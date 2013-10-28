@@ -3,8 +3,6 @@ package com.tint.specular.states;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import sun.security.krb5.internal.tools.Ktab;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;

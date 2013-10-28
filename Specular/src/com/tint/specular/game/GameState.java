@@ -27,7 +27,7 @@ public class GameState extends State {
 	private Music music;
 	
 	private BitmapFont font = new BitmapFont();
-	
+
 	public GameState(Specular game) {
 		super(game);
 		

@@ -8,12 +8,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
-import com.tint.specular.states.NetworkTest;
+import com.tint.specular.menu.MenuState;
 import com.tint.specular.states.State;
 
 public class Specular extends Game {
 	public enum States {
-		GAMESTATE
+		MENUSTATE, GAMESTATE
 	}
 	private Map<States, State> states = new HashMap<States, State>();
 	
@@ -28,9 +28,10 @@ public class Specular extends Game {
 		camera = new OrthographicCamera(w, h);
 		batch = new SpriteBatch();
 		
+		states.put(States.MENUSTATE, new MenuState(this));
 		states.put(States.GAMESTATE, new GameState(this));
 		
-		enterState(States.GAMESTATE);
+		enterState(States.MENUSTATE);
 	}
 	
 	public void enterState(States state) {
