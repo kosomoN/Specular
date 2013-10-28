@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Specular"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="lib" path="/Specular/libs/gdx.jar" sourcepath="/Specular/libs/gdx-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx-backend-android-sources.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry exported="true" kind="lib" path="/Specular/libs/kryonet.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Specular/libs/asm-4.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Specular/libs/jsonbeans-0.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Specular/libs/kryo-debug-2.20.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Specular/libs/minlog-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Specular/libs/objenesis-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="/Specular/libs/reflectasm-1.07.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>
