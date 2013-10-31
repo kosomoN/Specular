@@ -15,8 +15,10 @@ public class Bullet implements Entity {
 	public Bullet(float x, float y, float direction, float initalDx, float initalDy, GameState gs) {
 		this.x = x;
 		this.y = y;
-		this.dx = (float) (Math.cos(Math.toRadians(direction)) * 15);
-		this.dy = (float) (Math.sin(Math.toRadians(direction)) * 15);
+		float cos = (float) Math.cos(Math.toRadians(direction));
+		float sin = (float) Math.sin(Math.toRadians(direction));
+		this.dx = cos * 15;
+		this.dy = sin * 15;
 		if(Math.abs(dx + initalDx) > 15) {
 			dx += initalDx;
 		}
@@ -25,15 +27,15 @@ public class Bullet implements Entity {
 		}
 		this.gs = gs;
 		
-		this.x += dx * 2f;
-		this.y += dy * 2f;
+		this.x += cos * 32;
+		this.y += sin * 32;
 	}
 
 	@Override
 	public boolean update() {
 		x += dx;
 		y += dy;
-		
+        
        	return (x + dx < 0 || x + dx > gs.getMapWidth() || y + dy < 0 || y + dy > gs.getMapHeight());
         
 	}

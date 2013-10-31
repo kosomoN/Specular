@@ -1,6 +1,6 @@
 package com.tint.specular.game.entities;
 
-public interface Enemy {
-	public void render();
-	public void update();
+public abstract class Enemy implements Entity {
+	protected float x, y;
+	protected float direction;
 }

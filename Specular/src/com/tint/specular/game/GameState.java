@@ -11,7 +11,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.game.entities.Bullet;
+import com.tint.specular.game.entities.EnemyBooster;
 import com.tint.specular.game.entities.Entity;
+import com.tint.specular.game.entities.EnemyFast;
+import com.tint.specular.game.entities.EnemyNormal;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.states.State;
 
@@ -27,7 +30,7 @@ public class GameState extends State {
 	private Music music;
 	
 	private BitmapFont font = new BitmapFont();
-
+	
 	public GameState(Specular game) {
 		super(game);
 		
@@ -36,13 +39,20 @@ public class GameState extends State {
 		
 		Player.init();
 		Bullet.init();
+		EnemyNormal.init();
+		EnemyFast.init();
+		EnemyBooster.init();
 		
 		player.setX(map.getWidth());
 		player.setY(map.getHeight());
 		entities.add(player);
 		
+		entities.add(new EnemyNormal(100, 100, player, this));
+		entities.add(new EnemyFast(100, 100, player));
+		entities.add(new EnemyBooster(100, 100, player, this));
+		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
-		music.play();
+		//music.play();
 	}
 
 	@Override

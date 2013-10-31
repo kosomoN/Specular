@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
+import com.tint.specular.Util;
 import com.tint.specular.game.GameState;
 
 public class Player implements Entity {
@@ -25,16 +25,16 @@ public class Player implements Entity {
 	public boolean update() {
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-			dy += 1f;
+			dy += 0.8f;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-			dy -= 1f;
+			dy -= 0.8f;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-			dx += 1f;
+			dx += 0.8f;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-			dx -= 1f;
+			dx -= 0.8f;
 		}
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.G)) {
@@ -48,8 +48,8 @@ public class Player implements Entity {
 			}
 		}
 		
-        dx *= 0.93f;
-        dy *= 0.93f;
+        dx *= 0.95f;
+        dy *= 0.95f;
         
         if(x - 31 + dx < 0)
         	dx = -dx * 0.6f;
@@ -94,28 +94,8 @@ public class Player implements Entity {
 	}
 	
 	public static void init() {
-		TextureRegion tr = new TextureRegion(new Texture(Gdx.files.internal("graphics/game/Player.png")));
-		TextureRegion[][] trArr = tr.split(128, 128);
-		Array<TextureRegion> innerFrames = new Array<TextureRegion>();
-		for(TextureRegion[] tr1 : trArr) {
-			for(TextureRegion tr2 : tr1) {
-				if(innerFrames.size < 23) {
-					innerFrames.add(tr2);
-				}
-			}
-		}
-		
-		innerAnim = new Animation(0.1f, innerFrames);
-		
-		Array<TextureRegion> outerFrames = new Array<TextureRegion>();
-		for(int y = 4; y < 7; y++) {
-			for(int x = 0; x < 8; x++) {
-				if(y == 6 && x == 2)
-					break;
-				outerFrames.add(trArr[y][x]);
-			}
-		}
-		
-		outerAnim = new Animation(0.1f, outerFrames);
+		Texture texture  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
+		innerAnim = Util.getAnimation(texture, 128, 128, 0.1f, 0, 0, 6, 2);
+		outerAnim = Util.getAnimation(texture, 128, 128, 0.1f, 0, 4, 2, 6);
 	}
 }

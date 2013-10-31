@@ -10,7 +10,7 @@ public abstract class State implements Screen {
 	public State(Specular game) {
 		this.game = game;
 	}
-	
+
 	@Override
 	public void resize(int width, int height) {}
 
