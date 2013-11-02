@@ -1,11 +1,12 @@
-package com.tint.specular.game.entities;
+package com.tint.specular.game.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.tint.specular.Util;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Player;
+import com.tint.specular.utils.Util;
 
 public class EnemyNormal extends Enemy {
 
@@ -21,6 +22,8 @@ public class EnemyNormal extends Enemy {
 		this.player = player;
 		this.gs = gameState;
 		
+		useOfSpeed = 1;
+		
 	    if(Math.random() < 0.5) {
 	    	offset = (float) Math.toRadians(60);
 	    } else {
@@ -31,8 +34,8 @@ public class EnemyNormal extends Enemy {
 	@Override
 	public boolean update() {
 		double angle = Math.atan2(player.getY() - y, player.getX() - x) + offset;
-		x += Math.cos(angle) * 2;
-		y += Math.sin(angle) * 2;
+		x += Math.cos(angle) * 2 * useOfSpeed;
+		y += Math.sin(angle) * 2 * useOfSpeed;
 		
 		if(x - 20 < 0) {
 			offset = -offset;

@@ -1,6 +1,11 @@
 package com.tint.specular.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 
 public class Util {
 	
@@ -34,5 +39,47 @@ public class Util {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * 
+	 * @param texture - The texture containing all frames
+	 * @param spriteWidth - The width of the frame
+	 * @param spriteHeight - The height of the frame
+	 * @param frameTime - The duration every frame will be showed
+	 * @param firstX - The first frames x coordianate
+	 * @param firstY - The first frames y coordianate
+	 * @param lastX - The last frames x coordianate
+	 * @param lastY - The last frames y coordianate
+	 * @return an animation
+	 */
+	public static Animation getAnimation(Texture texture, int spriteWidth, int spriteHeight, float frameTime, int firstX, int firstY, int lastX, int lastY) {
+		TextureRegion tr = new TextureRegion(texture);
+		TextureRegion[][] trArr = tr.split(spriteWidth, spriteHeight);
+		Array<TextureRegion> frames = new Array<TextureRegion>();
+		for(int y = firstY; y <= lastY; y++) {
+			int x = 0;
+			if(y == firstY)
+				x = firstX;
+			
+			for(; x < 8; x++) {
+				if(y == lastY && x == lastX)
+					break;
+				frames.add(trArr[y][x]);
+			}
+		}
+		return new Animation(frameTime, frames);
+	}
+	
+	/**
+	 * 
+	 * @param batch - The spritebatch to use
+	 * @param tex - The texture to draw
+	 * @param centerx - The centerx
+	 * @param centery - The centery
+	 * @param rotation - The angle of the rotation around the centerpoint
+	 */
+	public static void drawCentered(SpriteBatch batch, Texture tex, float centerx, float centery, float rotation) {
+		batch.draw(tex, centerx - tex.getWidth() / 2, centery - tex.getHeight() / 2, tex.getWidth() / 2, tex.getHeight() / 2, tex.getWidth(), tex.getHeight(), 1, 1, rotation, 0, 0, tex.getWidth(), tex.getHeight(), false, false);
 	}
 }

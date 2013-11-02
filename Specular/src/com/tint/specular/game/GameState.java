@@ -6,36 +6,41 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.game.entities.Bullet;
-import com.tint.specular.game.entities.EnemyBooster;
 import com.tint.specular.game.entities.Entity;
-import com.tint.specular.game.entities.EnemyFast;
-import com.tint.specular.game.entities.EnemyNormal;
 import com.tint.specular.game.entities.Player;
+import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.game.entities.enemies.EnemyBooster;
+import com.tint.specular.game.entities.enemies.EnemyFast;
+import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.powerups.PowerUp;
+import com.tint.specular.map.Map;
 import com.tint.specular.states.State;
 
 public class GameState extends State {
 	
 	private static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
-	private static Texture map;
+//	private static Texture mapTexture;
 	
 	private Array<Entity> entities = new Array<Entity>();
+	private Array<PowerUp> powerUps = new Array<PowerUp>();
 	private Player player = new Player(this);
 	private float unprocessed;
 	private long lastTickTime = System.nanoTime();
 	private Music music;
+	private Map map;
 	
 	private BitmapFont font = new BitmapFont();
 	
 	public GameState(Specular game) {
 		super(game);
 		
-		map = new Texture(Gdx.files.internal("graphics/game/Map.png"));
-		map.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Map.png"));
+		
+		map = new Map(mapTexture, Gdx.files.internal("graphics/game/Map.png").nameWithoutExtension(), mapTexture.getWidth() * 2, mapTexture.getHeight() * 2);
 		
 		Player.init();
 		Bullet.init();
@@ -43,8 +48,11 @@ public class GameState extends State {
 		EnemyFast.init();
 		EnemyBooster.init();
 		
-		player.setX(map.getWidth());
-		player.setY(map.getHeight());
+		for(PowerUp.Type t : PowerUp.Type.values())
+			powerUps.add(new PowerUp(t));
+		
+		player.setX(map.getWidth() / 2);
+		player.setY(map.getHeight() / 2);
 		entities.add(player);
 		
 		entities.add(new EnemyNormal(100, 100, player, this));
@@ -52,7 +60,7 @@ public class GameState extends State {
 		entities.add(new EnemyBooster(100, 100, player, this));
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
-		//music.play();
+		music.play();
 	}
 
 	@Override
@@ -75,7 +83,8 @@ public class GameState extends State {
 		game.camera.update();
 		game.batch.setProjectionMatrix(game.camera.combined);
 		game.batch.begin();
-		game.batch.draw(map, 0, 0, map.getWidth() * 2, map.getHeight() * 2);
+//		game.batch.draw(mapTexture, 0, 0, mapTexture.getWidth() * 2, mapTexture.getHeight() * 2);
+		map.render(game.batch);
 		for(Entity ent : entities) {
 			ent.render(game.batch);
 		}
@@ -94,12 +103,30 @@ public class GameState extends State {
 	public void addEntity(Entity entity) {
 		entities.add(entity);
 	}
+	
+	public Array<PowerUp> getPowerUps() {
+		return powerUps;
+	}
+	
+	public Array<Enemy> getEnemies() {
+		Array<Enemy> enemies = new Array<Enemy>();
+		
+		for(Entity ent : entities) {
+			if(ent instanceof Enemy) {
+				enemies.add((Enemy) ent);
+			}
+		}
+		
+		return enemies;
+	}
 
 	public float getMapWidth() {
-		return map.getWidth() * 2;
+//		return mapTexture.getWidth() * 2;
+		return map.getWidth();
 	}
 
 	public float getMapHeight() {
-		return map.getHeight() * 2;
+//		return mapTexture.getHeight() * 2;
+		return map.getHeight();
 	}
 }

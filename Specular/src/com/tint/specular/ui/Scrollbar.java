@@ -1,4 +1,4 @@
-package com.tint.specular.utils;
+package com.tint.specular.ui;
 
 import com.badlogic.gdx.graphics.Texture;
 

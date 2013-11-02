@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.tint.specular.Specular;
 import com.tint.specular.states.State;
-import com.tint.specular.utils.Button;
+import com.tint.specular.ui.Button;
 
 public class MenuState extends State {
 

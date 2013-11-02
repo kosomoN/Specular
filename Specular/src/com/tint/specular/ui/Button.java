@@ -1,4 +1,4 @@
-package com.tint.specular.utils;
+package com.tint.specular.ui;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,9 +15,7 @@ public class Button {
 	}
 	
 	public void render(SpriteBatch batch) {
-		batch.begin();
 		batch.draw(texture, x, y);
-		batch.end();
 	}
 	
 	public void update() {

@@ -31,7 +31,7 @@ public class Specular extends Game {
 		states.put(States.MENUSTATE, new MenuState(this));
 		states.put(States.GAMESTATE, new GameState(this));
 		
-		enterState(States.MENUSTATE);
+		enterState(States.GAMESTATE);
 	}
 	
 	public void enterState(States state) {

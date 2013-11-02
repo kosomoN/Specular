@@ -19,9 +19,7 @@ public class Map {
 	}
 	
 	public void render(SpriteBatch batch) {
-		batch.begin();
 		batch.draw(texture, 0, 0, width, height);
-		batch.end();
 	}
 
 	public int getWidth() {

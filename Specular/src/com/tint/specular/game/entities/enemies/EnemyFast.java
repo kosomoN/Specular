@@ -1,10 +1,11 @@
-package com.tint.specular.game.entities;
+package com.tint.specular.game.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.tint.specular.Util;
+import com.tint.specular.game.entities.Player;
+import com.tint.specular.utils.Util;
 
 public class EnemyFast extends Enemy {
 
@@ -16,13 +17,15 @@ public class EnemyFast extends Enemy {
 		this.x = x;
 		this.y = y;
 		this.player = player;
+		
+		useOfSpeed = 1;
 	}
 
 	@Override
 	public boolean update() {
 		double angle = Math.atan2(player.getY() - y, player.getX() - x);
-		x += Math.cos(angle) * 3;
-		y += Math.sin(angle) * 3;
+		x += Math.cos(angle) * 3 * useOfSpeed;
+		y += Math.sin(angle) * 3 * useOfSpeed;
 		return false;
 	}
 

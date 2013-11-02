@@ -1,11 +1,12 @@
-package com.tint.specular.game.entities;
+package com.tint.specular.game.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.tint.specular.Util;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Player;
+import com.tint.specular.utils.Util;
 
 public class EnemyBooster extends Enemy {
 
@@ -21,14 +22,17 @@ public class EnemyBooster extends Enemy {
 		this.y = y;
 		this.player = player;
 		this.gs = gameState;
+		
+		useOfSpeed = 1;
 	}
 
 	@Override
 	public boolean update() {
 		if(boostingDelay > 30) {
 			speed += 0.1;
-			x += Math.cos(direction) * speed;
-			y += Math.sin(direction) * speed;
+			
+			x += Math.cos(direction) * speed * useOfSpeed;
+			y += Math.sin(direction) * speed * useOfSpeed;
 			boostingDelay++;
 		} else if(boostingDelay == 0) {
 			direction = Math.atan2(player.getY() - y, player.getX() - x);
