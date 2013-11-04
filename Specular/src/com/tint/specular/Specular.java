@@ -1,6 +1,6 @@
 package com.tint.specular;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Game;
@@ -8,27 +8,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
-import com.tint.specular.menu.MenuState;
 import com.tint.specular.states.State;
 
 public class Specular extends Game {
 	public enum States {
 		MENUSTATE, GAMESTATE
 	}
-	private Map<States, State> states = new HashMap<States, State>();
+	private Map<States, State> states = new EnumMap<Specular.States, State>(States.class);
 	
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
 	
 	@Override
 	public void create() {
+		
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 		
 		camera = new OrthographicCamera(w, h);
 		batch = new SpriteBatch();
 		
-		states.put(States.MENUSTATE, new MenuState(this));
+//		states.put(States.MENUSTATE, new MenuState(this));
 		states.put(States.GAMESTATE, new GameState(this));
 		
 		enterState(States.GAMESTATE);

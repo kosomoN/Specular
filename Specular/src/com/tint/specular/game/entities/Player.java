@@ -12,7 +12,7 @@ import com.tint.specular.utils.Util;
 
 public class Player implements Entity {
 
-	private static Animation innerAnim, outerAnim;
+	private static Animation anim;
 	private float animFrameTime;
 	private float x, y, dx, dy;
 	private GameState gs;
@@ -116,11 +116,8 @@ public class Player implements Entity {
 	@Override
 	public void render(SpriteBatch batch) {
 		animFrameTime += Gdx.graphics.getDeltaTime();
-		TextureRegion frame = outerAnim.getKeyFrame(animFrameTime, true);
-		batch.draw(frame, x - frame.getRegionWidth() / 2, y - frame.getRegionHeight() / 2);
-		
-		frame = innerAnim.getKeyFrame(animFrameTime, true);
-		batch.draw(frame, x - frame.getRegionWidth() / 2, y - frame.getRegionHeight() / 2);
+		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
+		batch.draw(frame, x - frame.getRegionWidth() / 2, y - frame.getRegionHeight() / 2, frame.getRegionWidth() / 2, frame.getRegionHeight() / 2, frame.getRegionWidth(), frame.getRegionHeight(), 1, 1, animFrameTime % 2 > 1 ? 0 : 180, false);
 	}
 
 	public void activateSpeedBonus() {
@@ -167,7 +164,6 @@ public class Player implements Entity {
 	
 	public static void init() {
 		Texture texture  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
-		innerAnim = Util.getAnimation(texture, 128, 128, 0.1f, 0, 0, 6, 2);
-		outerAnim = Util.getAnimation(texture, 128, 128, 0.1f, 0, 4, 2, 6);
+		anim = Util.getAnimation(texture, 128, 128, 1 / 16f, 0, 0, 3, 3);
 	}
 }

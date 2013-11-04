@@ -62,7 +62,7 @@ public class Util {
 			if(y == firstY)
 				x = firstX;
 			
-			for(; x < 8; x++) {
+			for(; x < trArr[0].length; x++) {
 				if(y == lastY && x == lastX)
 					break;
 				frames.add(trArr[y][x]);
