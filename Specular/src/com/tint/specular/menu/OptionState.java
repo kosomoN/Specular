@@ -12,13 +12,16 @@ import com.tint.specular.utils.Util;
 
 public class OptionState extends State {
 	
+	//FIELDS
 	private Specular game;
 	private TextureRegion scrollbar, slider;
-	private int pressedx = 0, pressedy = 0;
+	
 	private Rectangle scrollbarBox;
 	private Rectangle sliderBox;
 	
+	private int pressedx = 0, pressedy = 0;
 	
+	//CONSTRUCTOR
 	public OptionState(Specular game) {
 		super(game);
 		this.game = game;
@@ -32,6 +35,7 @@ public class OptionState extends State {
 				1f / 40 * Gdx.graphics.getHeight());
 	}
 	
+	//RENDER&UPDATE loop
 	@Override
 	public void render(float delta) {
 		//Rendering
@@ -70,27 +74,17 @@ public class OptionState extends State {
 	}
 
 	@Override
-	public void dispose() {
-
-	}
+	public void dispose() {}
 
 	@Override
-	public void resize(int width, int height) {
-		
-	}
+	public void resize(int width, int height) {}
 
 	@Override
-	public void hide() {
-		
-	}
+	public void hide() {}
 
 	@Override
-	public void pause() {
-		
-	}
+	public void pause() {}
 
 	@Override
-	public void resume() {
-		
-	}
+	public void resume() {}
 }

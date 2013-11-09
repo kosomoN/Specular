@@ -6,8 +6,7 @@ public class Scrollbar {
 	private Texture texture;
 	private float x, y;
 	private float width, height;
-	@SuppressWarnings("rawtypes")
-	private Enum orientation;
+	private Enum<?> orientation;
 	private Slider slider;
 	
 	public enum Orientation {

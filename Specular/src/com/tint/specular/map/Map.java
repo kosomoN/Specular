@@ -6,10 +6,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Map {
 	
+	//FIELDS
 	private int width, height;
 	private Texture texture;
 	private String name;
 	
+	//CONSTRUCTORS
 	public Map(Texture texture, String name, int width, int height) {
 		this.name = name;
 		this.texture = texture;
@@ -18,27 +20,19 @@ public class Map {
 		this.height = height;
 	}
 	
+	public Map() {
+		
+	}
+	
+	//RENDER
 	public void render(SpriteBatch batch) {
 		batch.draw(texture, 0, 0, width, height);
 	}
 
-	public int getWidth() {
-		return width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public Texture getTexture() {
-		return texture;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setTexture(Texture texture) {
-		this.texture = texture;
-	}
+	//GETTERS
+	public int getWidth() { return width; }
+	public int getHeight() { return height;	}
+	public Texture getTexture() { return texture; }
+	public String getName() { return name; }
+	public void setTexture(Texture texture) { this.texture = texture; }
 }

@@ -1,55 +1,67 @@
 package com.tint.specular.ui;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 
 public class Button {
-	private float x, y, width, height;
+	
+	//FIELDS
+	private Rectangle hitbox;
 	private Texture texture;
 	
+	private boolean isPressed;
+	
+	//CONSTRUCTOR
 	public Button() {
-		x = 0;
-		y = 0;
-		width = 0;
-		height = 0;
+		hitbox = new Rectangle(0, 0, 1, 1);
 	}
 	
-	public void render(SpriteBatch batch) {
-		batch.draw(texture, x, y);
+	//RENDER&UPDATE loop
+/*_____________________________________________________________________*/
+	public void renderTexture(SpriteBatch batch) {
+		batch.draw(texture, hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
 	}
 	
-	public void update() {
-		
+	public void renderShape(ShapeRenderer shape) {
+		shape.begin(ShapeType.Filled);
+		shape.setColor(Color.YELLOW);
+		shape.rect(hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
+		shape.end();
 	}
 	
-	public void setTexture(Texture texture) {
-		this.texture = texture;
-		width = this.texture.getWidth();
-		height = this.texture.getHeight();
+	public void update(float delta) {
+		if(Gdx.input.justTouched()) {
+			if(hitbox.contains(Gdx.input.getX(), Gdx.input.getY())) {
+				isPressed = true;
+				System.out.println("pressed");
+				return;
+			}
+		}
+				
+		isPressed = false;
 	}
+/*_____________________________________________________________________*/
 	
-	public void setPosition(float x, float y) {
-		this.x = x;
-		this.y = y;
-	}
+	//SETTERS
+	public void setTexture(Texture texture) { this.texture = texture; }
+	public void setPosition(float x, float y) { hitbox.setPosition(x, y); }
+	public void setSize(float width, float height) { hitbox.setSize(width, height); }
 	
-	public float getX() {
-		return x;
-	}
+	//GETTERS
+	public float getX() { return hitbox.getX();	}
+	public float getY() { return hitbox.getY(); }
+	public float getWidth() { return hitbox.getWidth(); }
+	public float getHeight() { return hitbox.getHeight(); }
+	public Rectangle getHitbox() { return hitbox; }
+	public Texture getTexture() { return texture; }
+	public boolean isPressed() { return isPressed; }
 	
-	public float getY() {
-		return y;
-	}
-	
-	public float getWidth() {
-		return width;
-	}
-	
-	public float getHeight() {
-		return height;
-	}
-	
-	public Texture getTexture() {
-		return texture;
+	public void dispose() {
+		texture.dispose();
 	}
 }

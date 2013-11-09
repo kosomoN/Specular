@@ -7,27 +7,61 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
-import com.tint.specular.game.powerups.PowerUp;
+import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.utils.Timer;
 import com.tint.specular.utils.Util;
 
 public class Player implements Entity {
 
+	//FIELDS
 	private static Animation anim;
-	private float animFrameTime;
-	private float x, y, dx, dy;
+	
 	private GameState gs;
+	private Timer speedTimer, bulletTimer;
+	
+	private float animFrameTime;
+	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 6f;
+	
 	private int life = 3;
 	private int speedBonus = 1;
 	private int bulletBurst = 2;
 	
+	private boolean isDead;
+	
+	//CONSTRUCTOR
 	public Player(GameState gs) {
 		this.gs = gs;
+		speedTimer = new Timer();
+		bulletTimer = new Timer();
 	}
 
+	
+	//RENDER&UPDATE loop
+/*_____________________________________________________________________*/
 	@Override
-	public boolean update() {
+	public void render(SpriteBatch batch) {
+		animFrameTime += Gdx.graphics.getDeltaTime();
+		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
+		batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2, frame.getRegionWidth() / 2, frame.getRegionHeight() / 2, frame.getRegionWidth(), frame.getRegionHeight(), 1, 1, animFrameTime % 2 > 1 ? 0 : 180, false);
+	}
+	
+	@Override
+	public boolean update(float delta) {
+		//Updating timers and power-ups
+		if(speedTimer.getTime() <= 0) {
+			deactivateSpeedBonus();
+		} else {
+			speedTimer.update(delta);
+		}
 		
+		if(bulletTimer.getTime() <= 0) {
+			setBulletBurst(1);
+		} else {
+			bulletTimer.update(delta);
+		}
+		
+		//Handling key input
 		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
 			dy += 0.8f * speedBonus;
 		}
@@ -43,17 +77,10 @@ public class Player implements Entity {
 		if(Gdx.input.isKeyPressed(Input.Keys.G)) {
 			System.gc();
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.B)) {
-			for(PowerUp pow : gs.getPowerUps()) {
-				if(pow.getType() == PowerUp.Type.BULLETBURST) {
-					//pow.affect(this, gs.getEnemies());
-				}
-			}
-		}
-		
-		timeSinceLastFire += 1;
 		
 		//Shooting
+		timeSinceLastFire += 1;
+		
 		if(Gdx.input.isTouched()) {
 			if(timeSinceLastFire >= fireRate) {
 				
@@ -72,21 +99,21 @@ public class Player implements Entity {
 					
 					for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
 						if(j == 0) {
-							gs.addEntity(new Bullet(x, y, direction + offset / 2, dx, dy, gs));
-							gs.addEntity(new Bullet(x, y, direction - offset / 2, dx, dy, gs));
+							gs.addEntity(new Bullet(centerx, centery, direction + offset / 2, dx, dy, gs));
+							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2, dx, dy, gs));
 						} else {
-							gs.addEntity(new Bullet(x, y, direction + offset / 2 + j * offset, dx, dy, gs));
-							gs.addEntity(new Bullet(x, y, direction - offset / 2 - j * offset, dx, dy, gs));
+							gs.addEntity(new Bullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy, gs));
+							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs));
 						}
 					}
 					
 				//If the number of bullet "lines" are odd
 				} else {
-					gs.addEntity(new Bullet(x, y, direction, dx, dy, gs));
+					gs.addEntity(new Bullet(centerx, centery, direction, dx, dy, gs));
 
 					for(int i = 0; i < spaces; i++) {
-						gs.addEntity(new Bullet(x, y, direction + i * offset, dx, dy, gs));
-						gs.addEntity(new Bullet(x, y, direction - i * offset, dx, dy, gs));
+						gs.addEntity(new Bullet(centerx, centery, direction + i * offset, dx, dy, gs));
+						gs.addEntity(new Bullet(centerx, centery, direction - i * offset, dx, dy, gs));
 					}
 				}
 				
@@ -94,32 +121,38 @@ public class Player implements Entity {
 			}
 		}
 		
+		//Movement
         dx *= 0.95f;
         dy *= 0.95f;
         
-        if(x - 31 + dx < 0)
+        if(centerx - 31 + dx < 0)
         	dx = -dx * 0.6f;
-        else if(x + 31 + dx > gs.getMapWidth())
+        else if(centerx + 31 + dx > gs.getMapWidth())
         	dx = -dx * 0.6f;
         
-        if(y - 31 + dy < 0)
+        if(centery - 31 + dy < 0)
         	dy = -dy * 0.6f;
-        else if(y + 31 + dy > gs.getMapHeight())
+        else if(centery + 31 + dy > gs.getMapHeight())
         	dy = -dy * 0.6f;
         
-        x += dx;
-        y += dy;
+        centerx += dx;
+        centery += dy;
         
-        return false;
+        return isDead;
 	}
-
-	@Override
-	public void render(SpriteBatch batch) {
-		animFrameTime += Gdx.graphics.getDeltaTime();
-		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
-		batch.draw(frame, x - frame.getRegionWidth() / 2, y - frame.getRegionHeight() / 2, frame.getRegionWidth() / 2, frame.getRegionHeight() / 2, frame.getRegionWidth(), frame.getRegionHeight(), 1, 1, animFrameTime % 2 > 1 ? 0 : 180, false);
+	
+	public void updateHitDetection() {
+		//Hit detection
+        for(Enemy e : gs.getEnemies()) {
+        	if(Math.pow(centerx - e.getX(), 2) + Math.pow(centery - e.getY(), 2)
+        			< Math.pow(getRadius() + e.getWidth(), 2)) {
+        		isDead = true;
+        	}
+        }
 	}
+/*_____________________________________________________________________*/
 
+	//POWER-UPS
 	public void activateSpeedBonus() {
 		speedBonus = 2;
 	}
@@ -128,42 +161,38 @@ public class Player implements Entity {
 		speedBonus = 1;
 	}
 	
-	//Setters
-	public void setX(float x) {
-		this.x = x;
-	}
-
-	public void setY(float y) {
-		this.y = y;
-	}
-	
-	public void setBulletBurst(int burst) {
-		bulletBurst = burst;
-	}
-	
 	public void addLives(int livesToAdd) {
 		life += livesToAdd;
 	}
 	
-	//Getters
-	public float getX() {
-		return x;
+	//SETTERS
+	public void setCenterX(float x) { this.centerx = x; }
+	public void setCenterY(float y) { this.centery = y;	}
+	public void setBulletBurst(int burst) {	bulletBurst = burst; }
+	
+	public void setTime(Timer timer, float seconds) {
+		if(timer.getTime() <= 0) {
+			timer.setTime(seconds < 0 ? 0 : seconds);
+		}
 	}
 	
-	public float getY() {
-		return y;
-	}
-	
-	public int getLife() {
-		return life;
-	}
-	
-	public int getSpeedBonus() {
-		return speedBonus;
-	}
+	//GETTERS
+	public float getCenterX() { return centerx; }
+	public float getCenterY() { return centery;	}
+	public float getRadius() { return anim.getKeyFrame(0).getRegionWidth() / 2; }
+	public int getLife() { return life;	}
+	public int getSpeedBonus() { return speedBonus;	}
+	public boolean isDead() { return isDead; }
+	public Timer getSpeedTimer() { return speedTimer; }
+	public Timer getBulletTimer() { return bulletTimer;	}
 	
 	public static void init() {
 		Texture texture  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
 		anim = Util.getAnimation(texture, 128, 128, 1 / 16f, 0, 0, 3, 3);
+	}
+
+	@Override
+	public void dispose() {
+		
 	}
 }

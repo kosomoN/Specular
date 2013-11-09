@@ -5,12 +5,14 @@ import com.tint.specular.Specular;
 
 public abstract class State implements Screen {
 	
+	//FIELDS
 	protected Specular game;
 	
+	//CONSTRUCTOR
 	public State(Specular game) {
 		this.game = game;
 	}
-
+	
 	@Override
 	public void resize(int width, int height) {}
 

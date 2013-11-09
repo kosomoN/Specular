@@ -7,17 +7,22 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.tint.specular.game.GameState;
+import com.tint.specular.menu.MenuState;
 import com.tint.specular.states.State;
 
 public class Specular extends Game {
 	public enum States {
 		MENUSTATE, GAMESTATE
 	}
+	
+	//FIELDS
 	private Map<States, State> states = new EnumMap<Specular.States, State>(States.class);
 	
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
+	public ShapeRenderer shape;
 	
 	@Override
 	public void create() {
@@ -27,8 +32,9 @@ public class Specular extends Game {
 		
 		camera = new OrthographicCamera(w, h);
 		batch = new SpriteBatch();
+		shape = new ShapeRenderer();
 		
-//		states.put(States.MENUSTATE, new MenuState(this));
+		states.put(States.MENUSTATE, new MenuState(this));
 		states.put(States.GAMESTATE, new GameState(this));
 		
 		enterState(States.GAMESTATE);
@@ -41,5 +47,6 @@ public class Specular extends Game {
 	@Override
 	public void dispose() {
 		batch.dispose();
+		shape.dispose();
 	}
 }
