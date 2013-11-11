@@ -20,8 +20,7 @@ public class EnemyNormal extends Enemy {
 	
 	//CONSTRUCTOR
 	public EnemyNormal(float x, float y, Player player, GameState gameState) {
-		this.x = x;
-		this.y = y;
+		super(x, y);
 		this.width = tex.getWidth();
 		this.height = tex.getHeight();
 		this.player = player;
@@ -45,14 +44,14 @@ public class EnemyNormal extends Enemy {
 	}
 	
 	@Override
-	public boolean update(float delta) {
+	public boolean update() {
 		double angle = Math.atan2(player.getCenterY() - y, player.getCenterX() - x) + offset;
 		x += Math.cos(angle) * 2 * speedUtilization;
 		y += Math.sin(angle) * 2 * speedUtilization;
 		
 		
 		if(speedTimer > 0)
-			speedTimer -= delta;
+			speedTimer -= 10;
 		else
 			setSpeedUtilization(1f);
 		
@@ -69,7 +68,7 @@ public class EnemyNormal extends Enemy {
 		}
 		
 		
-		return super.update(delta);
+		return super.update();
 	}
 /*_______________________________________________________________________________*/
 	

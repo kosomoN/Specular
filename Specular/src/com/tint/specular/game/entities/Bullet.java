@@ -47,7 +47,7 @@ public class Bullet implements Entity {
 	}
 	
 	@Override
-	public boolean update(float delta) {
+	public boolean update() {
 		x += dx;
 		y += dy;
 		

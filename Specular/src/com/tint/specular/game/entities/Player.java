@@ -47,18 +47,18 @@ public class Player implements Entity {
 	}
 	
 	@Override
-	public boolean update(float delta) {
+	public boolean update() {
 		//Updating timers and power-ups
 		if(speedTimer.getTime() <= 0) {
 			deactivateSpeedBonus();
 		} else {
-			speedTimer.update(delta);
+			speedTimer.update(10);
 		}
 		
 		if(bulletTimer.getTime() <= 0) {
 			setBulletBurst(1);
 		} else {
-			bulletTimer.update(delta);
+			bulletTimer.update(10);
 		}
 		
 		//Handling key input
@@ -138,7 +138,7 @@ public class Player implements Entity {
         centerx += dx;
         centery += dy;
         
-        return isDead;
+        return false;
 	}
 	
 	public void updateHitDetection() {

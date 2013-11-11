@@ -64,7 +64,6 @@ public class GameState extends State {
 		
 		//Adding enemies
 		addEntity(new EnemyFast(400, 400, player));
-		addEntity(new EnemyFast(400, 398, player));
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
 	}
@@ -78,18 +77,12 @@ public class GameState extends State {
         lastTickTime = currTime;
         while(unprocessed >= 1) {
         	unprocessed--;
-        	update(delta);
+        	update();
         }
 		renderGame();
-		
-		//IN CASE OF DEFEAT
-		if(player.isDead()) {
-			dispose();
-			game.enterState(States.MENUSTATE);
-		}
 	}
 	
-	private void update(float delta) {
+	private void update() {
 		//Checking if any bullet hit an enemy
 		for(Bullet b : bullets) {
 			for(Enemy e : enemies) {
@@ -107,7 +100,7 @@ public class GameState extends State {
 		//Removing destroyed entities
 		for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
 			Entity ent = it.next();
-			if(ent.update(delta)) {
+			if(ent.update()) {
 				if(ent instanceof Enemy)
 					enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
 				else if(ent instanceof Bullet)
@@ -116,10 +109,15 @@ public class GameState extends State {
 				it.remove();
 			}
 		}
+		
+		//IN CASE OF DEFEAT
+		if(player.isDead()) {
+			game.enterState(States.MENUSTATE);
+		}
 	}
 	
 	private void renderGame() {
-		//Positioning camera, renderering map and entities
+		//Positioning camera, rendering map and entities
 		Gdx.gl.glClearColor(0.2f, 0, 0, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		game.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
@@ -198,6 +196,7 @@ public class GameState extends State {
 
 	@Override
 	public void dispose() {
+		System.out.println("Dispose");
 		super.dispose();
 		music.dispose();
 		player.dispose();

@@ -20,8 +20,7 @@ public class EnemyBooster extends Enemy {
 	
 	//CONSTRUCTOR
 	public EnemyBooster(float x, float y, Player player, GameState gameState) {
-		this.x = x;
-		this.y = y;
+		super(x, y);
 		this.player = player;
 		this.gs = gameState;
 		
@@ -36,7 +35,7 @@ public class EnemyBooster extends Enemy {
 	}
 	
 	@Override
-	public boolean update(float delta) {
+	public boolean update() {
 		if(boostingDelay > 30) {
 			speed += 0.2;
 			
@@ -44,7 +43,7 @@ public class EnemyBooster extends Enemy {
 			y += Math.sin(direction) * speed * speedUtilization;
 			
 			if(speedTimer > 0) {
-				speedTimer -= delta;
+				speedTimer -= 10;
 			} else {
 				setSpeedUtilization(1f);
 			}
@@ -74,7 +73,7 @@ public class EnemyBooster extends Enemy {
 			boostingDelay = 0;
 		}
 		
-		return super.update(delta);
+		return super.update();
 	}
 /*________________________________________________________________________________*/
 	

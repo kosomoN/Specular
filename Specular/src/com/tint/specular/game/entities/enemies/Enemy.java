@@ -14,8 +14,13 @@ public abstract class Enemy implements Entity {
 	
 	protected boolean isHit;
 	
+	public Enemy(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
+	
 	@Override
-	public boolean update(float delta) {
+	public boolean update() {
 		return isHit;
 	}
 

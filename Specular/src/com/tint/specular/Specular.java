@@ -34,14 +34,18 @@ public class Specular extends Game {
 		batch = new SpriteBatch();
 		shape = new ShapeRenderer();
 		
-		states.put(States.MENUSTATE, new MenuState(this));
+//		states.put(States.MENUSTATE, new MenuState(this));
 		states.put(States.GAMESTATE, new GameState(this));
 		
 		enterState(States.GAMESTATE);
 	}
 	
 	public void enterState(States state) {
-		setScreen(states.get(state));
+		State s = states.get(state);
+		if(s != null)
+			setScreen(s);
+		else
+			throw new RuntimeException("No state assigned to this enum: " + state);
 	}
 
 	@Override

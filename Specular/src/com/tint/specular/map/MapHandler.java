@@ -32,15 +32,6 @@ public class MapHandler {
 	}
 	
 	//RENDER
-	/**
-	 * Renders all maps at their locations
-	 * @param batch - A Spritebatch
-	 */
-	public void renderAll(SpriteBatch batch) {
-		for(String s : maps.keySet()) {
-			maps.get(s).render(batch);
-		}
-	}
 	
 	/**
 	 * Renders a specific map by it's name
