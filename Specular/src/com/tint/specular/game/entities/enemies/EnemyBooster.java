@@ -83,6 +83,13 @@ public class EnemyBooster extends Enemy {
 	}
 
 	@Override
+	public void hit() {
+		super.hit();
+		if(life <= 0)
+			player.getGameState().addPoints(50);
+	}
+	
+	@Override
 	public void dispose() {
 		tex.dispose();
 	}

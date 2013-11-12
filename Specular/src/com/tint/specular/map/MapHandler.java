@@ -19,7 +19,8 @@ public class MapHandler {
 	 * @param height - The height
 	 */
 	public void addMap(String name, Texture texture, int width, int height) {
-		maps.put(name, new Map(texture, name, width, height));
+		if(!maps.containsKey(name))
+			maps.put(name, new Map(texture, name, width, height));
 	}
 	
 	/**
@@ -28,7 +29,8 @@ public class MapHandler {
 	 * @param map - The map itself
 	 */
 	public void addMap(String name, Map map) {
-		maps.put(name, map);
+		if(!maps.containsValue(map))
+			maps.put(name, map);
 	}
 	
 	//RENDER

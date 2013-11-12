@@ -12,6 +12,8 @@ public abstract class Enemy implements Entity {
 	protected float speedUtilization;
 	protected float speedTimer;
 	
+	protected int life;
+	
 	protected boolean isHit;
 	
 	public Enemy(float x, float y) {
@@ -21,7 +23,7 @@ public abstract class Enemy implements Entity {
 	
 	@Override
 	public boolean update() {
-		return isHit;
+		return life <= 0;
 	}
 
 	//SETTERS
@@ -47,6 +49,7 @@ public abstract class Enemy implements Entity {
 	
 	public void hit() {
 		isHit = true;
+		life--;
 	}
 	
 	//GETTERS

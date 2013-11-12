@@ -42,6 +42,18 @@ public class Util {
 	}
 	
 	/**
+	 * Calculates the distance between two points
+	 * @param x1 - x value of the first point
+	 * @param y1 - y value of the first point
+	 * @param x2 - x value of the second point
+	 * @param y2 - y value of the second point
+	 * @return - Distance between the two points
+	 */
+	public static float getDistance(float x1, float y1, float x2, float y2) {
+		return (float) Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+	}
+	
+	/**
 	 * 
 	 * @param texture - The texture containing all frames
 	 * @param spriteWidth - The width of the frame

@@ -3,22 +3,14 @@ package com.tint.specular.game.powerups;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
 
-public class PowerUp {
+public class PowerUp implements Entity {
 
 	public enum Type {
-		ADD_ONE_LIFE(1), SPEEDBOOST(2), SLOWDOWN_ENEMIES(3), BULLETBURST(4);
-		
-		private int time;
-		private Type(int time) {
-			this.time = time;
-		}
-		
-		public int getTime() {
-			return time;
-		}
+		ADD_ONE_LIFE, SPEEDBOOST, SLOWDOWN_ENEMIES, BULLETBURST, SCORE_MULTIPLIER;
 	}
 	
 	//FIELDS
@@ -27,7 +19,6 @@ public class PowerUp {
 	
 	private Type type;
 	private Texture texture;
-	
 	
 	//Constructors
 	public PowerUp(Type type, float x, float y) {
@@ -66,6 +57,10 @@ public class PowerUp {
 			player.setTime(player.getBulletTimer(), 5f);
 			break;
 			
+		case SCORE_MULTIPLIER :
+			
+			break;
+			
 		default :
 			break;
 		}
@@ -75,13 +70,22 @@ public class PowerUp {
 	
 	//RENDER&UPDATE loop
 /*_________________________________________________________________*/
+	@Override
 	public void render(SpriteBatch batch) {
-		batch.begin();
-		batch.draw(texture, x, y);
-		batch.end();
+		if(texture == null) {
+			/*sr.begin(ShapeType.Filled);
+			sr.setColor(color);
+			sr.circle(x, y, 4);
+			sr.end();*/
+		} else {
+			batch.begin();
+			batch.draw(texture, x, y);
+			batch.end();
+		}
 	}
 	
-	public boolean update(float delta) {
+	@Override
+	public boolean update() {
 		/*if(useTimer) {
 			timeActive -= delta;
 			if(timeActive <= 0) {
@@ -117,6 +121,10 @@ public class PowerUp {
 			//Set Texture
 			break;
 			
+		case SCORE_MULTIPLIER :
+			//Set Texture
+			break;
+			
 		default :
 			System.err.println("No such PowerUp as: " + type.toString());
 			break;
@@ -132,6 +140,7 @@ public class PowerUp {
 	public Type getType() { return type; }
 	public Texture getTexture() { return texture; }
 	
+	@Override
 	public void dispose() {
 		texture.dispose();
 	}

@@ -11,7 +11,8 @@ public class Timer {
 	
 	//UPDATE
 	public void update(float deltaInSeconds) {
-		time -= deltaInSeconds;
+		if(time > 0)
+			time -= deltaInSeconds;
 	}
 	
 	//SETTERS

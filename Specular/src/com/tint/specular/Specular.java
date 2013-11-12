@@ -34,7 +34,7 @@ public class Specular extends Game {
 		batch = new SpriteBatch();
 		shape = new ShapeRenderer();
 		
-//		states.put(States.MENUSTATE, new MenuState(this));
+		states.put(States.MENUSTATE, new MenuState(this));
 		states.put(States.GAMESTATE, new GameState(this));
 		
 		enterState(States.GAMESTATE);
@@ -46,6 +46,10 @@ public class Specular extends Game {
 			setScreen(s);
 		else
 			throw new RuntimeException("No state assigned to this enum: " + state);
+	}
+	
+	public State getState(States state) {
+		return states.get(state);
 	}
 
 	@Override

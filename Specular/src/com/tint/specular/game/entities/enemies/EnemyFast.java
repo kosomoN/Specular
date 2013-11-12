@@ -20,6 +20,7 @@ public class EnemyFast extends Enemy {
 		this.player = player;
 		
 		speedUtilization = 1;
+		life = 2;
 	}
 
 	//RENDER&UPDATE loop
@@ -49,6 +50,13 @@ public class EnemyFast extends Enemy {
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Fast.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	}
+
+	@Override
+	public void hit() {
+		super.hit();
+		if(life <= 0)
+			player.getGameState().addPoints(20);
 	}
 
 	@Override

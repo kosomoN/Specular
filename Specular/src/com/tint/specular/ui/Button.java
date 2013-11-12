@@ -47,6 +47,10 @@ public class Button {
 	}
 /*_____________________________________________________________________*/
 	
+	public boolean isOver(float x, float y) {
+		return hitbox.contains(x, Gdx.graphics.getHeight() - y);
+	}
+	
 	//SETTERS
 	public void setTexture(Texture texture) { this.texture = texture; }
 	public void setPosition(float x, float y) { hitbox.setPosition(x, y); }

@@ -27,6 +27,7 @@ public class EnemyNormal extends Enemy {
 		this.gs = gameState;
 		
 		speedUtilization = 1;
+		life = 2;
 		
 	    if(Math.random() < 0.5) {
 	    	offset = (float) Math.toRadians(60);
@@ -75,6 +76,13 @@ public class EnemyNormal extends Enemy {
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Normal.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	}
+
+	@Override
+	public void hit() {
+		super.hit();
+		if(life <= 0)
+			player.getGameState().addPoints(20);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL10;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
+import com.tint.specular.game.GameState;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.Button;
 
@@ -19,18 +20,19 @@ public class MenuState extends State {
 	public MenuState(Specular game) {
 		super(game);
 		
-//		background = new Texture("graphics/mainmenu/Title.png");
-//		background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		/*background = new Texture("graphics/mainmenu/Title.png");
+		background.setFilter(TextureFilter.Linear, TextureFilter.Linear);*/
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/04.ogg"));
 		
+		//TODO Set texture, set size and position according to that
 		playBtn = new Button();
 		playBtn.setSize(100, 30);
 		playBtn.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 		
 		exitBtn = new Button();
 		exitBtn.setSize(100, 30);
-		exitBtn.setPosition(0, 0);
+		exitBtn.setPosition(150, 150);
 	}
 	
 	//RENDER&UPDATE loop
@@ -49,7 +51,7 @@ public class MenuState extends State {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
 		game.batch.begin();
-//		game.batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		//game.batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		game.batch.end();
 		
 		playBtn.renderShape(game.shape);
@@ -60,10 +62,16 @@ public class MenuState extends State {
 		playBtn.update(delta);
 		exitBtn.update(delta);
 		
-		if(playBtn.isPressed())
-			game.enterState(States.GAMESTATE);
-		else if(exitBtn.isPressed())
-			Gdx.app.exit();
+		if(Gdx.input.justTouched()) {
+			if(playBtn.isOver(Gdx.input.getX(), Gdx.input.getY())) {
+				music.stop();
+				((GameState) game.getState(States.GAMESTATE)).enter();
+				game.enterState(States.GAMESTATE);
+			} else if(exitBtn.isOver(Gdx.input.getX(), Gdx.input.getY())) {
+				music.stop();
+				Gdx.app.exit();
+			}
+		}
 	}
 /*_____________________________________________________*/
 

@@ -1,6 +1,7 @@
 package com.tint.specular.game;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -18,8 +19,10 @@ import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
 import com.tint.specular.game.powerups.PowerUp;
+import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.State;
+import com.tint.specular.utils.Util;
 
 public class GameState extends State {
 	
@@ -27,6 +30,13 @@ public class GameState extends State {
 	private static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	private float unprocessed;
 	private long lastTickTime = System.nanoTime();
+	
+	private int wave = 1;
+	private int killedEnemies = 0;
+	private int points = 0;
+	private float scoreMultiplier = 1;
+	
+	private boolean justEntered;
 	
 	private Array<Entity> entities = new Array<Entity>();
 	private Array<Enemy> enemies = new Array<Enemy>();
@@ -36,17 +46,23 @@ public class GameState extends State {
 	private Player player = new Player(this);
 	private Music music;
 	private MapHandler mapHandler;
+	private Map currentMap;
 	
 	private BitmapFont font = new BitmapFont();
+	
+	private Random rand;
 	
 	//CONSTRUCTOR
 	public GameState(Specular game) {
 		super(game);
 		
+		rand = new Random();
+		
 		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Map.png"));
 		
 		mapHandler = new MapHandler();
 		mapHandler.addMap("Map", mapTexture, mapTexture.getWidth() * 2, mapTexture.getHeight() * 2);
+		currentMap = mapHandler.getMap("Map");
 		
 		Player.init();
 		Bullet.init();
@@ -54,12 +70,17 @@ public class GameState extends State {
 		EnemyFast.init();
 		EnemyBooster.init();
 		
-		for(PowerUp.Type t : PowerUp.Type.values())
-			powerUps.add(new PowerUp(t));
+		int i = 0;
+		for(PowerUp.Type t : PowerUp.Type.values()) {
+			PowerUp pu = new PowerUp(t, 500 + i * 50, 300 + i * 30);
+			powerUps.add(pu);
+			addEntity(pu);
+			i++;
+		}
 		
 		//Adding player
-		player.setCenterX(mapHandler.getMap("Map").getWidth() / 2);
-		player.setCenterY(mapHandler.getMap("Map").getHeight() / 2);
+		player.setCenterX(currentMap.getWidth() / 2);
+		player.setCenterY(currentMap.getHeight() / 2);
 		addEntity(player);
 		
 		//Adding enemies
@@ -83,6 +104,9 @@ public class GameState extends State {
 	}
 	
 	private void update() {
+		if(justEntered)
+			justEntered = false;
+		
 		//Checking if any bullet hit an enemy
 		for(Bullet b : bullets) {
 			for(Enemy e : enemies) {
@@ -101,10 +125,12 @@ public class GameState extends State {
 		for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
 			Entity ent = it.next();
 			if(ent.update()) {
-				if(ent instanceof Enemy)
+				if(ent instanceof Enemy) {
 					enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
-				else if(ent instanceof Bullet)
+					killedEnemies++;
+				} else if(ent instanceof Bullet) {
 					bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
+				}
 				
 				it.remove();
 			}
@@ -114,6 +140,10 @@ public class GameState extends State {
 		if(player.isDead()) {
 			game.enterState(States.MENUSTATE);
 		}
+		
+		if(killedEnemies >= wave)
+			nextWave();
+		
 	}
 	
 	private void renderGame() {
@@ -124,7 +154,7 @@ public class GameState extends State {
 		game.camera.update();
 		game.batch.setProjectionMatrix(game.camera.combined);
 		game.batch.begin();
-		mapHandler.getMap("Map").render(game.batch);
+		currentMap.render(game.batch);
 		for(Entity ent : entities) {
 			ent.render(game.batch);
 		}
@@ -139,10 +169,50 @@ public class GameState extends State {
 		font.draw(game.batch, "Enemies: " + enemies.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
 		font.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
 						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
+		font.draw(game.batch, "Player Life: " + player.getLife(), -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
 		game.batch.end();
 	}
 /*____________________________________________________________________*/
 	
+	public void nextWave() {
+		wave++;
+		int enemyID = 0;
+		int enemiesAdded = 0;
+		int x;
+		int y;
+		
+		do {
+			x = rand.nextInt(currentMap.getWidth());
+			y = rand.nextInt(currentMap.getHeight());
+			
+			if(Util.getDistance(x, player.getCenterX(),
+					y, player.getCenterY()) < 1000) {
+				continue;
+			}
+			
+			enemyID = rand.nextInt(3);
+			
+			switch(enemyID) {
+			case 0 :
+				addEntity(new EnemyNormal(x, y, player, this));
+				break;
+				
+			case 1 : 
+				addEntity(new EnemyFast(x, y, player));
+				break;
+				
+			case 2 :
+				addEntity(new EnemyBooster(x, y, player, this));
+				break;
+			}
+			
+			enemiesAdded++;
+		} while(enemiesAdded <= wave);
+		
+		killedEnemies = 0;
+	}
+	
+	//SETTERS
 	public void addEntity(Entity entity) {
 		if(entity instanceof Enemy)
 			enemies.add((Enemy) entity);
@@ -151,20 +221,24 @@ public class GameState extends State {
 		entities.add(entity);
 	}
 	
+	public void addPoints(int points) {
+		this.points += points;
+	}
+	
+	public void setScoreMultiplier(float multiplier) {
+		scoreMultiplier = multiplier;
+	}
+	
+	public void enter() {
+		justEntered = true;
+	}
+	
 	//GETTERS
 	public Array<PowerUp> getPowerUps() {
 		return powerUps;
 	}
 	
 	public Array<Enemy> getEnemies() {
-		Array<Enemy> enemies = new Array<Enemy>();
-		
-		for(Entity ent : entities) {
-			if(ent instanceof Enemy) {
-				enemies.add((Enemy) ent);
-			}
-		}
-		
 		return enemies;
 	}
 	
@@ -179,18 +253,54 @@ public class GameState extends State {
 		
 		return bullets;
 	}
+	
+	public int getWave() {
+		return wave;
+	}
+	
+	public Map getCurrentMap() {
+		return currentMap;
+	}
 
 	public float getMapWidth() {
-		return mapHandler.getMap("Map").getWidth();
+		return currentMap.getWidth();
 	}
 
 	public float getMapHeight() {
-		return mapHandler.getMap("Map").getHeight();
+		return currentMap.getHeight();
+	}
+	
+	public int getPoints() {
+		return points;
+	}
+	
+	public float getScoreMultiplier() {
+		return scoreMultiplier;
 	}
 	
 	@Override
 	public void show() {
 		super.show();
+		
+		//reset
+		if(player.isDead() || justEntered) {
+			System.out.println("reset");
+			player = new Player(this);
+			player.reset();
+			
+			entities.clear();
+			enemies.clear();
+			bullets.clear();
+			
+			player.setCenterX(mapHandler.getMap("Map").getWidth() / 2);
+			player.setCenterY(mapHandler.getMap("Map").getHeight() / 2);
+			addEntity(player);
+			addEntity(new EnemyFast(400, 400, player));
+			
+			wave = 1;
+			killedEnemies = 0;
+		}
+		
 		music.play();
 	}
 
