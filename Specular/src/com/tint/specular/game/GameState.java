@@ -1,7 +1,6 @@
 package com.tint.specular.game;
 
 import java.util.Iterator;
-import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -19,10 +18,11 @@ import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
 import com.tint.specular.game.powerups.PowerUp;
+import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
+import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.State;
-import com.tint.specular.utils.Util;
 
 public class GameState extends State {
 	
@@ -32,7 +32,8 @@ public class GameState extends State {
 	private long lastTickTime = System.nanoTime();
 	
 	private int wave = 1;
-	private int killedEnemies = 0;
+	private int enemiesKilledThisWave = 0;
+	private int totalEnemiesKilled = 0;
 	private int points = 0;
 	private float scoreMultiplier = 1;
 	
@@ -48,15 +49,14 @@ public class GameState extends State {
 	private MapHandler mapHandler;
 	private Map currentMap;
 	
-	private BitmapFont font = new BitmapFont();
+	private EnemySpawnSystem ess;
+	private PowerUpSpawnSystem pss;
 	
-	private Random rand;
+	private BitmapFont font = new BitmapFont();
 	
 	//CONSTRUCTOR
 	public GameState(Specular game) {
 		super(game);
-		
-		rand = new Random();
 		
 		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Map.png"));
 		
@@ -70,13 +70,8 @@ public class GameState extends State {
 		EnemyFast.init();
 		EnemyBooster.init();
 		
-		int i = 0;
-		for(PowerUp.Type t : PowerUp.Type.values()) {
-			PowerUp pu = new PowerUp(t, 500 + i * 50, 300 + i * 30);
-			powerUps.add(pu);
-			addEntity(pu);
-			i++;
-		}
+		ess = new EnemySpawnSystem(this);
+		pss = new PowerUpSpawnSystem(this);
 		
 		//Adding player
 		player.setCenterX(currentMap.getWidth() / 2);
@@ -84,7 +79,7 @@ public class GameState extends State {
 		addEntity(player);
 		
 		//Adding enemies
-		addEntity(new EnemyFast(400, 400, player));
+		addEntity(new EnemyFast(400, 400, player, this));
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
 	}
@@ -114,6 +109,16 @@ public class GameState extends State {
 						Math.pow(e.getWidth() / 2, 2) + Math.pow(b.getWidth() / 2, 2)) {
 					e.hit();
 					b.hit();
+					
+					if(e.isDead()) {
+						enemiesKilledThisWave++;
+						totalEnemiesKilled++;
+					}
+					
+					//Spawning power-ups
+					if(totalEnemiesKilled % 5 == 0) {
+						pss.spawn(e);
+					}
 				}
 			}
 		}
@@ -127,9 +132,10 @@ public class GameState extends State {
 			if(ent.update()) {
 				if(ent instanceof Enemy) {
 					enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
-					killedEnemies++;
 				} else if(ent instanceof Bullet) {
 					bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
+				} else if(ent instanceof PowerUp) {
+					powerUps.removeIndex(powerUps.indexOf((PowerUp) ent, true));
 				}
 				
 				it.remove();
@@ -138,10 +144,11 @@ public class GameState extends State {
 		
 		//IN CASE OF DEFEAT
 		if(player.isDead()) {
+			System.out.println(getPoints());
 			game.enterState(States.MENUSTATE);
 		}
 		
-		if(killedEnemies >= wave)
+		if(enemiesKilledThisWave >= wave)
 			nextWave();
 		
 	}
@@ -169,47 +176,15 @@ public class GameState extends State {
 		font.draw(game.batch, "Enemies: " + enemies.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
 		font.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
 						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
-		font.draw(game.batch, "Player Life: " + player.getLife(), -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
+		font.draw(game.batch, "Points: " + getPoints(), -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
 		game.batch.end();
 	}
 /*____________________________________________________________________*/
 	
 	public void nextWave() {
 		wave++;
-		int enemyID = 0;
-		int enemiesAdded = 0;
-		int x;
-		int y;
-		
-		do {
-			x = rand.nextInt(currentMap.getWidth());
-			y = rand.nextInt(currentMap.getHeight());
-			
-			if(Util.getDistance(x, player.getCenterX(),
-					y, player.getCenterY()) < 1000) {
-				continue;
-			}
-			
-			enemyID = rand.nextInt(3);
-			
-			switch(enemyID) {
-			case 0 :
-				addEntity(new EnemyNormal(x, y, player, this));
-				break;
-				
-			case 1 : 
-				addEntity(new EnemyFast(x, y, player));
-				break;
-				
-			case 2 :
-				addEntity(new EnemyBooster(x, y, player, this));
-				break;
-			}
-			
-			enemiesAdded++;
-		} while(enemiesAdded <= wave);
-		
-		killedEnemies = 0;
+		ess.spawn(wave);
+		enemiesKilledThisWave = 0;
 	}
 	
 	//SETTERS
@@ -218,11 +193,15 @@ public class GameState extends State {
 			enemies.add((Enemy) entity);
 		if(entity instanceof Bullet)
 			bullets.add((Bullet) entity);
+		if(entity instanceof PowerUp) {
+			powerUps.add((PowerUp) entity);
+		}
+		
 		entities.add(entity);
 	}
 	
 	public void addPoints(int points) {
-		this.points += points;
+		this.points += points * getScoreMultiplier();
 	}
 	
 	public void setScoreMultiplier(float multiplier) {
@@ -234,40 +213,16 @@ public class GameState extends State {
 	}
 	
 	//GETTERS
-	public Array<PowerUp> getPowerUps() {
-		return powerUps;
+	public Player getPlayer() {
+		return player;
 	}
 	
 	public Array<Enemy> getEnemies() {
 		return enemies;
 	}
 	
-	public Array<Bullet> getBullets() {
-		Array<Bullet> bullets = new Array<Bullet>();
-		
-		for(Entity ent : entities) {
-			if(ent instanceof Bullet) {
-				bullets.add((Bullet) ent);
-			}
-		}
-		
-		return bullets;
-	}
-	
-	public int getWave() {
-		return wave;
-	}
-	
 	public Map getCurrentMap() {
 		return currentMap;
-	}
-
-	public float getMapWidth() {
-		return currentMap.getWidth();
-	}
-
-	public float getMapHeight() {
-		return currentMap.getHeight();
 	}
 	
 	public int getPoints() {
@@ -276,6 +231,7 @@ public class GameState extends State {
 	
 	public float getScoreMultiplier() {
 		return scoreMultiplier;
+		
 	}
 	
 	@Override
@@ -284,7 +240,6 @@ public class GameState extends State {
 		
 		//reset
 		if(player.isDead() || justEntered) {
-			System.out.println("reset");
 			player = new Player(this);
 			player.reset();
 			
@@ -295,10 +250,15 @@ public class GameState extends State {
 			player.setCenterX(mapHandler.getMap("Map").getWidth() / 2);
 			player.setCenterY(mapHandler.getMap("Map").getHeight() / 2);
 			addEntity(player);
-			addEntity(new EnemyFast(400, 400, player));
+			addEntity(new EnemyFast(400, 400, player, this));
 			
 			wave = 1;
-			killedEnemies = 0;
+			enemiesKilledThisWave = 0;
+			
+			points = 0;
+			
+			ess = new EnemySpawnSystem(this);
+			pss = new PowerUpSpawnSystem(this);
 		}
 		
 		music.play();
@@ -306,7 +266,6 @@ public class GameState extends State {
 
 	@Override
 	public void dispose() {
-		System.out.println("Dispose");
 		super.dispose();
 		music.dispose();
 		player.dispose();

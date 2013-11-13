@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.utils.Util;
 
@@ -15,8 +16,8 @@ public class EnemyFast extends Enemy {
 	private float rotation;
 
 	//CONSTRUCTOR
-	public EnemyFast(float x, float y, Player player) {
-		super(x, y);
+	public EnemyFast(float x, float y, Player player, GameState gs) {
+		super(x, y, gs);
 		this.player = player;
 		
 		speedUtilization = 1;

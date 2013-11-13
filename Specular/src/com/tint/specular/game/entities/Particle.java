@@ -1,15 +1,29 @@
 package com.tint.specular.game.entities;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.tint.specular.game.entities.Entity;
 
 public class Particle implements Entity {
 	
 	private float x, y;
+	private Texture texture;
+	private int lifeInMillis = 0;
 	
-	public Particle(float x, float y) {
+	public Particle(Texture texture, float x, float y) {
 		this.x = x;
 		this.y = y;
+		this.texture = texture;
+	}
+	
+	@Override
+	public void render(SpriteBatch batch) {
+		batch.draw(texture, x, y);
+	}
+	
+	@Override
+	public boolean update() {
+		lifeInMillis -= 10;
+		return lifeInMillis <= 0;
 	}
 	
 	//SETTERS
@@ -17,16 +31,6 @@ public class Particle implements Entity {
 	//GETTERS
 	public float getX() { return x; }
 	public float getY() { return y; }
-
-	@Override
-	public boolean update() {
-		return false;
-	}
-
-	@Override
-	public void render(SpriteBatch batch) {
-		
-	}
 
 	@Override
 	public void dispose() {

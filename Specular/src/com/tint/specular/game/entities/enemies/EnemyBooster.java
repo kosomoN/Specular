@@ -12,19 +12,20 @@ public class EnemyBooster extends Enemy {
 
 	//FIELDS
 	private static Texture tex;
-	private double direction;
-	private Player player;
-	private GameState gs;
-	private int boostingDelay;
+	
 	private float speed;
+	private double direction;
+	private int boostingDelay;
+	
+	private Player player;
 	
 	//CONSTRUCTOR
-	public EnemyBooster(float x, float y, Player player, GameState gameState) {
-		super(x, y);
+	public EnemyBooster(float x, float y, Player player, GameState gs) {
+		super(x, y, gs);
 		this.player = player;
-		this.gs = gameState;
 		
 		speedUtilization = 1;
+		life = 1;
 	}
 
 	//RENDER&UPDATE loop
@@ -60,16 +61,16 @@ public class EnemyBooster extends Enemy {
 		if(x - 20 < 0) {
 			x = 20;
 			boostingDelay = 0;
-		} else if(x + 20 > gs.getMapWidth()){
-			x = gs.getMapWidth() - 20;
+		} else if(x + 20 > gs.getCurrentMap().getWidth()){
+			x = gs.getCurrentMap().getWidth() - 20;
 			boostingDelay = 0;
 		}
 		
 		if(y - 20 < 0) {
 			y = 20;
 			boostingDelay = 0;
-		} else if(y + 20 > gs.getMapHeight()){
-			y = gs.getMapHeight() - 20;
+		} else if(y + 20 > gs.getCurrentMap().getHeight()){
+			y = gs.getCurrentMap().getHeight() - 20;
 			boostingDelay = 0;
 		}
 		

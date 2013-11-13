@@ -36,7 +36,6 @@ public class Player implements Entity {
 		this.gs = gs;
 		speedTimer = new Timer();
 		bulletTimer = new Timer();
-		System.out.println("Player created");
 	}
 
 	
@@ -133,12 +132,12 @@ public class Player implements Entity {
         
         if(centerx - 31 + dx < 0)
         	dx = -dx * 0.6f;
-        else if(centerx + 31 + dx > gs.getMapWidth())
+        else if(centerx + 31 + dx > gs.getCurrentMap().getWidth())
         	dx = -dx * 0.6f;
         
         if(centery - 31 + dy < 0)
         	dy = -dy * 0.6f;
-        else if(centery + 31 + dy > gs.getMapHeight())
+        else if(centery + 31 + dy > gs.getCurrentMap().getHeight())
         	dy = -dy * 0.6f;
         
         centerx += dx;
@@ -183,7 +182,7 @@ public class Player implements Entity {
 	public void setBulletBurst(int burst) {	bulletBurst = burst; }
 	public void setLife(int life) { this.life = life; }
 	
-	public void setTime(Timer timer, float seconds) {
+	public void setTimer(Timer timer, float seconds) {
 		if(timer.getTime() <= 0) {
 			timer.setTime(seconds < 0 ? 0 : seconds);
 		}

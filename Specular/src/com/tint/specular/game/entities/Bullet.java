@@ -51,7 +51,7 @@ public class Bullet implements Entity {
 		x += dx;
 		y += dy;
 		
-		if((x + dx < 0 || x + dx > gs.getMapWidth() || y + dy < 0 || y + dy > gs.getMapHeight() || isHit))
+		if((x + dx < 0 || x + dx > gs.getCurrentMap().getWidth() || y + dy < 0 || y + dy > gs.getCurrentMap().getHeight() || isHit))
 			return true;
 		else
 			return false;

@@ -16,15 +16,13 @@ public class EnemyNormal extends Enemy {
 	private float offset;
 	
 	private Player player;
-	private GameState gs;
 	
 	//CONSTRUCTOR
-	public EnemyNormal(float x, float y, Player player, GameState gameState) {
-		super(x, y);
+	public EnemyNormal(float x, float y, Player player, GameState gs) {
+		super(x, y, gs);
 		this.width = tex.getWidth();
 		this.height = tex.getHeight();
 		this.player = player;
-		this.gs = gameState;
 		
 		speedUtilization = 1;
 		life = 2;
@@ -58,13 +56,13 @@ public class EnemyNormal extends Enemy {
 		
 		if(x - 20 < 0) {
 			offset = -offset;
-		} else if(x + 20 > gs.getMapWidth()){
+		} else if(x + 20 > gs.getCurrentMap().getHeight()){
 			offset = -offset;
 		}
 		
 		if(y - 20 < 0) {
 			offset = -offset;
-		} else if(y + 20 > gs.getMapHeight()){
+		} else if(y + 20 > gs.getCurrentMap().getHeight()){
 			offset = -offset;
 		}
 		

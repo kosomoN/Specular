@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 
 public class EnemyWorm extends Enemy {
@@ -19,8 +20,8 @@ public class EnemyWorm extends Enemy {
 	private Player player;
 	private double angle;
 	
-	public EnemyWorm(float x, float y, Player player) {
-		super(x, y);
+	public EnemyWorm(float x, float y, Player player, GameState gs) {
+		super(x, y, gs);
 		this.player = player;
 		head = new Part(0, 100, true, null);
 		for(int i = 0; i < 6; i++) {

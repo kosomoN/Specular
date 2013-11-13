@@ -1,8 +1,10 @@
 package com.tint.specular.game.powerups;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
@@ -10,7 +12,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 public class PowerUp implements Entity {
 
 	public enum Type {
-		ADD_ONE_LIFE, SPEEDBOOST, SLOWDOWN_ENEMIES, BULLETBURST, SCORE_MULTIPLIER;
+		ADD_ONE_LIFE, SPEEDBOOST, SLOWDOWN_ENEMIES, BULLETBURST, SCORE_MULTIPLIER_2X;
 	}
 	
 	//FIELDS
@@ -20,11 +22,14 @@ public class PowerUp implements Entity {
 	private Type type;
 	private Texture texture;
 	
+	private GameState gs;
+	
 	//Constructors
-	public PowerUp(Type type, float x, float y) {
+	public PowerUp(Type type, float x, float y, GameState gs) {
 		this.x = x;
 		this.y = y;
 		this.type = type;
+		this.gs = gs;
 		
 		setType(type);
 	}
@@ -42,7 +47,7 @@ public class PowerUp implements Entity {
 			
 		case SPEEDBOOST :
 			player.activateSpeedBonus();
-			player.setTime(player.getSpeedTimer(), 5f);
+			player.setTimer(player.getSpeedTimer(), 5f);
 			break;
 			
 		case SLOWDOWN_ENEMIES :
@@ -54,11 +59,11 @@ public class PowerUp implements Entity {
 			
 		case BULLETBURST :
 			player.setBulletBurst(3);
-			player.setTime(player.getBulletTimer(), 5f);
+			player.setTimer(player.getBulletTimer(), 5f);
 			break;
 			
-		case SCORE_MULTIPLIER :
-			
+		case SCORE_MULTIPLIER_2X :
+			gs.setScoreMultiplier(2);
 			break;
 			
 		default :
@@ -72,26 +77,22 @@ public class PowerUp implements Entity {
 /*_________________________________________________________________*/
 	@Override
 	public void render(SpriteBatch batch) {
-		if(texture == null) {
-			/*sr.begin(ShapeType.Filled);
-			sr.setColor(color);
-			sr.circle(x, y, 4);
-			sr.end();*/
-		} else {
-			batch.begin();
+		if(texture != null) {
 			batch.draw(texture, x, y);
-			batch.end();
 		}
 	}
 	
 	@Override
 	public boolean update() {
-		/*if(useTimer) {
-			timeActive -= delta;
-			if(timeActive <= 0) {
-				toBeRemoved = true;
-			}
-		}*/
+		if(Math.pow(getCenterX() - gs.getPlayer().getCenterX(), 2) +
+				Math.pow(getCenterY() - gs.getPlayer().getCenterY(), 2) < Math.pow(gs.getPlayer().getRadius()
+						- (getCenterX() - getX()), 2)) {
+			
+			affect(gs.getPlayer(), gs.getEnemies());
+			toBeRemoved = true;
+		} else {
+			toBeRemoved = false;
+		}
 		
 		return toBeRemoved;
 	}
@@ -107,22 +108,27 @@ public class PowerUp implements Entity {
 		switch(type) {
 		case ADD_ONE_LIFE :
 			//Set texture
+			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
 			break;
 			
 		case SPEEDBOOST :
 			//Set texture
+			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
 			break;
 			
 		case SLOWDOWN_ENEMIES :
 			//Set texture
+			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
 			break;
 			
 		case BULLETBURST :
 			//Set Texture
+			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
 			break;
 			
-		case SCORE_MULTIPLIER :
+		case SCORE_MULTIPLIER_2X :
 			//Set Texture
+			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
 			break;
 			
 		default :

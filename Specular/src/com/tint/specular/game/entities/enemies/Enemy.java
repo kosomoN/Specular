@@ -1,5 +1,6 @@
 package com.tint.specular.game.entities.enemies;
 
+import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 
 public abstract class Enemy implements Entity {
@@ -13,17 +14,19 @@ public abstract class Enemy implements Entity {
 	protected float speedTimer;
 	
 	protected int life;
-	
 	protected boolean isHit;
 	
-	public Enemy(float x, float y) {
+	protected GameState gs;
+	
+	public Enemy(float x, float y, GameState gs) {
 		this.x = x;
 		this.y = y;
+		this.gs = gs;
 	}
 	
 	@Override
 	public boolean update() {
-		return life <= 0;
+		return isDead();
 	}
 
 	//SETTERS
@@ -53,6 +56,10 @@ public abstract class Enemy implements Entity {
 	}
 	
 	//GETTERS
+	public boolean isDead() {
+		return life <= 0;
+	}
+	
 	public float getTimer() {
 		return speedTimer;
 	}
