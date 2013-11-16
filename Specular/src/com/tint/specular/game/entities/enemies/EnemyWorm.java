@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.game.GameState;
-import com.tint.specular.game.entities.Player;
 
 public class EnemyWorm extends Enemy {
 	
@@ -17,12 +16,10 @@ public class EnemyWorm extends Enemy {
 	private float time;
 	private float speed;
 	private int ticks;
-	private Player player;
 	private double angle;
 	
-	public EnemyWorm(float x, float y, Player player, GameState gs) {
+	public EnemyWorm(float x, float y, GameState gs) {
 		super(x, y, gs);
-		this.player = player;
 		head = new Part(0, 100, true, null);
 		for(int i = 0; i < 6; i++) {
 			Part p = i > 0 ? parts.get(i - 1) : head;
@@ -92,7 +89,7 @@ public class EnemyWorm extends Enemy {
 					goingToY = nextPart.oldY;
 				}
 			} else {
-				double deltaAngle = angle - Math.atan2(player.getCenterX() - y, player.getCenterY() - x);
+				double deltaAngle = angle - Math.atan2(getClosestPlayer().getCenterX() - y, getClosestPlayer().getCenterY() - x);
 				if(deltaAngle > Math.PI)
 					deltaAngle += deltaAngle > 0 ? -Math.PI * 2 : Math.PI * 2;
 				

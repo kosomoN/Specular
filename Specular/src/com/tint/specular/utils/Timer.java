@@ -10,12 +10,18 @@ public class Timer {
 	public Timer(float time) { this.time = time; }
 	
 	//UPDATE
-	public void update(float deltaInSeconds) {
+	public boolean update(float deltaInMilliSeconds) {
 		if(time > 0)
-			time -= deltaInSeconds;
+			time -= deltaInMilliSeconds;
+		
+		return time > 0;
 	}
 	
 	//SETTERS
+	/**
+	 * 
+	 * @param time - In milliseconds
+	 */
 	public void setTime(float time) { this.time = time; }
 	
 	//GETTERS

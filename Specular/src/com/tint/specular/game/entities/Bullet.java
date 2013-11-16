@@ -16,25 +16,28 @@ public class Bullet implements Entity {
 	private boolean isHit;
 	private Circle hitbox;
 	private GameState gs;
+	private Player shooter;
 	
 	//CONSTRUCTOR
-	public Bullet(float x, float y, float direction, float initalDx, float initalDy, GameState gs) {
+	public Bullet(float x, float y, float direction, float initalDx, float initalDy, GameState gs, Player shooter) {
 		this.x = x;
 		this.y = y;
 		float cos = (float) Math.cos(Math.toRadians(direction));
 		float sin = (float) Math.sin(Math.toRadians(direction));
 		this.dx = cos * 15;
 		this.dy = sin * 15;
-		if(Math.abs(dx + initalDx) > 15) {
+		
+		if(Math.abs(dx + initalDx) > 15)
 			dx += initalDx;
-		}
-		if(Math.abs(dy + initalDy) > 15) {
+		if(Math.abs(dy + initalDy) > 15)
 			dy += initalDy;
-		}
-		this.gs = gs;
 		
 		this.x += cos * 32;
 		this.y += sin * 32;
+		
+		
+		this.gs = gs;
+		this.shooter = shooter;
 		
 		hitbox = new Circle(x, y, bulletTex.getWidth() > bulletTex.getHeight() ? bulletTex.getWidth() : bulletTex.getHeight());
 	}
@@ -68,6 +71,7 @@ public class Bullet implements Entity {
 	}
 	
 	//GETTERS
+	public Player getShooter() { return shooter; }
 	public Circle getHitbox() { return hitbox; }
 	public float getX() { return x; }
 	public float getY() { return y; }

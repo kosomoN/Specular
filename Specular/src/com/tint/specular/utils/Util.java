@@ -42,15 +42,15 @@ public class Util {
 	}
 	
 	/**
-	 * Calculates the distance between two points
-	 * @param x1 - x value of the first point
+	 * Calculates distance with pythagoras statement
+	 *  @param x1 - x value of the first point
 	 * @param y1 - y value of the first point
 	 * @param x2 - x value of the second point
 	 * @param y2 - y value of the second point
-	 * @return - Distance between the two points
+	 * @return - Distance between the two points squared
 	 */
-	public static float getDistance(float x1, float y1, float x2, float y2) {
-		return (float) Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+	public static float getDistanceSquared(float x1, float y1, float x2, float y2) {
+		return (float) (Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 	}
 	
 	/**

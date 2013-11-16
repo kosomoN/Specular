@@ -12,10 +12,13 @@ import com.tint.specular.utils.Timer;
 import com.tint.specular.utils.Util;
 
 public class Player implements Entity {
-
+	/* Remember
+	 * updateHitDetection() - Players should be integrated with entities
+	 * 
+	 */
+	
 	//FIELDS
 	private static Animation anim;
-
 	private static Texture texture;
 	
 	private GameState gs;
@@ -28,14 +31,14 @@ public class Player implements Entity {
 	private int life = 2;
 	private int speedBonus = 1;
 	private int bulletBurst = 2;
+	private int score = 0;
 	
 	private boolean isDead;
 	
 	//CONSTRUCTOR
 	public Player(GameState gs) {
 		this.gs = gs;
-		speedTimer = new Timer();
-		bulletTimer = new Timer();
+		reset();
 	}
 
 	
@@ -52,35 +55,24 @@ public class Player implements Entity {
 	@Override
 	public boolean update() {
 		//Updating timers and power-ups
-		if(speedTimer.getTime() <= 0) {
+		if(!speedTimer.update(10))
 			deactivateSpeedBonus();
-		} else {
-			speedTimer.update(10);
-		}
 		
-		if(bulletTimer.getTime() <= 0) {
+		if(!bulletTimer.update(10))
 			setBulletBurst(1);
-		} else {
-			bulletTimer.update(10);
-		}
 		
 		//Handling key input
 		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-			dy += 0.8f * speedBonus;
+			dy += 0.8f * getSpeedBonus();
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-			dy -= 0.8f * speedBonus;
+			dy -= 0.8f * getSpeedBonus();
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-			dx += 0.8f * speedBonus;
+			dx += 0.8f * getSpeedBonus();
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-			dx -= 0.8f * speedBonus;
-		}
-		
-		//TODO debugging stuff
-		if(Gdx.input.isKeyPressed(Input.Keys.G)) {
-			System.gc();
+			dx -= 0.8f * getSpeedBonus();
 		}
 		
 		//Shooting
@@ -101,24 +93,22 @@ public class Player implements Entity {
 				
 				//If the amount of bullet "lines" are even
 				if(bulletBurst % 2 == 0) {
-					
 					for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
 						if(j == 0) {
-							gs.addEntity(new Bullet(centerx, centery, direction + offset / 2, dx, dy, gs));
-							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2, dx, dy, gs));
+							gs.addEntity(new Bullet(centerx, centery, direction + offset / 2, dx, dy, gs, this));
+							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2, dx, dy, gs, this));
 						} else {
-							gs.addEntity(new Bullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy, gs));
-							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs));
-						}
+							gs.addEntity(new Bullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy, gs, this));
+							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs, this));					}
 					}
 					
 				//If the number of bullet "lines" are odd
 				} else {
-					gs.addEntity(new Bullet(centerx, centery, direction, dx, dy, gs));
+					gs.addEntity(new Bullet(centerx, centery, direction, dx, dy, gs, this));
 
 					for(int i = 0; i < spaces; i++) {
-						gs.addEntity(new Bullet(centerx, centery, direction + i * offset, dx, dy, gs));
-						gs.addEntity(new Bullet(centerx, centery, direction - i * offset, dx, dy, gs));
+						gs.addEntity(new Bullet(centerx, centery, direction + i * offset, dx, dy, gs, this));
+						gs.addEntity(new Bullet(centerx, centery, direction - i * offset, dx, dy, gs, this));
 					}
 				}
 				
@@ -130,36 +120,45 @@ public class Player implements Entity {
         dx *= 0.95f;
         dy *= 0.95f;
         
-        if(centerx - 31 + dx < 0)
+        if(centerx - getRadius() + dx < 0)
         	dx = -dx * 0.6f;
-        else if(centerx + 31 + dx > gs.getCurrentMap().getWidth())
+        else if(centerx + getRadius() + dx > gs.getCurrentMap().getWidth())
         	dx = -dx * 0.6f;
         
-        if(centery - 31 + dy < 0)
+        if(centery - getRadius() + dy < 0)
         	dy = -dy * 0.6f;
-        else if(centery + 31 + dy > gs.getCurrentMap().getHeight())
+        else if(centery + getRadius() + dy > gs.getCurrentMap().getHeight())
         	dy = -dy * 0.6f;
         
         centerx += dx;
         centery += dy;
-        
         return isDead;
 	}
 	
 	public void updateHitDetection() {
 		//Hit detection
         for(Enemy e : gs.getEnemies()) {
-        	if(Math.pow(centerx - e.getX(), 2) + Math.pow(centery - e.getY(), 2)
-        			< Math.pow(getRadius() + e.getWidth(), 2)) {
+    		if(Math.pow(centerx - e.getX(), 2) + Math.pow(centery - e.getY(), 2)
+    			< Math.pow(getRadius() + e.getInnerRadius(), 2)) {
         		life--;
-        		e.hit();
+        		e.hit(this);
         	}
         }
         
-        if(life <= 0)
+        for(Player p : gs.getPlayers()) {
+        	if(!p.equals(this)) {
+	    		if(Util.getDistanceSquared(centerx, centery, p.getCenterX(), p.getCenterY())
+	    				< Math.pow(getRadius(), p.getRadius())) {
+	    			life--;
+	    		}
+        	}
+        }
+        
+        if(life <= 0) {
         	isDead = true;
-        else
+        } else {
         	isDead = false;
+        }
 	}
 /*_____________________________________________________________________*/
 
@@ -174,6 +173,10 @@ public class Player implements Entity {
 	
 	public void addLives(int livesToAdd) {
 		life += livesToAdd;
+	}
+	
+	public void addScore(int score) {
+		this.score += score * gs.getScoreMultiplier();
 	}
 	
 	//SETTERS
@@ -191,9 +194,10 @@ public class Player implements Entity {
 	//GETTERS
 	public float getCenterX() { return centerx; }
 	public float getCenterY() { return centery;	}
-	public float getRadius() { return anim.getKeyFrame(0).getRegionWidth() / 2; }
+	public float getRadius() { return (anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
 	public int getLife() { return life;	}
 	public int getSpeedBonus() { return speedBonus;	}
+	public int getScore() { return score; }
 	public boolean isDead() { return isDead; }
 	public Timer getSpeedTimer() { return speedTimer; }
 	public Timer getBulletTimer() { return bulletTimer;	}
@@ -207,12 +211,14 @@ public class Player implements Entity {
 	public void reset() {
 		isDead = false;
 		setLife(1);
-		speedTimer = new Timer();
-		bulletTimer = new Timer();
+		speedTimer = new Timer(0);
+		bulletTimer = new Timer(0);
+		bulletTimer.setTime(5000);
 		deactivateSpeedBonus();
-		setBulletBurst(1);
 		
-		init();
+		setBulletBurst(3);
+		setCenterX(gs.getCurrentMap().getWidth() / 2);
+		setCenterY(gs.getCurrentMap().getHeight() / 2);
 	}
 
 	@Override

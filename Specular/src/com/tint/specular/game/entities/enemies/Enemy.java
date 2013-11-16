@@ -2,6 +2,9 @@ package com.tint.specular.game.entities.enemies;
 
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
+import com.tint.specular.game.entities.Player;
+import com.tint.specular.utils.Timer;
+import com.tint.specular.utils.Util;
 
 public abstract class Enemy implements Entity {
 	
@@ -11,21 +14,25 @@ public abstract class Enemy implements Entity {
 	protected float direction;
 	
 	protected float speedUtilization;
-	protected float speedTimer;
 	
 	protected int life;
 	protected boolean isHit;
 	
 	protected GameState gs;
+	protected Timer speedTimer;
 	
 	public Enemy(float x, float y, GameState gs) {
 		this.x = x;
 		this.y = y;
 		this.gs = gs;
+		
+		speedTimer = new Timer();
 	}
 	
 	@Override
 	public boolean update() {
+		if(!speedTimer.update(10))
+			setSpeedUtilization(1);
 		return isDead();
 	}
 
@@ -45,22 +52,39 @@ public abstract class Enemy implements Entity {
 	}
 	
 	public void setTimer(float seconds) {
-		if(speedTimer <= 0) {
-			speedTimer = seconds < 0 ? 0: seconds;
+		if(speedTimer.getTime() <= 0) {
+			speedTimer.setTime(seconds < 0 ? 0: seconds);
 		}
 	}
 	
-	public void hit() {
+	public void hit(Player shooter) {
 		isHit = true;
 		life--;
 	}
 	
 	//GETTERS
+	public Player getClosestPlayer() {
+		//Calculates the closest player
+		Player closest = null;
+		float distance = Float.MAX_VALUE;
+		float tempDistSqrd;
+		
+		for(Player p : gs.getPlayers()) {
+			tempDistSqrd = Util.getDistanceSquared(x, y, p.getCenterX(), p.getCenterY());
+			if(tempDistSqrd < Math.pow(distance, 2)) {
+				distance = tempDistSqrd;
+				closest = p;
+			}
+		}
+		
+		return closest;
+	}
+	
 	public boolean isDead() {
 		return life <= 0;
 	}
 	
-	public float getTimer() {
+	public Timer getSpeedTimer() {
 		return speedTimer;
 	}
 	
@@ -72,12 +96,12 @@ public abstract class Enemy implements Entity {
 		return y;
 	}
 	
-	public float getWidth() {
-		return width;
+	public float getInnerRadius() {
+		return 0;
 	}
 	
-	public float getHeight() {
-		return height;
+	public float getOuterRadius() {
+		return 0;
 	}
 	
 	@Override

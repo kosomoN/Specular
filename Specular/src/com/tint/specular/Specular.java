@@ -8,13 +8,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.tint.specular.game.GameState;
+import com.tint.specular.game.MultiplayerGameState;
+import com.tint.specular.game.SingleplayerGameState;
 import com.tint.specular.menu.MenuState;
 import com.tint.specular.states.State;
 
 public class Specular extends Game {
 	public enum States {
-		MENUSTATE, GAMESTATE
+		MENUSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE
 	}
 	
 	//FIELDS
@@ -35,9 +36,10 @@ public class Specular extends Game {
 		shape = new ShapeRenderer();
 		
 		states.put(States.MENUSTATE, new MenuState(this));
-		states.put(States.GAMESTATE, new GameState(this));
+		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
+		states.put(States.MULTIPLAYER_GAMESTATE, new MultiplayerGameState(this));
 		
-		enterState(States.GAMESTATE);
+		enterState(States.SINGLEPLAYER_GAMESTATE);
 	}
 	
 	public void enterState(States state) {
@@ -51,7 +53,7 @@ public class Specular extends Game {
 	public State getState(States state) {
 		return states.get(state);
 	}
-
+	
 	@Override
 	public void dispose() {
 		batch.dispose();

@@ -11,14 +11,12 @@ import com.tint.specular.utils.Util;
 public class EnemyFast extends Enemy {
 
 	//FIELDS
-	private Player player;
 	private static Texture tex;
 	private float rotation;
 
 	//CONSTRUCTOR
-	public EnemyFast(float x, float y, Player player, GameState gs) {
+	public EnemyFast(float x, float y, GameState gs) {
 		super(x, y, gs);
-		this.player = player;
 		
 		speedUtilization = 1;
 		life = 2;
@@ -34,15 +32,9 @@ public class EnemyFast extends Enemy {
 	
 	@Override
 	public boolean update() {
-		double angle = Math.atan2(player.getCenterY() - y, player.getCenterX() - x);
+		double angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
 		x += Math.cos(angle) * 3 * speedUtilization;
 		y += Math.sin(angle) * 3 * speedUtilization;
-		
-		if(speedTimer > 0) {
-			speedTimer -= 10;
-		} else {
-			setSpeedUtilization(1f);
-		}
 		
 		return super.update();
 	}
@@ -54,10 +46,10 @@ public class EnemyFast extends Enemy {
 	}
 
 	@Override
-	public void hit() {
-		super.hit();
+	public void hit(Player shooter) {
+		super.hit(shooter);
 		if(life <= 0)
-			player.getGameState().addPoints(20);
+			shooter.addScore(30);
 	}
 
 	@Override

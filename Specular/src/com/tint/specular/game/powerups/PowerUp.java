@@ -47,19 +47,19 @@ public class PowerUp implements Entity {
 			
 		case SPEEDBOOST :
 			player.activateSpeedBonus();
-			player.setTimer(player.getSpeedTimer(), 5f);
+			player.setTimer(player.getSpeedTimer(), 5000f);
 			break;
 			
 		case SLOWDOWN_ENEMIES :
 			for(Enemy e : enemies) {
 				e.setSpeedUtilization(0.5f);
-				e.setTimer(5f);
+				e.setTimer(5000f);
 			}
 			break;
 			
 		case BULLETBURST :
 			player.setBulletBurst(3);
-			player.setTimer(player.getBulletTimer(), 5f);
+			player.setTimer(player.getBulletTimer(), 5000f);
 			break;
 			
 		case SCORE_MULTIPLIER_2X :
@@ -84,14 +84,16 @@ public class PowerUp implements Entity {
 	
 	@Override
 	public boolean update() {
-		if(Math.pow(getCenterX() - gs.getPlayer().getCenterX(), 2) +
-				Math.pow(getCenterY() - gs.getPlayer().getCenterY(), 2) < Math.pow(gs.getPlayer().getRadius()
-						- (getCenterX() - getX()), 2)) {
-			
-			affect(gs.getPlayer(), gs.getEnemies());
-			toBeRemoved = true;
-		} else {
-			toBeRemoved = false;
+		
+		for(Player p : gs.getPlayers()) {
+			if(Math.pow(getCenterX() - p.getCenterX(), 2) +	Math.pow(getCenterY() - p.getCenterY(), 2)
+					< Math.pow(p.getRadius() + (getCenterX() - getX()), 2)) {
+				
+				affect(p, gs.getEnemies());
+				toBeRemoved = true;
+			} else {
+				toBeRemoved = false;
+			}
 		}
 		
 		return toBeRemoved;

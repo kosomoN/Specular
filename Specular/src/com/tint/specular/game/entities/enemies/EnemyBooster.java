@@ -17,12 +17,9 @@ public class EnemyBooster extends Enemy {
 	private double direction;
 	private int boostingDelay;
 	
-	private Player player;
-	
 	//CONSTRUCTOR
-	public EnemyBooster(float x, float y, Player player, GameState gs) {
+	public EnemyBooster(float x, float y, GameState gs) {
 		super(x, y, gs);
-		this.player = player;
 		
 		speedUtilization = 1;
 		life = 1;
@@ -43,15 +40,13 @@ public class EnemyBooster extends Enemy {
 			x += Math.cos(direction) * speed * speedUtilization;
 			y += Math.sin(direction) * speed * speedUtilization;
 			
-			if(speedTimer > 0) {
-				speedTimer -= 10;
-			} else {
-				setSpeedUtilization(1f);
+			if(speedTimer.getTime() > 0) {
+				speedTimer.setTime(speedTimer.getTime() - 10);
 			}
 			
 			boostingDelay++;
 		} else if(boostingDelay == 0) {
-			direction = Math.atan2(player.getCenterY() - y, player.getCenterX() - x);
+			direction = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
 			speed = 0;
 			boostingDelay++;
 		} else {
@@ -78,16 +73,26 @@ public class EnemyBooster extends Enemy {
 	}
 /*________________________________________________________________________________*/
 	
+	//GETTERS
+	@Override
+	public float getInnerRadius() {
+		return tex.getWidth() / 4;
+	}
+	
+	public float getOuterRadius() {
+		return tex.getWidth() / 2;
+	}
+	
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Booster.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 
 	@Override
-	public void hit() {
-		super.hit();
+	public void hit(Player shooter) {
+		super.hit(shooter);
 		if(life <= 0)
-			player.getGameState().addPoints(50);
+			shooter.addScore(50);
 	}
 	
 	@Override
