@@ -1,5 +1,7 @@
 package com.tint.specular.game;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.multiplayer.Client;
@@ -11,23 +13,35 @@ public class MultiplayerGameState extends GameState {
 	
 	public MultiplayerGameState(Specular game) {
 		super(game);
-		//Adding players
-		clients.add(new Client(game, this));
-		
-		for(Client c : clients)
-			addEntity(c.getPlayer());
-		
 	}
 
 	@Override
 	public void render(float delta) {
-		super.render(delta);
-		for(Client c : clients) {
-			c.update();
+		for(Iterator<Client> it = clients.iterator(); it.hasNext(); ) {
+			Client c = it.next();
+			if(c.update()) {
+				disconnectClient(c);
+			}
 		}
+		
+		super.render(10);
 	}
 	
-	public void addClient(Client client) {
+	public void connectClient(Client client) {
 		clients.add(client);
+		pss.spawn(1);
+		client.setPlayer(getPlayers().get(getPlayers().size - 1));
+	}
+	
+	public void disconnectClient(Client client) {
+		getPlayers().removeValue(client.getPlayer(), false);
+		clients.removeValue(client, false);
+	}
+
+	@Override
+	public void show() {
+		super.show();
+		connectClient(new Client(game, this));
+		connectClient(new Client(game, this));
 	}
 }

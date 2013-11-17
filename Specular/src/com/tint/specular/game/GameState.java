@@ -18,6 +18,7 @@ import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
 import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
+import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
 import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
@@ -36,7 +37,7 @@ public class GameState extends State {
 	 * 
 	 * Fix!
 	 * _______________________________________________________________________________________________
-	 * 
+	 * reset of game
 	 */
 	
 	
@@ -50,7 +51,7 @@ public class GameState extends State {
 	private int totalEnemiesKilled = 0;
 	private float scoreMultiplier = 1;
 	
-	private boolean justEntered;
+	private boolean paused;
 	
 	private Array<Entity> entities = new Array<Entity>();
 	private Array<Enemy> enemies = new Array<Enemy>();
@@ -60,11 +61,12 @@ public class GameState extends State {
 	private MapHandler mapHandler;
 	private Map currentMap;
 	
-	private EnemySpawnSystem ess;
-	private PowerUpSpawnSystem pss;
-	
 	private Music music;
 	private BitmapFont font = new BitmapFont();
+	
+	protected EnemySpawnSystem ess;
+	protected PlayerSpawnSystem pss;
+	protected PowerUpSpawnSystem puss;
 	
 	//CONSTRUCTOR
 	public GameState(Specular game) {
@@ -83,7 +85,8 @@ public class GameState extends State {
 		EnemyBooster.init();
 		
 		ess = new EnemySpawnSystem(this);
-		pss = new PowerUpSpawnSystem(this);
+		pss = new PlayerSpawnSystem(this);
+		puss = new PowerUpSpawnSystem(this);
 		
 		//Adding enemies
 		addEntity(new EnemyFast(400, 400, this));
@@ -95,21 +98,21 @@ public class GameState extends State {
 /*____________________________________________________________________*/
 	@Override
 	public void render(float delta) {
-		long currTime = System.nanoTime();
-        unprocessed += (currTime - lastTickTime) / TICK_LENGTH;
-        lastTickTime = currTime;
-        while(unprocessed >= 1) {
-        	unprocessed--;
-        	update();
-        }
-        if(players.size != 0) {
-        	renderGame();
-        }
+		if(!paused) {
+			long currTime = System.nanoTime();
+	        unprocessed += (currTime - lastTickTime) / TICK_LENGTH;
+	        lastTickTime = currTime;
+	        while(unprocessed >= 1) {
+	        	unprocessed--;
+	        	update();
+	        }
+	        if(players.size != 0) {
+	        	renderGame();
+	        }
+		}
 	}
 	
 	private void update() {
-		if(justEntered)
-			justEntered = false;
 		//Checking if any bullet hit an enemy
 		for(Bullet b : bullets) {
 			for(Enemy e : enemies) {
@@ -125,7 +128,7 @@ public class GameState extends State {
 							
 							//Spawning power-ups
 							if(totalEnemiesKilled % 5 == 0 && totalEnemiesKilled != 0) {
-								pss.spawn(e);
+								puss.spawn(e);
 							}
 						}
 					}
@@ -136,20 +139,12 @@ public class GameState extends State {
 		//Player hit detection
 		for(Player p : players) {
 			p.updateHitDetection();
-			
-			if(p.isDead()) {
-				players.removeValue(p, false);
-				
-				//IN CASE OF DEFEAT
-				if(players.size == 0) {
-					game.enterState(States.MENUSTATE);
-				}
-			}
 		}
 		
-		if(players.size != 0) {
-			players.get(players.size - 1).update();
-			
+		//IN CASE OF DEFEAT
+		if(players.size == 0) {
+			game.enterState(States.MENUSTATE);
+		} else {
 			//Removing destroyed entities
 			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
 				Entity ent = it.next();
@@ -158,7 +153,8 @@ public class GameState extends State {
 						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
 					else if(ent instanceof Bullet)
 						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
-					
+					else if(ent instanceof Player) {}
+						
 					it.remove();
 				}
 			}
@@ -178,8 +174,6 @@ public class GameState extends State {
 		for(Entity ent : entities) {
 			ent.render(game.batch);
 		}
-		for(Player p : players)
-			p.render(game.batch);
 		game.batch.end();
 		
 		//Drawing HUD
@@ -228,25 +222,42 @@ public class GameState extends State {
 	
 	//SETTERS
 	public void addEntity(Entity entity) {
-		if(entity instanceof Player && !players.contains((Player) entity, true)) {
+		if(entity instanceof Player)
 			players.add((Player) entity);
-		} else {
-			if(entity instanceof Enemy && !enemies.contains((Enemy) entity, true))
-				enemies.add((Enemy) entity);
-			if(entity instanceof Bullet && !bullets.contains((Bullet) entity, true))
-				bullets.add((Bullet) entity);
-				
-			entities.add(entity);
-		}
-		
+		if(entity instanceof Enemy)
+			enemies.add((Enemy) entity);
+		if(entity instanceof Bullet)
+			bullets.add((Bullet) entity);
+			
+		entities.add(entity);
 	}
 	
 	public void setScoreMultiplier(float multiplier) {
 		scoreMultiplier = multiplier;
 	}
 	
+	@Override
 	public void enter() {
-		justEntered = true;
+		reset();
+	}
+	
+	private void reset() {
+		//Wave reset
+		wave = 1;
+		enemiesKilledThisWave = 0;
+		totalEnemiesKilled = 0;
+		
+		//Entity reset
+		entities.clear();
+		enemies.clear();
+		bullets.clear();
+		
+		addEntity(new EnemyFast(400, 400, this));
+		
+		//Spawn system reset
+		ess = new EnemySpawnSystem(this);
+		pss = new PlayerSpawnSystem(this);
+		puss = new PowerUpSpawnSystem(this);
 	}
 	
 	//GETTERS
@@ -277,38 +288,19 @@ public class GameState extends State {
 	@Override
 	public void show() {
 		super.show();
-		
-		//reset
-		if(players.size == 0 || players.get(players.size - 1).isDead() || justEntered) {
-			System.out.println("reset game");
-			
-			//Wave reset
-			wave = 1;
-			enemiesKilledThisWave = 0;
-			totalEnemiesKilled = 0;
-			
-			//Entity reset
-			entities.clear();
-			enemies.clear();
-			bullets.clear();
-			
-			if(players.size == 0) {
-				addEntity(new Player(this));
-			} else {
-				for(Player p : players) {
-					p.reset();
-					addEntity(p);
-				}
-			}
-			
-			addEntity(new EnemyFast(400, 400, this));
-			
-			//Spawn system reset
-			ess = new EnemySpawnSystem(this);
-			pss = new PowerUpSpawnSystem(this);
-		}
-		
 		music.play();
+	}
+	
+	@Override
+	public void resume() {
+		super.resume();
+		paused = false;
+	}
+
+	@Override
+	public void pause() {
+		super.pause();
+		paused = true;
 	}
 
 	@Override

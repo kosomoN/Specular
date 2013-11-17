@@ -39,15 +39,17 @@ public class Specular extends Game {
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
 		states.put(States.MULTIPLAYER_GAMESTATE, new MultiplayerGameState(this));
 		
-		enterState(States.SINGLEPLAYER_GAMESTATE);
+		enterState(States.MULTIPLAYER_GAMESTATE);
 	}
 	
 	public void enterState(States state) {
 		State s = states.get(state);
-		if(s != null)
+		if(s != null) {
+			s.enter();
 			setScreen(s);
-		else
+		} else {
 			throw new RuntimeException("No state assigned to this enum: " + state);
+		}
 	}
 	
 	public State getState(States state) {

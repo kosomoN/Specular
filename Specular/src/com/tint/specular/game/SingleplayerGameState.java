@@ -11,8 +11,6 @@ public class SingleplayerGameState extends GameState {
 	
 	public SingleplayerGameState(Specular game) {
 		super(game);
-		player = new Player(this);
-		addEntity(player);
 	}
 	
 	@Override
@@ -21,8 +19,20 @@ public class SingleplayerGameState extends GameState {
 		game.camera.update();
 		game.batch.setProjectionMatrix(game.camera.combined);
 		super.render(10);
+		
+		if(player.isDead()) {
+			getPlayers().removeValue(getPlayer(), false);
+		}
 	}
 	
+	@Override
+	public void show() {
+		super.show();
+		
+		pss.spawn(1);
+		player = getPlayers().first();
+	}
+
 	public Player getPlayer() {
 		return player;
 	}

@@ -13,15 +13,20 @@ public class Client {
 	private Specular game;
 	
 	public Client(Specular game, GameState state) {
-		player = new Player(state);
 		cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		this.game = game;
 	}
 	
-	public void update() {
+	public boolean update() {
 		cam.position.set(player.getCenterX(), player.getCenterY(), 0);
 		cam.update();
 		game.batch.setProjectionMatrix(cam.combined);
+		
+		return player.isDead();
+	}
+	
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 	
 	public Player getPlayer() {

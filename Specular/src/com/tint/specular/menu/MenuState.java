@@ -5,7 +5,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL10;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
-import com.tint.specular.game.GameState;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.Button;
 
@@ -65,8 +64,7 @@ public class MenuState extends State {
 		if(Gdx.input.justTouched()) {
 			if(playBtn.isOver(Gdx.input.getX(), Gdx.input.getY())) {
 				music.stop();
-				((GameState) game.getState(States.SINGLEPLAYER_GAMESTATE)).enter();
-				game.enterState(States.SINGLEPLAYER_GAMESTATE);
+				game.enterState(States.MULTIPLAYER_GAMESTATE);
 			} else if(exitBtn.isOver(Gdx.input.getX(), Gdx.input.getY())) {
 				music.stop();
 				Gdx.app.exit();

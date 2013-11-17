@@ -87,7 +87,7 @@ public class PowerUp implements Entity {
 		
 		for(Player p : gs.getPlayers()) {
 			if(Math.pow(getCenterX() - p.getCenterX(), 2) +	Math.pow(getCenterY() - p.getCenterY(), 2)
-					< Math.pow(p.getRadius() + (getCenterX() - getX()), 2)) {
+					< Math.pow(Player.getRadius() + (getCenterX() - getX()), 2)) {
 				
 				affect(p, gs.getEnemies());
 				toBeRemoved = true;

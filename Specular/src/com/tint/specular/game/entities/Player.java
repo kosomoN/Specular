@@ -12,10 +12,6 @@ import com.tint.specular.utils.Timer;
 import com.tint.specular.utils.Util;
 
 public class Player implements Entity {
-	/* Remember
-	 * updateHitDetection() - Players should be integrated with entities
-	 * 
-	 */
 	
 	//FIELDS
 	private static Animation anim;
@@ -36,8 +32,10 @@ public class Player implements Entity {
 	private boolean isDead;
 	
 	//CONSTRUCTOR
-	public Player(GameState gs) {
+	public Player(GameState gs, float x, float y) {
 		this.gs = gs;
+		centerx = x;
+		centery = y;
 		reset();
 	}
 
@@ -136,28 +134,28 @@ public class Player implements Entity {
 	}
 	
 	public void updateHitDetection() {
-		//Hit detection
-        for(Enemy e : gs.getEnemies()) {
-    		if(Math.pow(centerx - e.getX(), 2) + Math.pow(centery - e.getY(), 2)
-    			< Math.pow(getRadius() + e.getInnerRadius(), 2)) {
-        		life--;
-        		e.hit(this);
-        	}
-        }
-        
-        for(Player p : gs.getPlayers()) {
-        	if(!p.equals(this)) {
-	    		if(Util.getDistanceSquared(centerx, centery, p.getCenterX(), p.getCenterY())
-	    				< Math.pow(getRadius(), p.getRadius())) {
-	    			life--;
-	    		}
-        	}
-        }
-        
         if(life <= 0) {
         	isDead = true;
         } else {
         	isDead = false;
+        }
+        
+        for(Entity e : gs.getEntities()) {
+        	if(e instanceof Enemy) {
+        		if(Math.pow(centerx - ((Enemy) e).getX(), 2) + Math.pow(centery - ((Enemy) e).getY(), 2)
+	    			< Math.pow(getRadius() + ((Enemy) e).getInnerRadius(), 2)) {
+        			life--;
+	        		((Enemy) e).hit(this);
+	        	}
+        	} else if(e instanceof Player) {
+        		if(!e.equals(this)) {
+					if(Util.getDistanceSquared(centerx, centery, ((Player) e).getCenterX(), ((Player) e).getCenterY())
+							< Math.pow(getRadius() * 2, 2)) {
+						life--;
+						((Player) e).addLives(-1);
+					}
+        		}
+        	}
         }
 	}
 /*_____________________________________________________________________*/
@@ -194,7 +192,7 @@ public class Player implements Entity {
 	//GETTERS
 	public float getCenterX() { return centerx; }
 	public float getCenterY() { return centery;	}
-	public float getRadius() { return (anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
+	public static float getRadius() { return (anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
 	public int getLife() { return life;	}
 	public int getSpeedBonus() { return speedBonus;	}
 	public int getScore() { return score; }
@@ -217,8 +215,6 @@ public class Player implements Entity {
 		deactivateSpeedBonus();
 		
 		setBulletBurst(3);
-		setCenterX(gs.getCurrentMap().getWidth() / 2);
-		setCenterY(gs.getCurrentMap().getHeight() / 2);
 	}
 
 	@Override
