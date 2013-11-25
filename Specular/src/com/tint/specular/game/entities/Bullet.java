@@ -27,14 +27,25 @@ public class Bullet implements Entity {
 		this.dx = cos * 15;
 		this.dy = sin * 15;
 		
+		/*float minimumOffset;
+		
+		if(dx < dy)
+			minimumOffset = Math.abs(15 - dx);
+		else
+			minimumOffset = Math.abs(15 - dy);*/
+		
 		if(Math.abs(dx + initalDx) > 15)
 			dx += initalDx;
+		/*else
+			dx += minimumOffset;*/
+		
 		if(Math.abs(dy + initalDy) > 15)
 			dy += initalDy;
+		/*else
+			dy += minimumOffset;*/
 		
 		this.x += cos * 32;
 		this.y += sin * 32;
-		
 		
 		this.gs = gs;
 		this.shooter = shooter;
@@ -54,7 +65,7 @@ public class Bullet implements Entity {
 		x += dx;
 		y += dy;
 		
-		if((x + dx < 0 || x + dx > gs.getCurrentMap().getWidth() || y + dy < 0 || y + dy > gs.getCurrentMap().getHeight() || isHit))
+		if((x + dx < 0 || x + dx > gs.getCurrentMap().getWidth() || y + dy < 0 || y + dy > gs.getCurrentMap().getHeight()) || isHit)
 			return true;
 		else
 			return false;

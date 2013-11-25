@@ -3,6 +3,7 @@ package com.tint.specular.game;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,6 +13,7 @@ import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Entity;
+import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
@@ -20,25 +22,13 @@ import com.tint.specular.game.entities.enemies.EnemyNormal;
 import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
 import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
 import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
+import com.tint.specular.input.AnalogStick;
+import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.State;
 
 public class GameState extends State {
-	/* Remember!
-	 * _______________________________________________________________________________________________
-	 * Camera is updated in client (Last client.render() is showed on screen) in multiplayer
-	 * Check for players.get(players.size - 1) in this class
-	 * This is a temporary solution as it is a local multiplayer & only the last added client is updated
-	 * Put players back in entities list, taken away for testing purpose only
-	 * See:
-	 * 		Player.java
-	 * 		GameState.java (line:181)
-	 * 
-	 * Fix!
-	 * _______________________________________________________________________________________________
-	 * reset of game
-	 */
 	
 	
 	//FIELDS
@@ -52,11 +42,13 @@ public class GameState extends State {
 	private float scoreMultiplier = 1;
 	
 	private boolean paused;
+	private boolean useParticles = true;
 	
 	private Array<Entity> entities = new Array<Entity>();
+	private Array<Player> players = new Array<Player>();
 	private Array<Enemy> enemies = new Array<Enemy>();
 	private Array<Bullet> bullets = new Array<Bullet>();
-	private Array<Player> players = new Array<Player>();
+	private Array<Particle> particles = new Array<Particle>();
 	
 	private MapHandler mapHandler;
 	private Map currentMap;
@@ -64,9 +56,18 @@ public class GameState extends State {
 	private Music music;
 	private BitmapFont font = new BitmapFont();
 	
+	private Input input;
+	
+	protected Player player;
+	
 	protected EnemySpawnSystem ess;
 	protected PlayerSpawnSystem pss;
 	protected PowerUpSpawnSystem puss;
+//	protected ParticleSpawnSystem pass;
+	
+//	protected Controls controls = Controls.KEYBOARD_AND_STICK;
+	
+	protected AnalogStick move, shoot;
 	
 	//CONSTRUCTOR
 	public GameState(Specular game) {
@@ -80,16 +81,22 @@ public class GameState extends State {
 		
 		Player.init();
 		Bullet.init();
+		Particle.init();
 		EnemyNormal.init();
 		EnemyFast.init();
 		EnemyBooster.init();
+		AnalogStick.init();
 		
 		ess = new EnemySpawnSystem(this);
 		pss = new PlayerSpawnSystem(this);
-		puss = new PowerUpSpawnSystem(this);
+//		puss = new PowerUpSpawnSystem(this);
+//		pass = new ParticleSpawnSystem(this);
 		
-		//Adding enemies
-		addEntity(new EnemyFast(400, 400, this));
+		move = new AnalogStick();
+		shoot = new AnalogStick();
+		
+		input = Gdx.input;
+		input.setInputProcessor(new GameInputProcessor());
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
 	}
@@ -112,13 +119,48 @@ public class GameState extends State {
 		}
 	}
 	
-	private void update() {
+	public void updateAnalogSticks() {
+		if(((GameInputProcessor) input.getInputProcessor()).isShooting()) {
+			//Shooting with stick
+			shoot.setRender(true);
+			
+			shoot.setBasePos(input.getX(((GameInputProcessor) input.getInputProcessor()).getShootPointer()),
+					input.getY(((GameInputProcessor) input.getInputProcessor()).getShootPointer()));
+			
+			shoot.setHeadPos(input.getX(), input.getY());
+		
+		} else if(((GameInputProcessor) input.getInputProcessor()).isMoving()) {
+			move.setRender(true);
+			
+			move.setBasePos(input.getX(((GameInputProcessor) input.getInputProcessor()).getMovePointer()),
+					input.getY(((GameInputProcessor) input.getInputProcessor()).getMovePointer()));
+			
+			move.setHeadPos(input.getX(), input.getY());
+		
+		}
+	}
+	
+	public void releaseAnalogSticks(float x, float y, int pointer, int stick) {
+		//MoveStick
+		if(stick == 0) {
+			move.setRender(false);
+		}
+		//ShootStick
+		else if(stick == 1) {
+			shoot.setRender(false);
+		}
+	}
+	
+	protected void update() {
 		//Checking if any bullet hit an enemy
 		for(Bullet b : bullets) {
 			for(Enemy e : enemies) {
 				if(!e.isDead()) {
 					if(Math.pow(b.getX() - e.getX(), 2) + Math.pow(b.getY() - e.getY(), 2) <
 							Math.pow(e.getOuterRadius(), 2) + Math.pow(b.getWidth() / 2, 2)) {
+						if(useParticles)
+//							pass.spawn(e, 20, 5);
+						
 						e.hit(b.getShooter());
 						b.hit();
 						
@@ -135,16 +177,22 @@ public class GameState extends State {
 				}
 			}
 		}
-		
-		//Player hit detection
-		for(Player p : players) {
-			p.updateHitDetection();
-		}
-		
+				
 		//IN CASE OF DEFEAT
 		if(players.size == 0) {
 			game.enterState(States.MENUSTATE);
 		} else {
+			//Moving player
+			if(((GameInputProcessor) input.getInputProcessor()).isWDown())
+				player.changeAcceleration(0, 0.8f * player.getSpeedBonus());
+			if(((GameInputProcessor) input.getInputProcessor()).isADown())
+				player.changeAcceleration(-0.8f * player.getSpeedBonus(), 0);
+			if(((GameInputProcessor) input.getInputProcessor()).isSDown())
+				player.changeAcceleration(0, -0.8f * player.getSpeedBonus());
+			if(((GameInputProcessor) input.getInputProcessor()).isDDown())
+				player.changeAcceleration(0.8f * player.getSpeedBonus(), 0);
+			
+			
 			//Removing destroyed entities
 			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
 				Entity ent = it.next();
@@ -160,15 +208,26 @@ public class GameState extends State {
 			}
 		}
 		
+		//Player hit detection
+		for(Player p : players) {
+			p.updateHitDetection();
+		}
+		
+		//Updating sticks
+//		updateAnalogSticks();
+		
 		if(enemiesKilledThisWave >= wave)
 			nextWave();
 		
 	}
 	
-	private void renderGame() {
+	protected void renderGame() {
 		//Clearing screen, positioning camera, rendering map and entities
 		Gdx.gl.glClearColor(0.2f, 0, 0, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		game.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
+		game.camera.update();
+		game.batch.setProjectionMatrix(game.camera.combined);
 		game.batch.begin();
 		currentMap.render(game.batch);
 		for(Entity ent : entities) {
@@ -181,35 +240,42 @@ public class GameState extends State {
 		game.camera.update();
 		game.batch.setProjectionMatrix(game.camera.combined);
 		game.batch.begin();
-		font.draw(game.batch, "Enities: " + entities.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 10);
-		font.draw(game.batch, "Enemies: " + enemies.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
+		
+//		move.render(game.batch);
+//		shoot.render(game.batch);
+		
+		//Debugging
+		font.draw(game.batch, "Enities: " + entities.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
+		font.draw(game.batch, "Enemies: " + enemies.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
 		font.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
-						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
-		font.draw(game.batch, "Points: " + players.get(players.size - 1).getScore(), -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
+						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
+		
 		
 		//Power-Ups
-		StringBuilder playerPowerUps = new StringBuilder();
-		StringBuilder enemyPowerUp = new StringBuilder();
-		if(players.get(players.size - 1).getBulletTimer().getTime() > 0)
-			playerPowerUps.append("BulletBurst, ");
-		else if(players.get(players.size - 1).getSpeedTimer().getTime() > 0)
-			playerPowerUps.append("Speedboost, ");
-		else
-			playerPowerUps.append(" - ");
-		
-		if(enemies.size > 0 && enemies.get(0).getSpeedTimer().getTime() > 0)
-			enemyPowerUp.append("Slowdown, ");
-		else
-			enemyPowerUp.append(" - ");
-		
-		//Draw powerups affecting player
-		font.draw(game.batch, "Active PowerUps Player: " + playerPowerUps.toString(),
-				-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 90);
-		
-		//Draw powerups affecting enemies
-		font.draw(game.batch, "Active PowerUps Enemy: " + enemyPowerUp.toString(),
-				-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 110);
-		
+		if(getPlayers().size != 0) {
+			StringBuilder playerPowerUps = new StringBuilder();
+			StringBuilder enemyPowerUp = new StringBuilder();
+			if(players.get(players.size - 1).getBulletTimer().getTime() > 0)
+				playerPowerUps.append("BulletBurst, ");
+			if(players.get(players.size - 1).getSpeedTimer().getTime() > 0)
+				playerPowerUps.append("Speedboost, ");
+			else
+				playerPowerUps.append(" - ");
+			
+			if(enemies.size > 0 && enemies.get(0).getSpeedTimer().getTime() > 0)
+				enemyPowerUp.append("Slowdown, ");
+			else
+				enemyPowerUp.append(" - ");
+			
+			//Draw powerups affecting player
+			font.draw(game.batch, "Active PowerUps Player" + players.size + ": " + playerPowerUps.toString(),
+					-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 90);
+			
+			//Draw powerups affecting enemies
+			font.draw(game.batch, "Active PowerUps Enemy: " + enemyPowerUp.toString(),
+					-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 110);
+			
+		}
 		game.batch.end();
 	}
 /*____________________________________________________________________*/
@@ -224,17 +290,23 @@ public class GameState extends State {
 	public void addEntity(Entity entity) {
 		if(entity instanceof Player)
 			players.add((Player) entity);
-		if(entity instanceof Enemy)
+		else if(entity instanceof Enemy)
 			enemies.add((Enemy) entity);
-		if(entity instanceof Bullet)
+		else if(entity instanceof Bullet)
 			bullets.add((Bullet) entity);
-			
+		else if(entity instanceof Particle)
+			particles.add((Particle) entity);
+		
 		entities.add(entity);
 	}
 	
 	public void setScoreMultiplier(float multiplier) {
 		scoreMultiplier = multiplier;
 	}
+	
+	/*public void setControls(Controls controls) {
+		this.controls = controls;
+	}*/
 	
 	@Override
 	public void enter() {
@@ -252,12 +324,7 @@ public class GameState extends State {
 		enemies.clear();
 		bullets.clear();
 		
-		addEntity(new EnemyFast(400, 400, this));
-		
-		//Spawn system reset
-		ess = new EnemySpawnSystem(this);
-		pss = new PlayerSpawnSystem(this);
-		puss = new PowerUpSpawnSystem(this);
+//		addEntity(new EnemyFast(400, 400, this));
 	}
 	
 	//GETTERS
@@ -280,6 +347,10 @@ public class GameState extends State {
 	public float getScoreMultiplier() {
 		return scoreMultiplier;
 	}
+	
+//	public ParticleSpawnSystem getParticleSpawnSystem() {
+//		return pass;
+//	}
 	
 	public BitmapFont getFont() {
 		return font;

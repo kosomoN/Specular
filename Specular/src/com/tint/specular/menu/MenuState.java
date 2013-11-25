@@ -64,7 +64,7 @@ public class MenuState extends State {
 		if(Gdx.input.justTouched()) {
 			if(playBtn.isOver(Gdx.input.getX(), Gdx.input.getY())) {
 				music.stop();
-				game.enterState(States.MULTIPLAYER_GAMESTATE);
+				game.enterState(States.SINGLEPLAYER_GAMESTATE);
 			} else if(exitBtn.isOver(Gdx.input.getX(), Gdx.input.getY())) {
 				music.stop();
 				Gdx.app.exit();

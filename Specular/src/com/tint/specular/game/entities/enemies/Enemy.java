@@ -9,7 +9,7 @@ import com.tint.specular.utils.Util;
 public abstract class Enemy implements Entity {
 	
 	//FIELDS
-	protected float x, y;
+	protected float x, y, dx, dy;
 	protected float width, height;
 	protected float direction;
 	
@@ -19,6 +19,7 @@ public abstract class Enemy implements Entity {
 	protected boolean isHit;
 	
 	protected GameState gs;
+	protected Player killer;
 	protected Timer speedTimer;
 	
 	public Enemy(float x, float y, GameState gs) {
@@ -33,6 +34,11 @@ public abstract class Enemy implements Entity {
 	public boolean update() {
 		if(!speedTimer.update(10))
 			setSpeedUtilization(1);
+		if(killer != null) {
+			killer.setHit(false);
+			killer = null;
+		}
+			
 		return isDead();
 	}
 
@@ -58,8 +64,12 @@ public abstract class Enemy implements Entity {
 	}
 	
 	public void hit(Player shooter) {
-		isHit = true;
 		life--;
+	}
+	
+	public void kill(Player killer) {
+		life = 0;
+		this.killer = killer;
 	}
 	
 	//GETTERS
@@ -95,6 +105,10 @@ public abstract class Enemy implements Entity {
 	public float getY() {
 		return y;
 	}
+	
+	public abstract float getDeltaX();
+	
+	public abstract float getDeltaY();
 	
 	public float getInnerRadius() {
 		return 0;

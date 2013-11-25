@@ -33,8 +33,10 @@ public class EnemyFast extends Enemy {
 	@Override
 	public boolean update() {
 		double angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
-		x += Math.cos(angle) * 3 * speedUtilization;
-		y += Math.sin(angle) * 3 * speedUtilization;
+		dx = (float) (Math.cos(angle) * 3);
+		dy = (float) (Math.sin(angle) * 3);
+		x += dx * speedUtilization;
+		y += dy * speedUtilization;
 		
 		return super.update();
 	}
@@ -43,6 +45,16 @@ public class EnemyFast extends Enemy {
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Fast.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	}
+
+	@Override
+	public float getDeltaX() {
+		return dx;
+	}
+
+	@Override
+	public float getDeltaY() {
+		return dy;
 	}
 
 	@Override

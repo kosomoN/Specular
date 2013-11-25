@@ -42,8 +42,10 @@ public class EnemyNormal extends Enemy {
 	@Override
 	public boolean update() {
 		double angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x) + offset;
-		x += Math.cos(angle) * 2 * speedUtilization;
-		y += Math.sin(angle) * 2 * speedUtilization;
+		dx = (float) (Math.cos(angle) * 2);
+		dy = (float) (Math.sin(angle) * 2);
+		x += dx * speedUtilization;
+		y += dy * speedUtilization;
 		
 		if(x - 20 < 0) {
 			offset = -offset;
@@ -71,7 +73,17 @@ public class EnemyNormal extends Enemy {
 	public float getOuterRadius() {
 		return tex.getWidth() / 2;
 	}
-		
+	
+	@Override
+	public float getDeltaX() {
+		return dx;
+	}
+
+	@Override
+	public float getDeltaY() {
+		return dy;
+	}
+
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Normal.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);

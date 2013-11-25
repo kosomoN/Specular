@@ -94,4 +94,17 @@ public class Util {
 	public static void drawCentered(SpriteBatch batch, Texture tex, float centerx, float centery, float rotation) {
 		batch.draw(tex, centerx - tex.getWidth() / 2, centery - tex.getHeight() / 2, tex.getWidth() / 2, tex.getHeight() / 2, tex.getWidth(), tex.getHeight(), 1, 1, rotation, 0, 0, tex.getWidth(), tex.getHeight(), false, false);
 	}
+	
+	/**
+	 * 
+	 * @param batch - The spritebatch to use
+	 * @param tex - The texture to draw
+	 * @param centerx - The centerx
+	 * @param centery - The centery
+	 * @param rotation - The angle of the rotation around the centerpoint
+	 */
+	public static void drawCentered(SpriteBatch batch, TextureRegion tex, float centerx, float centery, float rotation) {
+		batch.draw(tex, centerx - tex.getRegionWidth() / 2, centery - tex.getRegionHeight() / 2,
+				centerx, centery, tex.getRegionWidth(), tex.getRegionHeight(), 1, 1, rotation);
+	}
 }

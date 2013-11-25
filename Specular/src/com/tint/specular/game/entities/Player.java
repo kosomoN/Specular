@@ -1,7 +1,8 @@
 package com.tint.specular.game.entities;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -24,12 +25,13 @@ public class Player implements Entity {
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 6f;
 	
-	private int life = 2;
+	private int life = 5;
 	private int speedBonus = 1;
 	private int bulletBurst = 2;
 	private int score = 0;
 	
 	private boolean isDead;
+	private boolean isHit;
 	
 	//CONSTRUCTOR
 	public Player(GameState gs, float x, float y) {
@@ -60,7 +62,7 @@ public class Player implements Entity {
 			setBulletBurst(1);
 		
 		//Handling key input
-		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+		/*if(Gdx.input.isKeyPressed(Input.Keys.W)) {
 			dy += 0.8f * getSpeedBonus();
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.S)) {
@@ -71,7 +73,7 @@ public class Player implements Entity {
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
 			dx -= 0.8f * getSpeedBonus();
-		}
+		}*/
 		
 		//Shooting
 		timeSinceLastFire += 1;
@@ -97,7 +99,8 @@ public class Player implements Entity {
 							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2, dx, dy, gs, this));
 						} else {
 							gs.addEntity(new Bullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy, gs, this));
-							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs, this));					}
+							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs, this));
+						}
 					}
 					
 				//If the number of bullet "lines" are odd
@@ -135,27 +138,56 @@ public class Player implements Entity {
 	
 	public void updateHitDetection() {
         if(life <= 0) {
+        	System.out.println("Score: " + score);
         	isDead = true;
         } else {
         	isDead = false;
         }
         
-        for(Entity e : gs.getEntities()) {
-        	if(e instanceof Enemy) {
-        		if(Math.pow(centerx - ((Enemy) e).getX(), 2) + Math.pow(centery - ((Enemy) e).getY(), 2)
-	    			< Math.pow(getRadius() + ((Enemy) e).getInnerRadius(), 2)) {
-        			life--;
-	        		((Enemy) e).hit(this);
+        if(!isHit) {
+	        for(Iterator<Entity> it = gs.getEntities().iterator(); it.hasNext(); ) {
+	        	Entity e = it.next();
+	        	if(e instanceof Enemy) {
+	        		if(!((Enemy) e).isDead()) {
+		        		if(Math.pow(centerx - ((Enemy) e).getX(), 2) + Math.pow(centery - ((Enemy) e).getY(), 2)
+			    			< Math.pow(getRadius() + ((Enemy) e).getInnerRadius(), 2)) {
+		        			
+//			        		gs.getParticleSpawnSystem().spawn((Enemy) e, 20, 5);
+		        			
+		        			it.remove();
+		        			life--;
+		        			
+			        		if(centerx - getRadius() + dx < ((Enemy) e).getX() + ((Enemy) e).getInnerRadius())
+			                	dx = -dx ;
+			                else if(centerx + getRadius() + dx > ((Enemy) e).getX() - ((Enemy) e).getInnerRadius())
+			                	dx = -dx;
+			                
+			                if(centery - getRadius() + dy < ((Enemy) e).getY() + ((Enemy) e).getInnerRadius())
+			                	dy = -dy;
+			                else if(centery + getRadius() + dy > ((Enemy) e).getY() - ((Enemy) e).getInnerRadius())
+			                	dy = -dy;
+			        	}
+	        		}
+	        	} else if(e instanceof Player) {
+	        		if(!e.equals(this)) {
+						if(Util.getDistanceSquared(centerx, centery, ((Player) e).getCenterX(), ((Player) e).getCenterY())
+								< Math.pow(getRadius() * 2, 2)) {
+							life--;
+							((Player) e).addLives(-1);
+							
+							if(centerx - getRadius() + dx < ((Player) e).getCenterX() + Player.getRadius())
+					        	dx = -dx * 0.6f;
+					        else if(centerx + getRadius() + dx > ((Player) e).getCenterX() - Player.getRadius())
+					        	dx = -dx * 0.6f;
+					        
+					        if(centery - getRadius() + dy < ((Player) e).getCenterY() + Player.getRadius())
+					        	dy = -dy * 0.6f;
+					        else if(centery + getRadius() + dy > ((Player) e).getCenterY() - Player.getRadius())
+					        	dy = -dy * 0.6f;
+						}
+	        		}
 	        	}
-        	} else if(e instanceof Player) {
-        		if(!e.equals(this)) {
-					if(Util.getDistanceSquared(centerx, centery, ((Player) e).getCenterX(), ((Player) e).getCenterY())
-							< Math.pow(getRadius() * 2, 2)) {
-						life--;
-						((Player) e).addLives(-1);
-					}
-        		}
-        	}
+	        }
         }
 	}
 /*_____________________________________________________________________*/
@@ -177,11 +209,17 @@ public class Player implements Entity {
 		this.score += score * gs.getScoreMultiplier();
 	}
 	
+	public void changeAcceleration(float dx, float dy) {
+		this.dx += dx;
+		this.dy += dy;
+	}
+	
 	//SETTERS
 	public void setCenterX(float x) { this.centerx = x; }
 	public void setCenterY(float y) { this.centery = y;	}
 	public void setBulletBurst(int burst) {	bulletBurst = burst; }
 	public void setLife(int life) { this.life = life; }
+	public void setHit(boolean hit) { isHit = hit; }
 	
 	public void setTimer(Timer timer, float seconds) {
 		if(timer.getTime() <= 0) {
@@ -192,6 +230,8 @@ public class Player implements Entity {
 	//GETTERS
 	public float getCenterX() { return centerx; }
 	public float getCenterY() { return centery;	}
+	public float getDeltaX() { return dx; }
+	public float getDeltaY() { return dy; }
 	public static float getRadius() { return (anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
 	public int getLife() { return life;	}
 	public int getSpeedBonus() { return speedBonus;	}

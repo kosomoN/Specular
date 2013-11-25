@@ -37,8 +37,10 @@ public class EnemyBooster extends Enemy {
 		if(boostingDelay > 30) {
 			speed += 0.2;
 			
-			x += Math.cos(direction) * speed * speedUtilization;
-			y += Math.sin(direction) * speed * speedUtilization;
+			dx = (float) (Math.cos(direction) * speed);
+			dy = (float) (Math.sin(direction) * speed);
+			x += dx * speedUtilization;
+			y += dy * speedUtilization;
 			
 			if(speedTimer.getTime() > 0) {
 				speedTimer.setTime(speedTimer.getTime() - 10);
@@ -83,6 +85,16 @@ public class EnemyBooster extends Enemy {
 		return tex.getWidth() / 2;
 	}
 	
+	@Override
+	public float getDeltaX() {
+		return dx;
+	}
+
+	@Override
+	public float getDeltaY() {
+		return dy;
+	}
+
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Booster.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);

@@ -39,7 +39,7 @@ public class Specular extends Game {
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
 		states.put(States.MULTIPLAYER_GAMESTATE, new MultiplayerGameState(this));
 		
-		enterState(States.MULTIPLAYER_GAMESTATE);
+		enterState(States.MENUSTATE);
 	}
 	
 	public void enterState(States state) {
