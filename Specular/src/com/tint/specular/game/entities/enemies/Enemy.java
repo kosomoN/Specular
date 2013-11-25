@@ -81,7 +81,7 @@ public abstract class Enemy implements Entity {
 		
 		for(Player p : gs.getPlayers()) {
 			tempDistSqrd = Util.getDistanceSquared(x, y, p.getCenterX(), p.getCenterY());
-			if(tempDistSqrd < Math.pow(distance, 2)) {
+			if(tempDistSqrd < distance * distance) {
 				distance = tempDistSqrd;
 				closest = p;
 			}
@@ -106,17 +106,8 @@ public abstract class Enemy implements Entity {
 		return y;
 	}
 	
-	public abstract float getDeltaX();
-	
-	public abstract float getDeltaY();
-	
-	public float getInnerRadius() {
-		return 0;
-	}
-	
-	public float getOuterRadius() {
-		return 0;
-	}
+	public abstract float getInnerRadius();
+	public abstract float getOuterRadius();
 	
 	@Override
 	public void dispose() {}

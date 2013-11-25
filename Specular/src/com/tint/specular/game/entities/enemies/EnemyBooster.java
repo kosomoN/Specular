@@ -85,16 +85,6 @@ public class EnemyBooster extends Enemy {
 		return tex.getWidth() / 2;
 	}
 	
-	@Override
-	public float getDeltaX() {
-		return dx;
-	}
-
-	@Override
-	public float getDeltaY() {
-		return dy;
-	}
-
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Booster.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);

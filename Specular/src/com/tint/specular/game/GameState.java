@@ -19,6 +19,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
 import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
 import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
@@ -85,6 +86,7 @@ public class GameState extends State {
 		EnemyNormal.init();
 		EnemyFast.init();
 		EnemyBooster.init();
+		EnemyWorm.init();
 		AnalogStick.init();
 		
 		ess = new EnemySpawnSystem(this);
@@ -325,6 +327,8 @@ public class GameState extends State {
 		bullets.clear();
 		
 //		addEntity(new EnemyFast(400, 400, this));
+		
+		addEntity(new EnemyWorm(200, 200, this));
 	}
 	
 	//GETTERS

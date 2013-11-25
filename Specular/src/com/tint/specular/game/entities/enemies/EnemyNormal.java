@@ -73,16 +73,6 @@ public class EnemyNormal extends Enemy {
 	public float getOuterRadius() {
 		return tex.getWidth() / 2;
 	}
-	
-	@Override
-	public float getDeltaX() {
-		return dx;
-	}
-
-	@Override
-	public float getDeltaY() {
-		return dy;
-	}
 
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Normal.png"));

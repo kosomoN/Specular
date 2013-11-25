@@ -110,14 +110,14 @@ public class EnemyWorm extends Enemy {
 		   return (y1 * (1 - mu) + y2 * mu);
 		}
 	}
-
+	
 	@Override
-	public float getDeltaX() {
+	public float getInnerRadius() {
 		return 0;
 	}
 
 	@Override
-	public float getDeltaY() {
+	public float getOuterRadius() {
 		return 0;
 	}
 }

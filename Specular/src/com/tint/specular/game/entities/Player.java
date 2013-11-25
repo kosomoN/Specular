@@ -49,7 +49,7 @@ public class Player implements Entity {
 	public void render(SpriteBatch batch) {
 		animFrameTime += Gdx.graphics.getDeltaTime();
 		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
-		batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2, frame.getRegionWidth() / 2, frame.getRegionHeight() / 2, frame.getRegionWidth(), frame.getRegionHeight(), 1, 1, animFrameTime % 2 > 1 ? 0 : 180, false);
+		batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
 	}
 	
 	@Override
@@ -243,7 +243,7 @@ public class Player implements Entity {
 	
 	public static void init() {
 		texture  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
-		anim = Util.getAnimation(texture, 128, 128, 1 / 16f, 0, 0, 3, 3);
+		anim = Util.getAnimation(texture, 128, 128, 1 / 16f, 0, 0, 7, 3);
 	}
 	
 	public void reset() {

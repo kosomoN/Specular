@@ -48,16 +48,6 @@ public class EnemyFast extends Enemy {
 	}
 
 	@Override
-	public float getDeltaX() {
-		return dx;
-	}
-
-	@Override
-	public float getDeltaY() {
-		return dy;
-	}
-
-	@Override
 	public void hit(Player shooter) {
 		super.hit(shooter);
 		if(life <= 0)
@@ -67,5 +57,15 @@ public class EnemyFast extends Enemy {
 	@Override
 	public void dispose() {
 		tex.dispose();
+	}
+
+	@Override
+	public float getInnerRadius() {
+		return 16;
+	}
+
+	@Override
+	public float getOuterRadius() {
+		return 32;
 	}
 }
