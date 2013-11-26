@@ -1,6 +1,5 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
@@ -51,8 +50,8 @@ public class EnemyWorm extends Enemy {
 	}
 	
 	public static void init() {
-		middleTex = new Texture(Gdx.files.internal("graphics/game/Enemy Worm Middle.png"));
-		headTex = middleTex;
+//		middleTex = new Texture(Gdx.files.internal("graphics/game/Enemy Worm Middle.png"));
+//		headTex = middleTex;
 	}
 
 	public class Part {
@@ -120,4 +119,14 @@ public class EnemyWorm extends Enemy {
 	public float getOuterRadius() {
 		return 0;
 	}
+
+	/*@Override
+	public float getDeltaX() {
+		return dx;
+	}
+
+	@Override
+	public float getDeltaY() {
+		return dy;
+	}*/
 }

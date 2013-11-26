@@ -3,12 +3,14 @@ package com.tint.specular.game.entities;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.utils.Timer;
 import com.tint.specular.utils.Util;
 
@@ -61,29 +63,68 @@ public class Player implements Entity {
 		if(!bulletTimer.update(10))
 			setBulletBurst(1);
 		
-		//Handling key input
-		/*if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-			dy += 0.8f * getSpeedBonus();
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-			dy -= 0.8f * getSpeedBonus();
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-			dx += 0.8f * getSpeedBonus();
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-			dx -= 0.8f * getSpeedBonus();
-		}*/
+		//Moving
+		updateMovement((GameInputProcessor) Gdx.input.getInputProcessor());
 		
 		//Shooting
+		updateShooting();
+		
+		//Movement
+        dx *= 0.95f;
+        dy *= 0.95f;
+        
+        if(centerx - getRadius() + dx < 0)
+        	dx = -dx * 0.6f;
+        else if(centerx + getRadius() + dx > gs.getCurrentMap().getWidth())
+        	dx = -dx * 0.6f;
+        
+        if(centery - getRadius() + dy < 0)
+        	dy = -dy * 0.6f;
+        else if(centery + getRadius() + dy > gs.getCurrentMap().getHeight())
+        	dy = -dy * 0.6f;
+        
+        centerx += dx;
+        centery += dy;
+        return isDead;
+	}
+	
+	public void updateMovement(GameInputProcessor processor) {
+		if(gs.getGame().system == 0) {
+			if(processor.isWDown())
+				changeAcceleration(0, 0.8f * getSpeedBonus());
+			if(processor.isADown())
+				changeAcceleration(-0.8f * getSpeedBonus(), 0);
+			if(processor.isSDown())
+				changeAcceleration(0, -0.8f * getSpeedBonus());
+			if(processor.isDDown())
+				changeAcceleration(0.8f * getSpeedBonus(), 0);
+		} else if(gs.getGame().system == 1 || gs.getGame().system == 2) {
+			double angle = Math.atan2(gs.getMovingStick().getYHead() 
+					- gs.getMovingStick().getYBase(), gs.getMovingStick().getXHead() 
+					- gs.getMovingStick().getXBase());
+			changeAcceleration((float) Math.cos(angle) * 0.8f,(float) Math.sin(angle) * 0.8f);
+		}
+	}
+	
+	public void updateShooting() {
 		timeSinceLastFire += 1;
 		
-		if(Gdx.input.isTouched()) {
+		if(gs.getGame().system == 0 || gs.getGame().system == 3 ? Gdx.input.isTouched() : Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
 			if(timeSinceLastFire >= fireRate) {
 				
 				//TODO Uncomment to get random direction
-				float direction = (float) (Math.toDegrees(Math.atan2(Gdx.graphics.getHeight() / 2
-						- Gdx.input.getY(), Gdx.input.getX() - Gdx.graphics.getWidth() / 2)));
+				float direction = 0;
+				if(gs.getGame().system == 0 || gs.getGame().system == 2) {
+					
+					direction = (float) (Math.toDegrees(Math.atan2(gs.getShootingStick().getYHead()
+						- gs.getShootingStick().getYBase(), gs.getShootingStick().getXHead()
+						- gs.getShootingStick().getXBase())));
+				} else if(gs.getGame().system == 1) {
+					System.out.println("Shooting");
+					direction = (float) (Math.toDegrees(Math.atan2(Gdx.input.getY()
+							- Gdx.graphics.getWidth() / 2, Gdx.input.getY()
+							- Gdx.graphics.getHeight() / 2)));
+				}
 					//+ Math.random() * 20 - 10);
 				
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
@@ -116,24 +157,6 @@ public class Player implements Entity {
 				timeSinceLastFire = 0;
 			}
 		}
-		
-		//Movement
-        dx *= 0.95f;
-        dy *= 0.95f;
-        
-        if(centerx - getRadius() + dx < 0)
-        	dx = -dx * 0.6f;
-        else if(centerx + getRadius() + dx > gs.getCurrentMap().getWidth())
-        	dx = -dx * 0.6f;
-        
-        if(centery - getRadius() + dy < 0)
-        	dy = -dy * 0.6f;
-        else if(centery + getRadius() + dy > gs.getCurrentMap().getHeight())
-        	dy = -dy * 0.6f;
-        
-        centerx += dx;
-        centery += dy;
-        return isDead;
 	}
 	
 	public void updateHitDetection() {

@@ -3,6 +3,7 @@ package com.tint.specular.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.tint.specular.utils.Util;
 
 public class AnalogStick {
 	
@@ -21,10 +22,10 @@ public class AnalogStick {
 	}
 	
 	public void render(SpriteBatch batch) {
-//		if(render) {
-			batch.draw(base, xBase, yBase);
-			batch.draw(head, xHead, yHead);
-//		}
+		if(render) {
+			Util.drawCentered(batch, base, xBase, yBase, 0);
+			Util.drawCentered(batch, head, xHead, yHead, 0);
+		}
 	}
 	
 	public void setBasePos(float xBase, float yBase) {

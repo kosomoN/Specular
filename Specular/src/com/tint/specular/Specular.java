@@ -10,12 +10,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.tint.specular.game.MultiplayerGameState;
 import com.tint.specular.game.SingleplayerGameState;
-import com.tint.specular.menu.MenuState;
-import com.tint.specular.states.State;
+import com.tint.specular.states.*;
 
 public class Specular extends Game {
 	public enum States {
-		MENUSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE
+		MAINMENUSTATE, SETTINGSMENUSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE
 	}
 	
 	//FIELDS
@@ -24,6 +23,13 @@ public class Specular extends Game {
 	public OrthographicCamera camera;
 	public SpriteBatch batch;
 	public ShapeRenderer shape;
+	
+	/*
+	 * 0. Keyboard and shooting stick 
+	 * 1. Keyboard and moving stick
+	 * 2. Twin sticks
+	 */
+	public int system = 0;
 	
 	@Override
 	public void create() {
@@ -35,11 +41,12 @@ public class Specular extends Game {
 		batch = new SpriteBatch();
 		shape = new ShapeRenderer();
 		
-		states.put(States.MENUSTATE, new MenuState(this));
+		states.put(States.MAINMENUSTATE, new MainmenuState(this));
+		states.put(States.SETTINGSMENUSTATE, new SettingsMenuState(this));
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
 		states.put(States.MULTIPLAYER_GAMESTATE, new MultiplayerGameState(this));
 		
-		enterState(States.MENUSTATE);
+		enterState(States.MAINMENUSTATE);
 	}
 	
 	public void enterState(States state) {

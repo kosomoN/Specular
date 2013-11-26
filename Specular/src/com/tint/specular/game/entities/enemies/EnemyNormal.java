@@ -90,4 +90,14 @@ public class EnemyNormal extends Enemy {
 	public void dispose() {
 		tex.dispose();
 	}
+
+	/*@Override
+	public float getDeltaX() {
+		return dx;
+	}
+
+	@Override
+	public float getDeltaY() {
+		return dy;
+	}*/
 }

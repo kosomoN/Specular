@@ -1,17 +1,24 @@
 package com.tint.specular.input;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.tint.specular.Specular;
 
 public class GameInputProcessor implements InputProcessor {
 
-	private int touches;
 	private int movePointer = -1, shootPointer = -1;
-	private boolean moving, shooting;
-	private boolean w, a, s, d;
-	private static boolean space;
+	private int pressPointer;
 	
-	public GameInputProcessor() {
+	private boolean moving, shooting;
+	private boolean press;
+	private boolean w, a, s, d;
+	private boolean space;
+	
+	private Specular game;
+	
+	public GameInputProcessor(Specular game) {
+		this.game = game;
 	}
 	
 	@Override
@@ -54,12 +61,16 @@ public class GameInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		touches++;
+		press = true;
+		pressPointer = pointer;
 		
-		/*if(controls.equals(Controls.KEYBOARD_AND_STICK) || controls.equals(Controls.ACCELEROMETER_AND_STICK)) {*/
+		if(game.system == 0) {
 			shootPointer = pointer;
 			shooting = true;
-		/*} else if(controls.equals(Controls.TWINSTICKS)) {
+		} else if(game.system == 1) {
+			movePointer = pointer;
+			moving = true;
+		} else if(game.system == 2) {
 			if(screenX <= Gdx.graphics.getWidth() / 2) {
 				movePointer = pointer;
 				moving = true;
@@ -67,14 +78,12 @@ public class GameInputProcessor implements InputProcessor {
 				shootPointer = pointer;
 				shooting = true;
 			}
-		}*/
+		}
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		touches--;
-		
 		if(movePointer == pointer) {
 			moving = false;
 			movePointer = -1;
@@ -88,11 +97,6 @@ public class GameInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		//Shooting with stick
-//		if(controls.equals(Controls.KEYBOARD_AND_STICK) || controls.equals(Controls.ACCELEROMETER_AND_STICK)) {
-//			shootStick.setHeadPos(Gdx.input.getX(pointer), Gdx.input.getY(pointer));
-//		}
-		
 		return false;
 	}
 
@@ -126,8 +130,8 @@ public class GameInputProcessor implements InputProcessor {
 		return space;
 	}
 	
-	public int getTouches() {
-		return touches;
+	public boolean isPressed() {
+		return press;
 	}
 	
 	public int getMovePointer() {
@@ -138,11 +142,23 @@ public class GameInputProcessor implements InputProcessor {
 		return shootPointer;
 	}
 	
+	public int getPressPointer() {
+		return pressPointer;
+	}
+	
 	public boolean isMoving() {
 		return moving;
 	}
 	
 	public boolean isShooting() {
 		return shooting;
+	}
+	
+	public void setPress(boolean b) {
+		press = b;
+	}
+	
+	public void resetPressPointer() {
+		pressPointer = -1;
 	}
 }

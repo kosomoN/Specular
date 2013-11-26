@@ -106,6 +106,8 @@ public abstract class Enemy implements Entity {
 		return y;
 	}
 	
+	/*public abstract float getDeltaX();
+	public abstract float getDeltaY();*/
 	public abstract float getInnerRadius();
 	public abstract float getOuterRadius();
 	

@@ -21,6 +21,15 @@ public class Button {
 		hitbox = new Rectangle(0, 0, 1, 1);
 	}
 	
+	public Button(float x, float y) {
+		hitbox.setPosition(x, y);
+	}
+	
+	public Button(float x, float y, float width, float height) {
+		hitbox.setPosition(x, y);
+		hitbox.setSize(width, height);
+	}
+	
 	//RENDER&UPDATE loop
 /*_____________________________________________________________________*/
 	public void renderTexture(SpriteBatch batch) {
@@ -38,7 +47,6 @@ public class Button {
 		if(Gdx.input.justTouched()) {
 			if(hitbox.contains(Gdx.input.getX(), Gdx.input.getY())) {
 				isPressed = true;
-				System.out.println("pressed");
 				return;
 			}
 		}

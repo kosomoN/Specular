@@ -1,4 +1,4 @@
-package com.tint.specular.menu;
+package com.tint.specular.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -8,7 +8,7 @@ import com.tint.specular.Specular.States;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.Button;
 
-public class MenuState extends State {
+public class MainmenuState extends State {
 
 	//FIELDS
 //	private static Texture background;
@@ -16,7 +16,7 @@ public class MenuState extends State {
 	private Button playBtn, exitBtn;
 	
 	//CONSTRUCTOR
-	public MenuState(Specular game) {
+	public MainmenuState(Specular game) {
 		super(game);
 		
 		/*background = new Texture("graphics/mainmenu/Title.png");

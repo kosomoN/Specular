@@ -68,4 +68,14 @@ public class EnemyFast extends Enemy {
 	public float getOuterRadius() {
 		return 32;
 	}
+
+	/*@Override
+	public float getDeltaX() {
+		return dx;
+	}
+
+	@Override
+	public float getDeltaY() {
+		return dy;
+	}*/
 }

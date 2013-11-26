@@ -31,7 +31,6 @@ import com.tint.specular.states.State;
 
 public class GameState extends State {
 	
-	
 	//FIELDS
 	private static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	private float unprocessed;
@@ -43,7 +42,6 @@ public class GameState extends State {
 	private float scoreMultiplier = 1;
 	
 	private boolean paused;
-	private boolean useParticles = true;
 	
 	private Array<Entity> entities = new Array<Entity>();
 	private Array<Player> players = new Array<Player>();
@@ -65,8 +63,6 @@ public class GameState extends State {
 	protected PlayerSpawnSystem pss;
 	protected PowerUpSpawnSystem puss;
 //	protected ParticleSpawnSystem pass;
-	
-//	protected Controls controls = Controls.KEYBOARD_AND_STICK;
 	
 	protected AnalogStick move, shoot;
 	
@@ -91,14 +87,14 @@ public class GameState extends State {
 		
 		ess = new EnemySpawnSystem(this);
 		pss = new PlayerSpawnSystem(this);
-//		puss = new PowerUpSpawnSystem(this);
+		puss = new PowerUpSpawnSystem(this);
 //		pass = new ParticleSpawnSystem(this);
 		
 		move = new AnalogStick();
 		shoot = new AnalogStick();
 		
 		input = Gdx.input;
-		input.setInputProcessor(new GameInputProcessor());
+		input.setInputProcessor(new GameInputProcessor(game));
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
 	}
@@ -122,23 +118,36 @@ public class GameState extends State {
 	}
 	
 	public void updateAnalogSticks() {
-		if(((GameInputProcessor) input.getInputProcessor()).isShooting()) {
+		GameInputProcessor processor = (GameInputProcessor) input.getInputProcessor();
+		if(processor.isPressed()) {
+			if(processor.getPressPointer() == processor.getMovePointer()) {
+				move.setBasePos(input.getX(processor.getMovePointer()) - Gdx.graphics.getWidth() / 2,
+						- (input.getY(processor.getMovePointer()) - Gdx.graphics.getHeight() / 2));
+			} else if(processor.getPressPointer() == processor.getShootPointer()) {
+				shoot.setBasePos(input.getX(processor.getShootPointer()) - Gdx.graphics.getWidth() / 2,
+						- (input.getY(processor.getShootPointer()) - Gdx.graphics.getHeight() / 2));
+			}
+			
+			processor.setPress(false);
+		}
+		
+		if(processor.isShooting()) {
 			//Shooting with stick
 			shoot.setRender(true);
 			
-			shoot.setBasePos(input.getX(((GameInputProcessor) input.getInputProcessor()).getShootPointer()),
-					input.getY(((GameInputProcessor) input.getInputProcessor()).getShootPointer()));
+			shoot.setHeadPos(input.getX(processor.getShootPointer()) - Gdx.graphics.getWidth() / 2,
+					- (input.getY(processor.getShootPointer()) - Gdx.graphics.getHeight() / 2));
+		} else {
+			shoot.setRender(false);
+		}
 			
-			shoot.setHeadPos(input.getX(), input.getY());
-		
-		} else if(((GameInputProcessor) input.getInputProcessor()).isMoving()) {
+		if(processor.isMoving()) {
 			move.setRender(true);
 			
-			move.setBasePos(input.getX(((GameInputProcessor) input.getInputProcessor()).getMovePointer()),
-					input.getY(((GameInputProcessor) input.getInputProcessor()).getMovePointer()));
-			
-			move.setHeadPos(input.getX(), input.getY());
-		
+			move.setHeadPos(input.getX(processor.getMovePointer()) - Gdx.graphics.getWidth() / 2,
+					- (input.getY(processor.getMovePointer()) - Gdx.graphics.getHeight() / 2));
+		} else {
+			move.setRender(false);
 		}
 	}
 	
@@ -160,7 +169,7 @@ public class GameState extends State {
 				if(!e.isDead()) {
 					if(Math.pow(b.getX() - e.getX(), 2) + Math.pow(b.getY() - e.getY(), 2) <
 							Math.pow(e.getOuterRadius(), 2) + Math.pow(b.getWidth() / 2, 2)) {
-						if(useParticles)
+//						if(useParticles)
 //							pass.spawn(e, 20, 5);
 						
 						e.hit(b.getShooter());
@@ -182,19 +191,8 @@ public class GameState extends State {
 				
 		//IN CASE OF DEFEAT
 		if(players.size == 0) {
-			game.enterState(States.MENUSTATE);
+			game.enterState(States.MAINMENUSTATE);
 		} else {
-			//Moving player
-			if(((GameInputProcessor) input.getInputProcessor()).isWDown())
-				player.changeAcceleration(0, 0.8f * player.getSpeedBonus());
-			if(((GameInputProcessor) input.getInputProcessor()).isADown())
-				player.changeAcceleration(-0.8f * player.getSpeedBonus(), 0);
-			if(((GameInputProcessor) input.getInputProcessor()).isSDown())
-				player.changeAcceleration(0, -0.8f * player.getSpeedBonus());
-			if(((GameInputProcessor) input.getInputProcessor()).isDDown())
-				player.changeAcceleration(0.8f * player.getSpeedBonus(), 0);
-			
-			
 			//Removing destroyed entities
 			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
 				Entity ent = it.next();
@@ -215,8 +213,8 @@ public class GameState extends State {
 			p.updateHitDetection();
 		}
 		
-		//Updating sticks
-//		updateAnalogSticks();
+		//Updating analog sticks
+		updateAnalogSticks();
 		
 		if(enemiesKilledThisWave >= wave)
 			nextWave();
@@ -243,15 +241,14 @@ public class GameState extends State {
 		game.batch.setProjectionMatrix(game.camera.combined);
 		game.batch.begin();
 		
-//		move.render(game.batch);
-//		shoot.render(game.batch);
+		move.render(game.batch);
+		shoot.render(game.batch);
 		
 		//Debugging
 		font.draw(game.batch, "Enities: " + entities.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
 		font.draw(game.batch, "Enemies: " + enemies.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
 		font.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
 						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
-		
 		
 		//Power-Ups
 		if(getPlayers().size != 0) {
@@ -306,10 +303,6 @@ public class GameState extends State {
 		scoreMultiplier = multiplier;
 	}
 	
-	/*public void setControls(Controls controls) {
-		this.controls = controls;
-	}*/
-	
 	@Override
 	public void enter() {
 		reset();
@@ -326,12 +319,16 @@ public class GameState extends State {
 		enemies.clear();
 		bullets.clear();
 		
-//		addEntity(new EnemyFast(400, 400, this));
+		addEntity(new EnemyFast(400, 400, this));
 		
-		addEntity(new EnemyWorm(200, 200, this));
+//		addEntity(new EnemyWorm(200, 200, this));
 	}
 	
 	//GETTERS
+	public Specular getGame() {
+		return game;
+	}
+	
 	public Array<Player> getPlayers() {
 		return players;
 	}
@@ -358,6 +355,14 @@ public class GameState extends State {
 	
 	public BitmapFont getFont() {
 		return font;
+	}
+	
+	public AnalogStick getMovingStick() {
+		return move;
+	}
+	
+	public AnalogStick getShootingStick() {
+		return shoot;
 	}
 	
 	@Override

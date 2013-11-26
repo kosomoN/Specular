@@ -1,4 +1,4 @@
-package com.tint.specular.menu;
+package com.tint.specular.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

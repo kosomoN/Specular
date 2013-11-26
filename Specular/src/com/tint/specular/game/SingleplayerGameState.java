@@ -7,8 +7,6 @@ import com.tint.specular.game.entities.Player;
 public class SingleplayerGameState extends GameState {
 	
 	//FIELDS
-	private Player player;
-	
 	public SingleplayerGameState(Specular game) {
 		super(game);
 	}
