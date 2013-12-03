@@ -3,7 +3,6 @@ package com.tint.specular.game.entities;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -89,7 +88,7 @@ public class Player implements Entity {
 	}
 	
 	public void updateMovement(GameInputProcessor processor) {
-		if(gs.getGame().system == 0) {
+		if(gs.getGame().prefs.getString("Controls").equals("Accelerometer and stick")) {
 			if(processor.isWDown())
 				changeAcceleration(0, 0.8f * getSpeedBonus());
 			if(processor.isADown())
@@ -98,35 +97,31 @@ public class Player implements Entity {
 				changeAcceleration(0, -0.8f * getSpeedBonus());
 			if(processor.isDDown())
 				changeAcceleration(0.8f * getSpeedBonus(), 0);
-		} else if(gs.getGame().system == 1 || gs.getGame().system == 2) {
+			
+			/*changeAcceleration(Gdx.input.getAccelerometerX() * 0.1f * 0.8f * getSpeedBonus(),
+					Gdx.input.getAccelerometerY() * 0.1f * 0.8f * getSpeedBonus());*/
+		} else if(gs.getGame().prefs.getString("Controls").equals("Two sticks")) {
 			double angle = Math.atan2(gs.getMovingStick().getYHead() 
 					- gs.getMovingStick().getYBase(), gs.getMovingStick().getXHead() 
 					- gs.getMovingStick().getXBase());
-			changeAcceleration((float) Math.cos(angle) * 0.8f,(float) Math.sin(angle) * 0.8f);
+			if(gs.getMovingStick().shallRender()) {
+				changeAcceleration((float) Math.cos(angle) * 0.8f,(float) Math.sin(angle) * 0.8f);
+			}
 		}
 	}
 	
 	public void updateShooting() {
 		timeSinceLastFire += 1;
 		
-		if(gs.getGame().system == 0 || gs.getGame().system == 3 ? Gdx.input.isTouched() : Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+		if(Gdx.input.isTouched()) {
 			if(timeSinceLastFire >= fireRate) {
 				
 				//TODO Uncomment to get random direction
 				float direction = 0;
-				if(gs.getGame().system == 0 || gs.getGame().system == 2) {
-					
-					direction = (float) (Math.toDegrees(Math.atan2(gs.getShootingStick().getYHead()
-						- gs.getShootingStick().getYBase(), gs.getShootingStick().getXHead()
-						- gs.getShootingStick().getXBase())));
-				} else if(gs.getGame().system == 1) {
-					System.out.println("Shooting");
-					direction = (float) (Math.toDegrees(Math.atan2(Gdx.input.getY()
-							- Gdx.graphics.getWidth() / 2, Gdx.input.getY()
-							- Gdx.graphics.getHeight() / 2)));
-				}
-					//+ Math.random() * 20 - 10);
-				
+				direction = (float) (Math.toDegrees(Math.atan2(gs.getShootingStick().getYHead()
+					- gs.getShootingStick().getYBase(), gs.getShootingStick().getXHead()
+					- gs.getShootingStick().getXBase())));
+
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
 				int spaces = bulletBurst - 1;
 				
@@ -181,14 +176,14 @@ public class Player implements Entity {
 		        			life--;
 		        			
 			        		if(centerx - getRadius() + dx < ((Enemy) e).getX() + ((Enemy) e).getInnerRadius())
-			                	dx = -dx ;
+			                	dx = -dx * 0.5f;
 			                else if(centerx + getRadius() + dx > ((Enemy) e).getX() - ((Enemy) e).getInnerRadius())
-			                	dx = -dx;
+			                	dx = -dx * 0.5f;
 			                
 			                if(centery - getRadius() + dy < ((Enemy) e).getY() + ((Enemy) e).getInnerRadius())
-			                	dy = -dy;
+			                	dy = -dy * 0.5f;
 			                else if(centery + getRadius() + dy > ((Enemy) e).getY() - ((Enemy) e).getInnerRadius())
-			                	dy = -dy;
+			                	dy = -dy * 0.5f;
 			        	}
 	        		}
 	        	} else if(e instanceof Player) {
@@ -225,7 +220,8 @@ public class Player implements Entity {
 	}
 	
 	public void addLives(int livesToAdd) {
-		life += livesToAdd;
+		if(life + livesToAdd <= 3)
+			life += livesToAdd;
 	}
 	
 	public void addScore(int score) {
@@ -271,7 +267,7 @@ public class Player implements Entity {
 	
 	public void reset() {
 		isDead = false;
-		setLife(1);
+		setLife(3);
 		speedTimer = new Timer(0);
 		bulletTimer = new Timer(0);
 		bulletTimer.setTime(5000);

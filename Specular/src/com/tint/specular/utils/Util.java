@@ -3,6 +3,7 @@ package com.tint.specular.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
@@ -106,5 +107,9 @@ public class Util {
 	public static void drawCentered(SpriteBatch batch, TextureRegion tex, float centerx, float centery, float rotation) {
 		batch.draw(tex, centerx - tex.getRegionWidth() / 2, centery - tex.getRegionHeight() / 2,
 				centerx, centery, tex.getRegionWidth(), tex.getRegionHeight(), 1, 1, rotation);
+	}
+	
+	public static void writeCentered(SpriteBatch batch, BitmapFont font, String s, float centerx, float centery) {
+		font.draw(batch, s, centerx - s.length() * font.getSpaceWidth() / 2, centery + font.getCapHeight() / 2);
 	}
 }

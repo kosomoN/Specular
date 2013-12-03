@@ -1,5 +1,6 @@
 package com.tint.specular.game;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.Array;
+import com.tint.specular.Setting;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
 import com.tint.specular.game.entities.Bullet;
@@ -27,21 +29,20 @@ import com.tint.specular.input.AnalogStick;
 import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
+import com.tint.specular.states.SettingsMenuState;
 import com.tint.specular.states.State;
 
 public class GameState extends State {
 	
-	//FIELDS
 	private static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	private float unprocessed;
 	private long lastTickTime = System.nanoTime();
 	
-	private int wave = 1;
-	private int enemiesKilledThisWave = 0;
-	private int totalEnemiesKilled = 0;
+	private float enemiesOnScreen = 0;
 	private float scoreMultiplier = 1;
 	
 	private boolean paused;
+	private boolean useParticles;
 	
 	private Array<Entity> entities = new Array<Entity>();
 	private Array<Player> players = new Array<Player>();
@@ -54,7 +55,6 @@ public class GameState extends State {
 	
 	private Music music;
 	private BitmapFont font = new BitmapFont();
-	
 	private Input input;
 	
 	protected Player player;
@@ -65,6 +65,8 @@ public class GameState extends State {
 //	protected ParticleSpawnSystem pass;
 	
 	protected AnalogStick move, shoot;
+	protected HashMap<String, Setting> settings;
+	protected boolean ready;
 	
 	//CONSTRUCTOR
 	public GameState(Specular game) {
@@ -88,13 +90,11 @@ public class GameState extends State {
 		ess = new EnemySpawnSystem(this);
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
-//		pass = new ParticleSpawnSystem(this);
 		
 		move = new AnalogStick();
 		shoot = new AnalogStick();
 		
 		input = Gdx.input;
-		input.setInputProcessor(new GameInputProcessor(game));
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
 	}
@@ -152,38 +152,25 @@ public class GameState extends State {
 	}
 	
 	public void releaseAnalogSticks(float x, float y, int pointer, int stick) {
-		//MoveStick
 		if(stick == 0) {
 			move.setRender(false);
-		}
-		//ShootStick
-		else if(stick == 1) {
+		} else if(stick == 1) {
 			shoot.setRender(false);
 		}
 	}
 	
 	protected void update() {
+		enemiesOnScreen += 0.01;
 		//Checking if any bullet hit an enemy
 		for(Bullet b : bullets) {
 			for(Enemy e : enemies) {
 				if(!e.isDead()) {
 					if(Math.pow(b.getX() - e.getX(), 2) + Math.pow(b.getY() - e.getY(), 2) <
 							Math.pow(e.getOuterRadius(), 2) + Math.pow(b.getWidth() / 2, 2)) {
-//						if(useParticles)
-//							pass.spawn(e, 20, 5);
 						
 						e.hit(b.getShooter());
 						b.hit();
 						
-						if(e.isDead()) {
-							enemiesKilledThisWave++;
-							totalEnemiesKilled++;
-							
-							//Spawning power-ups
-							if(totalEnemiesKilled % 5 == 0 && totalEnemiesKilled != 0) {
-								puss.spawn(e);
-							}
-						}
 					}
 				}
 			}
@@ -206,6 +193,9 @@ public class GameState extends State {
 					it.remove();
 				}
 			}
+			
+			if(enemies.size < Math.floor(enemiesOnScreen))
+				ess.spawn((int) Math.floor(enemiesOnScreen) - enemies.size);
 		}
 		
 		//Player hit detection
@@ -213,77 +203,69 @@ public class GameState extends State {
 			p.updateHitDetection();
 		}
 		
-		//Updating analog sticks
+		//Updating analog stick(s)
 		updateAnalogSticks();
-		
-		if(enemiesKilledThisWave >= wave)
-			nextWave();
-		
 	}
 	
 	protected void renderGame() {
-		//Clearing screen, positioning camera, rendering map and entities
-		Gdx.gl.glClearColor(0.2f, 0, 0, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		game.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
-		game.camera.update();
-		game.batch.setProjectionMatrix(game.camera.combined);
-		game.batch.begin();
-		currentMap.render(game.batch);
-		for(Entity ent : entities) {
-			ent.render(game.batch);
+		if(players.size != 0) {
+			//Clearing screen, positioning camera, rendering map and entities
+			Gdx.gl.glClearColor(0.2f, 0, 0, 1);
+			Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+			game.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
+			game.camera.update();
+			game.batch.setProjectionMatrix(game.camera.combined);
+			game.batch.begin();
+			currentMap.render(game.batch);
+			for(Entity ent : entities) {
+				ent.render(game.batch);
+			}
+			game.batch.end();
+			
+			//Drawing HUD
+			game.camera.position.set(0, 0, 0);
+			game.camera.update();
+			game.batch.setProjectionMatrix(game.camera.combined);
+			game.batch.begin();
+			
+			move.render(game.batch);
+			shoot.render(game.batch);
+			
+			//Debugging
+			font.draw(game.batch, "Enities: " + entities.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
+			font.draw(game.batch, "Player Life: " + player.getLife(), -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
+			font.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
+							-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
+			
+			//Power-Ups
+			if(getPlayers().size != 0) {
+				StringBuilder playerPowerUps = new StringBuilder();
+				StringBuilder enemyPowerUp = new StringBuilder();
+				if(players.get(players.size - 1).getBulletTimer().getTime() > 0)
+					playerPowerUps.append("BulletBurst, ");
+				if(players.get(players.size - 1).getSpeedTimer().getTime() > 0)
+					playerPowerUps.append("Speedboost, ");
+				else
+					playerPowerUps.append(" - ");
+				
+				if(enemies.size > 0 && enemies.get(0).getSpeedTimer().getTime() > 0)
+					enemyPowerUp.append("Slowdown, ");
+				else
+					enemyPowerUp.append(" - ");
+				
+				//Draw powerups affecting player
+				font.draw(game.batch, "Active PowerUps Player" + players.size + ": " + playerPowerUps.toString(),
+						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 90);
+				
+				//Draw powerups affecting enemies
+				font.draw(game.batch, "Active PowerUps Enemy: " + enemyPowerUp.toString(),
+						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 110);
+				
+			}
+			game.batch.end();
 		}
-		game.batch.end();
-		
-		//Drawing HUD
-		game.camera.position.set(0, 0, 0);
-		game.camera.update();
-		game.batch.setProjectionMatrix(game.camera.combined);
-		game.batch.begin();
-		
-		move.render(game.batch);
-		shoot.render(game.batch);
-		
-		//Debugging
-		font.draw(game.batch, "Enities: " + entities.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
-		font.draw(game.batch, "Enemies: " + enemies.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
-		font.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
-						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
-		
-		//Power-Ups
-		if(getPlayers().size != 0) {
-			StringBuilder playerPowerUps = new StringBuilder();
-			StringBuilder enemyPowerUp = new StringBuilder();
-			if(players.get(players.size - 1).getBulletTimer().getTime() > 0)
-				playerPowerUps.append("BulletBurst, ");
-			if(players.get(players.size - 1).getSpeedTimer().getTime() > 0)
-				playerPowerUps.append("Speedboost, ");
-			else
-				playerPowerUps.append(" - ");
-			
-			if(enemies.size > 0 && enemies.get(0).getSpeedTimer().getTime() > 0)
-				enemyPowerUp.append("Slowdown, ");
-			else
-				enemyPowerUp.append(" - ");
-			
-			//Draw powerups affecting player
-			font.draw(game.batch, "Active PowerUps Player" + players.size + ": " + playerPowerUps.toString(),
-					-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 90);
-			
-			//Draw powerups affecting enemies
-			font.draw(game.batch, "Active PowerUps Enemy: " + enemyPowerUp.toString(),
-					-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 110);
-			
-		}
-		game.batch.end();
 	}
 /*____________________________________________________________________*/
-	
-	public void nextWave() {
-		wave++;
-		ess.spawn(wave);
-		enemiesKilledThisWave = 0;
-	}
 	
 	//SETTERS
 	public void addEntity(Entity entity) {
@@ -303,16 +285,9 @@ public class GameState extends State {
 		scoreMultiplier = multiplier;
 	}
 	
-	@Override
-	public void enter() {
-		reset();
-	}
-	
 	private void reset() {
 		//Wave reset
-		wave = 1;
-		enemiesKilledThisWave = 0;
-		totalEnemiesKilled = 0;
+		enemiesOnScreen = 0;
 		
 		//Entity reset
 		entities.clear();
@@ -320,13 +295,17 @@ public class GameState extends State {
 		bullets.clear();
 		
 		addEntity(new EnemyFast(400, 400, this));
-		
-//		addEntity(new EnemyWorm(200, 200, this));
+		pss.spawn(1);
+		input.setInputProcessor(new GameInputProcessor(game));
 	}
 	
 	//GETTERS
 	public Specular getGame() {
 		return game;
+	}
+	
+	public HashMap<String, Setting> getSettings() {
+		return settings;
 	}
 	
 	public Array<Player> getPlayers() {
@@ -368,6 +347,15 @@ public class GameState extends State {
 	@Override
 	public void show() {
 		super.show();
+		settings = ((SettingsMenuState) game.getState(States.SETTINGSMENUSTATE)).getSettings();
+		game.prefs.putBoolean("Particles", settings.get("Particles").getSelectedValue().toString().equals("On"));
+		game.prefs.putString("Controls", settings.get("Controls").getSelectedValue().toString());
+		game.prefs.putFloat("Width", Float.parseFloat(settings.get("Resolution").getSelectedValue().toString().split("x")[0]));
+		game.prefs.putFloat("Height", Float.parseFloat(settings.get("Resolution").getSelectedValue().toString().split("x")[1]));
+		
+		useParticles = game.prefs.getBoolean("Particles");
+		reset();
+		
 		music.play();
 	}
 	

@@ -64,13 +64,10 @@ public class GameInputProcessor implements InputProcessor {
 		press = true;
 		pressPointer = pointer;
 		
-		if(game.system == 0) {
+		if(game.prefs.getString("Controls").equals("Accelerometer and stick")) {
 			shootPointer = pointer;
 			shooting = true;
-		} else if(game.system == 1) {
-			movePointer = pointer;
-			moving = true;
-		} else if(game.system == 2) {
+		} else if(game.prefs.getString("Controls").equals("Two sticks")) {
 			if(screenX <= Gdx.graphics.getWidth() / 2) {
 				movePointer = pointer;
 				moving = true;

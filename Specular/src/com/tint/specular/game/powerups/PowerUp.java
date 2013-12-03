@@ -12,7 +12,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 public class PowerUp implements Entity {
 
 	public enum Type {
-		ADD_ONE_LIFE, SPEEDBOOST, SLOWDOWN_ENEMIES, BULLETBURST, SCORE_MULTIPLIER_2X;
+		ADD_ONE_LIFE, SLOWDOWN_ENEMIES, BULLETBURST_3, BULLETBURST_5, SCORE_MULTIPLIER_2X;
 	}
 	
 	//FIELDS
@@ -31,23 +31,18 @@ public class PowerUp implements Entity {
 		this.type = type;
 		this.gs = gs;
 		
-		setType(type);
+		setTexture(type);
 	}
 	
 	public PowerUp(Type type) {
 		this.type = type;
-		setType(type);
+		setTexture(type);
 	}
 	
 	public void affect(Player player, Array<Enemy> enemies) {
 		switch(type) {
 		case ADD_ONE_LIFE :
 			player.addLives(1);
-			break;
-			
-		case SPEEDBOOST :
-			player.activateSpeedBonus();
-			player.setTimer(player.getSpeedTimer(), 5000f);
 			break;
 			
 		case SLOWDOWN_ENEMIES :
@@ -57,7 +52,12 @@ public class PowerUp implements Entity {
 			}
 			break;
 			
-		case BULLETBURST :
+		case BULLETBURST_3 :
+			player.setBulletBurst(3);
+			player.setTimer(player.getBulletTimer(), 5000f);
+			break;
+			
+		case BULLETBURST_5 :
 			player.setBulletBurst(3);
 			player.setTimer(player.getBulletTimer(), 5000f);
 			break;
@@ -84,7 +84,6 @@ public class PowerUp implements Entity {
 	
 	@Override
 	public boolean update() {
-		
 		for(Player p : gs.getPlayers()) {
 			if(Math.pow(getCenterX() - p.getCenterX(), 2) +	Math.pow(getCenterY() - p.getCenterY(), 2)
 					< Math.pow(Player.getRadius() + (getCenterX() - getX()), 2)) {
@@ -106,14 +105,9 @@ public class PowerUp implements Entity {
 		this.y = y;
 	}
 	
-	private void setType(Type type) {
+	private void setTexture(Type type) {
 		switch(type) {
 		case ADD_ONE_LIFE :
-			//Set texture
-			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
-			break;
-			
-		case SPEEDBOOST :
 			//Set texture
 			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
 			break;
@@ -123,7 +117,12 @@ public class PowerUp implements Entity {
 			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
 			break;
 			
-		case BULLETBURST :
+		case BULLETBURST_3 :
+			//Set Texture
+			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
+			break;
+			
+		case BULLETBURST_5 :
 			//Set Texture
 			texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
 			break;

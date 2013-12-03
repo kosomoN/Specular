@@ -11,7 +11,7 @@ import com.tint.specular.ui.Button;
 public class MainmenuState extends State {
 
 	//FIELDS
-//	private static Texture background;
+//	private Texture background;
 	private Music music;
 	private Button playBtn, exitBtn;
 	
@@ -24,14 +24,8 @@ public class MainmenuState extends State {
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/04.ogg"));
 		
-		//TODO Set texture, set size and position according to that
-		playBtn = new Button();
-		playBtn.setSize(100, 30);
-		playBtn.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-		
-		exitBtn = new Button();
-		exitBtn.setSize(100, 30);
-		exitBtn.setPosition(150, 150);
+		playBtn = new Button(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 100, 30);
+		exitBtn = new Button(150, 150, 100, 30);
 	}
 	
 	//RENDER&UPDATE loop
@@ -58,14 +52,11 @@ public class MainmenuState extends State {
 	}
 	
 	public void update(float delta) {
-		playBtn.update(delta);
-		exitBtn.update(delta);
-		
 		if(Gdx.input.justTouched()) {
-			if(playBtn.isOver(Gdx.input.getX(), Gdx.input.getY())) {
+			if(playBtn.isOver(Gdx.input.getX(), Gdx.input.getY(), true)) {
 				music.stop();
 				game.enterState(States.SINGLEPLAYER_GAMESTATE);
-			} else if(exitBtn.isOver(Gdx.input.getX(), Gdx.input.getY())) {
+			} else if(exitBtn.isOver(Gdx.input.getX(), Gdx.input.getY(), true)) {
 				music.stop();
 				Gdx.app.exit();
 			}

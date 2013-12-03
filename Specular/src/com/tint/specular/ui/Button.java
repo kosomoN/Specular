@@ -14,20 +14,12 @@ public class Button {
 	private Rectangle hitbox;
 	private Texture texture;
 	
-	private boolean isPressed;
-	
-	//CONSTRUCTOR
 	public Button() {
-		hitbox = new Rectangle(0, 0, 1, 1);
-	}
-	
-	public Button(float x, float y) {
-		hitbox.setPosition(x, y);
+		hitbox = new Rectangle();
 	}
 	
 	public Button(float x, float y, float width, float height) {
-		hitbox.setPosition(x, y);
-		hitbox.setSize(width, height);
+		hitbox = new Rectangle(x, y, width, height);
 	}
 	
 	//RENDER&UPDATE loop
@@ -38,25 +30,19 @@ public class Button {
 	
 	public void renderShape(ShapeRenderer shape) {
 		shape.begin(ShapeType.Filled);
-		shape.setColor(Color.YELLOW);
+		shape.setColor(Color.RED);
 		shape.rect(hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
 		shape.end();
 	}
 	
-	public void update(float delta) {
-		if(Gdx.input.justTouched()) {
-			if(hitbox.contains(Gdx.input.getX(), Gdx.input.getY())) {
-				isPressed = true;
-				return;
-			}
-		}
-				
-		isPressed = false;
-	}
 /*_____________________________________________________________________*/
 	
-	public boolean isOver(float x, float y) {
-		return hitbox.contains(x, Gdx.graphics.getHeight() - y);
+	public boolean isOver(float x, float y, boolean topLeftCorner) {
+		if(topLeftCorner) {
+			return hitbox.contains(x, Gdx.graphics.getHeight() - y);
+		} else {
+			return hitbox.contains(x, y);
+		}
 	}
 	
 	//SETTERS
@@ -71,7 +57,6 @@ public class Button {
 	public float getHeight() { return hitbox.getHeight(); }
 	public Rectangle getHitbox() { return hitbox; }
 	public Texture getTexture() { return texture; }
-	public boolean isPressed() { return isPressed; }
 	
 	public void dispose() {
 		texture.dispose();
