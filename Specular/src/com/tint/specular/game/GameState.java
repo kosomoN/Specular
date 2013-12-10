@@ -2,6 +2,7 @@ package com.tint.specular.game;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -29,7 +30,6 @@ import com.tint.specular.input.AnalogStick;
 import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
-import com.tint.specular.states.SettingsMenuState;
 import com.tint.specular.states.State;
 
 public class GameState extends State {
@@ -37,12 +37,14 @@ public class GameState extends State {
 	private static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	private float unprocessed;
 	private long lastTickTime = System.nanoTime();
+	private long timePlayedInMillis;
 	
 	private float enemiesOnScreen = 0;
-	private float scoreMultiplier = 1;
+	private float multiplierTime;
+	private double scoreMultiplier = 1;
 	
 	private boolean paused;
-	private boolean useParticles;
+//	private boolean useParticles;
 	
 	private Array<Entity> entities = new Array<Entity>();
 	private Array<Player> players = new Array<Player>();
@@ -64,11 +66,9 @@ public class GameState extends State {
 	protected PowerUpSpawnSystem puss;
 //	protected ParticleSpawnSystem pass;
 	
-	protected AnalogStick move, shoot;
 	protected HashMap<String, Setting> settings;
 	protected boolean ready;
 	
-	//CONSTRUCTOR
 	public GameState(Specular game) {
 		super(game);
 		
@@ -90,9 +90,6 @@ public class GameState extends State {
 		ess = new EnemySpawnSystem(this);
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
-		
-		move = new AnalogStick();
-		shoot = new AnalogStick();
 		
 		input = Gdx.input;
 		
@@ -117,49 +114,16 @@ public class GameState extends State {
 		}
 	}
 	
-	public void updateAnalogSticks() {
-		GameInputProcessor processor = (GameInputProcessor) input.getInputProcessor();
-		if(processor.isPressed()) {
-			if(processor.getPressPointer() == processor.getMovePointer()) {
-				move.setBasePos(input.getX(processor.getMovePointer()) - Gdx.graphics.getWidth() / 2,
-						- (input.getY(processor.getMovePointer()) - Gdx.graphics.getHeight() / 2));
-			} else if(processor.getPressPointer() == processor.getShootPointer()) {
-				shoot.setBasePos(input.getX(processor.getShootPointer()) - Gdx.graphics.getWidth() / 2,
-						- (input.getY(processor.getShootPointer()) - Gdx.graphics.getHeight() / 2));
-			}
-			
-			processor.setPress(false);
-		}
-		
-		if(processor.isShooting()) {
-			//Shooting with stick
-			shoot.setRender(true);
-			
-			shoot.setHeadPos(input.getX(processor.getShootPointer()) - Gdx.graphics.getWidth() / 2,
-					- (input.getY(processor.getShootPointer()) - Gdx.graphics.getHeight() / 2));
-		} else {
-			shoot.setRender(false);
-		}
-			
-		if(processor.isMoving()) {
-			move.setRender(true);
-			
-			move.setHeadPos(input.getX(processor.getMovePointer()) - Gdx.graphics.getWidth() / 2,
-					- (input.getY(processor.getMovePointer()) - Gdx.graphics.getHeight() / 2));
-		} else {
-			move.setRender(false);
-		}
-	}
-	
-	public void releaseAnalogSticks(float x, float y, int pointer, int stick) {
-		if(stick == 0) {
-			move.setRender(false);
-		} else if(stick == 1) {
-			shoot.setRender(false);
-		}
-	}
-	
 	protected void update() {
+		//Adding played time
+		timePlayedInMillis += 10;
+		
+		//Updating score multiplier
+		multiplierTime += 10;
+		if(multiplierTime % 1000 == 0)
+			setScoreMultiplier(getScoreMultiplier() - 0.1);
+		
+		
 		enemiesOnScreen += 0.01;
 		//Checking if any bullet hit an enemy
 		for(Bullet b : bullets) {
@@ -171,12 +135,17 @@ public class GameState extends State {
 						e.hit(b.getShooter());
 						b.hit();
 						
+						//5% chance every hit to generate a power-up
+						Random r = new Random();
+						if(r.nextInt(100) < 5) {
+							puss.spawn(e);
+						}
 					}
 				}
 			}
 		}
 				
-		//IN CASE OF DEFEAT
+		//In case of death it won't update entities
 		if(players.size == 0) {
 			game.enterState(States.MAINMENUSTATE);
 		} else {
@@ -188,23 +157,21 @@ public class GameState extends State {
 						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
 					else if(ent instanceof Bullet)
 						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
-					else if(ent instanceof Player) {}
 						
 					it.remove();
 				}
 			}
 			
-			if(enemies.size < Math.floor(enemiesOnScreen))
-				ess.spawn((int) Math.floor(enemiesOnScreen) - enemies.size);
+			//Spawning new enemies
+			if(timePlayedInMillis >= 2000)
+				if(enemies.size < Math.floor(enemiesOnScreen))
+					ess.spawn((int) Math.floor(enemiesOnScreen) - enemies.size);
 		}
 		
 		//Player hit detection
 		for(Player p : players) {
 			p.updateHitDetection();
 		}
-		
-		//Updating analog stick(s)
-		updateAnalogSticks();
 	}
 	
 	protected void renderGame() {
@@ -228,8 +195,9 @@ public class GameState extends State {
 			game.batch.setProjectionMatrix(game.camera.combined);
 			game.batch.begin();
 			
-			move.render(game.batch);
-			shoot.render(game.batch);
+			//Drawing analogsticks
+			getProcessor().getShootStick().render(game.batch);
+			getProcessor().getMoveStick().render(game.batch);
 			
 			//Debugging
 			font.draw(game.batch, "Enities: " + entities.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
@@ -281,8 +249,9 @@ public class GameState extends State {
 		entities.add(entity);
 	}
 	
-	public void setScoreMultiplier(float multiplier) {
-		scoreMultiplier = multiplier;
+	public void setScoreMultiplier(double multiplier) {
+		scoreMultiplier = multiplier < 1 ? 1 : multiplier;
+		multiplierTime = 0;
 	}
 	
 	private void reset() {
@@ -294,7 +263,6 @@ public class GameState extends State {
 		enemies.clear();
 		bullets.clear();
 		
-		addEntity(new EnemyFast(400, 400, this));
 		pss.spawn(1);
 		input.setInputProcessor(new GameInputProcessor(game));
 	}
@@ -302,6 +270,10 @@ public class GameState extends State {
 	//GETTERS
 	public Specular getGame() {
 		return game;
+	}
+	
+	public GameInputProcessor getProcessor() {
+		return (GameInputProcessor) Gdx.input.getInputProcessor();
 	}
 	
 	public HashMap<String, Setting> getSettings() {
@@ -324,8 +296,12 @@ public class GameState extends State {
 		return currentMap;
 	}
 	
-	public float getScoreMultiplier() {
+	public double getScoreMultiplier() {
 		return scoreMultiplier;
+	}
+	
+	public long getTimePlayed() {
+		return timePlayedInMillis;
 	}
 	
 //	public ParticleSpawnSystem getParticleSpawnSystem() {
@@ -336,26 +312,20 @@ public class GameState extends State {
 		return font;
 	}
 	
-	public AnalogStick getMovingStick() {
-		return move;
-	}
-	
-	public AnalogStick getShootingStick() {
-		return shoot;
-	}
-	
 	@Override
 	public void show() {
 		super.show();
-		settings = ((SettingsMenuState) game.getState(States.SETTINGSMENUSTATE)).getSettings();
+		
+		/*settings = ((SettingsMenuState) game.getState(States.SETTINGSMENUSTATE)).getSettings();
 		game.prefs.putBoolean("Particles", settings.get("Particles").getSelectedValue().toString().equals("On"));
 		game.prefs.putString("Controls", settings.get("Controls").getSelectedValue().toString());
 		game.prefs.putFloat("Width", Float.parseFloat(settings.get("Resolution").getSelectedValue().toString().split("x")[0]));
 		game.prefs.putFloat("Height", Float.parseFloat(settings.get("Resolution").getSelectedValue().toString().split("x")[1]));
 		
-		useParticles = game.prefs.getBoolean("Particles");
+		useParticles = game.prefs.getBoolean("Particles");*/
 		reset();
 		
+		timePlayedInMillis = 0;
 		music.play();
 	}
 	

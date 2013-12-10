@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
-import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.utils.Timer;
 import com.tint.specular.utils.Util;
 
@@ -24,7 +23,7 @@ public class Player implements Entity {
 	
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
-	private float timeSinceLastFire, fireRate = 6f;
+	private float timeSinceLastFire, fireRate = 10f;
 	
 	private int life = 5;
 	private int speedBonus = 1;
@@ -63,7 +62,7 @@ public class Player implements Entity {
 			setBulletBurst(1);
 		
 		//Moving
-		updateMovement((GameInputProcessor) Gdx.input.getInputProcessor());
+		updateMovement();
 		
 		//Shooting
 		updateShooting();
@@ -87,40 +86,41 @@ public class Player implements Entity {
         return isDead;
 	}
 	
-	public void updateMovement(GameInputProcessor processor) {
-		if(gs.getGame().prefs.getString("Controls").equals("Accelerometer and stick")) {
-			if(processor.isWDown())
-				changeAcceleration(0, 0.8f * getSpeedBonus());
-			if(processor.isADown())
-				changeAcceleration(-0.8f * getSpeedBonus(), 0);
-			if(processor.isSDown())
-				changeAcceleration(0, -0.8f * getSpeedBonus());
-			if(processor.isDDown())
-				changeAcceleration(0.8f * getSpeedBonus(), 0);
+	public void updateMovement() {
+		if(gs.getProcessor().isWDown())
+			changeAcceleration(0, 0.6f * getSpeedBonus());
+		if(gs.getProcessor().isADown())
+			changeAcceleration(-0.6f * getSpeedBonus(), 0);
+		if(gs.getProcessor().isSDown())
+			changeAcceleration(0, -0.6f * getSpeedBonus());
+		if(gs.getProcessor().isDDown())
+			changeAcceleration(0.6f * getSpeedBonus(), 0);
+		
+		/*changeAcceleration(Gdx.input.getAccelerometerX() * 0.1f * 0.6f * getSpeedBonus(),
+				Gdx.input.getAccelerometerY() * 0.1f * 0.6f * getSpeedBonus());
+		
+		
+		if(gs.getProcessor().getMoveStick().isActive()) {
+			//calculating the angle with delta x and delta y
+			double angle = Math.atan2(gs.getProcessor().getMoveStick().getYHead() 
+				- gs.getProcessor().getMoveStick().getYBase(), gs.getProcessor().getMoveStick().getXHead() 
+				- gs.getProcessor().getMoveStick().getXBase());
 			
-			/*changeAcceleration(Gdx.input.getAccelerometerX() * 0.1f * 0.8f * getSpeedBonus(),
-					Gdx.input.getAccelerometerY() * 0.1f * 0.8f * getSpeedBonus());*/
-		} else if(gs.getGame().prefs.getString("Controls").equals("Two sticks")) {
-			double angle = Math.atan2(gs.getMovingStick().getYHead() 
-					- gs.getMovingStick().getYBase(), gs.getMovingStick().getXHead() 
-					- gs.getMovingStick().getXBase());
-			if(gs.getMovingStick().shallRender()) {
-				changeAcceleration((float) Math.cos(angle) * 0.8f,(float) Math.sin(angle) * 0.8f);
-			}
-		}
+			changeAcceleration((float) Math.cos(angle) * 0.6f,(float) Math.sin(angle) * 0.6f);
+		}*/
 	}
 	
 	public void updateShooting() {
 		timeSinceLastFire += 1;
 		
-		if(Gdx.input.isTouched()) {
+		if(gs.getProcessor().getShootStick().isActive()) {
 			if(timeSinceLastFire >= fireRate) {
 				
 				//TODO Uncomment to get random direction
 				float direction = 0;
-				direction = (float) (Math.toDegrees(Math.atan2(gs.getShootingStick().getYHead()
-					- gs.getShootingStick().getYBase(), gs.getShootingStick().getXHead()
-					- gs.getShootingStick().getXBase())));
+				direction = (float) (Math.toDegrees(Math.atan2(gs.getProcessor().getShootStick().getYHead()
+					- gs.getProcessor().getShootStick().getYBase(), gs.getProcessor().getShootStick().getXHead()
+					- gs.getProcessor().getShootStick().getXBase())));
 
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
 				int spaces = bulletBurst - 1;
@@ -143,9 +143,9 @@ public class Player implements Entity {
 				} else {
 					gs.addEntity(new Bullet(centerx, centery, direction, dx, dy, gs, this));
 
-					for(int i = 0; i < spaces; i++) {
-						gs.addEntity(new Bullet(centerx, centery, direction + i * offset, dx, dy, gs, this));
-						gs.addEntity(new Bullet(centerx, centery, direction - i * offset, dx, dy, gs, this));
+					for(int i = 0; i < spaces / 2; i++) {
+						gs.addEntity(new Bullet(centerx, centery, direction + (i + 1) * offset, dx, dy, gs, this));
+						gs.addEntity(new Bullet(centerx, centery, direction - (i + 1) * offset, dx, dy, gs, this));
 					}
 				}
 				
@@ -254,6 +254,7 @@ public class Player implements Entity {
 	public static float getRadius() { return (anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
 	public int getLife() { return life;	}
 	public int getSpeedBonus() { return speedBonus;	}
+	public int getBulletBurst() { return bulletBurst; }
 	public int getScore() { return score; }
 	public boolean isDead() { return isDead; }
 	public Timer getSpeedTimer() { return speedTimer; }
@@ -270,10 +271,9 @@ public class Player implements Entity {
 		setLife(3);
 		speedTimer = new Timer(0);
 		bulletTimer = new Timer(0);
-		bulletTimer.setTime(5000);
 		deactivateSpeedBonus();
 		
-		setBulletBurst(3);
+		setBulletBurst(1);
 	}
 
 	@Override

@@ -7,18 +7,13 @@ import com.tint.specular.Specular;
 
 public class GameInputProcessor implements InputProcessor {
 
-	private int movePointer = -1, shootPointer = -1;
-	private int pressPointer;
-	
-	private boolean moving, shooting;
-	private boolean press;
 	private boolean w, a, s, d;
-	private boolean space;
 	
-	private Specular game;
+	private AnalogStick shoot, move;
 	
 	public GameInputProcessor(Specular game) {
-		this.game = game;
+		shoot = new AnalogStick();
+		move = new AnalogStick();
 	}
 	
 	@Override
@@ -31,8 +26,6 @@ public class GameInputProcessor implements InputProcessor {
 			s = true;
 		else if(keycode == Keys.D)
 			d = true;
-		else if(keycode == Keys.SPACE)
-			space = true;
 		
 		return false;
 	}
@@ -47,9 +40,6 @@ public class GameInputProcessor implements InputProcessor {
 			s = false;
 		else if(keycode == Keys.D)
 			d = false;
-		else if(keycode == Keys.SPACE)
-			space = false;
-		
 		
 		return false;
 	}
@@ -61,32 +51,29 @@ public class GameInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		press = true;
-		pressPointer = pointer;
-		
-		if(game.prefs.getString("Controls").equals("Accelerometer and stick")) {
+		/*if(game.prefs.getString("Controls").equals("Accelerometer and stick")) {
 			shootPointer = pointer;
 			shooting = true;
-		} else if(game.prefs.getString("Controls").equals("Two sticks")) {
+		} else if(game.prefs.getString("Controls").equals("Two sticks")) {*/
 			if(screenX <= Gdx.graphics.getWidth() / 2) {
-				movePointer = pointer;
-				moving = true;
+				move.setBasePos(Gdx.input.getX(move.getPointer()) - Gdx.graphics.getWidth() / 2,
+						- (Gdx.input.getY(move.getPointer()) - Gdx.graphics.getHeight() / 2));
+				move.setPointer(pointer);
 			} else {
-				shootPointer = pointer;
-				shooting = true;
+				shoot.setBasePos(Gdx.input.getX(shoot.getPointer()) - Gdx.graphics.getWidth() / 2,
+						- (Gdx.input.getY(shoot.getPointer()) - Gdx.graphics.getHeight() / 2));
+				shoot.setPointer(pointer);
 			}
-		}
-		return false;
+
+			return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if(movePointer == pointer) {
-			moving = false;
-			movePointer = -1;
-		} else if(shootPointer == pointer) {
-			shooting = false;
-			shootPointer = -1;
+		if(move.getPointer() == pointer) {
+			move.setPointer(-1);
+		} else if(shoot.getPointer() == pointer) {
+			shoot.setPointer(-1);
 		}
 		
 		return false;
@@ -94,6 +81,14 @@ public class GameInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		if(pointer == shoot.getPointer())
+		shoot.setHeadPos(Gdx.input.getX(shoot.getPointer()) - Gdx.graphics.getWidth() / 2,
+				- (Gdx.input.getY(shoot.getPointer()) - Gdx.graphics.getHeight() / 2));
+		
+		else if(pointer == move.getPointer())
+		move.setHeadPos(Gdx.input.getX(shoot.getPointer()) - Gdx.graphics.getWidth() / 2,
+				- (Gdx.input.getY(shoot.getPointer()) - Gdx.graphics.getHeight() / 2));
+		
 		return false;
 	}
 
@@ -123,39 +118,11 @@ public class GameInputProcessor implements InputProcessor {
 		return d;
 	}
 	
-	public boolean isSpaceDown() {
-		return space;
+	public AnalogStick getMoveStick() {
+		return move;
 	}
 	
-	public boolean isPressed() {
-		return press;
-	}
-	
-	public int getMovePointer() {
-		return movePointer;
-	}
-	
-	public int getShootPointer() {
-		return shootPointer;
-	}
-	
-	public int getPressPointer() {
-		return pressPointer;
-	}
-	
-	public boolean isMoving() {
-		return moving;
-	}
-	
-	public boolean isShooting() {
-		return shooting;
-	}
-	
-	public void setPress(boolean b) {
-		press = b;
-	}
-	
-	public void resetPressPointer() {
-		pressPointer = -1;
+	public AnalogStick getShootStick() {
+		return shoot;
 	}
 }

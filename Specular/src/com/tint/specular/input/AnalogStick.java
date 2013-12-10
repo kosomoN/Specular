@@ -10,10 +10,10 @@ public class AnalogStick {
 	public static Texture base, head;
 	
 	private float xBase, yBase, xHead, yHead;
-	private boolean render;
+	private int pointer;
 	
 	public AnalogStick() {
-		
+		pointer = -1;
 	}
 	
 	public static void init() {
@@ -22,7 +22,7 @@ public class AnalogStick {
 	}
 	
 	public void render(SpriteBatch batch) {
-		if(render) {
+		if(isActive()) {
 			Util.drawCentered(batch, base, xBase, yBase, 0);
 			Util.drawCentered(batch, head, xHead, yHead, 0);
 		}
@@ -38,8 +38,8 @@ public class AnalogStick {
 		this.yHead = yHead;
 	}
 	
-	public void setRender(boolean render) {
-		this.render = render;
+	public void setPointer(int pointer) {
+		this.pointer = pointer;
 	}
 
 	public float getXBase() {
@@ -58,7 +58,11 @@ public class AnalogStick {
 		return yHead;
 	}
 	
-	public boolean shallRender() {
-		return render;
+	public int getPointer() {
+		return pointer;
+	}
+	
+	public boolean isActive() {
+		return pointer != -1;
 	}
 }

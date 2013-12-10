@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.tint.specular.game.MultiplayerGameState;
 import com.tint.specular.game.SingleplayerGameState;
 import com.tint.specular.states.MainmenuState;
-import com.tint.specular.states.SettingsMenuState;
 import com.tint.specular.states.State;
 
 public class Specular extends Game {
@@ -40,11 +39,11 @@ public class Specular extends Game {
 		prefs = Gdx.app.getPreferences("Preferences");
 		
 		states.put(States.MAINMENUSTATE, new MainmenuState(this));
-		states.put(States.SETTINGSMENUSTATE, new SettingsMenuState(this));
+//		states.put(States.SETTINGSMENUSTATE, new SettingsMenuState(this));
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
 		states.put(States.MULTIPLAYER_GAMESTATE, new MultiplayerGameState(this));
 		
-		enterState(States.SETTINGSMENUSTATE);
+		enterState(States.MAINMENUSTATE);
 	}
 	
 	public void enterState(States state) {

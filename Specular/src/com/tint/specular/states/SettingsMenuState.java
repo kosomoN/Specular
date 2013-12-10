@@ -3,15 +3,25 @@ package com.tint.specular.states;
 import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox.SelectBoxStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.tint.specular.Setting;
 import com.tint.specular.Specular;
-import com.tint.specular.Specular.States;
-import com.tint.specular.input.MenuInputProcessor;
-import com.tint.specular.ui.Button;
-import com.tint.specular.utils.Util;
 
 public class SettingsMenuState extends State {
 	//FIELDS
@@ -21,18 +31,24 @@ public class SettingsMenuState extends State {
 	private float sensitivity;
 	private int controls;
 
-	private BitmapFont font = new BitmapFont();
 	private Texture background;
 	private HashMap<String, Setting> settings = new HashMap<String, Setting>();
 	
-	private Specular game;
-	private Button back;
+	//LibGDX scene stuff
+	private Stage stage;
+	private Skin skin;
+	
+	/* TO-DO:
+	 * Graphics for every little bit of menu
+	 * List of objects to the selectbox
+	 * 
+	 */
 	
 	public SettingsMenuState(Specular game) {
 		super(game);
 		this.game = game;
 		
-		settings.put("Resolution", new Setting(Gdx.graphics.getDisplayModes()[0].width + "x" + Gdx.graphics.getDisplayModes()[0].height));
+		/*settings.put("Resolution", new Setting(Gdx.graphics.getDisplayModes()[0].width + "x" + Gdx.graphics.getDisplayModes()[0].height));
 		settings.get("Resolution").addValue("600x480");
 		settings.get("Resolution").setButtonDimensions(40, 40, 40, 40);
 		settings.get("Resolution").setButtonPositions(Gdx.graphics.getWidth() / 2 - 140, 200, Gdx.graphics.getWidth() / 2 + 100, 200);
@@ -44,9 +60,76 @@ public class SettingsMenuState extends State {
 		settings.put("Controls", new Setting("Accelerometer and stick", "Two stick"));
 		settings.get("Controls").setButtonDimensions(40, 40, 40, 40);
 		settings.get("Controls").setButtonPositions(Gdx.graphics.getWidth() / 2 - 140, 400, Gdx.graphics.getWidth() / 2 + 100, 400);
+		*/
+		/*------------------------------------------------------------------------------------------------------*/
+		Texture btnTextures = new Texture(Gdx.files.internal("graphics/mainmenu/Buttons.png"));
+		
+		stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.input.setInputProcessor(stage);
+		
+		skin = new Skin();
+		
+		//Adding a default font
+		skin.add("default", new BitmapFont());
+		
+		//Button style based on the skins
+		TextButtonStyle btnStyle = new TextButtonStyle();
+		btnStyle.up = (Drawable) new TextureRegion(btnTextures, 0, 0, 32, 32);
+		btnStyle.down = (Drawable) new TextureRegion(btnTextures, 33, 0, 32, 32);
+		btnStyle.over = (Drawable) new TextureRegion(btnTextures, 0, 33, 32, 32);
+		btnStyle.checked =  (Drawable) new TextureRegion(btnTextures, 33, 33, 32, 32);
+		btnStyle.font = skin.getFont("default");
+		skin.add("default", btnStyle);
+		
+		//Scrollpane style
+		ScrollPaneStyle paneStyle = new ScrollPaneStyle();
+		paneStyle.background = null;
+		paneStyle.hScroll = null;
+		paneStyle.hScrollKnob = null;
+		
+		//List style
+		ListStyle listStyle = new ListStyle();
+		listStyle.font = skin.getFont("default");
+		listStyle.fontColorSelected = Color.LIGHT_GRAY;
+		listStyle.fontColorUnselected = Color.DARK_GRAY;
+		listStyle.selection = null;
+		
+		//Dropdown list style
+		SelectBoxStyle boxStyle = new SelectBoxStyle();
+		boxStyle.background = null;
+		boxStyle.scrollStyle = paneStyle;
+		boxStyle.listStyle = listStyle;
+		boxStyle.font = skin.getFont("default");
+		boxStyle.fontColor = Color.WHITE;
+		boxStyle.disabledFontColor = Color.GRAY;
+		
+		//A container holding scene2d objects
+		Table table = new Table();
+		table.setFillParent(true);
+		stage.addActor(table);
+		
+		//Widgets
+		/*________________________________________________________________*/
+		
+		//back button
+		TextButton back = new TextButton("Click me!", skin);
 		
 		
-		back = new Button(10, Gdx.graphics.getHeight() - 50, 40, 40);
+		//Adding a input listener to the button
+		back.addListener(new InputListener() {
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("down");
+				return true;
+			}
+		});
+		
+		//Adding the button to the table container
+		table.add(back);
+		
+		//Dropdown list
+		SelectBox list = new SelectBox(null, boxStyle);
+		table.add(list);
 	}
 
 	@Override
@@ -56,14 +139,15 @@ public class SettingsMenuState extends State {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		//Positioning camera
-		game.camera.position.set(0, 0, 0);
+		/*game.camera.position.set(0, 0, 0);
 		game.camera.update();
-		game.batch.setProjectionMatrix(game.camera.combined);
+		game.batch.setProjectionMatrix(game.camera.combined);*/
 		
+		stage.act(10);
+		stage.draw();
 		//Drawing
-		game.batch.begin();
+		/*game.batch.begin();
 //		game.batch.draw(background, 0, 0);
-		back.renderShape(game.shape);
 		
 		//Drawing headers
 		Util.writeCentered(game.batch, font, "Controls", Gdx.graphics.getWidth() / 2,
@@ -88,6 +172,7 @@ public class SettingsMenuState extends State {
 		}
 		
 		game.batch.end();
+		*/
 	}
 	
 	public void update() {
@@ -96,9 +181,9 @@ public class SettingsMenuState extends State {
 	
 	public void updateButtons(float x, float y) {
 		for(String str : settings.keySet()) {
-			if(back.isOver(x, y, true)) {
+			/*if(back.isOver(x, y, true)) {
 				game.enterState(States.MAINMENUSTATE);
-			} else if(settings.get(str).getNextButton().isOver(x, y, true)) {
+			} else */if(settings.get(str).getNextButton().isOver(x, y, true)) {
 				settings.get(str).setIndex(settings.get(str).getIndex() + 1);
 			} else if(settings.get(str).getPreviousButton().isOver(x, y, true)) {
 				settings.get(str).setIndex(settings.get(str).getIndex() - 1);
@@ -153,6 +238,6 @@ public class SettingsMenuState extends State {
 	@Override
 	public void show() {
 		super.show();
-		Gdx.input.setInputProcessor(new MenuInputProcessor(this));
+//		Gdx.input.setInputProcessor(new MenuInputProcessor(this));
 	}
 }

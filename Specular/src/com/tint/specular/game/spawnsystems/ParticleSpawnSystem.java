@@ -1,4 +1,4 @@
-package com.tint.specular.game.spawnsystems;
+/*package com.tint.specular.game.spawnsystems;
 
 import java.util.Random;
 
@@ -51,7 +51,7 @@ public class ParticleSpawnSystem {
 					
 					//Adding particle to the game
 					gs.addEntity(p);*/
-				} else if(ent instanceof Player) {
+				/*} else if(ent instanceof Player) {
 					
 					//Particle
 					p = new Particle(((Player) ent).getCenterX(), ((Player) ent).getCenterY(),
@@ -68,4 +68,4 @@ public class ParticleSpawnSystem {
 			}	
 		}
 	}
-}
+}*/

@@ -19,31 +19,14 @@ public class Bullet implements Entity {
 	private Player shooter;
 	
 	//CONSTRUCTOR
-	public Bullet(float x, float y, float direction, float initalDx, float initalDy, GameState gs, Player shooter) {
+	public Bullet(float x, float y, float direction, float initialDx, float initialDy, GameState gs, Player shooter) {
 		this.x = x;
 		this.y = y;
 		float cos = (float) Math.cos(Math.toRadians(direction));
 		float sin = (float) Math.sin(Math.toRadians(direction));
 		this.dx = cos * 15;
 		this.dy = sin * 15;
-		
-		/*float minimumOffset;
-		
-		if(dx < dy)
-			minimumOffset = Math.abs(15 - dx);
-		else
-			minimumOffset = Math.abs(15 - dy);*/
-		
-		if(Math.abs(dx + initalDx) > 15)
-			dx += initalDx;
-		/*else
-			dx += minimumOffset;*/
-		
-		if(Math.abs(dy + initalDy) > 15)
-			dy += initalDy;
-		/*else
-			dy += minimumOffset;*/
-		
+
 		this.x += cos * 32;
 		this.y += sin * 32;
 		
