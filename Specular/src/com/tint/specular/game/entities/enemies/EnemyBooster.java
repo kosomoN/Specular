@@ -29,13 +29,15 @@ public class EnemyBooster extends Enemy {
 /*________________________________________________________________________________*/
 	@Override
 	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction));
+		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction) - 90);
+		
+		Util.drawCentered(batch, tex, 100, 100, 0);
 	}
 	
 	@Override
 	public boolean update() {
 		if(boostingDelay > 30) {
-			speed += 0.2;
+			speed += 0.1;
 			
 			dx = (float) (Math.cos(direction) * speed);
 			dy = (float) (Math.sin(direction) * speed);
