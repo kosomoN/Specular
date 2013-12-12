@@ -13,7 +13,7 @@ public class SlowdownEnemies extends PowerUp {
 
 	public void affect(Array<Enemy> enemies) {
 		for(Enemy e : enemies) {
-			e.setSpeedUtilization(0.5f);
+			e.setSlowdown(0.5f);
 			e.setTimer(5);
 		}
 	}

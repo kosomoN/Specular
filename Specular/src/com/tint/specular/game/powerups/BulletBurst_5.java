@@ -11,7 +11,6 @@ public class BulletBurst_5 extends PowerUp {
 
 	public void affect(Player player) {
 		player.setBulletBurst(5);
-		player.setTimer(player.getBulletTimer(), 5000);
 	}
 	
 	@Override

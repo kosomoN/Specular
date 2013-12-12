@@ -3,6 +3,7 @@ package com.tint.specular.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.tint.specular.Specular;
@@ -18,9 +19,9 @@ public class MainmenuState extends State {
 	public MainmenuState(Specular game) {
 		super(game);
 		
-		Texture.setEnforcePotImages(false);
+		GLTexture.setEnforcePotImages(false);
 		
-		background = new Texture("graphics/mainmenu/Menu.png");
+		background = new Texture(Gdx.files.internal("graphics/mainmenu/Menu.png"));
 		background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/04.ogg"));
@@ -86,6 +87,9 @@ public class MainmenuState extends State {
 	@Override
 	public void show() {
 		super.show();
+		game.camera.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
+		game.camera.update();
+		game.batch.setProjectionMatrix(game.camera.combined);
 		music.play();
 	}
 

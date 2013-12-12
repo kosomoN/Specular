@@ -2,14 +2,15 @@ package com.tint.specular.game;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Setting;
 import com.tint.specular.Specular;
@@ -31,6 +32,7 @@ import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.State;
+import com.tint.specular.utils.Util;
 
 public class GameState extends State {
 	
@@ -56,8 +58,11 @@ public class GameState extends State {
 	private Map currentMap;
 	
 	private Music music;
-	private BitmapFont font = new BitmapFont();
 	private Input input;
+	
+	private BitmapFont arial15 = new BitmapFont();
+	private BitmapFont font30;
+	public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
 	
 	protected Player player;
 	
@@ -72,11 +77,19 @@ public class GameState extends State {
 	public GameState(Specular game) {
 		super(game);
 		
+		//Loading map texture from a internal directory
 		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Map.png"));
 		
+		//Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
 		mapHandler.addMap("Map", mapTexture, mapTexture.getWidth() * 2, mapTexture.getHeight() * 2);
 		currentMap = mapHandler.getMap("Map");
+		
+		//Initializing font
+		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
+		font30 = fontGen.generateFont(30, FONT_CHARACTERS, false);
+		font30.setColor(Color.RED);
+		fontGen.dispose();
 		
 		Player.init();
 		Bullet.init();
@@ -136,10 +149,10 @@ public class GameState extends State {
 						b.hit();
 						
 						//5% chance every hit to generate a power-up
-						Random r = new Random();
+						/*Random r = new Random();
 						if(r.nextInt(100) < 5) {
 							puss.spawn(e);
-						}
+						}*/
 					}
 				}
 			}
@@ -189,7 +202,7 @@ public class GameState extends State {
 			}
 			game.batch.end();
 			
-			//Drawing HUD
+			//Positioning camera
 			game.camera.position.set(0, 0, 0);
 			game.camera.update();
 			game.batch.setProjectionMatrix(game.camera.combined);
@@ -198,38 +211,18 @@ public class GameState extends State {
 			//Drawing analogsticks
 			getProcessor().getShootStick().render(game.batch);
 			getProcessor().getMoveStick().render(game.batch);
+			player.renderLifebar(game.batch);
+			
+			//Drawing score
+			Util.writeCentered(game.batch, font30, "SCORE: " + player.getScore(), 0,
+					Gdx.graphics.getHeight() / 2 - font30.getCapHeight() - 10);
 			
 			//Debugging
-			font.draw(game.batch, "Enities: " + entities.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
-			font.draw(game.batch, "Player Life: " + player.getLife(), -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
-			font.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
+			arial15.draw(game.batch, "Enities: " + entities.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
+			arial15.draw(game.batch, "Player Life: " + player.getLife(), -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
+			arial15.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
 							-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
 			
-			//Power-Ups
-			if(getPlayers().size != 0) {
-				StringBuilder playerPowerUps = new StringBuilder();
-				StringBuilder enemyPowerUp = new StringBuilder();
-				if(players.get(players.size - 1).getBulletTimer().getTime() > 0)
-					playerPowerUps.append("BulletBurst, ");
-				if(players.get(players.size - 1).getSpeedTimer().getTime() > 0)
-					playerPowerUps.append("Speedboost, ");
-				else
-					playerPowerUps.append(" - ");
-				
-				if(enemies.size > 0 && enemies.get(0).getSpeedTimer().getTime() > 0)
-					enemyPowerUp.append("Slowdown, ");
-				else
-					enemyPowerUp.append(" - ");
-				
-				//Draw powerups affecting player
-				font.draw(game.batch, "Active PowerUps Player" + players.size + ": " + playerPowerUps.toString(),
-						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 90);
-				
-				//Draw powerups affecting enemies
-				font.draw(game.batch, "Active PowerUps Enemy: " + enemyPowerUp.toString(),
-						-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 110);
-				
-			}
 			game.batch.end();
 		}
 	}
@@ -308,8 +301,16 @@ public class GameState extends State {
 //		return pass;
 //	}
 	
-	public BitmapFont getFont() {
-		return font;
+	public BitmapFont getCustomFont(int size) {
+			if(size == 30)
+				return font30;
+			
+			System.err.println("No font such font" + size);
+			return null;
+	}
+	
+	public BitmapFont getDefaultFont() {
+		return arial15;
 	}
 	
 	@Override

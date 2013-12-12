@@ -21,7 +21,7 @@ public class EnemyNormal extends Enemy {
 		this.width = tex.getWidth();
 		this.height = tex.getHeight();
 		
-		speedUtilization = 1;
+		slowdown = 0;
 		life = 2;
 		
 	    if(Math.random() < 0.5) {
@@ -44,8 +44,8 @@ public class EnemyNormal extends Enemy {
 		double angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x) + offset;
 		dx = (float) (Math.cos(angle) * 2);
 		dy = (float) (Math.sin(angle) * 2);
-		x += dx * speedUtilization;
-		y += dy * speedUtilization;
+		x += dx * (1 - slowdown);
+		y += dy * (1 - slowdown);
 		
 		if(x - 20 < 0) {
 			offset = -offset;
@@ -70,6 +70,7 @@ public class EnemyNormal extends Enemy {
 		return tex.getWidth() / 4;
 	}
 	
+	@Override
 	public float getOuterRadius() {
 		return tex.getWidth() / 2;
 	}

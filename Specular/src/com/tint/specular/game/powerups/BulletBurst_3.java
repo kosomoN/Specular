@@ -12,7 +12,6 @@ public class BulletBurst_3 extends PowerUp {
 	public void affect(Player player) {
 		if(player.getBulletBurst() != 5) {
 			player.setBulletBurst(3);
-			player.setTimer(player.getBulletTimer(), 5000);
 		}
 	}
 	

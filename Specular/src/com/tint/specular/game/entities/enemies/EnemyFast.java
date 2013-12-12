@@ -18,7 +18,7 @@ public class EnemyFast extends Enemy {
 	public EnemyFast(float x, float y, GameState gs) {
 		super(x, y, gs);
 		
-		speedUtilization = 1;
+		slowdown = 1;
 		life = 2;
 	}
 
@@ -35,8 +35,8 @@ public class EnemyFast extends Enemy {
 		double angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
 		dx = (float) (Math.cos(angle) * 3);
 		dy = (float) (Math.sin(angle) * 3);
-		x += dx * speedUtilization;
-		y += dy * speedUtilization;
+		x += dx * (1 - slowdown);
+		y += dy * (1 - slowdown);
 		
 		return super.update();
 	}

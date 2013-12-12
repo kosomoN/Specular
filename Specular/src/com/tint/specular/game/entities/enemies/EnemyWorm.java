@@ -9,7 +9,6 @@ import com.tint.specular.game.GameState;
 public class EnemyWorm extends Enemy {
 	
 	private static Texture body1Tex, body2Tex, headTex, tailTex;
-	private static final double TURN_RATE = 0.04;
 	
 	private Array<Part> parts = new Array<Part>();
 	private Part head;
@@ -73,8 +72,6 @@ public class EnemyWorm extends Enemy {
 				goingToX = nextPart.oldX;
 				goingToX = nextPart.oldY;
 			}
-			
-			System.out.println(partIndex);
 		}
 		
 		public void render(SpriteBatch batch) {

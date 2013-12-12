@@ -13,7 +13,7 @@ public abstract class Enemy implements Entity {
 	protected float width, height;
 	protected float direction;
 	
-	protected float speedUtilization;
+	protected float slowdown;
 	
 	protected int life;
 	protected boolean isHit;
@@ -33,7 +33,7 @@ public abstract class Enemy implements Entity {
 	@Override
 	public boolean update() {
 		if(!speedTimer.update(10))
-			setSpeedUtilization(1);
+			setSlowdown(0);
 		if(killer != null) {
 			killer.setHit(false);
 			killer = null;
@@ -45,22 +45,20 @@ public abstract class Enemy implements Entity {
 	//SETTERS
 	/**
 	 * 
-	 * @param utilization - Max value 1, minimum value 0.
+	 * @param slowdown - Max value 1, minimum value 0.
 	 * If it higher or lower than the restriction it will be changed to
 	 * nearest accepted value
 	 */
-	public void setSpeedUtilization(float utilization) {
-		speedUtilization = utilization;
+	public void setSlowdown(float slowdown) {
+		this.slowdown = slowdown;
 		
 		//Checking boundaries
-		speedUtilization = speedUtilization > 1 ? 1 : speedUtilization;
-		speedUtilization = speedUtilization < 0 ? 0 : speedUtilization;
+		slowdown = slowdown > 1 ? 1 : slowdown;
+		slowdown = slowdown < 0 ? 0 : slowdown;
 	}
 	
 	public void setTimer(float seconds) {
-		if(speedTimer.getTime() <= 0) {
-			speedTimer.setTime(seconds < 0 ? 0: seconds);
-		}
+		speedTimer.setTime(seconds < 0 ? 0: seconds);
 	}
 	
 	public void hit(Player shooter) {

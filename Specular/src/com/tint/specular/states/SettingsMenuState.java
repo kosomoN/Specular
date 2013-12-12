@@ -31,7 +31,7 @@ public class SettingsMenuState extends State {
 	private float sensitivity;
 	private int controls;
 
-	private Texture background;
+//	private Texture background;
 	private HashMap<String, Setting> settings = new HashMap<String, Setting>();
 	
 	//LibGDX scene stuff

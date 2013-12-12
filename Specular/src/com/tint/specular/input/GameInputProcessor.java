@@ -58,10 +58,16 @@ public class GameInputProcessor implements InputProcessor {
 			if(screenX <= Gdx.graphics.getWidth() / 2) {
 				move.setBasePos(Gdx.input.getX(move.getPointer()) - Gdx.graphics.getWidth() / 2,
 						- (Gdx.input.getY(move.getPointer()) - Gdx.graphics.getHeight() / 2));
+				move.setHeadPos(Gdx.input.getX(move.getPointer()) - Gdx.graphics.getWidth() / 2,
+						- (Gdx.input.getY(move.getPointer()) - Gdx.graphics.getHeight() / 2));
+				
 				move.setPointer(pointer);
 			} else {
 				shoot.setBasePos(Gdx.input.getX(shoot.getPointer()) - Gdx.graphics.getWidth() / 2,
 						- (Gdx.input.getY(shoot.getPointer()) - Gdx.graphics.getHeight() / 2));
+				shoot.setHeadPos(Gdx.input.getX(shoot.getPointer()) - Gdx.graphics.getWidth() / 2,
+						- (Gdx.input.getY(shoot.getPointer()) - Gdx.graphics.getHeight() / 2));
+				
 				shoot.setPointer(pointer);
 			}
 

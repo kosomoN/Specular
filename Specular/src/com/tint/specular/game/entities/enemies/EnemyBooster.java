@@ -10,18 +10,16 @@ import com.tint.specular.utils.Util;
 
 public class EnemyBooster extends Enemy {
 
-	//FIELDS
 	private static Texture tex;
 	
 	private float speed;
 	private double direction;
 	private int boostingDelay;
 	
-	//CONSTRUCTOR
 	public EnemyBooster(float x, float y, GameState gs) {
 		super(x, y, gs);
 		
-		speedUtilization = 1;
+		slowdown = 0;
 		life = 1;
 	}
 
@@ -41,8 +39,8 @@ public class EnemyBooster extends Enemy {
 			
 			dx = (float) (Math.cos(direction) * speed);
 			dy = (float) (Math.sin(direction) * speed);
-			x += dx * speedUtilization;
-			y += dy * speedUtilization;
+			x += dx * (1 - slowdown);
+			y += dy * (1 - slowdown);
 			
 			if(speedTimer.getTime() > 0) {
 				speedTimer.setTime(speedTimer.getTime() - 10);
@@ -57,6 +55,7 @@ public class EnemyBooster extends Enemy {
 			boostingDelay++;
 		}
 		
+		//Checking so that the enemy will not get outside the map
 		if(x - 20 < 0) {
 			x = 20;
 			boostingDelay = 0;
@@ -83,6 +82,7 @@ public class EnemyBooster extends Enemy {
 		return tex.getWidth() / 4;
 	}
 	
+	@Override
 	public float getOuterRadius() {
 		return tex.getWidth() / 2;
 	}

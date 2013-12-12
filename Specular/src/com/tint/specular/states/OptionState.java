@@ -2,12 +2,11 @@ package com.tint.specular.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL11;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.tint.specular.Specular;
-import com.tint.specular.states.State;
 import com.tint.specular.utils.Util;
 
 public class OptionState extends State {
@@ -40,7 +39,7 @@ public class OptionState extends State {
 	public void render(float delta) {
 		//Rendering
 		Gdx.gl.glClearColor(30f / 255, 0, 0, 1);
-		Gdx.gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		game.batch.begin();
 		game.batch.draw(scrollbar, scrollbarBox.getX(), scrollbarBox.getY(), scrollbarBox.getWidth(),
