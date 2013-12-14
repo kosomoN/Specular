@@ -5,15 +5,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
+import com.tint.specular.utils.Util;
 
 public class PowerUp implements Entity {
+	
 	private float x, y;
-	private boolean toBeRemoved = false;
 	
 	private Texture texture;
-	
 	protected GameState gs;
-	protected boolean collected;
 	
 	//Constructors
 	public PowerUp(float x, float y, GameState gs) {
@@ -27,14 +26,12 @@ public class PowerUp implements Entity {
 /*_________________________________________________________________*/
 	@Override
 	public void render(SpriteBatch batch) {
-		if(texture != null) {
-			batch.draw(texture, x, y);
-		}
+		Util.drawCentered(batch, texture, x, y, 0);
 	}
 	
 	@Override
 	public boolean update() {
-		return collected;
+		return true;
 	}
 /*_________________________________________________________________*/
 	
@@ -45,11 +42,9 @@ public class PowerUp implements Entity {
 	}
 	
 	//GETTERS
-	public float getCenterX() { return x + texture.getWidth() / 2; }
-	public float getCenterY() {	return y + texture.getHeight() / 2; }
-	public float getX() { return x;	}
-	public float getY() { return y; }
-	public boolean toBeRemoved() { return toBeRemoved; }
+	public float getCenterX() { return x; }
+	public float getCenterY() {	return y; }
+	public float getRadius() { return texture.getWidth() / 2; }
 	public Texture getTexture() { return texture; }
 	
 	@Override

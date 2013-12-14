@@ -19,12 +19,11 @@ public class BulletBurst_3 extends PowerUp {
 	public boolean update() {
 		for(Player p : gs.getPlayers()) {
 			if(Math.pow(getCenterX() - p.getCenterX(), 2) +	Math.pow(getCenterY() - p.getCenterY(), 2)
-					< Math.pow(Player.getRadius() + (getCenterX() - getX()), 2)) {
+					< Math.pow(Player.getRadius() + getRadius(), 2)) {
 				affect(p);
 				return true;
 			}
 		}
-		
 		return false;
 	}
 }

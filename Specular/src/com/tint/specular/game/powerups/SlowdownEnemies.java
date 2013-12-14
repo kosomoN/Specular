@@ -14,7 +14,6 @@ public class SlowdownEnemies extends PowerUp {
 	public void affect(Array<Enemy> enemies) {
 		for(Enemy e : enemies) {
 			e.setSlowdown(0.5f);
-			e.setTimer(5);
 		}
 	}
 	
@@ -22,12 +21,11 @@ public class SlowdownEnemies extends PowerUp {
 	public boolean update() {
 		for(Player p : gs.getPlayers()) {
 			if(Math.pow(getCenterX() - p.getCenterX(), 2) +	Math.pow(getCenterY() - p.getCenterY(), 2)
-					< Math.pow(Player.getRadius() + (getCenterX() - getX()), 2)) {
+					< Math.pow(Player.getRadius() + getRadius(), 2)) {
 				affect(gs.getEnemies());
-				collected = true;
+				return true;
 			}
 		}
-		
-		return collected;
+		return false;
 	}
 }

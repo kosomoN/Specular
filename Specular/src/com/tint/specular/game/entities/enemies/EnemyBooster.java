@@ -28,12 +28,11 @@ public class EnemyBooster extends Enemy {
 	@Override
 	public void render(SpriteBatch batch) {
 		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction) - 90);
-		
-		Util.drawCentered(batch, tex, 100, 100, 0);
 	}
 	
 	@Override
 	public boolean update() {
+		//Boosting and changing direction
 		if(boostingDelay > 30) {
 			speed += 0.1;
 			
@@ -41,10 +40,6 @@ public class EnemyBooster extends Enemy {
 			dy = (float) (Math.sin(direction) * speed);
 			x += dx * (1 - slowdown);
 			y += dy * (1 - slowdown);
-			
-			if(speedTimer.getTime() > 0) {
-				speedTimer.setTime(speedTimer.getTime() - 10);
-			}
 			
 			boostingDelay++;
 		} else if(boostingDelay == 0) {
@@ -78,14 +73,9 @@ public class EnemyBooster extends Enemy {
 	
 	//GETTERS
 	@Override
-	public float getInnerRadius() {
-		return tex.getWidth() / 4;
-	}
-	
+	public float getInnerRadius() { return tex.getWidth() / 4; }
 	@Override
-	public float getOuterRadius() {
-		return tex.getWidth() / 2;
-	}
+	public float getOuterRadius() { return tex.getWidth() / 2; }
 	
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Booster.png"));
@@ -103,14 +93,4 @@ public class EnemyBooster extends Enemy {
 	public void dispose() {
 		tex.dispose();
 	}
-
-	/*@Override
-	public float getDeltaX() {
-		return dx;
-	}
-
-	@Override
-	public float getDeltaY() {
-		return dy;
-	}*/
 }

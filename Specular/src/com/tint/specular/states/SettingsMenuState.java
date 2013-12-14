@@ -38,12 +38,6 @@ public class SettingsMenuState extends State {
 	private Stage stage;
 	private Skin skin;
 	
-	/* TO-DO:
-	 * Graphics for every little bit of menu
-	 * List of objects to the selectbox
-	 * 
-	 */
-	
 	public SettingsMenuState(Specular game) {
 		super(game);
 		this.game = game;

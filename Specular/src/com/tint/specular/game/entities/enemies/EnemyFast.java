@@ -17,9 +17,8 @@ public class EnemyFast extends Enemy {
 	//CONSTRUCTOR
 	public EnemyFast(float x, float y, GameState gs) {
 		super(x, y, gs);
-		
-		slowdown = 1;
-		life = 2;
+		slowdown = 0;
+		life = 3;
 	}
 
 	//RENDER&UPDATE loop
@@ -32,7 +31,9 @@ public class EnemyFast extends Enemy {
 	
 	@Override
 	public boolean update() {
+		//Calculating angle of movement based on closest player
 		double angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
+		
 		dx = (float) (Math.cos(angle) * 3);
 		dy = (float) (Math.sin(angle) * 3);
 		x += dx * (1 - slowdown);
@@ -60,22 +61,7 @@ public class EnemyFast extends Enemy {
 	}
 
 	@Override
-	public float getInnerRadius() {
-		return 16;
-	}
-
+	public float getInnerRadius() { return tex.getWidth() / 4; }
 	@Override
-	public float getOuterRadius() {
-		return 32;
-	}
-
-	/*@Override
-	public float getDeltaX() {
-		return dx;
-	}
-
-	@Override
-	public float getDeltaY() {
-		return dy;
-	}*/
+	public float getOuterRadius() { return tex.getWidth() / 2; }
 }

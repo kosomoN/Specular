@@ -26,8 +26,8 @@ public class MainmenuState extends State {
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/04.ogg"));
 		int backgroundWidth = Gdx.graphics.getHeight() * 16 / 9;
-		System.out.println(backgroundWidth);
-		
+
+		//Setting up buttons for main menu
 		int y = Gdx.graphics.getHeight() * 380 / 1080;
 		int x = backgroundWidth * 800 / 1920;
 		

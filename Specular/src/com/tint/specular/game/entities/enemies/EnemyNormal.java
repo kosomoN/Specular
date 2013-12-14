@@ -22,7 +22,7 @@ public class EnemyNormal extends Enemy {
 		this.height = tex.getHeight();
 		
 		slowdown = 0;
-		life = 2;
+		life = 5;
 		
 	    if(Math.random() < 0.5) {
 	    	offset = (float) Math.toRadians(60);
@@ -47,6 +47,7 @@ public class EnemyNormal extends Enemy {
 		x += dx * (1 - slowdown);
 		y += dy * (1 - slowdown);
 		
+		//Checking map boundaries
 		if(x - 20 < 0) {
 			offset = -offset;
 		} else if(x + 20 > gs.getCurrentMap().getHeight()){
@@ -66,14 +67,9 @@ public class EnemyNormal extends Enemy {
 	
 	//GETTERS
 	@Override
-	public float getInnerRadius() {
-		return tex.getWidth() / 4;
-	}
-	
+	public float getInnerRadius() { return tex.getWidth() / 4; }
 	@Override
-	public float getOuterRadius() {
-		return tex.getWidth() / 2;
-	}
+	public float getOuterRadius() { return tex.getWidth() / 2; }
 
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Normal.png"));
@@ -91,14 +87,4 @@ public class EnemyNormal extends Enemy {
 	public void dispose() {
 		tex.dispose();
 	}
-
-	/*@Override
-	public float getDeltaX() {
-		return dx;
-	}
-
-	@Override
-	public float getDeltaY() {
-		return dy;
-	}*/
 }

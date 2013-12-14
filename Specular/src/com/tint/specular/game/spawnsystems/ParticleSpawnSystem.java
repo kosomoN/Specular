@@ -12,11 +12,10 @@ import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
 
-public class ParticleSpawnSystem {
+public class ParticleSpawnSystem extends SpawnSystem {
 	
-	private GameState gs;
-	private Random rand;
 	public ParticleSpawnSystem(GameState gs) {
+		super(gs);
 		this.gs = gs;
 		rand = new Random();
 	}

@@ -18,8 +18,7 @@ public class Player implements Entity {
 	
 	private static Animation anim;
 	private static Texture texture;
-	private static Texture lifeBar;
-	private static Texture lifeTex;
+	private static Texture lifeBar, lifeTex;
 	
 	private GameState gs;
 	
@@ -27,9 +26,7 @@ public class Player implements Entity {
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
 	
-	private int life = 5;
-	private int lifeY = 512;
-	private int targetLifeY = 512;
+	private int life = 5, lifeY = 512, targetLifeY = 512;
 	
 	private int bulletBurst = 2;
 	private int score = 0;
@@ -182,14 +179,16 @@ public class Player implements Entity {
 	        for(Iterator<Entity> it = gs.getEntities().iterator(); it.hasNext(); ) {
 	        	Entity e = it.next();
 	        	if(e instanceof Enemy) {
-	        		if(!((Enemy) e).isDead()) {
+	        		if(((Enemy) e).getLife() > 0) {
 		        		if(Math.pow(centerx - ((Enemy) e).getX(), 2) + Math.pow(centery - ((Enemy) e).getY(), 2)
 			    			< Math.pow(getRadius() + ((Enemy) e).getInnerRadius(), 2)) {
 		        			
 //			        		gs.getParticleSpawnSystem().spawn((Enemy) e, 20, 5);
 		        			
 		        			it.remove();
-		        			addLives(-1);
+		        			
+		        			if(getLife() > 0)
+		        				addLives(-1);
 		        			
 			        		if(centerx - getRadius() + dx < ((Enemy) e).getX() + ((Enemy) e).getInnerRadius())
 			                	dx = -dx * 0.5f;
@@ -234,10 +233,10 @@ public class Player implements Entity {
 		if(life == 3)
 			targetLifeY = 512;
 		else if(life == 2)
-			targetLifeY = 410;
+			targetLifeY = 408;
 		else if(life == 1)
 			targetLifeY = 265;
-		else if(life == 0)
+		else if(life <= 0)
 			targetLifeY = 0;
 	}
 	
@@ -267,7 +266,7 @@ public class Player implements Entity {
 	public float getCenterY() { return centery;	}
 	public float getDeltaX() { return dx; }
 	public float getDeltaY() { return dy; }
-	public static float getRadius() { return 64; }//(anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
+	public static float getRadius() { return (anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
 	public int getScore() { return score; }
@@ -275,15 +274,14 @@ public class Player implements Entity {
 	public GameState getGameState() { return gs; }
 	
 	public static void init() {
-		lifeBar = new Texture(Gdx.files.absolute("C:/Users/daniel/Spare Time/Workspace/Specular-android/assets/graphics/game/Lifebar.png"));
-		lifeTex = new Texture(Gdx.files.absolute("C:/Users/daniel/Spare Time/Workspace/Specular-android/assets/graphics/game/Life.png"));
-		texture  = new Texture(Gdx.files.absolute("C:/Users/daniel/Spare Time/Workspace/Specular-android/assets/graphics/game/Player.png"));
+		lifeBar = new Texture(Gdx.files.internal("graphics/game/Lifebar.png"));
+		lifeTex = new Texture(Gdx.files.internal("graphics/game/Life.png"));
+		texture  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
 		anim = Util.getAnimation(texture, 64, 64, 1 / 16f, 0, 0, 7, 3);
 	}
 	
 	public void reset() {
 		setLife(3);
-		setBulletBurst(5);
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package com.tint.specular.game.spawnsystems;
 
-import java.util.Random;
-
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
@@ -10,16 +8,12 @@ import com.tint.specular.game.entities.enemies.EnemyNormal;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.utils.Util;
 
-public class EnemySpawnSystem {
-	
-	private GameState gs;
-	private Random rand;
+public class EnemySpawnSystem extends SpawnSystem {
 	
 	private int enemiesSpawned = 0;
 	
 	public EnemySpawnSystem(GameState gs) {
-		this.gs = gs;
-		rand = new Random();
+		super(gs);
 	}
 
 	public void spawn(int wave) {

@@ -6,12 +6,11 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.powerups.*;
 
-public class PowerUpSpawnSystem {
+public class PowerUpSpawnSystem extends SpawnSystem {
 
-	private GameState gs;
 	
 	public PowerUpSpawnSystem(GameState gs) {
-		this.gs = gs;
+		super(gs);
 	}
 	
 	public void spawn(Enemy e) {
@@ -20,7 +19,7 @@ public class PowerUpSpawnSystem {
 		
 		float x = e.getX(), y = e.getY();
 		
-		//Doing so that no powerup spawns "outside" the map
+		//Checking so that no powerup spawns "outside" the map
 		if(x > gs.getCurrentMap().getWidth() - 32)
 			x = gs.getCurrentMap().getWidth() - 32;
 		else if(x < 32)

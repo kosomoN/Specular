@@ -1,24 +1,18 @@
 package com.tint.specular.game.spawnsystems;
 
-import java.util.Random;
-
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.utils.Util;
 
-public class PlayerSpawnSystem {
-	
-	//FIELDS
-	private GameState gs;
-	private Random rand;
+public class PlayerSpawnSystem extends SpawnSystem {
 	
 	public PlayerSpawnSystem(GameState gs) {
-		this.gs = gs;
-		rand = new Random();
+		super(gs);
 	}
 	
+	@Override
 	public void spawn(int playerAmount) {
 		int x, y;
 		int playersSpawned = 0;

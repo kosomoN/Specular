@@ -46,7 +46,6 @@ public class GameState extends State {
 	private double scoreMultiplier = 1;
 	
 	private boolean paused;
-//	private boolean useParticles;
 	
 	private Array<Entity> entities = new Array<Entity>();
 	private Array<Player> players = new Array<Player>();
@@ -121,9 +120,7 @@ public class GameState extends State {
 	        	unprocessed--;
 	        	update();
 	        }
-	        if(players.size != 0) {
-	        	renderGame();
-	        }
+	        renderGame();
 		}
 	}
 	
@@ -138,31 +135,34 @@ public class GameState extends State {
 		
 		
 		enemiesOnScreen += 0.01;
-		//Checking if any bullet hit an enemy
-		for(Bullet b : bullets) {
-			for(Enemy e : enemies) {
-				if(!e.isDead()) {
-					if(Math.pow(b.getX() - e.getX(), 2) + Math.pow(b.getY() - e.getY(), 2) <
-							Math.pow(e.getOuterRadius(), 2) + Math.pow(b.getWidth() / 2, 2)) {
-						
-						e.hit(b.getShooter());
-						b.hit();
-						
-						//5% chance every hit to generate a power-up
-						/*Random r = new Random();
-						if(r.nextInt(100) < 5) {
-							puss.spawn(e);
-						}*/
+		if(player != null && player.getLife() > 0) {
+			//Checking if any bullet hit an enemy
+			for(Bullet b : bullets) {
+				for(Enemy e : enemies) {
+					if(e.getLife() > 0) {
+						if(Math.pow(b.getX() - e.getX(), 2) + Math.pow(b.getY() - e.getY(), 2) <
+								Math.pow(e.getOuterRadius(), 2) + Math.pow(b.getWidth() / 2, 2)) {
+							
+							e.hit(b.getShooter());
+							b.hit();
+							
+							//5% chance every hit to generate a power-up
+							/*Random r = new Random();
+							if(r.nextInt(100) < 5) {
+								puss.spawn(e);
+							}*/
+						}
 					}
 				}
 			}
 		}
-				
-		//In case of death it won't update entities
-		if(players.size == 0) {
+		
+		//Not moving on until lifebar is empty
+		if(player != null && player.isDead())
 			game.enterState(States.MAINMENUSTATE);
-		} else {
-			//Removing destroyed entities
+
+		//Removing destroyed entities
+		if(players.size != 0) {
 			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
 				Entity ent = it.next();
 				if(ent.update()) {
@@ -174,12 +174,12 @@ public class GameState extends State {
 					it.remove();
 				}
 			}
-			
-			//Spawning new enemies
-			if(timePlayedInMillis >= 2000)
-				if(enemies.size < Math.floor(enemiesOnScreen))
-					ess.spawn((int) Math.floor(enemiesOnScreen) - enemies.size);
 		}
+		
+		//Spawning new enemies
+		if(timePlayedInMillis >= 2000)
+			if(enemies.size < Math.floor(enemiesOnScreen))
+				ess.spawn((int) Math.floor(enemiesOnScreen) - enemies.size);
 		
 		//Player hit detection
 		for(Player p : players) {
@@ -247,19 +247,6 @@ public class GameState extends State {
 		multiplierTime = 0;
 	}
 	
-	private void reset() {
-		//Wave reset
-		enemiesOnScreen = 0;
-		
-		//Entity reset
-		entities.clear();
-		enemies.clear();
-		bullets.clear();
-		
-		pss.spawn(1);
-		input.setInputProcessor(new GameInputProcessor(game));
-	}
-	
 	//GETTERS
 	public Specular getGame() {
 		return game;
@@ -297,33 +284,45 @@ public class GameState extends State {
 		return timePlayedInMillis;
 	}
 	
-//	public ParticleSpawnSystem getParticleSpawnSystem() {
-//		return pass;
-//	}
-	
+	/** Get a custom BitmapFont based on its size. If ther is no font with that size it returns null.
+	 * @param size - The size of the wanted font
+	 * @return The custom font
+	 */
 	public BitmapFont getCustomFont(int size) {
 			if(size == 30)
 				return font30;
 			
-			System.err.println("No font such font" + size);
+			System.err.println("No font with size " + size);
 			return null;
 	}
 	
+	/**
+	 * Gets the default font which is the arial font with size 15
+	 * @return Arial font
+	 */
 	public BitmapFont getDefaultFont() {
 		return arial15;
+	}
+	
+	private void reset() {
+		//Entity reset
+		entities.clear();
+		enemies.clear();
+		players.clear();
+		bullets.clear();
+		
+		//Wave reset
+		enemiesOnScreen = 0;
+		
+		//Adding player and setting up input processor
+		pss.spawn(1);
+		input.setInputProcessor(new GameInputProcessor(game));
 	}
 	
 	@Override
 	public void show() {
 		super.show();
 		
-		/*settings = ((SettingsMenuState) game.getState(States.SETTINGSMENUSTATE)).getSettings();
-		game.prefs.putBoolean("Particles", settings.get("Particles").getSelectedValue().toString().equals("On"));
-		game.prefs.putString("Controls", settings.get("Controls").getSelectedValue().toString());
-		game.prefs.putFloat("Width", Float.parseFloat(settings.get("Resolution").getSelectedValue().toString().split("x")[0]));
-		game.prefs.putFloat("Height", Float.parseFloat(settings.get("Resolution").getSelectedValue().toString().split("x")[1]));
-		
-		useParticles = game.prefs.getBoolean("Particles");*/
 		reset();
 		
 		timePlayedInMillis = 0;

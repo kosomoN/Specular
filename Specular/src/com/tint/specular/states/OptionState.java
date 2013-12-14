@@ -11,8 +11,6 @@ import com.tint.specular.utils.Util;
 
 public class OptionState extends State {
 	
-	//FIELDS
-	private Specular game;
 	private TextureRegion scrollbar, slider;
 	
 	private Rectangle scrollbarBox;
@@ -20,10 +18,8 @@ public class OptionState extends State {
 	
 	private int pressedx = 0, pressedy = 0;
 	
-	//CONSTRUCTOR
 	public OptionState(Specular game) {
 		super(game);
-		this.game = game;
 		
 		scrollbarBox = new Rectangle((Gdx.graphics.getWidth() - 500f / 1280 * Gdx.graphics.getWidth()) / 2,
 				(Gdx.graphics.getHeight() - 5f / 8 * Gdx.graphics.getHeight()) / 2, 500f / 1280 * Gdx.graphics.getWidth(),

@@ -3,7 +3,6 @@ package com.tint.specular.game.entities.enemies;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
-import com.tint.specular.utils.Timer;
 import com.tint.specular.utils.Util;
 
 public abstract class Enemy implements Entity {
@@ -12,42 +11,30 @@ public abstract class Enemy implements Entity {
 	protected float x, y, dx, dy;
 	protected float width, height;
 	protected float direction;
-	
 	protected float slowdown;
 	
 	protected int life;
 	protected boolean isHit;
 	
 	protected GameState gs;
-	protected Player killer;
-	protected Timer speedTimer;
 	
 	public Enemy(float x, float y, GameState gs) {
 		this.x = x;
 		this.y = y;
 		this.gs = gs;
-		
-		speedTimer = new Timer();
 	}
 	
 	@Override
-	public boolean update() {
-		if(!speedTimer.update(10))
-			setSlowdown(0);
-		if(killer != null) {
-			killer.setHit(false);
-			killer = null;
-		}
-			
-		return isDead();
+	public boolean update() {			
+		return life <= 0;
 	}
 
 	//SETTERS
 	/**
 	 * 
 	 * @param slowdown - Max value 1, minimum value 0.
-	 * If it higher or lower than the restriction it will be changed to
-	 * nearest accepted value
+	 * If it higher than 1 or lower than 0, it will be changed to
+	 * the nearest accepted value
 	 */
 	public void setSlowdown(float slowdown) {
 		this.slowdown = slowdown;
@@ -57,17 +44,8 @@ public abstract class Enemy implements Entity {
 		slowdown = slowdown < 0 ? 0 : slowdown;
 	}
 	
-	public void setTimer(float seconds) {
-		speedTimer.setTime(seconds < 0 ? 0: seconds);
-	}
-	
 	public void hit(Player shooter) {
 		life--;
-	}
-	
-	public void kill(Player killer) {
-		life = 0;
-		this.killer = killer;
 	}
 	
 	//GETTERS
@@ -88,24 +66,10 @@ public abstract class Enemy implements Entity {
 		return closest;
 	}
 	
-	public boolean isDead() {
-		return life <= 0;
-	}
+	public float getX() { return x;	}
+	public float getY() { return y; }
+	public int getLife() { return life; }
 	
-	public Timer getSpeedTimer() {
-		return speedTimer;
-	}
-	
-	public float getX() {
-		return x;
-	}
-	
-	public float getY() {
-		return y;
-	}
-	
-	/*public abstract float getDeltaX();
-	public abstract float getDeltaY();*/
 	public abstract float getInnerRadius();
 	public abstract float getOuterRadius();
 	
