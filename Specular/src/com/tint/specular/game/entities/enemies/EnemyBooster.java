@@ -43,7 +43,9 @@ public class EnemyBooster extends Enemy {
 			
 			boostingDelay++;
 		} else if(boostingDelay == 0) {
-			direction = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
+			if(getClosestPlayer() != null)
+				direction = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
+			
 			speed = 0;
 			boostingDelay++;
 		} else {

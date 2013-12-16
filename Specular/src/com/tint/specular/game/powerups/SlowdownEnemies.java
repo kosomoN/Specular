@@ -19,12 +19,10 @@ public class SlowdownEnemies extends PowerUp {
 	
 	@Override
 	public boolean update() {
-		for(Player p : gs.getPlayers()) {
-			if(Math.pow(getCenterX() - p.getCenterX(), 2) +	Math.pow(getCenterY() - p.getCenterY(), 2)
-					< Math.pow(Player.getRadius() + getRadius(), 2)) {
-				affect(gs.getEnemies());
-				return true;
-			}
+		if(Math.pow(getCenterX() - gs.getPlayer().getCenterX(), 2) + Math.pow(getCenterY() - gs.getPlayer().getCenterY(), 2)
+				< Math.pow(Player.getRadius() + getRadius(), 2)) {
+			affect(gs.getEnemies());
+			return true;
 		}
 		return false;
 	}

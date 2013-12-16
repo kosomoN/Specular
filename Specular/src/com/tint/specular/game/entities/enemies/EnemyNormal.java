@@ -14,6 +14,7 @@ public class EnemyNormal extends Enemy {
 	private static Texture tex;
 	private float rotation;
 	private float offset;
+	private double angle;
 	
 	//CONSTRUCTOR
 	public EnemyNormal(float x, float y, GameState gs) {
@@ -41,7 +42,9 @@ public class EnemyNormal extends Enemy {
 	
 	@Override
 	public boolean update() {
-		double angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x) + offset;
+		if(getClosestPlayer() != null)
+			angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x) + offset;
+		
 		dx = (float) (Math.cos(angle) * 2);
 		dy = (float) (Math.sin(angle) * 2);
 		x += dx * (1 - slowdown);

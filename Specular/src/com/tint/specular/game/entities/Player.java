@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.utils.Util;
 
 public class Player implements Entity {
@@ -75,8 +76,8 @@ public class Player implements Entity {
 		updateShooting();
 		
 		//Movement
-        dx *= 0.95f;
-        dy *= 0.95f;
+        dx *= 0.98f;
+        dy *= 0.98f;
         
         if(centerx - getRadius() + dx < 0)
         	dx = -dx * 0.6f;
@@ -109,18 +110,18 @@ public class Player implements Entity {
 		
 		float aFourthOfWidthSqrd = Gdx.graphics.getWidth() / 4 * Gdx.graphics.getWidth() / 4;
 		
-		float distBaseToHead = Math.abs((gs.getProcessor().getMoveStick().getYHead() - gs.getProcessor().getMoveStick().getYBase())
-				* (gs.getProcessor().getMoveStick().getYHead() - gs.getProcessor().getMoveStick().getYBase())
+		float distBaseToHead = Math.abs((((GameInputProcessor) gs.getProcessor()).getMoveStick().getYHead() - ((GameInputProcessor) gs.getProcessor()).getMoveStick().getYBase())
+				* (((GameInputProcessor) gs.getProcessor()).getMoveStick().getYHead() - ((GameInputProcessor) gs.getProcessor()).getMoveStick().getYBase())
 				+
-				(gs.getProcessor().getMoveStick().getXHead() - gs.getProcessor().getMoveStick().getXBase())
-				* (gs.getProcessor().getMoveStick().getXHead() - gs.getProcessor().getMoveStick().getXBase()));
+				(((GameInputProcessor) gs.getProcessor()).getMoveStick().getXHead() - ((GameInputProcessor) gs.getProcessor()).getMoveStick().getXBase())
+				* (((GameInputProcessor) gs.getProcessor()).getMoveStick().getXHead() - ((GameInputProcessor) gs.getProcessor()).getMoveStick().getXBase()));
 				
 		
-		if(gs.getProcessor().getMoveStick().isActive() && distBaseToHead != 0) {
+		if(((GameInputProcessor) gs.getProcessor()).getMoveStick().isActive() && distBaseToHead != 0) {
 			//calculating the angle with delta x and delta y
-			double angle = Math.atan2(gs.getProcessor().getMoveStick().getYHead() 
-				- gs.getProcessor().getMoveStick().getYBase(), gs.getProcessor().getMoveStick().getXHead() 
-				- gs.getProcessor().getMoveStick().getXBase());
+			double angle = Math.atan2(((GameInputProcessor) gs.getProcessor()).getMoveStick().getYHead() 
+				- ((GameInputProcessor) gs.getProcessor()).getMoveStick().getYBase(), ((GameInputProcessor) gs.getProcessor()).getMoveStick().getXHead() 
+				- ((GameInputProcessor) gs.getProcessor()).getMoveStick().getXBase());
 			
 			setSpeed(
 					(float) Math.cos(angle) * MAX_DELTA_SPEED *
@@ -135,12 +136,12 @@ public class Player implements Entity {
 	public void updateShooting() {
 		timeSinceLastFire += 1;
 		
-		if(gs.getProcessor().getShootStick().isActive()) {
+		if(((GameInputProcessor) gs.getProcessor()).getShootStick().isActive()) {
 			if(timeSinceLastFire >= fireRate) {
 				
-				float direction = (float) (Math.toDegrees(Math.atan2(gs.getProcessor().getShootStick().getYHead()
-					- gs.getProcessor().getShootStick().getYBase(), gs.getProcessor().getShootStick().getXHead()
-					- gs.getProcessor().getShootStick().getXBase())));
+				float direction = (float) (Math.toDegrees(Math.atan2(((GameInputProcessor) gs.getProcessor()).getShootStick().getYHead()
+					- ((GameInputProcessor) gs.getProcessor()).getShootStick().getYBase(), ((GameInputProcessor) gs.getProcessor()).getShootStick().getXHead()
+					- ((GameInputProcessor) gs.getProcessor()).getShootStick().getXBase())));
 
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
 				int spaces = bulletBurst - 1;
@@ -227,8 +228,7 @@ public class Player implements Entity {
 
 	//POWER-UPS
 	public void addLives(int livesToAdd) {
-		if(life + livesToAdd <= 3)
-			life += livesToAdd;
+		life = life + livesToAdd < 3 ? life + livesToAdd : 3;
 		
 		if(life == 3)
 			targetLifeY = 512;
@@ -258,7 +258,6 @@ public class Player implements Entity {
 	public void setCenterX(float x) { this.centerx = x; }
 	public void setCenterY(float y) { this.centery = y;	}
 	public void setBulletBurst(int burst) {	bulletBurst = burst; }
-	public void setLife(int life) { this.life = life; }
 	public void setHit(boolean hit) { isHit = hit; }
 	
 	//GETTERS
@@ -281,7 +280,7 @@ public class Player implements Entity {
 	}
 	
 	public void reset() {
-		setLife(3);
+		addLives(3);
 	}
 
 	@Override

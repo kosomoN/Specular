@@ -27,10 +27,8 @@ public class EnemySpawnSystem extends SpawnSystem {
 			x = rand.nextInt(gs.getCurrentMap().getWidth());
 			y = rand.nextInt(gs.getCurrentMap().getHeight());
 			
-			for(Player p : gs.getPlayers()) {
-				if(Util.getDistanceSquared(x, y, p.getCenterX(), p.getCenterY()) < Math.pow(1000, 2)) {
-					continue outer;
-				}
+			if(Util.getDistanceSquared(x, y, gs.getPlayer().getCenterX(), gs.getPlayer().getCenterY()) < Math.pow(1000, 2)) {
+				continue outer;
 			}
 			
 			enemyID = rand.nextInt(6);
@@ -54,12 +52,10 @@ public class EnemySpawnSystem extends SpawnSystem {
 			int x = rand.nextInt(gs.getCurrentMap().getWidth());
 			int y = rand.nextInt(gs.getCurrentMap().getHeight());
 			
-			for(Player p : gs.getPlayers()) {
-				if(Util.getDistanceSquared(x, y, p.getCenterX(), p.getCenterY())
+				if(Util.getDistanceSquared(x, y, gs.getPlayer().getCenterX(), gs.getPlayer().getCenterY())
 						< Math.pow(1000, 2)) {
 					continue doLoop;
 				}
-			}
 			
 			gs.addEntity(new EnemyWorm(x, y, gs));
 			bossAdded = true;
