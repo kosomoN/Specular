@@ -51,7 +51,7 @@ public class Util {
 	 * @return - Distance between the two points squared
 	 */
 	public static float getDistanceSquared(float x1, float y1, float x2, float y2) {
-		return (float) (Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+		return (float) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 	}
 	
 	/**

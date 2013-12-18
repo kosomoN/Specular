@@ -1,7 +1,6 @@
 package com.tint.specular.game.spawnsystems;
 
 import com.tint.specular.game.GameState;
-import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
@@ -52,10 +51,10 @@ public class EnemySpawnSystem extends SpawnSystem {
 			int x = rand.nextInt(gs.getCurrentMap().getWidth());
 			int y = rand.nextInt(gs.getCurrentMap().getHeight());
 			
-				if(Util.getDistanceSquared(x, y, gs.getPlayer().getCenterX(), gs.getPlayer().getCenterY())
-						< Math.pow(1000, 2)) {
-					continue doLoop;
-				}
+			if(Util.getDistanceSquared(x, y, gs.getPlayer().getCenterX(), gs.getPlayer().getCenterY())
+					< 1000 * 1000) {
+				continue doLoop;
+			}
 			
 			gs.addEntity(new EnemyWorm(x, y, gs));
 			bossAdded = true;

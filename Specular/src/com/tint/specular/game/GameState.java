@@ -5,27 +5,22 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Setting;
 import com.tint.specular.Specular;
+import com.tint.specular.Specular.States;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Particle;
@@ -36,12 +31,14 @@ import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
+import com.tint.specular.game.spawnsystems.ParticleSpawnSystem;
 import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
 import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
+import com.tint.specular.states.Facebook.LoginCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.utils.Util;
 
@@ -76,7 +73,7 @@ public class GameState extends State {
 	protected EnemySpawnSystem ess;
 	protected PlayerSpawnSystem pss;
 	protected PowerUpSpawnSystem puss;
-//	protected ParticleSpawnSystem pass;
+	protected ParticleSpawnSystem pass;
 	
 	protected HashMap<String, Setting> settings;
 	protected boolean ready;
@@ -85,16 +82,17 @@ public class GameState extends State {
 	private Stage stage;
 	private Skin skin;
 	private Table table;
+	private GameInputProcessor gameInputProcessor;
 	
 	public GameState(Specular game) {
 		super(game);
 		
 		//Loading map texture from a internal directory
-		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Map.png"));
+		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Level.png"));
 		
 		//Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
-		mapHandler.addMap("Map", mapTexture, mapTexture.getWidth() * 2, mapTexture.getHeight() * 2);
+		mapHandler.addMap("Map", mapTexture, mapTexture.getWidth(), mapTexture.getHeight());
 		currentMap = mapHandler.getMap("Map");
 		
 		//Initializing font
@@ -115,6 +113,7 @@ public class GameState extends State {
 		ess = new EnemySpawnSystem(this);
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
+		pass = new ParticleSpawnSystem(this);
 		
 		input = Gdx.input;
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
@@ -131,7 +130,7 @@ public class GameState extends State {
         	unprocessed--;
         	update();
         }
-    	renderGame();
+        renderGame();
 	}
 	
 	protected void update() {
@@ -150,8 +149,8 @@ public class GameState extends State {
 			for(Bullet b : bullets) {
 				for(Enemy e : enemies) {
 					if(e.getLife() > 0) {
-						if(Math.pow(b.getX() - e.getX(), 2) + Math.pow(b.getY() - e.getY(), 2) <
-								Math.pow(e.getOuterRadius(), 2) + Math.pow(b.getWidth() / 2, 2)) {
+						if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
+								e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
 							
 							e.hit(b.getShooter());
 							b.hit();
@@ -168,25 +167,21 @@ public class GameState extends State {
 		}
 		
 		//Removing destroyed entities
-//		if(player.isDead()) {
-			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
-				Entity ent = it.next();
-				if(ent.update()) {
-					if(ent instanceof Enemy)
-						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
-					else if(ent instanceof Bullet)
-						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
-					else if(ent instanceof Player) {
-						gameover = true;
-						table.add("Game Over").top().row();
-						table.add("Score: " + player.getScore()).align(Align.center).row();
-						input.setInputProcessor(stage);
-					}
-					
-					it.remove();
+		for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
+			Entity ent = it.next();
+			if(ent.update()) {
+				if(ent instanceof Enemy)
+					enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
+				else if(ent instanceof Bullet)
+					bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
+				else if(ent instanceof Player) {
+					gameover = true;
+//					table.setVisible(true);
+					input.setInputProcessor(stage);
 				}
+				it.remove();
 			}
-//		}
+		}
 		
 		//Spawning new enemies
 		if(timePlayedInMillis >= 2000)
@@ -196,66 +191,89 @@ public class GameState extends State {
 		//Player hit detection
 		if(!player.isDead())
 			player.updateHitDetection();
+		
+		CameraShake.update();
 	}
 	
 	protected void renderGame() {
 		//Clearing screen, positioning camera, rendering map and entities
-		Gdx.gl.glClearColor(0.2f, 0, 0, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		game.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
-		game.camera.update();
-		game.batch.setProjectionMatrix(game.camera.combined);
+		
+//		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE ); //Amazing stuff happens xD
+		
+		Specular.camera.position.set(player.getCenterX() / 2, player.getCenterY() / 2, 0);
+		Specular.camera.zoom = 1;
+		Specular.camera.update();
+		
+		game.batch.setProjectionMatrix(Specular.camera.combined);
+		CameraShake.moveCamera();
 		game.batch.begin();
+		game.batch.draw(currentMap.getTexture(), -2048, -2048, 4096, 4096);
+		
+		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
+		CameraShake.moveCamera();
+		/*float zoom = 1;
+		float time = timePlayedInMillis % 3000;
+		if(time > 2500) {
+			if(time == 2990) {
+				CameraShake.shake(1, 0.04f);
+			} else if(time > 2950) {
+				zoom = 1 - ((1 - ((time - 2950) / 50)) * (1 - ((time - 2950) / 50))) * 0.25f;
+			} else {
+				zoom = 1 - (1 - (1 - ((time - 2500) / 450)) * (1 - ((time - 2500) / 450))) * 0.25f;
+				System.out.println(zoom);
+			}
+		}
+		Specular.camera.zoom = zoom;*/
+		Specular.camera.update();
+		
+		game.batch.setProjectionMatrix(Specular.camera.combined);
+		CameraShake.moveCamera();
 		currentMap.render(game.batch);
 		for(Entity ent : entities) {
 			ent.render(game.batch);
 		}
-		game.batch.end();
 		
 		//Positioning camera
-		game.camera.position.set(0, 0, 0);
-		game.camera.update();
-		game.batch.setProjectionMatrix(game.camera.combined);
-		game.batch.begin();
+		Specular.camera.position.set(0, 0, 0);
+		Specular.camera.zoom = 1;
+		Specular.camera.update();
+		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
 		//Drawing analogsticks
 		if(!gameover) {
-			((GameInputProcessor) getProcessor()).getShootStick().render(game.batch);
-			((GameInputProcessor) getProcessor()).getMoveStick().render(game.batch);
+			gameInputProcessor.getShootStick().render(game.batch);
+			gameInputProcessor.getMoveStick().render(game.batch);
 		
 //			player.renderLifebar(game.batch);
 		
 			//Drawing score
-			Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
-					Gdx.graphics.getHeight() / 2 - font50.getCapHeight() - 10);
+
 			//Debugging
-			/*arial15.draw(game.batch, "Enities: " + entities.size, -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 30);
-			arial15.draw(game.batch, "Player Life: " + player.getLife(), -game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 50);
+			/*
+			arial15.draw(game.batch, "Enities: " + entities.size, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 30);
+			arial15.draw(game.batch, "Player Life: " + player.getLife(), -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 50);
 			arial15.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
-							-game.camera.viewportWidth / 2 + 10, game.camera.viewportHeight / 2 - 70);
-		*/
+							-Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 70);/**/
 		}
+		Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
+					Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
 		game.batch.end();
 		
 		if(gameover) {
 			stage.act();
 			stage.draw();
 		}
-	}
-	
-	protected void renderGameOver() {
-		//Clearing screen, positioning camera, rendering map and entities
-		Gdx.gl.glClearColor(0.2f, 0, 0, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
+		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
 	}
 /*____________________________________________________________________*/
 	
 	//SETTERS
 	public void addEntity(Entity entity) {
-		if(entity instanceof Player) {
+		if(entity instanceof Player)
 			player = (Player) entity;
-		} else if(entity instanceof Enemy)
+		else if(entity instanceof Enemy)
 			enemies.add((Enemy) entity);
 		else if(entity instanceof Bullet)
 			bullets.add((Bullet) entity);
@@ -275,8 +293,8 @@ public class GameState extends State {
 		return game;
 	}
 	
-	public InputProcessor getProcessor() {
-		return Gdx.input.getInputProcessor();
+	public GameInputProcessor getProcessor() {
+		return gameInputProcessor;
 	}
 	
 	public HashMap<String, Setting> getSettings() {
@@ -332,7 +350,7 @@ public class GameState extends State {
 		timePlayedInMillis = 0;
 		
 		//Reset table
-		table.clear();
+//		table.clear();
 		
 		//Entity reset
 		entities.clear();
@@ -344,7 +362,7 @@ public class GameState extends State {
 		
 		//Adding player and setting up input processor
 		pss.spawn(1);
-		input.setInputProcessor(new GameInputProcessor(game));
+		input.setInputProcessor(gameInputProcessor);
 	}
 	
 	@Override
@@ -353,20 +371,53 @@ public class GameState extends State {
 		
 		//Scene2d stuff
 		stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
+		/*
 		skin = new Skin();
 		skin.add("font30", font50);
 		skin.add("font15", arial15);
-		skin.add("background", new Texture(Gdx.files.internal("graphics/game/GameOver.png")));
+		skin.add("background", new Texture(Gdx.files.internal("graphics/")));
 		skin.add("default", new LabelStyle(font50, Color.RED));
 		
 		table = new Table();
+		table.setVisible(false);
+		table.center();*/
+		TextButton tb = new TextButton("Post highscore!", skin);
+		tb.setSize(300, 150);
+		tb.setPosition((Gdx.graphics.getWidth() - 300) / 2, (Gdx.graphics.getHeight() - 150) / 2);
+		tb.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				if(!Specular.facebook.isLoggedIn()) {
+					Specular.facebook.login(new LoginCallback() {
+						@Override
+						public void loginSuccess() {
+							Specular.facebook.postHighscore(player.getScore());
+							game.enterState(States.MAINMENUSTATE);
+						}
+
+						@Override
+						public void loginFailed() {
+							game.enterState(States.MAINMENUSTATE);
+						}
+					});
+				} else {
+					Specular.facebook.postHighscore(player.getScore());
+					game.enterState(States.MAINMENUSTATE);
+				}
+			}
+		});
+//		table.add(tb).fill();
+		
+		stage.addActor(tb);
+		/*
 		table.setSize(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 		table.setPosition((Gdx.graphics.getWidth() - table.getWidth()) / 2, (Gdx.graphics.getHeight() - table.getHeight()) / 2);
 		table.setSkin(skin);
 		
 		table.setBackground("background");
-		table.center();
-		stage.addActor(table);
+		
+
 		
 		TextButtonStyle btnStyle = new TextButtonStyle(skin.getDrawable("background"),
 				skin.getDrawable("background"), skin.getDrawable("background"), skin.getFont("font15"));
@@ -395,17 +446,21 @@ public class GameState extends State {
 				return false;
 			}
 		});
-		stage.addActor(highscores);
+		stage.addActor(highscores);*/
 		
 		reset();
 		music.play();
+		gameInputProcessor = new GameInputProcessor(game);
+		input.setInputProcessor(gameInputProcessor);
 		
-		input.setInputProcessor(new GameInputProcessor(game));
+		timePlayedInMillis = 0;
 	}
 	
 	@Override
 	public void resume() {
 		super.resume();
+		
+		lastTickTime = System.nanoTime();
 	}
 
 	@Override
@@ -423,5 +478,9 @@ public class GameState extends State {
 		
 		enemies.clear();
 		bullets.clear();
+	}
+
+	public ParticleSpawnSystem getPass() {
+		return pass;
 	}
 }

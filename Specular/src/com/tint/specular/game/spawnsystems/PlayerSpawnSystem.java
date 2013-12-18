@@ -24,12 +24,12 @@ public class PlayerSpawnSystem extends SpawnSystem {
 			
 			for(Entity ent : gs.getEntities()) {
 				if(ent instanceof Enemy) {
-					if(Util.getDistanceSquared(x, y, ((Enemy) ent).getX(), ((Enemy) ent).getY()) < Math.pow(500, 2)) {
+					if(Util.getDistanceSquared(x, y, ((Enemy) ent).getX(), ((Enemy) ent).getY()) < 500 * 500) {
 						continue outer;
 					}
 				} else if(ent instanceof Player) {
 					if(Util.getDistanceSquared(x, y, ((Player) ent).getCenterX(),
-							((Player) ent).getCenterY()) < Math.pow(Player.getRadius() * 2, 2)) {
+							((Player) ent).getCenterY()) < Player.getRadius() * Player.getRadius() * 4) {
 						continue outer;
 					}
 				}

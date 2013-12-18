@@ -4,12 +4,14 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
-import com.tint.specular.input.GameInputProcessor;
+import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
 
 public class Player implements Entity {
@@ -27,9 +29,9 @@ public class Player implements Entity {
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
 	
-	private int life = 5, lifeY = 512, targetLifeY = 512;
+	private int life = 3, lifeY = 512, targetLifeY = 512;
 	
-	private int bulletBurst = 2;
+	private int bulletBurst = 3;
 	private int score = 0;
 	
 	private boolean isHit;
@@ -55,8 +57,8 @@ public class Player implements Entity {
 	
 	public void renderLifebar(SpriteBatch batch) {
 		//Takes minus the screens with and height because the camera is centered
-		batch.draw(lifeTex, 30 - Gdx.graphics.getWidth() / 2, 30 - Gdx.graphics.getHeight() / 2, 64, lifeY);
-		batch.draw(lifeBar, 30 - Gdx.graphics.getWidth() / 2, 30 - Gdx.graphics.getHeight() / 2);
+		batch.draw(lifeTex, 30 - Specular.camera.viewportWidth / 2, 30 - Specular.camera.viewportHeight / 2, 64, lifeY);
+		batch.draw(lifeBar, 30 - Specular.camera.viewportWidth / 2, 30 - Specular.camera.viewportHeight / 2);
 	}
 	
 	@Override
@@ -76,23 +78,23 @@ public class Player implements Entity {
 		updateShooting();
 		
 		//Movement
-        dx *= 0.98f;
-        dy *= 0.98f;
+        dx *= 0.95f;
+        dy *= 0.95f;
         
-        if(centerx - getRadius() + dx < 0)
+        if(centerx - getRadius() + dx < 23)
         	dx = -dx * 0.6f;
-        else if(centerx + getRadius() + dx > gs.getCurrentMap().getWidth())
+        else if(centerx + getRadius() + dx > gs.getCurrentMap().getWidth() - 23)
         	dx = -dx * 0.6f;
         
-        if(centery - getRadius() + dy < 0)
+        if(centery - getRadius() + dy < 23)
         	dy = -dy * 0.6f;
-        else if(centery + getRadius() + dy > gs.getCurrentMap().getHeight())
+        else if(centery + getRadius() + dy > gs.getCurrentMap().getHeight() - 23)
         	dy = -dy * 0.6f;
         
         centerx += dx;
         centery += dy;
         
-        return lifeY <= 0;
+        return life <= 0;
 	}
 	
 	public void updateMovement() {
@@ -108,27 +110,24 @@ public class Player implements Entity {
 		changeSpeed(Gdx.input.getAccelerometerX() * 0.1f * 0.6f,
 				Gdx.input.getAccelerometerY() * 0.1f * 0.6f);*/
 		
-		float aFourthOfWidthSqrd = Gdx.graphics.getWidth() / 4 * Gdx.graphics.getWidth() / 4;
+		float aFourthOfWidthSqrd = Specular.camera.viewportWidth / 8 * Specular.camera.viewportWidth / 8;
 		
-		float distBaseToHead = Math.abs((((GameInputProcessor) gs.getProcessor()).getMoveStick().getYHead() - ((GameInputProcessor) gs.getProcessor()).getMoveStick().getYBase())
-				* (((GameInputProcessor) gs.getProcessor()).getMoveStick().getYHead() - ((GameInputProcessor) gs.getProcessor()).getMoveStick().getYBase())
-				+
-				(((GameInputProcessor) gs.getProcessor()).getMoveStick().getXHead() - ((GameInputProcessor) gs.getProcessor()).getMoveStick().getXBase())
-				* (((GameInputProcessor) gs.getProcessor()).getMoveStick().getXHead() - ((GameInputProcessor) gs.getProcessor()).getMoveStick().getXBase()));
+		AnalogStick moveStick = gs.getProcessor().getMoveStick();;
+		float moveDx = moveStick.getXHead() - moveStick.getXBase();
+		float moveDy = moveStick.getYHead() - moveStick.getYBase();
+		float distBaseToHead = moveDx * moveDx + moveDy * moveDy;
 				
 		
-		if(((GameInputProcessor) gs.getProcessor()).getMoveStick().isActive() && distBaseToHead != 0) {
+		if(moveStick.isActive() && distBaseToHead != 0) {
 			//calculating the angle with delta x and delta y
-			double angle = Math.atan2(((GameInputProcessor) gs.getProcessor()).getMoveStick().getYHead() 
-				- ((GameInputProcessor) gs.getProcessor()).getMoveStick().getYBase(), ((GameInputProcessor) gs.getProcessor()).getMoveStick().getXHead() 
-				- ((GameInputProcessor) gs.getProcessor()).getMoveStick().getXBase());
+			double angle = Math.atan2(moveDy, moveDx);
 			
-			setSpeed(
+			changeSpeed(
 					(float) Math.cos(angle) * MAX_DELTA_SPEED *
-					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd),
+					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) / 8, //Change the last number to alter the sensitivity
 					
 					(float) Math.sin(angle) * MAX_DELTA_SPEED *
-					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd)
+					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) / 8
 					);
 		}
 	}
@@ -136,12 +135,12 @@ public class Player implements Entity {
 	public void updateShooting() {
 		timeSinceLastFire += 1;
 		
-		if(((GameInputProcessor) gs.getProcessor()).getShootStick().isActive()) {
+		if(gs.getProcessor().getShootStick().isActive()) {
 			if(timeSinceLastFire >= fireRate) {
 				
-				float direction = (float) (Math.toDegrees(Math.atan2(((GameInputProcessor) gs.getProcessor()).getShootStick().getYHead()
-					- ((GameInputProcessor) gs.getProcessor()).getShootStick().getYBase(), ((GameInputProcessor) gs.getProcessor()).getShootStick().getXHead()
-					- ((GameInputProcessor) gs.getProcessor()).getShootStick().getXBase())));
+				float direction = (float) (Math.toDegrees(Math.atan2(gs.getProcessor().getShootStick().getYHead()
+					- gs.getProcessor().getShootStick().getYBase(), gs.getProcessor().getShootStick().getXHead()
+					- gs.getProcessor().getShootStick().getXBase())));
 
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
 				int spaces = bulletBurst - 1;
@@ -180,9 +179,11 @@ public class Player implements Entity {
 	        for(Iterator<Entity> it = gs.getEntities().iterator(); it.hasNext(); ) {
 	        	Entity e = it.next();
 	        	if(e instanceof Enemy) {
-	        		if(((Enemy) e).getLife() > 0) {
-		        		if(Math.pow(centerx - ((Enemy) e).getX(), 2) + Math.pow(centery - ((Enemy) e).getY(), 2)
-			    			< Math.pow(getRadius() + ((Enemy) e).getInnerRadius(), 2)) {
+	        		Enemy en = (Enemy) e;
+	        		if(en.getLife() > 0) {
+	        			float distX = centerx - en.getX();
+	        			float distY = centery - en.getY();
+		        		if(distX * distX + distY * distY < (getRadius() + en.getInnerRadius()) * (getRadius() + en.getInnerRadius())) {
 		        			
 //			        		gs.getParticleSpawnSystem().spawn((Enemy) e, 20, 5);
 		        			
@@ -191,21 +192,21 @@ public class Player implements Entity {
 		        			if(getLife() > 0)
 		        				addLives(-1);
 		        			
-			        		if(centerx - getRadius() + dx < ((Enemy) e).getX() + ((Enemy) e).getInnerRadius())
+			        		if(centerx - getRadius() + dx < en.getX() + en.getInnerRadius())
 			                	dx = -dx * 0.5f;
-			                else if(centerx + getRadius() + dx > ((Enemy) e).getX() - ((Enemy) e).getInnerRadius())
+			                else if(centerx + getRadius() + dx > en.getX() - en.getInnerRadius())
 			                	dx = -dx * 0.5f;
 			                
-			                if(centery - getRadius() + dy < ((Enemy) e).getY() + ((Enemy) e).getInnerRadius())
+			                if(centery - getRadius() + dy < en.getY() + en.getInnerRadius())
 			                	dy = -dy * 0.5f;
-			                else if(centery + getRadius() + dy > ((Enemy) e).getY() - ((Enemy) e).getInnerRadius())
+			                else if(centery + getRadius() + dy > en.getY() - en.getInnerRadius())
 			                	dy = -dy * 0.5f;
 			        	}
 	        		}
 	        	} else if(e instanceof Player) {
 	        		if(!e.equals(this)) {
 						if(Util.getDistanceSquared(centerx, centery, ((Player) e).getCenterX(), ((Player) e).getCenterY())
-								< Math.pow(getRadius() * 2, 2)) {
+								< getRadius() * getRadius() * 4) {
 							addLives(-1);
 							((Player) e).addLives(-1);
 							
@@ -258,6 +259,7 @@ public class Player implements Entity {
 	public void setCenterX(float x) { this.centerx = x; }
 	public void setCenterY(float y) { this.centery = y;	}
 	public void setBulletBurst(int burst) {	bulletBurst = burst; }
+	public void setLife(int life) { this.life = life; }
 	public void setHit(boolean hit) { isHit = hit; }
 	
 	//GETTERS
@@ -269,18 +271,19 @@ public class Player implements Entity {
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
 	public int getScore() { return score; }
-	public boolean isDead() { return lifeY <= 0; }
+	public boolean isDead() { return life <= 0; }
 	public GameState getGameState() { return gs; }
 	
 	public static void init() {
 		lifeBar = new Texture(Gdx.files.internal("graphics/game/Lifebar.png"));
 		lifeTex = new Texture(Gdx.files.internal("graphics/game/Life.png"));
 		texture  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
+		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(texture, 64, 64, 1 / 16f, 0, 0, 7, 3);
 	}
 	
 	public void reset() {
-		addLives(3);
+		setLife(3);
 	}
 
 	@Override

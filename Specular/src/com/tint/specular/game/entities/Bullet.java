@@ -2,6 +2,7 @@ package com.tint.specular.game.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.tint.specular.game.GameState;
@@ -9,7 +10,6 @@ import com.tint.specular.utils.Util;
 
 public class Bullet implements Entity {
 	
-	//FIELDS
 	private static Texture bulletTex;
 	
 	private float x, y, dx, dy;
@@ -18,17 +18,17 @@ public class Bullet implements Entity {
 	private GameState gs;
 	private Player shooter;
 	
-	//CONSTRUCTOR
 	public Bullet(float x, float y, float direction, float initialDx, float initialDy, GameState gs, Player shooter) {
 		this.x = x;
 		this.y = y;
+		direction += Math.random() * 10 - 5;
 		float cos = (float) Math.cos(Math.toRadians(direction));
 		float sin = (float) Math.sin(Math.toRadians(direction));
 		this.dx = cos * 15;
 		this.dy = sin * 15;
 
-		this.x += cos * 32;
-		this.y += sin * 32;
+		this.x += cos * 28;
+		this.y += sin * 28;
 		
 		this.gs = gs;
 		this.shooter = shooter;
@@ -36,8 +36,6 @@ public class Bullet implements Entity {
 		hitbox = new Circle(x, y, bulletTex.getWidth() > bulletTex.getHeight() ? bulletTex.getWidth() : bulletTex.getHeight());
 	}
 
-	//RENDER&UPDATE loop
-/*________________________________________________________________*/
 	@Override
 	public void render(SpriteBatch batch) {
 		Util.drawCentered(batch, bulletTex, x, y, 0);
@@ -53,18 +51,16 @@ public class Bullet implements Entity {
 		else
 			return false;
 	}
-/*________________________________________________________________*/
 	
 	public static void init() {
 		bulletTex = new Texture(Gdx.files.internal("graphics/game/Bullet.png"));
+		bulletTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 	
-	//SETTERS
 	public void hit() {
 		isHit = true;
 	}
 	
-	//GETTERS
 	public Player getShooter() { return shooter; }
 	public Circle getHitbox() { return hitbox; }
 	public float getX() { return x; }

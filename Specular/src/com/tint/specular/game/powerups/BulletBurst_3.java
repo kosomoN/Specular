@@ -9,21 +9,10 @@ public class BulletBurst_3 extends PowerUp {
 		super(x, y, gs);
 	}
 	
-	public void affect(Player player) {
+	@Override
+	protected void affect(Player player) {
 		if(player.getBulletBurst() != 5) {
 			player.setBulletBurst(3);
 		}
-	}
-	
-	@Override
-	public boolean update() {
-//		for(Player p : gs.getPlayers()) {
-			if(Math.pow(getCenterX() - gs.getPlayer().getCenterX(), 2) +	Math.pow(getCenterY() - gs.getPlayer().getCenterY(), 2)
-					< Math.pow(Player.getRadius() + getRadius(), 2)) {
-				affect(gs.getPlayer());
-				return true;
-			}
-//		}
-		return false;
 	}
 }

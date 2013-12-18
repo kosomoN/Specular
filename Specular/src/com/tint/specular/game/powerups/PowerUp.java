@@ -5,9 +5,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
+import com.tint.specular.game.entities.Player;
 import com.tint.specular.utils.Util;
 
-public class PowerUp implements Entity {
+public abstract class PowerUp implements Entity {
 	
 	private float x, y;
 	
@@ -19,7 +20,7 @@ public class PowerUp implements Entity {
 		this.x = x;
 		this.y = y;
 		this.gs = gs;
-		texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/PowerUgs.getPlayer().png"));
 	}
 	
 	//RENDER&UPDATE loop
@@ -31,8 +32,15 @@ public class PowerUp implements Entity {
 	
 	@Override
 	public boolean update() {
-		return true;
+		if((getCenterX() - gs.getPlayer().getCenterX()) * (getCenterX() - gs.getPlayer().getCenterX()) + (getCenterY() - gs.getPlayer().getCenterY()) * (getCenterY() - gs.getPlayer().getCenterY())
+				< (Player.getRadius() + getRadius()) * (Player.getRadius() + getRadius())) {
+			affect(gs.getPlayer());
+			return true;
+		}
+		return false;
 	}
+	
+	protected abstract void affect(Player p);
 /*_________________________________________________________________*/
 	
 	//SETTERS

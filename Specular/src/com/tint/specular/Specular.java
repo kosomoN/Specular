@@ -8,9 +8,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.tint.specular.game.MultiplayerGameState;
 import com.tint.specular.game.SingleplayerGameState;
+import com.tint.specular.states.Facebook;
 import com.tint.specular.states.HighscoreState;
 import com.tint.specular.states.MainmenuState;
 import com.tint.specular.states.State;
@@ -20,30 +20,44 @@ public class Specular extends Game {
 		MAINMENUSTATE, SETTINGSMENUSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE, PROFILE_STATE;
 	}
 	
+	public static Facebook facebook;
+	
 	//FIELDS
 	private Map<States, State> states = new EnumMap<Specular.States, State>(States.class);
 	
 	public Preferences prefs;
-	public OrthographicCamera camera;
+	public static OrthographicCamera camera;
 	public SpriteBatch batch;
-	public ShapeRenderer shape;
+	
+	public Specular(Facebook facebook) {
+		Specular.facebook = facebook;
+	}
 	
 	@Override
 	public void create() {
 		
-		float w = Gdx.graphics.getWidth();
-		float h = Gdx.graphics.getHeight();
-		
+		float displayAspectRatio = (float) Gdx.graphics.getWidth() / Gdx.graphics.getHeight();
+		float cameraAspectRatio = (float) (1920f/ 1080);
+		float w, h;
+		if(displayAspectRatio > cameraAspectRatio) {
+			h = 1080;
+			w = 1080 * displayAspectRatio;
+		} else {
+			w = 1920;
+			h = 1920f * Gdx.graphics.getHeight() / Gdx.graphics.getWidth();
+		}
+		System.out.println(w + " " + h);
 		camera = new OrthographicCamera(w, h);
 		batch = new SpriteBatch();
-		shape = new ShapeRenderer();
 		prefs = Gdx.app.getPreferences("Preferences");
+		
+		Gdx.input.setCatchBackKey(true);
 		
 		states.put(States.MAINMENUSTATE, new MainmenuState(this));
 //		states.put(States.SETTINGSMENUSTATE, new SettingsMenuState(this));
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
-		states.put(States.MULTIPLAYER_GAMESTATE, new MultiplayerGameState(this));
 		states.put(States.PROFILE_STATE, new HighscoreState(this));
+		
 		
 		enterState(States.MAINMENUSTATE);
 	}
@@ -64,7 +78,6 @@ public class Specular extends Game {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		shape.dispose();
 		prefs.flush();
 	}
 }

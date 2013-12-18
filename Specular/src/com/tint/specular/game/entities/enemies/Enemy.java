@@ -1,9 +1,9 @@
 package com.tint.specular.game.entities.enemies;
 
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
-import com.tint.specular.utils.Util;
 
 public abstract class Enemy implements Entity {
 	
@@ -46,6 +46,16 @@ public abstract class Enemy implements Entity {
 	
 	public void hit(Player shooter) {
 		life--;
+		if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
+				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
+				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
+				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
+			if(life == 0)
+				gs.getPass().spawn(this, 15, true);
+			else
+				gs.getPass().spawn(this, 6, false);
+		}
+		
 	}
 	
 	//GETTERS
@@ -67,6 +77,9 @@ public abstract class Enemy implements Entity {
 	
 	public float getX() { return x;	}
 	public float getY() { return y; }
+	public float getDx() { return dx; }
+	public float getDy() { return dy; }
+
 	public int getLife() { return life; }
 	
 	public abstract float getInnerRadius();

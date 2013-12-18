@@ -9,19 +9,8 @@ public class AddLife extends PowerUp {
 		super(x, y, gs);
 	}
 
-	public void affect(Player player) {
-		player.addLives(1);
-	}
-
 	@Override
-	public boolean update() {
-//		for(Player p : gs.getPlayers()) {
-			if(Math.pow(getCenterX() - gs.getPlayer().getCenterX(), 2) +	Math.pow(getCenterY() - gs.getPlayer().getCenterY(), 2)
-					< Math.pow(Player.getRadius() + getRadius(), 2)) {
-				affect(gs.getPlayer());
-				return true;
-			}
-//		}
-		return false;
+	protected void affect(Player player) {
+		player.addLives(1);
 	}
 }

@@ -1,12 +1,12 @@
 package com.tint.specular.ui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
+import com.tint.specular.Specular;
 
 public class Button {
 	
@@ -39,7 +39,7 @@ public class Button {
 	
 	public boolean isOver(float x, float y, boolean topLeftCorner) {
 		if(topLeftCorner) {
-			return hitbox.contains(x, Gdx.graphics.getHeight() - y);
+			return hitbox.contains(x, Specular.camera.viewportHeight - y);
 		} else {
 			return hitbox.contains(x, y);
 		}

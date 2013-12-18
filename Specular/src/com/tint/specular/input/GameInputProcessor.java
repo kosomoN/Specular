@@ -55,19 +55,20 @@ public class GameInputProcessor implements InputProcessor {
 			shootPointer = pointer;
 			shooting = true;
 		} else if(game.prefs.getString("Controls").equals("Two sticks")) {*/
-			if(screenX <= Gdx.graphics.getWidth() / 2) {
-				move.setBasePos(Gdx.input.getX(move.getPointer()) - Gdx.graphics.getWidth() / 2,
-						- (Gdx.input.getY(move.getPointer()) - Gdx.graphics.getHeight() / 2));
-				move.setHeadPos(Gdx.input.getX(move.getPointer()) - Gdx.graphics.getWidth() / 2,
-						- (Gdx.input.getY(move.getPointer()) - Gdx.graphics.getHeight() / 2));
-				
+			float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
+			float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
+			
+			if(viewportx <= Specular.camera.viewportWidth / 2) {
+				move.setBasePos(viewportx - Specular.camera.viewportWidth / 2,
+						- (viewporty - Specular.camera.viewportHeight / 2));
+				move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+						- (viewporty - Specular.camera.viewportHeight / 2));
 				move.setPointer(pointer);
 			} else {
-				shoot.setBasePos(Gdx.input.getX(shoot.getPointer()) - Gdx.graphics.getWidth() / 2,
-						- (Gdx.input.getY(shoot.getPointer()) - Gdx.graphics.getHeight() / 2));
-				shoot.setHeadPos(Gdx.input.getX(shoot.getPointer()) - Gdx.graphics.getWidth() / 2,
-						- (Gdx.input.getY(shoot.getPointer()) - Gdx.graphics.getHeight() / 2));
-				
+				shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2,
+						- (viewporty - Specular.camera.viewportHeight / 2));
+				shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2,
+						- (viewporty - Specular.camera.viewportHeight / 2));
 				shoot.setPointer(pointer);
 			}
 
@@ -87,13 +88,17 @@ public class GameInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		
+		float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
+		float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
+		
 		if(pointer == shoot.getPointer())
-		shoot.setHeadPos(Gdx.input.getX(shoot.getPointer()) - Gdx.graphics.getWidth() / 2,
-				- (Gdx.input.getY(shoot.getPointer()) - Gdx.graphics.getHeight() / 2));
+		shoot.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+				- (viewporty - Specular.camera.viewportHeight / 2));
 		
 		else if(pointer == move.getPointer())
-		move.setHeadPos(Gdx.input.getX(shoot.getPointer()) - Gdx.graphics.getWidth() / 2,
-				- (Gdx.input.getY(shoot.getPointer()) - Gdx.graphics.getHeight() / 2));
+		move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+				- (viewporty - Specular.camera.viewportHeight / 2));
 		
 		return false;
 	}

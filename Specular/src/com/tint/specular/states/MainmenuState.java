@@ -25,30 +25,29 @@ public class MainmenuState extends State {
 		background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/04.ogg"));
-		int backgroundWidth = Gdx.graphics.getHeight() * 16 / 9;
 
 		//Setting up buttons for main menu
-		int y = Gdx.graphics.getHeight() * 380 / 1080;
-		int x = backgroundWidth * 800 / 1920;
+		int y = (int) (380);
+		int x = 800;
 		
-		int height = Gdx.graphics.getHeight() * 180 / 1080;
-		int width = backgroundWidth * 730 / 1920;
+		int height = (int) (180);
+		int width = 730;
 		
 		playBtn = new Button(x, y, width, height);
 		
 		y = 0;
-		x = backgroundWidth * 1500 / 1920;
+		x = 1500;
 		
-		height = Gdx.graphics.getHeight() * 120 / 1080;
-		width = backgroundWidth * 420 / 1920;
+		height = (int) (120);
+		width = 420;
 		
 		optionsBtn = new Button(x, y, width, height);
 		
-		y = Gdx.graphics.getHeight() * 135 / 1080;
-		x = backgroundWidth * 1020 / 1920;
+		y = (int) (135);
+		x = 1020;
 		
-		height = Gdx.graphics.getHeight() * 190 / 1080;
-		width = backgroundWidth * 715 / 1920;
+		height = (int) (190);
+		width = 715;
 		
 		profileBtn = new Button(x, y, width, height);
 	}
@@ -65,20 +64,23 @@ public class MainmenuState extends State {
 	public void renderMenu() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
+		
 		game.batch.begin();
-		game.batch.draw(background, 0, 0, Gdx.graphics.getHeight() * 16 / 9, Gdx.graphics.getHeight());
+		game.batch.draw(background, 0, 0);
 		game.batch.end();
 	}
 	
 	public void update(float delta) {
 		if(Gdx.input.justTouched()) {
-			if(playBtn.isOver(Gdx.input.getX(), Gdx.input.getY(), true)) {
+			float viewportx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
+			float viewporty = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
+			
+			if(playBtn.isOver(viewportx, viewporty, true)) {
 				music.stop();
 				game.enterState(States.SINGLEPLAYER_GAMESTATE);
-			} else if(profileBtn.isOver(Gdx.input.getX(), Gdx.input.getY(), true)) {
+			} else if(profileBtn.isOver(viewportx, viewporty, true)) {
 				game.enterState(States.PROFILE_STATE);
-			} else if(optionsBtn.isOver(Gdx.input.getX(), Gdx.input.getY(), true)) {
+			} else if(optionsBtn.isOver(viewportx, viewporty, true)) {
 				System.out.println("Options");
 			}
 		}
@@ -87,9 +89,9 @@ public class MainmenuState extends State {
 	@Override
 	public void show() {
 		super.show();
-		game.camera.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
-		game.camera.update();
-		game.batch.setProjectionMatrix(game.camera.combined);
+		Specular.camera.position.set(Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight / 2, 0);
+		Specular.camera.update();
+		game.batch.setProjectionMatrix(Specular.camera.combined);
 		music.play();
 	}
 

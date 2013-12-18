@@ -9,13 +9,18 @@ import com.tint.specular.utils.Util;
 
 public class Particle implements Entity {
 	
+	public enum Type {
+		PLAYER, ENEMY_NORMAL, ENEMY_FAST, ENEMY_BOOSTER;
+	}
+	
 	//FIELDS
 	private float x, y, dx, dy;
 	private int lifetime;
 	
 	private GameState gs;
 	private Type type;
-	private static TextureRegion texture;
+	private int size;
+	private static TextureRegion[] textures;
 	private static Texture bigBase, smallBase;
 	
 	public Particle(float x, float y, float direction, float initialDx, float initialDy, float radius, boolean large, Type type, GameState gs) {
@@ -23,55 +28,21 @@ public class Particle implements Entity {
 		this.y = y;
 		float sin = (float) Math.sin(Math.toRadians(direction));
 		float cos = (float) Math.cos(Math.toRadians(direction));
-		dx = cos * 10;
-		dy = sin * 10;
+		dx = (float) (cos * (Math.random() * 4 + 2));
+		dy = (float) (sin * (Math.random() * 4 + 2));
 		
-		//float minimumOffset = 15 - (dx < dy ? dx : dy);
-		
-		if(dx + initialDx > 15)
-			dx += initialDx;
-		//else
-			//dx += minimumOffset;
-		
-		if(dy + initialDy > 15)
-			dy += initialDy;
-		//else
-		//	dy += minimumOffset;
+		dx += initialDx;
+		dy += initialDy;
 		
 		this.x += cos * radius;
 		this.y += sin * radius;
 		
 		this.gs = gs;
 		
-		lifetime = 500;
+		this.size = large ? 4 : 0;
+		this.type = type;
 		
-		
-		switch(type) {
-		case PLAYER :
-			texture = new TextureRegion(large ? bigBase : smallBase, 0, 0, large ? bigBase.getWidth() : smallBase.getWidth(),
-					large ? bigBase.getHeight() : smallBase.getHeight());
-			break;
-			
-		case ENEMY_NORMAL :
-			texture = new TextureRegion(large ? bigBase : smallBase, large ? bigBase.getWidth() / 2 : smallBase.getWidth() / 2,
-					0, large ? bigBase.getWidth() : smallBase.getWidth(), large ? bigBase.getHeight() : smallBase.getHeight());
-			break;
-			
-		case ENEMY_FAST :
-			texture = new TextureRegion(large ? bigBase : smallBase, 0, large ? bigBase.getHeight() / 2 : smallBase.getHeight() / 2,
-					large ? bigBase.getWidth() : smallBase.getWidth(), large ? bigBase.getHeight() : smallBase.getHeight());
-			break;
-			
-		case ENEMY_BOOSTER :
-			texture = new TextureRegion(large ? bigBase : smallBase, large ? bigBase.getWidth() / 2 : smallBase.getWidth() / 2,
-					large ? bigBase.getHeight() / 2 : smallBase.getHeight() / 2, large ? bigBase.getWidth() : smallBase.getWidth(),
-					large ? bigBase.getHeight() : smallBase.getHeight());
-			break;
-		}
-	}
-	
-	public enum Type {
-		PLAYER, ENEMY_NORMAL, ENEMY_FAST, ENEMY_BOOSTER;
+		lifetime = (int) (250 + Math.random() * 250);
 	}
 	
 	@Override
@@ -92,8 +63,7 @@ public class Particle implements Entity {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		if(texture != null)
-			Util.drawCentered(batch, texture, x, y, 0);
+		Util.drawCentered(batch, textures[type.ordinal() + size], x, y, 0);
 	}
 	
 	//SETTERS
@@ -106,6 +76,16 @@ public class Particle implements Entity {
 	public static void init() {
 		bigBase = new Texture(Gdx.files.internal("graphics/game/Large Particles.png"));
 		smallBase = new Texture(Gdx.files.internal("graphics/game/Small Particles.png"));
+		System.out.println("Derp");
+		textures = new TextureRegion[Type.values().length * 2];
+		for(int i = 0; i < 2; i++) {
+			for(int j = 0; j < 2; j++) {
+				textures[i * 2 + j] = new TextureRegion(smallBase, j * smallBase.getWidth() / 2, i * smallBase.getWidth() / 2,
+																		smallBase.getWidth() / 2, smallBase.getWidth() / 2);
+				textures[i * 2 + j + 4] = new TextureRegion(bigBase, j * bigBase.getWidth() / 2, i * bigBase.getWidth() / 2,
+						bigBase.getWidth() / 2, bigBase.getWidth() / 2);
+			}
+		}
 	}
 	
 	@Override
