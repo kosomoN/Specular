@@ -12,7 +12,7 @@ import com.tint.specular.ui.Button;
 
 public class MainmenuState extends State {
 
-	private Texture background;
+	private Texture playTex;
 	private Music music;
 	private Button playBtn, profileBtn, optionsBtn;
 	
@@ -21,43 +21,42 @@ public class MainmenuState extends State {
 		
 		GLTexture.setEnforcePotImages(false);
 		
-		background = new Texture(Gdx.files.internal("graphics/mainmenu/Menu.png"));
-		background.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		playTex = new Texture(Gdx.files.internal("graphics/mainmenu/Menu.png"));
+		playTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/04.ogg"));
 
-		//Setting up buttons for main menu
-		int y = (int) (380);
-		int x = 800;
+		//Defining main menu buttons locations and sizes
+		int x = 780;
+		int y = (int) (334);
 		
-		int height = (int) (180);
-		int width = 730;
+		int height = (int) (256);
+		int width = 768;
 		
 		playBtn = new Button(x, y, width, height);
 		
+		x = 1408;
 		y = 0;
-		x = 1500;
 		
-		height = (int) (120);
-		width = 420;
+		height = (int) (128);
+		width = 512;
 		
 		optionsBtn = new Button(x, y, width, height);
 		
-		y = (int) (135);
-		x = 1020;
+		x = 1000;
+		y = (int) (114);
 		
-		height = (int) (190);
-		width = 715;
+		height = (int) (256);
+		width = 512;
 		
 		profileBtn = new Button(x, y, width, height);
 	}
 	
 	@Override
 	public void render(float delta) {
-		//Update
+		
 		update(delta);
 		
-		//Render
 		renderMenu();
 	}
 	
@@ -66,21 +65,23 @@ public class MainmenuState extends State {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		game.batch.begin();
-		game.batch.draw(background, 0, 0);
+		game.batch.draw(playTex, 0, 0);
 		game.batch.end();
 	}
 	
+	// This function seems to check whether the screen is being touched and if so where
 	public void update(float delta) {
 		if(Gdx.input.justTouched()) {
-			float viewportx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
-			float viewporty = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
+			float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
+			float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 			
-			if(playBtn.isOver(viewportx, viewporty, true)) {
+			// It then checks if that touchpoint collides with the buttons on screen
+			if(playBtn.isOver(touchpointx, touchpointy, true)) {
 				music.stop();
 				game.enterState(States.SINGLEPLAYER_GAMESTATE);
-			} else if(profileBtn.isOver(viewportx, viewporty, true)) {
+			} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
 				game.enterState(States.PROFILE_STATE);
-			} else if(optionsBtn.isOver(viewportx, viewporty, true)) {
+			} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
 				System.out.println("Options");
 			}
 		}
