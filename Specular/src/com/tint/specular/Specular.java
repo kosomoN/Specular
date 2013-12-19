@@ -8,7 +8,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.tint.specular.game.MultiplayerGameState;
 import com.tint.specular.game.SingleplayerGameState;
 import com.tint.specular.states.Facebook;
 import com.tint.specular.states.HighscoreState;
@@ -19,6 +18,8 @@ public class Specular extends Game {
 	public enum States {
 		MAINMENUSTATE, SETTINGSMENUSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE, PROFILE_STATE;
 	}
+	
+	private static final int WIDTH = 1920, HEIGHT = 1080;
 	
 	public static Facebook facebook;
 	
@@ -37,14 +38,14 @@ public class Specular extends Game {
 	public void create() {
 		
 		float displayAspectRatio = (float) Gdx.graphics.getWidth() / Gdx.graphics.getHeight();
-		float cameraAspectRatio = (float) (1920f/ 1080);
+		float cameraAspectRatio = (float) (WIDTH/ HEIGHT);
 		float w, h;
 		if(displayAspectRatio > cameraAspectRatio) {
-			h = 1080;
-			w = 1080 * displayAspectRatio;
+			h = HEIGHT;
+			w = HEIGHT * displayAspectRatio;
 		} else {
-			w = 1920;
-			h = 1920f * Gdx.graphics.getHeight() / Gdx.graphics.getWidth();
+			w = WIDTH;
+			h = WIDTH * Gdx.graphics.getHeight() / Gdx.graphics.getWidth();
 		}
 		System.out.println(w + " " + h);
 		camera = new OrthographicCamera(w, h);

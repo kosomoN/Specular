@@ -4,10 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Pool.Poolable;
 import com.tint.specular.game.GameState;
 import com.tint.specular.utils.Util;
 
-public class Particle implements Entity {
+public class Particle implements Entity, Poolable {
 	
 	public enum Type {
 		PLAYER, ENEMY_NORMAL, ENEMY_FAST, ENEMY_BOOSTER;
@@ -23,26 +24,8 @@ public class Particle implements Entity {
 	private static TextureRegion[] textures;
 	private static Texture bigBase, smallBase;
 	
-	public Particle(float x, float y, float direction, float initialDx, float initialDy, float radius, boolean large, Type type, GameState gs) {
-		this.x = x;
-		this.y = y;
-		float sin = (float) Math.sin(Math.toRadians(direction));
-		float cos = (float) Math.cos(Math.toRadians(direction));
-		dx = (float) (cos * (Math.random() * 4 + 2));
-		dy = (float) (sin * (Math.random() * 4 + 2));
-		
-		dx += initialDx;
-		dy += initialDy;
-		
-		this.x += cos * radius;
-		this.y += sin * radius;
-		
+	public Particle(GameState gs) {
 		this.gs = gs;
-		
-		this.size = large ? 4 : 0;
-		this.type = type;
-		
-		lifetime = (int) (250 + Math.random() * 250);
 	}
 	
 	@Override
@@ -91,6 +74,30 @@ public class Particle implements Entity {
 	@Override
 	public void dispose() {
 		
+	}
+
+	public void reUse(float x, float y, float direction, float initialDx, float initialDy, float radius, boolean large, Type type) {
+		this.x = x;
+		this.y = y;
+		float sin = (float) Math.sin(Math.toRadians(direction));
+		float cos = (float) Math.cos(Math.toRadians(direction));
+		dx = (float) (cos * (Math.random() * 4 + 2));
+		dy = (float) (sin * (Math.random() * 4 + 2));
+		
+		dx += initialDx;
+		dy += initialDy;
+		
+		this.x += cos * radius;
+		this.y += sin * radius;
+		
+		this.size = large ? 4 : 0;
+		this.type = type;
+		
+		lifetime = (int) (250 + Math.random() * 250);
+	}
+	
+	@Override
+	public void reset() {
 	}
 
 }

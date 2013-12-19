@@ -18,9 +18,9 @@ public class MapHandler {
 	 * @param width - The width
 	 * @param height - The height
 	 */
-	public void addMap(String name, Texture texture, int width, int height) {
+	public void addMap(String name, Texture texture, Texture parallax, int width, int height) {
 		if(!maps.containsKey(name))
-			maps.put(name, new Map(texture, name, width, height));
+			maps.put(name, new Map(texture, parallax, name, width, height));
 	}
 	
 	/**

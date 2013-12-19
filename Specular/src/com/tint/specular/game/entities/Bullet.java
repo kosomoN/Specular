@@ -11,6 +11,7 @@ import com.tint.specular.utils.Util;
 public class Bullet implements Entity {
 	
 	private static Texture bulletTex;
+	private static int size;
 	
 	private float x, y, dx, dy;
 	private boolean isHit;
@@ -55,6 +56,8 @@ public class Bullet implements Entity {
 	public static void init() {
 		bulletTex = new Texture(Gdx.files.internal("graphics/game/Bullet.png"));
 		bulletTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		size = bulletTex.getWidth() / 2;
 	}
 	
 	public void hit() {
@@ -65,8 +68,8 @@ public class Bullet implements Entity {
 	public Circle getHitbox() { return hitbox; }
 	public float getX() { return x; }
 	public float getY() { return y; }
-	public float getWidth() { return bulletTex.getWidth(); }
-	public float getHeight() { return bulletTex.getHeight(); }
+	public float getWidth() { return size; }
+	public float getHeight() { return size; }
 
 	@Override
 	public void dispose() {

@@ -13,13 +13,10 @@ public class EnemyFast extends Enemy {
 	//FIELDS
 	private static Texture tex;
 	private float rotation;
-	private double angle;
 
 	//CONSTRUCTOR
 	public EnemyFast(float x, float y, GameState gs) {
-		super(x, y, gs);
-		slowdown = 0;
-		life = 3;
+		super(x, y, gs, 3);
 	}
 
 	//RENDER&UPDATE loop
@@ -33,8 +30,7 @@ public class EnemyFast extends Enemy {
 	@Override
 	public boolean update() {
 		//Calculating angle of movement based on closest player
-		if(getClosestPlayer() != null)
-			angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
+		double angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
 		
 		dx = (float) (Math.cos(angle) * 3);
 		dy = (float) (Math.sin(angle) * 3);
@@ -63,7 +59,7 @@ public class EnemyFast extends Enemy {
 	}
 
 	@Override
-	public float getInnerRadius() { return tex.getWidth() / 4; }
+	public float getInnerRadius() { return 16; }
 	@Override
-	public float getOuterRadius() { return tex.getWidth() / 2; }
+	public float getOuterRadius() { return 30; }
 }

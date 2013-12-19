@@ -18,12 +18,7 @@ public class EnemyNormal extends Enemy {
 	
 	//CONSTRUCTOR
 	public EnemyNormal(float x, float y, GameState gs) {
-		super(x, y, gs);
-		this.width = tex.getWidth();
-		this.height = tex.getHeight();
-		
-		slowdown = 0;
-		life = 5;
+		super(x, y, gs, 5);
 		
 	    if(Math.random() < 0.5) {
 	    	offset = (float) Math.toRadians(60);
@@ -70,9 +65,9 @@ public class EnemyNormal extends Enemy {
 	
 	//GETTERS
 	@Override
-	public float getInnerRadius() { return tex.getWidth() / 4; }
+	public float getInnerRadius() { return 16; }
 	@Override
-	public float getOuterRadius() { return tex.getWidth() / 2; }
+	public float getOuterRadius() { return 30; }
 
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Normal.png"));

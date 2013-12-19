@@ -2,6 +2,7 @@ package com.tint.specular.game.spawnsystems;
 
 import java.util.Random;
 
+import com.badlogic.gdx.utils.Pool;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Particle;
@@ -11,17 +12,27 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyVirus;
 
 public class ParticleSpawnSystem extends SpawnSystem {
 	
-	public ParticleSpawnSystem(GameState gs) {
+	private Pool<Particle> particlePool;
+	
+	public ParticleSpawnSystem(final GameState gs) {
 		super(gs);
 		this.gs = gs;
 		rand = new Random();
+		particlePool = new Pool<Particle>() {
+			@Override
+			protected Particle newObject() {
+				System.out.println("New particle");
+				return new Particle(gs);
+			}
+		};
 	}
 	
 	public void spawn(Entity ent, int amount, boolean shouldSpawnLarge) {
-		float direction = 360 / amount;
+		float direction = 360f / amount;
 		int offset;
 		
 		Particle p;
@@ -33,7 +44,7 @@ public class ParticleSpawnSystem extends SpawnSystem {
 				//Change the type
 				if(ent instanceof EnemyNormal) {
 					type = Type.ENEMY_NORMAL;
-				} else if(ent instanceof EnemyFast) {
+				} else if(ent instanceof EnemyFast || ent instanceof EnemyVirus) {
 					type = Type.ENEMY_FAST;
 				} else if(ent instanceof EnemyBooster) {
 					type = Type.ENEMY_BOOSTER;
@@ -41,18 +52,20 @@ public class ParticleSpawnSystem extends SpawnSystem {
 				Enemy e = (Enemy) ent;
 				//Particle
 				//TODO Remember to uncomment if u are to use particles
-				p = new Particle(e.getX(), e.getY(),
+				p = particlePool.obtain();
+				p.reUse(e.getX(), e.getY(),
 						i * direction + offset, e.getDx(), e.getDy(),
-						e.getInnerRadius(), (i % 2 == 0) && shouldSpawnLarge, type, gs);
+						e.getInnerRadius(), (i % 2 == 0) && shouldSpawnLarge, type);
 				
 				//Adding particle to the game
 				gs.addEntity(p);
 			} else if(ent instanceof Player) {
 				Player pl = (Player) ent;
 				//Particle
-				p = new Particle(pl.getCenterX(), pl.getCenterY(),
+				p = particlePool.obtain();
+				p.reUse(pl.getCenterX(), pl.getCenterY(),
 						i * direction + offset, pl.getDeltaX(), pl.getDeltaY(),
-						Player.getRadius(), (i % 2 == 0) && shouldSpawnLarge, Type.PLAYER, gs);
+						Player.getRadius(), (i % 2 == 0) && shouldSpawnLarge, Type.PLAYER);
 				
 				//Adding particle to the game
 				gs.addEntity(p);
@@ -61,5 +74,9 @@ public class ParticleSpawnSystem extends SpawnSystem {
 				break;
 			}
 		}
+	}
+
+	public Pool<Particle> getPool() {
+		return particlePool;
 	}
 }

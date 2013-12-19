@@ -35,6 +35,7 @@ public class MainActivity extends AndroidApplication {
         cfg.useGL20 = false;
         cfg.useAccelerometer = false;
         cfg.useCompass = false;
+        
         Session.openActiveSession(activity, false, null);
         if(Session.getActiveSession() != null && Session.getActiveSession().isOpened()) {
 			Request.newMeRequest(Session.getActiveSession(), new Request.GraphUserCallback() {

@@ -1,5 +1,6 @@
 package com.tint.specular.game.spawnsystems;
 
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
@@ -25,8 +26,10 @@ public class EnemySpawnSystem extends SpawnSystem {
 		do {
 			x = rand.nextInt(gs.getCurrentMap().getWidth());
 			y = rand.nextInt(gs.getCurrentMap().getHeight());
-			
-			if(Util.getDistanceSquared(x, y, gs.getPlayer().getCenterX(), gs.getPlayer().getCenterY()) < Math.pow(1000, 2)) {
+			if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
+					Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
+					Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
+					Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {
 				continue outer;
 			}
 			

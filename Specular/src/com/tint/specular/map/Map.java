@@ -8,14 +8,16 @@ public class Map {
 	
 	//FIELDS
 	private int width, height;
-	private Texture texture;
+	private Texture texture, parallax;
 	private String name;
 	
 	//CONSTRUCTORS
-	public Map(Texture texture, String name, int width, int height) {
+	public Map(Texture texture, Texture parallax, String name, int width, int height) {
 		this.name = name;
 		this.texture = texture;
 		this.texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		this.parallax = parallax;
+		this.parallax.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		this.width = width;
 		this.height = height;
 	}
@@ -35,4 +37,8 @@ public class Map {
 	public Texture getTexture() { return texture; }
 	public String getName() { return name; }
 	public void setTexture(Texture texture) { this.texture = texture; }
+
+	public Texture getParallax() {
+		return parallax;
+	}
 }

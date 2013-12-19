@@ -18,7 +18,7 @@ public class EnemyWorm extends Enemy {
 	private double angle;
 	
 	public EnemyWorm(float x, float y, GameState gs) {
-		super(x, y, gs);
+		super(x, y, gs, 1);
 		head = new Part(0, 100, 0, false, null);
 		for(int i = 0; i < 6; i++) {
 			Part p = i > 0 ? parts.get(i - 1) : head;

@@ -9,7 +9,6 @@ public abstract class Enemy implements Entity {
 	
 	//FIELDS
 	protected float x, y, dx, dy;
-	protected float width, height;
 	protected float direction;
 	protected float slowdown;
 	
@@ -18,10 +17,11 @@ public abstract class Enemy implements Entity {
 	
 	protected GameState gs;
 	
-	public Enemy(float x, float y, GameState gs) {
+	public Enemy(float x, float y, GameState gs, int life) {
 		this.x = x;
 		this.y = y;
 		this.gs = gs;
+		this.life = life;
 	}
 	
 	@Override
@@ -51,9 +51,9 @@ public abstract class Enemy implements Entity {
 				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
 				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
 			if(life == 0)
-				gs.getPass().spawn(this, 15, true);
+				gs.getParticleSpawner().spawn(this, 15, true);
 			else
-				gs.getPass().spawn(this, 6, false);
+				gs.getParticleSpawner().spawn(this, 6, false);
 		}
 		
 	}

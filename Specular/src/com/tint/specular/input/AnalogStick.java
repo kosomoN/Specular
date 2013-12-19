@@ -17,8 +17,8 @@ public class AnalogStick {
 	}
 	
 	public static void init() {
-		base = new Texture(Gdx.files.internal("graphics/game/Aiming Pad.png"));
-		head = new Texture(Gdx.files.internal("graphics/game/Aiming Pad.png"));
+		base = new Texture(Gdx.files.internal("graphics/game/Dpad Center.png"));
+		head = new Texture(Gdx.files.internal("graphics/game/Dpad Indicator.png"));
 	}
 	
 	public void render(SpriteBatch batch) {

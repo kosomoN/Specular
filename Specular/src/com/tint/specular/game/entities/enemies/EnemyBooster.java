@@ -17,10 +17,7 @@ public class EnemyBooster extends Enemy {
 	private int boostingDelay;
 	
 	public EnemyBooster(float x, float y, GameState gs) {
-		super(x, y, gs);
-		
-		slowdown = 0;
-		life = 1;
+		super(x, y, gs, 1);
 	}
 
 	//RENDER&UPDATE loop
@@ -75,9 +72,9 @@ public class EnemyBooster extends Enemy {
 	
 	//GETTERS
 	@Override
-	public float getInnerRadius() { return tex.getWidth() / 4; }
+	public float getInnerRadius() { return 16; }
 	@Override
-	public float getOuterRadius() { return tex.getWidth() / 2; }
+	public float getOuterRadius() { return 30; }
 	
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Booster.png"));

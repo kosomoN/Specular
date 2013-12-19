@@ -18,6 +18,8 @@ public class Player implements Entity {
 	
 	//FIELDS
 	private static final int MAX_DELTA_SPEED = 8;
+	private static final float SPEED = 0.125f;
+	private static final float FRICTION = 0.95f;
 	
 	private static Animation anim;
 	private static Texture texture;
@@ -78,8 +80,8 @@ public class Player implements Entity {
 		updateShooting();
 		
 		//Movement
-        dx *= 0.95f;
-        dy *= 0.95f;
+        dx *= FRICTION;
+        dy *= FRICTION;
         
         if(centerx - getRadius() + dx < 23)
         	dx = -dx * 0.6f;
@@ -98,7 +100,7 @@ public class Player implements Entity {
 	}
 	
 	public void updateMovement() {
-		/*if(gs.getProcessor().isWDown())
+		if(gs.getProcessor().isWDown())
 			changeSpeed(0, 0.6f);
 		if(gs.getProcessor().isADown())
 			changeSpeed(-0.6f, 0);
@@ -106,7 +108,7 @@ public class Player implements Entity {
 			changeSpeed(0, -0.6f);
 		if(gs.getProcessor().isDDown())
 			changeSpeed(0.6f, 0);
-		
+		/*
 		changeSpeed(Gdx.input.getAccelerometerX() * 0.1f * 0.6f,
 				Gdx.input.getAccelerometerY() * 0.1f * 0.6f);*/
 		
@@ -124,10 +126,10 @@ public class Player implements Entity {
 			
 			changeSpeed(
 					(float) Math.cos(angle) * MAX_DELTA_SPEED *
-					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) / 8, //Change the last number to alter the sensitivity
+					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) * SPEED, //Change the last number to alter the sensitivity
 					
 					(float) Math.sin(angle) * MAX_DELTA_SPEED *
-					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) / 8
+					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) * SPEED
 					);
 		}
 	}
@@ -176,52 +178,30 @@ public class Player implements Entity {
 	
 	public void updateHitDetection() {
         if(!isHit) {
-	        for(Iterator<Entity> it = gs.getEntities().iterator(); it.hasNext(); ) {
-	        	Entity e = it.next();
-	        	if(e instanceof Enemy) {
-	        		Enemy en = (Enemy) e;
-	        		if(en.getLife() > 0) {
-	        			float distX = centerx - en.getX();
-	        			float distY = centery - en.getY();
-		        		if(distX * distX + distY * distY < (getRadius() + en.getInnerRadius()) * (getRadius() + en.getInnerRadius())) {
-		        			
-//			        		gs.getParticleSpawnSystem().spawn((Enemy) e, 20, 5);
-		        			
-		        			it.remove();
-		        			
-		        			if(getLife() > 0)
-		        				addLives(-1);
-		        			
-			        		if(centerx - getRadius() + dx < en.getX() + en.getInnerRadius())
-			                	dx = -dx * 0.5f;
-			                else if(centerx + getRadius() + dx > en.getX() - en.getInnerRadius())
-			                	dx = -dx * 0.5f;
-			                
-			                if(centery - getRadius() + dy < en.getY() + en.getInnerRadius())
-			                	dy = -dy * 0.5f;
-			                else if(centery + getRadius() + dy > en.getY() - en.getInnerRadius())
-			                	dy = -dy * 0.5f;
-			        	}
-	        		}
-	        	} else if(e instanceof Player) {
-	        		if(!e.equals(this)) {
-						if(Util.getDistanceSquared(centerx, centery, ((Player) e).getCenterX(), ((Player) e).getCenterY())
-								< getRadius() * getRadius() * 4) {
-							addLives(-1);
-							((Player) e).addLives(-1);
-							
-							if(centerx - getRadius() + dx < ((Player) e).getCenterX() + Player.getRadius())
-					        	dx = -dx * 0.6f;
-					        else if(centerx + getRadius() + dx > ((Player) e).getCenterX() - Player.getRadius())
-					        	dx = -dx * 0.6f;
-					        
-					        if(centery - getRadius() + dy < ((Player) e).getCenterY() + Player.getRadius())
-					        	dy = -dy * 0.6f;
-					        else if(centery + getRadius() + dy > ((Player) e).getCenterY() - Player.getRadius())
-					        	dy = -dy * 0.6f;
-						}
-	        		}
-	        	}
+	        for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
+	        	Enemy e = it.next();
+        		if(e.getLife() > 0) {
+        			float distX = centerx - e.getX();
+        			float distY = centery - e.getY();
+	        		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
+	        			
+	        			System.out.println(gs.getEntities().removeValue(e, true));
+	        			it.remove();
+	        			
+	        			if(getLife() > 0)
+	        				addLives(-1);
+	        			
+		        		if(centerx - getRadius() + dx < e.getX() + e.getInnerRadius())
+		                	dx = -dx * 0.5f;
+		                else if(centerx + getRadius() + dx > e.getX() - e.getInnerRadius())
+		                	dx = -dx * 0.5f;
+		                
+		                if(centery - getRadius() + dy < e.getY() + e.getInnerRadius())
+		                	dy = -dy * 0.5f;
+		                else if(centery + getRadius() + dy > e.getY() - e.getInnerRadius())
+		                	dy = -dy * 0.5f;
+		        	}
+        		}
 	        }
         }
 	}

@@ -29,6 +29,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
 import com.tint.specular.game.spawnsystems.ParticleSpawnSystem;
@@ -56,7 +57,6 @@ public class GameState extends State {
 	private Array<Entity> entities = new Array<Entity>();
 	private Array<Enemy> enemies = new Array<Enemy>();
 	private Array<Bullet> bullets = new Array<Bullet>();
-	private Array<Particle> particles = new Array<Particle>();
 	
 	private MapHandler mapHandler;
 	private Map currentMap;
@@ -88,11 +88,12 @@ public class GameState extends State {
 		super(game);
 		
 		//Loading map texture from a internal directory
-		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Level.png"));
+		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Level2.png"));
+		Texture parallax = new Texture(Gdx.files.internal("graphics/game/Parallax.png"));
 		
 		//Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
-		mapHandler.addMap("Map", mapTexture, mapTexture.getWidth(), mapTexture.getHeight());
+		mapHandler.addMap("Map", mapTexture, parallax, mapTexture.getWidth(), mapTexture.getHeight());
 		currentMap = mapHandler.getMap("Map");
 		
 		//Initializing font
@@ -108,6 +109,7 @@ public class GameState extends State {
 		EnemyFast.init();
 		EnemyBooster.init();
 		EnemyWorm.init();
+		EnemyVirus.init();
 		AnalogStick.init();
 		
 		ess = new EnemySpawnSystem(this);
@@ -148,19 +150,18 @@ public class GameState extends State {
 			//Checking if any bullet hit an enemy
 			for(Bullet b : bullets) {
 				for(Enemy e : enemies) {
-					if(e.getLife() > 0) {
-						if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
-								e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
-							
-							e.hit(b.getShooter());
-							b.hit();
-							
-							//5% chance every hit to generate a power-up
-							/*Random r = new Random();
-							if(r.nextInt(100) < 5) {
-								puss.spawn(e);
-							}*/
-						}
+					if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
+							e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
+						
+						e.hit(b.getShooter());
+						b.hit();
+						break;
+						
+						//5% chance every hit to generate a power-up
+						/*Random r = new Random();
+						if(r.nextInt(100) < 5) {
+							puss.spawn(e);
+						}*/
 					}
 				}
 			}
@@ -170,7 +171,9 @@ public class GameState extends State {
 		for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
 			Entity ent = it.next();
 			if(ent.update()) {
-				if(ent instanceof Enemy)
+				if(ent instanceof Particle)
+					pass.getPool().free((Particle) ent);
+				else if(ent instanceof Enemy)
 					enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
 				else if(ent instanceof Bullet)
 					bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
@@ -208,7 +211,7 @@ public class GameState extends State {
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		CameraShake.moveCamera();
 		game.batch.begin();
-		game.batch.draw(currentMap.getTexture(), -2048, -2048, 4096, 4096);
+		game.batch.draw(currentMap.getParallax(), -2048, -2048, 4096, 4096);
 		
 		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
 		CameraShake.moveCamera();
@@ -216,7 +219,7 @@ public class GameState extends State {
 		float time = timePlayedInMillis % 3000;
 		if(time > 2500) {
 			if(time == 2990) {
-				CameraShake.shake(1, 0.04f);
+				CameraShake.shake(0.5f, 0.03f);
 			} else if(time > 2950) {
 				zoom = 1 - ((1 - ((time - 2950) / 50)) * (1 - ((time - 2950) / 50))) * 0.25f;
 			} else {
@@ -247,10 +250,8 @@ public class GameState extends State {
 		
 //			player.renderLifebar(game.batch);
 		
-			//Drawing score
-
 			//Debugging
-			/*
+			arial15.draw(game.batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 10);
 			arial15.draw(game.batch, "Enities: " + entities.size, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 30);
 			arial15.draw(game.batch, "Player Life: " + player.getLife(), -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 50);
 			arial15.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
@@ -277,8 +278,6 @@ public class GameState extends State {
 			enemies.add((Enemy) entity);
 		else if(entity instanceof Bullet)
 			bullets.add((Bullet) entity);
-		else if(entity instanceof Particle)
-			particles.add((Particle) entity);
 		
 		entities.add(entity);
 	}
@@ -363,6 +362,10 @@ public class GameState extends State {
 		//Adding player and setting up input processor
 		pss.spawn(1);
 		input.setInputProcessor(gameInputProcessor);
+		
+		lastTickTime = System.nanoTime();
+		EnemyVirus.virusAmount = 0;
+		addEntity(new EnemyVirus(500, 500, this));
 	}
 	
 	@Override
@@ -407,9 +410,20 @@ public class GameState extends State {
 				}
 			}
 		});
+		stage.addActor(tb);
+		
+		TextButton reset = new TextButton("Restart", skin);
+		reset.setSize(300, 150);
+		reset.setPosition((Gdx.graphics.getWidth() - 300) / 2, (Gdx.graphics.getHeight() - 150) / 2 - 200);
+		reset.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				reset();
+			}
+		});
 //		table.add(tb).fill();
 		
-		stage.addActor(tb);
+		stage.addActor(reset);
 		/*
 		table.setSize(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 		table.setPosition((Gdx.graphics.getWidth() - table.getWidth()) / 2, (Gdx.graphics.getHeight() - table.getHeight()) / 2);
@@ -480,7 +494,7 @@ public class GameState extends State {
 		bullets.clear();
 	}
 
-	public ParticleSpawnSystem getPass() {
+	public ParticleSpawnSystem getParticleSpawner() {
 		return pass;
 	}
 }
