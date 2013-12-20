@@ -97,7 +97,7 @@ public class EnemyWorm extends Enemy {
 					goingToY = nextPart.oldY;
 				}
 			} else {
-				angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);/*
+				angle = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x);/*
 				if(deltaAngle > Math.PI)
 					deltaAngle += deltaAngle > 0 ? -Math.PI * 2 : Math.PI * 2;
 				

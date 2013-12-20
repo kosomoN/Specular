@@ -27,8 +27,6 @@ public class EnemyNormal extends Enemy {
 	    }
 	}
 
-	//RENDER&UPDATE loop
-/*_______________________________________________________________________________*/
 	@Override
 	public void render(SpriteBatch batch) {
 		rotation += Gdx.graphics.getDeltaTime();
@@ -37,8 +35,8 @@ public class EnemyNormal extends Enemy {
 	
 	@Override
 	public boolean update() {
-		if(getClosestPlayer() != null)
-			angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x) + offset;
+		if(gs.getPlayer() != null)
+			angle = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x) + offset;
 		
 		dx = (float) (Math.cos(angle) * 2);
 		dy = (float) (Math.sin(angle) * 2);
@@ -61,9 +59,7 @@ public class EnemyNormal extends Enemy {
 		
 		return super.update();
 	}
-/*_______________________________________________________________________________*/
 	
-	//GETTERS
 	@Override
 	public float getInnerRadius() { return 16; }
 	@Override

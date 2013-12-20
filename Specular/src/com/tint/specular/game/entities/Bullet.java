@@ -28,13 +28,12 @@ public class Bullet implements Entity {
 		this.dx = cos * 15;
 		this.dy = sin * 15;
 
+		//Move the bullet away from the player center
 		this.x += cos * 28;
 		this.y += sin * 28;
 		
 		this.gs = gs;
 		this.shooter = shooter;
-		
-		hitbox = new Circle(x, y, bulletTex.getWidth() > bulletTex.getHeight() ? bulletTex.getWidth() : bulletTex.getHeight());
 	}
 
 	@Override
@@ -47,10 +46,7 @@ public class Bullet implements Entity {
 		x += dx;
 		y += dy;
 		
-		if((x + dx < 0 || x + dx > gs.getCurrentMap().getWidth() || y + dy < 0 || y + dy > gs.getCurrentMap().getHeight()) || isHit)
-			return true;
-		else
-			return false;
+		return ((x + dx < 0 || x + dx > gs.getCurrentMap().getWidth() || y + dy < 0 || y + dy > gs.getCurrentMap().getHeight()) || isHit);
 	}
 	
 	public static void init() {

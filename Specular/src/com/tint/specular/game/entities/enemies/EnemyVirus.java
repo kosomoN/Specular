@@ -64,7 +64,7 @@ public class EnemyVirus extends Enemy {
 			}
 			break;
 		case FOLLOW:
-			double angle = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
+			double angle = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x);
 			dx = (float) (Math.cos(angle) * 3);
 			dy = (float) (Math.sin(angle) * 3);
 			break;

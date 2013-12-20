@@ -58,23 +58,6 @@ public abstract class Enemy implements Entity {
 		
 	}
 	
-	//GETTERS
-	public Player getClosestPlayer() {
-		//Calculates the closest player
-		/*Player closest = null;
-		float distance = Float.MAX_VALUE;
-		float tempDistSqrd;
-		
-			tempDistSqrd = Util.getDistanceSquared(x, y, gs.getPlayer().getCenterX(), gs.getPlayer().getCenterY());
-			if(tempDistSqrd < distance * distance) {
-				distance = tempDistSqrd;
-				closest = gs.getPlayer()player;
-			}
-		}*/
-		
-		return gs.getPlayer();
-	}
-	
 	public float getX() { return x;	}
 	public float getY() { return y; }
 	public float getDx() { return dx; }

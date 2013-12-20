@@ -40,8 +40,8 @@ public class EnemyBooster extends Enemy {
 			
 			boostingDelay++;
 		} else if(boostingDelay == 0) {
-			if(getClosestPlayer() != null)
-				direction = Math.atan2(getClosestPlayer().getCenterY() - y, getClosestPlayer().getCenterX() - x);
+			if(gs.getPlayer() != null)
+				direction = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x);
 			
 			speed = 0;
 			boostingDelay++;
