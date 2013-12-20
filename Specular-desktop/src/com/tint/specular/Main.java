@@ -12,6 +12,7 @@ public class Main {
 		cfg.width = 1280;
 		cfg.height = 720;
 		
+		//There is no need to implement Facebook highscores in the desktop-version, so these are left empty
 		new LwjglApplication(new Specular(new Facebook() {
 
 			@Override
