@@ -1,67 +1,61 @@
 package com.tint.specular.game.spawnsystems;
 
+import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
-import com.tint.specular.game.entities.enemies.EnemyWorm;
-import com.tint.specular.utils.Util;
 
 public class EnemySpawnSystem extends SpawnSystem {
 	
 	private int enemiesSpawned = 0;
+	private Array<Enemy> enemyList;
 	
-	public EnemySpawnSystem(GameState gs) {
+	public EnemySpawnSystem(GameState gs, Array<Enemy> enemyList) {
 		super(gs);
+		this.enemyList = enemyList;
 	}
 
-	public void spawn(int wave) {
-		int enemyID = 0;
-		int enemiesAdded = 0;
-		int x;
-		int y;
+	public void update(int ticks) {
+		if(ticks > 5000) { //Different-spawns-depending-on-time-played concept
+			
+		} if(ticks > 2000) {
+			
+		} if(ticks > 200) {
+			
+		}
 		
-		outer :
-		do {
-			x = rand.nextInt(gs.getCurrentMap().getWidth());
-			y = rand.nextInt(gs.getCurrentMap().getHeight());
-			if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
-					Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
-					Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
-					Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {
-				continue outer;
+		//Remove this in case you are going to use the concept above
+		if(enemyList.size < ticks / 100) {
+			int randomId = rand.nextInt(6);
+			if(randomId < 3) {
+				putIntoGame(new EnemyNormal(0, 0, gs));
+			} else if(randomId < 5) {
+				putIntoGame(new EnemyFast(0, 0, gs));
+			} else {
+				putIntoGame(new EnemyBooster(0, 0, gs));
 			}
-			
-			enemyID = rand.nextInt(6);
-			
-			if(enemyID < 3)
-				gs.addEntity(new EnemyNormal(x, y, gs));
-			else if(enemyID < 5)
-				gs.addEntity(new EnemyFast(x, y, gs));
-			else if(enemyID == 5)
-				gs.addEntity(new EnemyBooster(x, y, gs));
-			
-			enemiesAdded++;
-			enemiesSpawned++;
-		} while(enemiesAdded <= wave);
+		}
 	}
 	
-	public void spawnBoss() {
-		boolean bossAdded = false;
-		doLoop :
-		do {
-			int x = rand.nextInt(gs.getCurrentMap().getWidth());
-			int y = rand.nextInt(gs.getCurrentMap().getHeight());
-			
-			if(Util.getDistanceSquared(x, y, gs.getPlayer().getCenterX(), gs.getPlayer().getCenterY())
-					< 1000 * 1000) {
-				continue doLoop;
+	private void putIntoGame(Enemy ent) {
+		int x;
+		int y;
+		while(true) {//I'm a bit skeptical about this loop
+			x = rand.nextInt(gs.getCurrentMap().getWidth());
+			y = rand.nextInt(gs.getCurrentMap().getHeight());
+			if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 > x ||
+					Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 < x ||
+					Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 > y ||
+					Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 < y) {
+				ent.setX(x);
+				ent.setY(y);
+				gs.addEntity(ent);
+				return;
 			}
-			
-			gs.addEntity(new EnemyWorm(x, y, gs));
-			bossAdded = true;
-		} while(!bossAdded);
+		}
 	}
 	
 	public int getSpawnedEnemies() {

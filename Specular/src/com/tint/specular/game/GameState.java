@@ -48,15 +48,14 @@ public class GameState extends State {
 	private static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	private float unprocessed;
 	private long lastTickTime = System.nanoTime();
-	private long timePlayedInMillis;
+	private int ticks;
 	
-	private float enemiesOnScreen = 0;
 	private float multiplierTime;
 	private double scoreMultiplier = 1;
 	
-	private Array<Entity> entities = new Array<Entity>();
-	private Array<Enemy> enemies = new Array<Enemy>();
-	private Array<Bullet> bullets = new Array<Bullet>();
+	private Array<Entity> entities = new Array<Entity>(false, 128);
+	private Array<Enemy> enemies = new Array<Enemy>(false, 64);
+	private Array<Bullet> bullets = new Array<Bullet>(false, 64);
 	
 	private MapHandler mapHandler;
 	private Map currentMap;
@@ -112,7 +111,7 @@ public class GameState extends State {
 		EnemyVirus.init();
 		AnalogStick.init();
 		
-		ess = new EnemySpawnSystem(this);
+		ess = new EnemySpawnSystem(this, enemies);
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
 		pass = new ParticleSpawnSystem(this);
@@ -137,7 +136,7 @@ public class GameState extends State {
 	
 	protected void update() {
 		//Adding played time
-		timePlayedInMillis += 10;
+		ticks++;
 		
 		//Updating score multiplier
 		multiplierTime += 10;
@@ -145,7 +144,6 @@ public class GameState extends State {
 			setScoreMultiplier(getScoreMultiplier() - 0.1);
 		
 		
-		enemiesOnScreen += 0.01;
 		if(player != null && player.getLife() > 0) {
 			//Checking if any bullet hit an enemy
 			for(Bullet b : bullets) {
@@ -187,9 +185,7 @@ public class GameState extends State {
 		}
 		
 		//Spawning new enemies
-		if(timePlayedInMillis >= 2000)
-			if(enemies.size < Math.floor(enemiesOnScreen))
-				ess.spawn((int) Math.floor(enemiesOnScreen) - enemies.size);
+		ess.update(ticks);
 		
 		//Player hit detection
 		if(!player.isDead())
@@ -320,10 +316,6 @@ public class GameState extends State {
 		return scoreMultiplier;
 	}
 	
-	public long getTimePlayed() {
-		return timePlayedInMillis;
-	}
-	
 	/** Get a custom BitmapFont based on its size. If ther is no font with that size it returns null.
 	 * @param size - The size of the wanted font
 	 * @return The custom font
@@ -346,7 +338,6 @@ public class GameState extends State {
 	
 	private void reset() {
 		gameover = false;
-		timePlayedInMillis = 0;
 		
 		//Reset table
 //		table.clear();
@@ -356,8 +347,8 @@ public class GameState extends State {
 		enemies.clear();
 		bullets.clear();
 		
-		//Wave reset
-		enemiesOnScreen = 0;
+		//Reset tick counter
+		ticks = 0;
 		
 		//Adding player and setting up input processor
 		pss.spawn(1);
@@ -365,7 +356,7 @@ public class GameState extends State {
 		
 		lastTickTime = System.nanoTime();
 		EnemyVirus.virusAmount = 0;
-		addEntity(new EnemyVirus(500, 500, this));
+//		addEntity(new EnemyVirus(500, 500, this));
 	}
 	
 	@Override
@@ -466,8 +457,6 @@ public class GameState extends State {
 		music.play();
 		gameInputProcessor = new GameInputProcessor(game);
 		input.setInputProcessor(gameInputProcessor);
-		
-		timePlayedInMillis = 0;
 	}
 	
 	@Override

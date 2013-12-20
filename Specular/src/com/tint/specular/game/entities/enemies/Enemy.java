@@ -70,4 +70,12 @@ public abstract class Enemy implements Entity {
 	
 	@Override
 	public void dispose() {}
+
+	public void setX(float x) {
+		this.x = x;
+	}
+	
+	public void setY(float y) {
+		this.y = y;
+	}
 }

@@ -12,7 +12,6 @@ public class PlayerSpawnSystem extends SpawnSystem {
 		super(gs);
 	}
 	
-	@Override
 	public void spawn(int playerAmount) {
 		int x, y;
 		int playersSpawned = 0;
