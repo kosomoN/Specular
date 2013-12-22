@@ -25,7 +25,7 @@ public abstract class Enemy implements Entity {
 	}
 	
 	@Override
-	public boolean update() {			
+	public boolean update() {
 		return life <= 0;
 	}
 

@@ -10,17 +10,13 @@ import com.tint.specular.utils.Util;
 
 public class EnemyFast extends Enemy {
 
-	//FIELDS
 	private static Texture tex;
 	private float rotation;
 
-	//CONSTRUCTOR
 	public EnemyFast(float x, float y, GameState gs) {
 		super(x, y, gs, 3);
 	}
 
-	//RENDER&UPDATE loop
-/*_______________________________________________________________________*/	
 	@Override
 	public void render(SpriteBatch batch) {
 		rotation += Gdx.graphics.getDeltaTime();

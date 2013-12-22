@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.Shield;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
@@ -22,10 +24,12 @@ public class Player implements Entity {
 	private static final float FRICTION = 0.95f;
 	
 	private static Animation anim;
-	private static Texture texture;
+	private static Texture playerTex;
 	private static Texture lifeBar, lifeTex;
+	private static Array<Texture> shieldTextures = new Array<Texture>();
 	
 	private GameState gs;
+	private Array<Shield> shields = new Array<Shield>();
 	
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
@@ -185,12 +189,13 @@ public class Player implements Entity {
         			float distY = centery - e.getY();
 	        		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
 	        			
-	        			System.out.println(gs.getEntities().removeValue(e, true));
+	        			gs.getEntities().removeValue(e, true);
 	        			it.remove();
 	        			
 	        			if(getLife() > 0)
 	        				addLives(-1);
 	        			
+	        			//Repel effect after collision
 		        		if(centerx - getRadius() + dx < e.getX() + e.getInnerRadius())
 		                	dx = -dx * 0.5f;
 		                else if(centerx + getRadius() + dx > e.getX() - e.getInnerRadius())
@@ -208,6 +213,11 @@ public class Player implements Entity {
 /*_____________________________________________________________________*/
 
 	//POWER-UPS
+	public void addShield() {
+		if(shields.size < shieldTextures.size)
+			shields.add(new Shield(this, shieldTextures.get(shields.size)));
+	}
+	
 	public void addLives(int livesToAdd) {
 		life = life + livesToAdd < 3 ? life + livesToAdd : 3;
 		
@@ -250,25 +260,28 @@ public class Player implements Entity {
 	public static float getRadius() { return (anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
+	public Array<Shield> getShields() { return shields; }
 	public int getScore() { return score; }
+	public boolean hasShield() { return shields.size > 0; }
 	public boolean isDead() { return life <= 0; }
 	public GameState getGameState() { return gs; }
 	
 	public static void init() {
 		lifeBar = new Texture(Gdx.files.internal("graphics/game/Lifebar.png"));
 		lifeTex = new Texture(Gdx.files.internal("graphics/game/Life.png"));
-		texture  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
-		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		anim = Util.getAnimation(texture, 64, 64, 1 / 16f, 0, 0, 7, 3);
+		playerTex  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
+		playerTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		anim = Util.getAnimation(playerTex, 64, 64, 1 / 16f, 0, 0, 7, 3);
 	}
 	
 	public void reset() {
 		setLife(3);
+//		shield = new Shield(this, shieldLayer1);
 	}
 
 	@Override
 	public void dispose() {
-		texture.dispose();
+		playerTex.dispose();
 		lifeBar.dispose();
 		lifeTex.dispose();
 	}

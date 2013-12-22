@@ -12,6 +12,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyStupid;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 
 public class ParticleSpawnSystem extends SpawnSystem {
@@ -25,7 +26,6 @@ public class ParticleSpawnSystem extends SpawnSystem {
 		particlePool = new Pool<Particle>() {
 			@Override
 			protected Particle newObject() {
-				System.out.println("New particle");
 				return new Particle(gs);
 			}
 		};
@@ -40,7 +40,7 @@ public class ParticleSpawnSystem extends SpawnSystem {
 		for(int i = 0; i < amount; i++) {
 			offset = rand.nextInt(50) - 25;
 			
-			if(ent instanceof Enemy) {
+			if(ent instanceof Enemy && !(ent instanceof EnemyStupid)) {
 				//Change the type
 				if(ent instanceof EnemyNormal) {
 					type = Type.ENEMY_NORMAL;

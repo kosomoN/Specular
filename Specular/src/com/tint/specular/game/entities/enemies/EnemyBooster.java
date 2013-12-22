@@ -20,8 +20,6 @@ public class EnemyBooster extends Enemy {
 		super(x, y, gs, 1);
 	}
 
-	//RENDER&UPDATE loop
-/*________________________________________________________________________________*/
 	@Override
 	public void render(SpriteBatch batch) {
 		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction) - 90);
@@ -68,9 +66,7 @@ public class EnemyBooster extends Enemy {
 		
 		return super.update();
 	}
-/*________________________________________________________________________________*/
-	
-	//GETTERS
+
 	@Override
 	public float getInnerRadius() { return 16; }
 	@Override

@@ -11,20 +11,16 @@ import com.tint.specular.utils.Util;
 public abstract class PowerUp implements Entity {
 	
 	private float x, y;
-	
 	private Texture texture;
 	protected GameState gs;
 	
-	//Constructors
 	public PowerUp(float x, float y, GameState gs) {
 		this.x = x;
 		this.y = y;
 		this.gs = gs;
-		texture = new Texture(Gdx.files.internal("graphics/game/PowerUgs.getPlayer().png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
 	}
 	
-	//RENDER&UPDATE loop
-/*_________________________________________________________________*/
 	@Override
 	public void render(SpriteBatch batch) {
 		Util.drawCentered(batch, texture, x, y, 0);
@@ -41,15 +37,12 @@ public abstract class PowerUp implements Entity {
 	}
 	
 	protected abstract void affect(Player p);
-/*_________________________________________________________________*/
-	
-	//SETTERS
+
 	public void setPosition(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
 	
-	//GETTERS
 	public float getCenterX() { return x; }
 	public float getCenterY() {	return y; }
 	public float getRadius() { return texture.getWidth() / 2; }

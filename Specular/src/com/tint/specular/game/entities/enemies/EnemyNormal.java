@@ -10,13 +10,11 @@ import com.tint.specular.utils.Util;
 
 public class EnemyNormal extends Enemy {
 
-	//FIELDS
 	private static Texture tex;
 	private float rotation;
 	private float offset;
 	private double angle;
 	
-	//CONSTRUCTOR
 	public EnemyNormal(float x, float y, GameState gs) {
 		super(x, y, gs, 5);
 		
@@ -74,7 +72,7 @@ public class EnemyNormal extends Enemy {
 	public void hit(Player shooter) {
 		super.hit(shooter);
 		if(life <= 0)
-			shooter.addScore(20);
+			shooter.addScore(10);
 	}
 
 	@Override

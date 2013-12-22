@@ -2,6 +2,7 @@ package com.tint.specular.game;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -17,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Setting;
 import com.tint.specular.Specular;
@@ -29,6 +32,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyStupid;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
@@ -50,7 +54,6 @@ public class GameState extends State {
 	private long lastTickTime = System.nanoTime();
 	private int ticks;
 	
-	private float multiplierTime;
 	private double scoreMultiplier = 1;
 	
 	private Array<Entity> entities = new Array<Entity>(false, 128);
@@ -73,6 +76,7 @@ public class GameState extends State {
 	protected PlayerSpawnSystem pss;
 	protected PowerUpSpawnSystem puss;
 	protected ParticleSpawnSystem pass;
+	protected ComboSystem cs;
 	
 	protected HashMap<String, Setting> settings;
 	protected boolean ready;
@@ -104,6 +108,7 @@ public class GameState extends State {
 		Player.init();
 		Bullet.init();
 		Particle.init();
+		EnemyStupid.init();
 		EnemyNormal.init();
 		EnemyFast.init();
 		EnemyBooster.init();
@@ -115,6 +120,7 @@ public class GameState extends State {
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
 		pass = new ParticleSpawnSystem(this);
+		cs = new ComboSystem();
 		
 		input = Gdx.input;
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
@@ -138,11 +144,12 @@ public class GameState extends State {
 		//Adding played time
 		ticks++;
 		
-		//Updating score multiplier
-		multiplierTime += 10;
-		if(multiplierTime % 1000 == 0)
-			setScoreMultiplier(getScoreMultiplier() - 0.1);
-		
+		//Updating combos and score multiplier
+		cs.update();
+		if(cs.getCombo() > 1)
+			setScoreMultiplier(0.5f * cs.getCombo());
+		else if(cs.getCombo() <= 1)
+			setScoreMultiplier(1);
 		
 		if(player != null && player.getLife() > 0) {
 			//Checking if any bullet hit an enemy
@@ -153,13 +160,19 @@ public class GameState extends State {
 						
 						e.hit(b.getShooter());
 						b.hit();
-						break;
 						
-						//5% chance every hit to generate a power-up
-						/*Random r = new Random();
-						if(r.nextInt(100) < 5) {
-							puss.spawn(e);
-						}*/
+						if(e.getLife() <= 0)
+							cs.activate();
+//						break;
+						
+						//Chance every kill to generate a power-up decreases as the amount of enemieso screen increases
+						Random r = new Random();
+						if(e.getLife() <= 0) {
+							if(r.nextInt(100) < 10 / (enemies.size % 100 > 0 ? Math.floor(enemies.size) : 1)) {
+								puss.spawn(e);
+							}
+						}
+						break;
 					}
 				}
 			}
@@ -177,7 +190,8 @@ public class GameState extends State {
 					bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
 				else if(ent instanceof Player) {
 					gameover = true;
-//					table.setVisible(true);
+					table.add(String.valueOf(player.getScore()));
+					table.setVisible(true);
 					input.setInputProcessor(stage);
 				}
 				it.remove();
@@ -254,7 +268,7 @@ public class GameState extends State {
 							-Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 70);/**/
 		}
 		Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
-					Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
+				Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
 		game.batch.end();
 		
 		if(gameover) {
@@ -280,7 +294,6 @@ public class GameState extends State {
 	
 	public void setScoreMultiplier(double multiplier) {
 		scoreMultiplier = multiplier < 1 ? 1 : multiplier;
-		multiplierTime = 0;
 	}
 	
 	//GETTERS
@@ -366,20 +379,11 @@ public class GameState extends State {
 		//Scene2d stuff
 		stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
-		/*
-		skin = new Skin();
-		skin.add("font30", font50);
-		skin.add("font15", arial15);
-		skin.add("background", new Texture(Gdx.files.internal("graphics/")));
-		skin.add("default", new LabelStyle(font50, Color.RED));
 		
-		table = new Table();
-		table.setVisible(false);
-		table.center();*/
-		TextButton tb = new TextButton("Post highscore!", skin);
-		tb.setSize(300, 150);
-		tb.setPosition((Gdx.graphics.getWidth() - 300) / 2, (Gdx.graphics.getHeight() - 150) / 2);
-		tb.addListener(new ChangeListener() {
+		TextButton post = new TextButton("Post highscore!", skin);
+		post.setSize(300, 150);
+		post.setPosition((Gdx.graphics.getWidth() - 300) / 2, (Gdx.graphics.getHeight() - 150) / 2);
+		post.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				if(!Specular.facebook.isLoggedIn()) {
@@ -401,7 +405,7 @@ public class GameState extends State {
 				}
 			}
 		});
-		stage.addActor(tb);
+		stage.addActor(post);
 		
 		TextButton reset = new TextButton("Restart", skin);
 		reset.setSize(300, 150);
@@ -415,46 +419,18 @@ public class GameState extends State {
 //		table.add(tb).fill();
 		
 		stage.addActor(reset);
-		/*
-		table.setSize(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+
+		table = new Table();
+		table.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		table.setPosition((Gdx.graphics.getWidth() - table.getWidth()) / 2, (Gdx.graphics.getHeight() - table.getHeight()) / 2);
 		table.setSkin(skin);
-		
-		table.setBackground("background");
-		
-
-		
-		TextButtonStyle btnStyle = new TextButtonStyle(skin.getDrawable("background"),
-				skin.getDrawable("background"), skin.getDrawable("background"), skin.getFont("font15"));
-		TextButton playAgain = new TextButton("Play Again", btnStyle);
-		playAgain.setSize(100, 30);
-		playAgain.setPosition(table.getX() + 10, table.getY() + 10);
-		playAgain.addListener(new ClickListener() {
-			
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				super.clicked(event, x, y);
-				reset();
-				System.out.println("helo");
-			}
-		});
-		stage.addActor(playAgain);
-		
-		TextButton highscores = new TextButton("Highscores", btnStyle);
-		highscores.setSize(100, 30);
-		highscores.setPosition(table.getX() + table.getWidth() - highscores.getWidth() - 10, table.getY() + 10);
-		highscores.addListener(new EventListener() {
-			
-			@Override
-			public boolean handle(Event event) {
-				System.out.println("hn");
-				return false;
-			}
-		});
-		stage.addActor(highscores);*/
+		table.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/mainmenu/Game Over Screen.png")))));
+		stage.addActor(table);
 		
 		reset();
+		
 		music.play();
+		music.setVolume(0.001f);
 		gameInputProcessor = new GameInputProcessor(game);
 		input.setInputProcessor(gameInputProcessor);
 	}

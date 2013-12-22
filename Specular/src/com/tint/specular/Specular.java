@@ -47,7 +47,6 @@ public class Specular extends Game {
 			w = WIDTH;
 			h = WIDTH * Gdx.graphics.getHeight() / Gdx.graphics.getWidth();
 		}
-		System.out.println(w + " " + h);
 		camera = new OrthographicCamera(w, h);
 		batch = new SpriteBatch();
 		prefs = Gdx.app.getPreferences("Preferences");
