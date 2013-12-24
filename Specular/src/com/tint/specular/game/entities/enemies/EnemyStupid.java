@@ -42,7 +42,6 @@ public class EnemyStupid extends Enemy {
 		
 		dx = (float) (Math.cos(angle) * 2);
 		dy = (float) (Math.sin(angle) * 2);
-		System.out.println(dx);
 		x += dx * (1 - slowdown);
 		y += dy * (1 - slowdown);
 		

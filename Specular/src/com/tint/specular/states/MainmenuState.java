@@ -18,8 +18,8 @@ public class MainmenuState extends State {
 		super(game);
 		
 		GLTexture.setEnforcePotImages(false);
-		title = new Texture(Gdx.files.internal("graphics/mainmenu/Title.png"));
-		background = new Texture(Gdx.files.internal("graphics/mainmenu/Title Background.png"));
+		title = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Title.png"));
+		background = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Title Background.png"));
 		
 	}
 	

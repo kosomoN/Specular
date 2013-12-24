@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -15,9 +16,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -80,12 +80,11 @@ public class GameState extends State {
 	
 	protected HashMap<String, Setting> settings;
 	protected boolean ready;
-	protected boolean gameover;
+	protected boolean gameOver;
 	
 	private Stage stage;
-	private Skin skin;
-	private Table table;
 	private GameInputProcessor gameInputProcessor;
+	private Texture gameOverTex;
 	
 	public GameState(Specular game) {
 		super(game);
@@ -93,6 +92,9 @@ public class GameState extends State {
 		//Loading map texture from a internal directory
 		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Level2.png"));
 		Texture parallax = new Texture(Gdx.files.internal("graphics/game/Parallax.png"));
+		
+		//Loading gameover texture
+		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Game Over Title.png"));
 		
 		//Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
@@ -189,9 +191,9 @@ public class GameState extends State {
 				else if(ent instanceof Bullet)
 					bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
 				else if(ent instanceof Player) {
-					gameover = true;
-					table.add(String.valueOf(player.getScore()));
-					table.setVisible(true);
+					gameOver = true;
+//					table.add(String.valueOf(player.getScore()));
+//					table.setVisible(true);
 					input.setInputProcessor(stage);
 				}
 				it.remove();
@@ -199,13 +201,17 @@ public class GameState extends State {
 		}
 		
 		//Spawning new enemies
-		ess.update(ticks);
+		if(!player.isDead())
+			ess.update(ticks);
 		
 		//Player hit detection
 		if(!player.isDead())
 			player.updateHitDetection();
 		
 		CameraShake.update();
+		
+		if(input.isKeyPressed(Keys.R))
+			refresh();
 	}
 	
 	protected void renderGame() {
@@ -254,7 +260,7 @@ public class GameState extends State {
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
 		//Drawing analogsticks
-		if(!gameover) {
+		if(!gameOver) {
 			gameInputProcessor.getShootStick().render(game.batch);
 			gameInputProcessor.getMoveStick().render(game.batch);
 		
@@ -269,9 +275,15 @@ public class GameState extends State {
 		}
 		Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
 				Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
+
 		game.batch.end();
 		
-		if(gameover) {
+		if(gameOver) {
+			game.batch.begin();
+			game.batch.draw(gameOverTex, -Gdx.graphics.getWidth() * 3 / 4, 30);
+			font50.draw(game.batch, String.valueOf(player.getScore()), -50, 100);
+			game.batch.end();
+			
 			stage.act();
 			stage.draw();
 		}
@@ -350,7 +362,7 @@ public class GameState extends State {
 	}
 	
 	private void reset() {
-		gameover = false;
+		gameOver = false;
 		
 		//Reset table
 //		table.clear();
@@ -372,18 +384,70 @@ public class GameState extends State {
 //		addEntity(new EnemyVirus(500, 500, this));
 	}
 	
+	public void refresh() {
+		//Post: Coord - 835, 20; size - 340, 170
+		//Retry: Coord - 400, 130; size - 520, 300
+		//Menu: Coord - 65, -40; size - 590, 300
+	}
+	
 	@Override
 	public void show() {
 		super.show();
 		
+		/*
+		 * All the positions are made after the resolution 1280:720
+		 */
 		//Scene2d stuff
 		stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
-		TextButton post = new TextButton("Post highscore!", skin);
-		post.setSize(300, 150);
-		post.setPosition((Gdx.graphics.getWidth() - 300) / 2, (Gdx.graphics.getHeight() - 150) / 2);
-		post.addListener(new ChangeListener() {
+		//Setting up the style for the retry button
+		ImageButtonStyle retryStyle = new ImageButtonStyle();
+		retryStyle.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Retry 600 550.png"))));
+		retryStyle.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Retry pressed.png"))));
+		
+		ImageButton retry = new ImageButton(retryStyle);
+		retry.setSize(520, 169);
+		retry.setPosition(400, 150);
+		
+		retry.addListener(new ChangeListener() {
+
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				reset();
+			}
+		});
+		stage.addActor(retry);
+		
+		//Setting up the style for the back to main menu button
+		ImageButtonStyle menuStyle = new ImageButtonStyle();
+		menuStyle.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Main menu button pressed.png"))));
+		menuStyle.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Main menu button 90 820.png"))));
+		
+		ImageButton menu = new ImageButton(menuStyle);
+		menu.setSize(590, 126.5f);
+		menu.setPosition(65, -40);
+		
+		menu.addListener(new ChangeListener() {
+
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+//				game.enterState(States.MAINMENUSTATE);
+			}
+
+		});
+		stage.addActor(menu);
+		
+		//Setting up the style for the post highscore button
+		ImageButtonStyle postStyle = new ImageButtonStyle();
+		postStyle.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Post 1250 790.png"))));
+		postStyle.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Post 1250 790.png"))));
+		
+		ImageButton postScore = new ImageButton(postStyle);
+		postScore.setSize(340, 170);
+		postScore.setPosition(835, -30);
+		
+		postScore.addListener(new ChangeListener() {
+
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				if(!Specular.facebook.isLoggedIn()) {
@@ -404,33 +468,14 @@ public class GameState extends State {
 					game.enterState(States.MAINMENUSTATE);
 				}
 			}
+			
 		});
-		stage.addActor(post);
-		
-		TextButton reset = new TextButton("Restart", skin);
-		reset.setSize(300, 150);
-		reset.setPosition((Gdx.graphics.getWidth() - 300) / 2, (Gdx.graphics.getHeight() - 150) / 2 - 200);
-		reset.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				reset();
-			}
-		});
-//		table.add(tb).fill();
-		
-		stage.addActor(reset);
-
-		table = new Table();
-		table.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		table.setPosition((Gdx.graphics.getWidth() - table.getWidth()) / 2, (Gdx.graphics.getHeight() - table.getHeight()) / 2);
-		table.setSkin(skin);
-		table.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/mainmenu/Game Over Screen.png")))));
-		stage.addActor(table);
+		stage.addActor(postScore);
 		
 		reset();
 		
 		music.play();
-		music.setVolume(0.001f);
+		music.setVolume(0.01f);
 		gameInputProcessor = new GameInputProcessor(game);
 		input.setInputProcessor(gameInputProcessor);
 	}

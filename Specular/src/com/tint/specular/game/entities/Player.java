@@ -25,7 +25,6 @@ public class Player implements Entity {
 	
 	private static Animation anim;
 	private static Texture playerTex;
-	private static Texture lifeBar, lifeTex;
 	private static Array<Texture> shieldTextures = new Array<Texture>();
 	
 	private GameState gs;
@@ -59,12 +58,6 @@ public class Player implements Entity {
 		animFrameTime += Gdx.graphics.getDeltaTime();
 		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
 		batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
-	}
-	
-	public void renderLifebar(SpriteBatch batch) {
-		//Takes minus the screens with and height because the camera is centered
-		batch.draw(lifeTex, 30 - Specular.camera.viewportWidth / 2, 30 - Specular.camera.viewportHeight / 2, 64, lifeY);
-		batch.draw(lifeBar, 30 - Specular.camera.viewportWidth / 2, 30 - Specular.camera.viewportHeight / 2);
 	}
 	
 	@Override
@@ -267,8 +260,6 @@ public class Player implements Entity {
 	public GameState getGameState() { return gs; }
 	
 	public static void init() {
-		lifeBar = new Texture(Gdx.files.internal("graphics/game/Lifebar.png"));
-		lifeTex = new Texture(Gdx.files.internal("graphics/game/Life.png"));
 		playerTex  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
 		playerTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(playerTex, 64, 64, 1 / 16f, 0, 0, 7, 3);
@@ -282,7 +273,5 @@ public class Player implements Entity {
 	@Override
 	public void dispose() {
 		playerTex.dispose();
-		lifeBar.dispose();
-		lifeTex.dispose();
 	}
 }

@@ -46,12 +46,12 @@ public class MenuInputProcessor implements InputProcessor{
 				profileBtn = new Button(x, y, width, height);
 				
 				// Set button textures
-				playTex = new Texture(Gdx.files.internal("graphics/mainmenu/Play 780 490.png"));
-				optionsTex = new Texture(Gdx.files.internal("graphics/mainmenu/Options.png"));
-				profileTex = new Texture(Gdx.files.internal("graphics/mainmenu/Profiles 1000 710.png"));
-				playTexPr = new Texture(Gdx.files.internal("graphics/mainmenu/Play Pressed.png"));
-				optionsTexPr = new Texture(Gdx.files.internal("graphics/mainmenu/Options Pressed.png"));
-				profileTexPr = new Texture(Gdx.files.internal("graphics/mainmenu/Profiles Pressed.png"));
+				playTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play 780 490.png"));
+				optionsTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options.png"));
+				profileTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles 1000 710.png"));
+				playTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play Pressed.png"));
+				optionsTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options Pressed.png"));
+				profileTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles Pressed.png"));
 				playBtn.setTexture(playTex);
 				optionsBtn.setTexture(optionsTex);
 				profileBtn.setTexture(profileTex);
@@ -59,7 +59,6 @@ public class MenuInputProcessor implements InputProcessor{
 
 	@Override
 	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
