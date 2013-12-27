@@ -8,6 +8,12 @@ import com.badlogic.gdx.math.Circle;
 import com.tint.specular.game.GameState;
 import com.tint.specular.utils.Util;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public class Bullet implements Entity {
 	
 	private static Texture bulletTex;

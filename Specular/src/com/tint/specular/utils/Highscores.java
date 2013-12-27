@@ -6,6 +6,12 @@ import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public class Highscores {
 	
 	public static void main(String[] args) {

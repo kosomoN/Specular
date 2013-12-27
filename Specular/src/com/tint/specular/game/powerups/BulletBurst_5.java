@@ -3,6 +3,12 @@ package com.tint.specular.game.powerups;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class BulletBurst_5 extends PowerUp {
 
 	public BulletBurst_5(float x, float y, GameState gs) {

@@ -4,6 +4,12 @@ import java.util.Random;
 
 import com.tint.specular.Specular;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public class CameraShake {
 	
 	private static float shakeIntensity;

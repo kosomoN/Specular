@@ -6,7 +6,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -46,6 +45,12 @@ import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.Facebook.LoginCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.utils.Util;
+
+/**
+ * 
+ * @author Daniel Riissanen, Onni Kosomaa
+ *
+ */
 
 public class GameState extends State {
 	
@@ -96,12 +101,12 @@ public class GameState extends State {
 		//Loading gameover texture
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Game Over Title.png"));
 		
-		//Initializing map handler for handling many maps
+		//Initialising map handler for handling many maps
 		mapHandler = new MapHandler();
 		mapHandler.addMap("Map", mapTexture, parallax, mapTexture.getWidth(), mapTexture.getHeight());
 		currentMap = mapHandler.getMap("Map");
 		
-		//Initializing font
+		//Initialising font
 		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
 		font50 = fontGen.generateFont(50, FONT_CHARACTERS, false);
 		font50.setColor(Color.RED);
@@ -165,9 +170,8 @@ public class GameState extends State {
 						
 						if(e.getLife() <= 0)
 							cs.activate();
-//						break;
 						
-						//Chance every kill to generate a power-up decreases as the amount of enemieso screen increases
+						//Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
 						Random r = new Random();
 						if(e.getLife() <= 0) {
 							if(r.nextInt(100) < 10 / (enemies.size % 100 > 0 ? Math.floor(enemies.size) : 1)) {
@@ -192,8 +196,6 @@ public class GameState extends State {
 					bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
 				else if(ent instanceof Player) {
 					gameOver = true;
-//					table.add(String.valueOf(player.getScore()));
-//					table.setVisible(true);
 					input.setInputProcessor(stage);
 				}
 				it.remove();
@@ -209,9 +211,6 @@ public class GameState extends State {
 			player.updateHitDetection();
 		
 		CameraShake.update();
-		
-		if(input.isKeyPressed(Keys.R))
-			refresh();
 	}
 	
 	protected void renderGame() {
@@ -308,7 +307,6 @@ public class GameState extends State {
 		scoreMultiplier = multiplier < 1 ? 1 : multiplier;
 	}
 	
-	//GETTERS
 	public Specular getGame() {
 		return game;
 	}
@@ -364,9 +362,6 @@ public class GameState extends State {
 	private void reset() {
 		gameOver = false;
 		
-		//Reset table
-//		table.clear();
-		
 		//Entity reset
 		entities.clear();
 		enemies.clear();
@@ -381,13 +376,6 @@ public class GameState extends State {
 		
 		lastTickTime = System.nanoTime();
 		EnemyVirus.virusAmount = 0;
-//		addEntity(new EnemyVirus(500, 500, this));
-	}
-	
-	public void refresh() {
-		//Post: Coord - 835, 20; size - 340, 170
-		//Retry: Coord - 400, 130; size - 520, 300
-		//Menu: Coord - 65, -40; size - 590, 300
 	}
 	
 	@Override
@@ -395,7 +383,7 @@ public class GameState extends State {
 		super.show();
 		
 		/*
-		 * All the positions are made after the resolution 1280:720
+		 * All the positions are made after the resolution 1280x720
 		 */
 		//Scene2d stuff
 		stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -431,7 +419,7 @@ public class GameState extends State {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-//				game.enterState(States.MAINMENUSTATE);
+				game.enterState(States.MAINMENUSTATE);
 			}
 
 		});

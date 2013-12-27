@@ -3,6 +3,12 @@ package com.tint.specular;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.ui.Button;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class Setting {
 	
 	//FIELDS

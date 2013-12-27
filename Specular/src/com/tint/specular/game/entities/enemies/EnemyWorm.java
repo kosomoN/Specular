@@ -6,6 +6,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.game.GameState;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public class EnemyWorm extends Enemy {
 	
 	private static Texture body1Tex, body2Tex, headTex, tailTex;

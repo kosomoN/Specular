@@ -3,6 +3,12 @@ package com.tint.specular.states;
 import com.badlogic.gdx.Screen;
 import com.tint.specular.Specular;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public abstract class State implements Screen {
 	
 	//FIELDS

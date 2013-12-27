@@ -6,6 +6,12 @@ import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.multiplayer.Client;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class MultiplayerGameState extends GameState {
 
 	//FIELDS

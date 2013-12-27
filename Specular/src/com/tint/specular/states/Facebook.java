@@ -1,5 +1,11 @@
 package com.tint.specular.states;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public interface Facebook {
 	public boolean login(LoginCallback loginCallback);
 	public void logout();

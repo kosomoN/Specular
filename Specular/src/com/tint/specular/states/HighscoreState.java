@@ -13,6 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.tint.specular.Specular;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public class HighscoreState extends State {
 	
 	private Stage stage;

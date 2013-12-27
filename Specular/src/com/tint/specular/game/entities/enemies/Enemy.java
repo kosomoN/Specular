@@ -5,6 +5,12 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public abstract class Enemy implements Entity {
 	
 	//FIELDS

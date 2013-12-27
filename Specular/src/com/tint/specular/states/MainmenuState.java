@@ -8,6 +8,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.Specular;
 import com.tint.specular.input.MenuInputProcessor;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class MainmenuState extends State {
 	
 	private Texture title, background;

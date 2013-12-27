@@ -8,6 +8,12 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 import com.tint.specular.game.GameState;
 import com.tint.specular.utils.Util;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public class Particle implements Entity, Poolable {
 	
 	public enum Type {

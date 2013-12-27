@@ -15,6 +15,12 @@ import com.tint.specular.game.entities.enemies.EnemyNormal;
 import com.tint.specular.game.entities.enemies.EnemyStupid;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public class ParticleSpawnSystem extends SpawnSystem {
 	
 	private Pool<Particle> particlePool;

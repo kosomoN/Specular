@@ -8,6 +8,12 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.utils.Util;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class EnemyStupid extends Enemy {
 
 	private static Texture texture;

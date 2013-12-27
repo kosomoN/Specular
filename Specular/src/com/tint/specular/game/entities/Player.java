@@ -16,6 +16,12 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class Player implements Entity {
 	
 	//FIELDS
@@ -189,15 +195,9 @@ public class Player implements Entity {
 	        				addLives(-1);
 	        			
 	        			//Repel effect after collision
-		        		if(centerx - getRadius() + dx < e.getX() + e.getInnerRadius())
-		                	dx = -dx * 0.5f;
-		                else if(centerx + getRadius() + dx > e.getX() - e.getInnerRadius())
-		                	dx = -dx * 0.5f;
-		                
-		                if(centery - getRadius() + dy < e.getY() + e.getInnerRadius())
-		                	dy = -dy * 0.5f;
-		                else if(centery + getRadius() + dy > e.getY() - e.getInnerRadius())
-		                	dy = -dy * 0.5f;
+	        			double repelAngle = Math.atan2(e.getY() - centery, e.getX() - centerx);
+	        			
+	        			setSpeed((float) (Math.cos(repelAngle) * -dx * 0.5f), (float) (Math.sin(repelAngle) * -dy * 0.5f));
 		        	}
         		}
 	        }

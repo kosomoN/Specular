@@ -6,6 +6,12 @@ import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.utils.Util;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class PlayerSpawnSystem extends SpawnSystem {
 	
 	public PlayerSpawnSystem(GameState gs) {

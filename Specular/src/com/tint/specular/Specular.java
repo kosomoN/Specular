@@ -14,6 +14,12 @@ import com.tint.specular.states.HighscoreState;
 import com.tint.specular.states.MainmenuState;
 import com.tint.specular.states.State;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public class Specular extends Game {
 	public enum States {
 		MAINMENUSTATE, SETTINGSMENUSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE, PROFILE_STATE;

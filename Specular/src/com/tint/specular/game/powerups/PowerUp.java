@@ -8,6 +8,12 @@ import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.utils.Util;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public abstract class PowerUp implements Entity {
 	
 	private float x, y;

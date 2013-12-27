@@ -8,6 +8,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.tint.specular.Specular;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class Button {
 	
 	//FIELDS

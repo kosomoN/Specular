@@ -1,5 +1,11 @@
 package com.tint.specular.game;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class ComboSystem {
 	
 	private int combo = 0;

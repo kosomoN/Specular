@@ -8,6 +8,12 @@ import com.tint.specular.game.GameState;
 
 import static com.tint.specular.game.entities.enemies.EnemyVirus.Behavior.*;
 
+/**
+ * 
+ * @author Onni Kosomaa
+ *
+ */
+
 public class EnemyVirus extends Enemy {
 
 	public enum Behavior {

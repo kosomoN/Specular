@@ -6,6 +6,12 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.powerups.*;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class PowerUpSpawnSystem extends SpawnSystem {
 
 	

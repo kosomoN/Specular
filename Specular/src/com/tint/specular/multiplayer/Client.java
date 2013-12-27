@@ -6,6 +6,12 @@ import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class Client {
 
 	private Player player;

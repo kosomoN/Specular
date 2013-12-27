@@ -2,6 +2,12 @@ package com.tint.specular.game;
 
 import com.tint.specular.Specular;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class SingleplayerGameState extends GameState {
 	
 	public SingleplayerGameState(Specular game) {

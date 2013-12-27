@@ -5,6 +5,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.utils.Util;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class Shield {
 	
 	private Player player;

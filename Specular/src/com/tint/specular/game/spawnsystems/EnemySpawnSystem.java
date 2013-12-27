@@ -9,6 +9,12 @@ import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
 import com.tint.specular.game.entities.enemies.EnemyStupid;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class EnemySpawnSystem extends SpawnSystem {
 
 	private int enemiesSpawned = 0;

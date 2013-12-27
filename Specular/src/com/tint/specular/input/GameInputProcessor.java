@@ -5,6 +5,12 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.tint.specular.Specular;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class GameInputProcessor implements InputProcessor {
 
 	private boolean w, a, s, d;

@@ -8,6 +8,12 @@ import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
 import com.tint.specular.ui.Button;
 
+/**
+ * 
+ * @author Casper Talvio
+ *
+ */
+
 public class MenuInputProcessor implements InputProcessor{
 	
 	private Texture playTex, profileTex, optionsTex, playTexPr, profileTexPr, optionsTexPr;
@@ -21,40 +27,40 @@ public class MenuInputProcessor implements InputProcessor{
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/04.ogg"));
 		
 		//Defining main menu buttons locations and sizes
-				int x = 780;
-				int y = (int) (334);
-				
-				int height = (int) (256);
-				int width = 768;
-				
-				playBtn = new Button(x, y, width, height);
-				
-				x = 1408;
-				y = 0;
-				
-				height = (int) (128);
-				width = 512;
-				
-				optionsBtn = new Button(x, y, width, height);
-				
-				x = 1000;
-				y = (int) (114);
-				
-				height = (int) (256);
-				width = 768;
-				
-				profileBtn = new Button(x, y, width, height);
-				
-				// Set button textures
-				playTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play 780 490.png"));
-				optionsTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options.png"));
-				profileTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles 1000 710.png"));
-				playTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play Pressed.png"));
-				optionsTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options Pressed.png"));
-				profileTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles Pressed.png"));
-				playBtn.setTexture(playTex);
-				optionsBtn.setTexture(optionsTex);
-				profileBtn.setTexture(profileTex);
+		int x = 780;
+		int y = (int) (334);
+		
+		int height = (int) (256);
+		int width = 768;
+		
+		playBtn = new Button(x, y, width, height);
+		
+		x = 1408;
+		y = 0;
+		
+		height = (int) (128);
+		width = 512;
+		
+		optionsBtn = new Button(x, y, width, height);
+		
+		x = 1000;
+		y = (int) (114);
+		
+		height = (int) (256);
+		width = 768;
+		
+		profileBtn = new Button(x, y, width, height);
+		
+		// Set button textures
+		playTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play 780 490.png"));
+		optionsTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options.png"));
+		profileTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles 1000 710.png"));
+		playTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play Pressed.png"));
+		optionsTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options Pressed.png"));
+		profileTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles Pressed.png"));
+		playBtn.setTexture(playTex);
+		optionsBtn.setTexture(optionsTex);
+		profileBtn.setTexture(profileTex);
 	}
 
 	@Override
@@ -64,13 +70,11 @@ public class MenuInputProcessor implements InputProcessor{
 
 	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -119,19 +123,16 @@ public class MenuInputProcessor implements InputProcessor{
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

@@ -1,5 +1,11 @@
 package com.tint.specular.game.gamemodes;
 
+/**
+ * 
+ * @author Daniel Riissanen
+ *
+ */
+
 public class TimeAttack {
 	private float timeLeft;
 	
