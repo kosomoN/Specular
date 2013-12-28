@@ -34,6 +34,7 @@ import com.tint.specular.game.entities.enemies.EnemyNormal;
 import com.tint.specular.game.entities.enemies.EnemyStupid;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
+import com.tint.specular.game.gamemodes.GameModes;
 import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
 import com.tint.specular.game.spawnsystems.ParticleSpawnSystem;
 import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
@@ -58,8 +59,10 @@ public class GameState extends State {
 	private float unprocessed;
 	private long lastTickTime = System.nanoTime();
 	private int ticks;
+	private float timeLeft;
 	
 	private double scoreMultiplier = 1;
+	private boolean enablePowerUps = true;
 	
 	private Array<Entity> entities = new Array<Entity>(false, 128);
 	private Array<Enemy> enemies = new Array<Enemy>(false, 64);
@@ -73,8 +76,9 @@ public class GameState extends State {
 	
 	private BitmapFont arial15 = new BitmapFont();
 	private BitmapFont font50;
-	public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
+	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
 	
+	protected Enum<GameModes> gameMode;
 	protected Player player;
 	
 	protected EnemySpawnSystem ess;
@@ -133,8 +137,6 @@ public class GameState extends State {
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
 	}
 
-	//UPDATE-RENDER loop, divided into update(float) and renderGame()
-/*____________________________________________________________________*/
 	@Override
 	public void render(float delta) {
 		long currTime = System.nanoTime();
@@ -151,37 +153,60 @@ public class GameState extends State {
 		//Adding played time
 		ticks++;
 		
-		//Updating combos and score multiplier
-		cs.update();
-		if(cs.getCombo() > 1)
-			setScoreMultiplier(0.5f * cs.getCombo());
-		else if(cs.getCombo() <= 1)
-			setScoreMultiplier(1);
-		
+		//Update timer if playing time attack
+		if(gameMode == GameModes.TIMEATTACK) {
+			timeLeft -= TICK_LENGTH / 1000000;
+			if(timeLeft <= 0) 
+				player.kill();
+		} else {
+			//Updating combos and score multiplier
+			cs.update();
+			if(cs.getCombo() > 1)
+				setScoreMultiplier(0.5f * cs.getCombo());
+			else if(cs.getCombo() <= 1)
+				setScoreMultiplier(1);
+		}
+				
 		if(player != null && player.getLife() > 0) {
+			//Adding score if time attack is played
+			if(gameMode == GameModes.TIMEATTACK)
+				player.setScore((int) (ticks * TICK_LENGTH / 1000000));
+			
 			//Checking if any bullet hit an enemy
 			for(Bullet b : bullets) {
 				for(Enemy e : enemies) {
 					if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
 							e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
 						
-						e.hit(b.getShooter());
+						e.hit();
 						b.hit();
 						
-						if(e.getLife() <= 0)
-							cs.activate();
-						
-						//Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
-						Random r = new Random();
+						//Rewarding player depending on game mode
 						if(e.getLife() <= 0) {
-							if(r.nextInt(100) < 10 / (enemies.size % 100 > 0 ? Math.floor(enemies.size) : 1)) {
-								puss.spawn(e);
-							}
+							if(gameMode == GameModes.RANKED)
+								player.addScore(e.getValue());
+							else if(gameMode == GameModes.TIMEATTACK)
+								timeLeft += e.getValue();
+							
+							cs.activate();
+							
+							//Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
+							Random r = new Random();
+							if(enablePowerUps)
+								if(r.nextInt(100) < 10 / (enemies.size % 100 > 0 ? Math.floor(enemies.size) : 1))
+									puss.spawn(e);
+							
+							break;
 						}
-						break;
 					}
 				}
 			}
+		}
+		
+		//Spawning new enemies and checking if player is hit
+		if(!player.isDead()) {
+			ess.update(ticks);
+			player.updateHitDetection();
 		}
 		
 		//Removing destroyed entities
@@ -202,14 +227,6 @@ public class GameState extends State {
 			}
 		}
 		
-		//Spawning new enemies
-		if(!player.isDead())
-			ess.update(ticks);
-		
-		//Player hit detection
-		if(!player.isDead())
-			player.updateHitDetection();
-		
 		CameraShake.update();
 	}
 	
@@ -217,8 +234,9 @@ public class GameState extends State {
 		//Clearing screen, positioning camera, rendering map and entities
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
-//		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE ); //Amazing stuff happens xD
+//		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE ); //Amazing stuff happens xD; Answer(Daniel): Jup xD
 		
+		//Positioning camera to the player
 		Specular.camera.position.set(player.getCenterX() / 2, player.getCenterY() / 2, 0);
 		Specular.camera.zoom = 1;
 		Specular.camera.update();
@@ -245,6 +263,7 @@ public class GameState extends State {
 		Specular.camera.zoom = zoom;*/
 		Specular.camera.update();
 		
+		//Rendering map and entities
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		CameraShake.moveCamera();
 		currentMap.render(game.batch);
@@ -252,7 +271,7 @@ public class GameState extends State {
 			ent.render(game.batch);
 		}
 		
-		//Positioning camera
+		//Re-positioning camera for HUD
 		Specular.camera.position.set(0, 0, 0);
 		Specular.camera.zoom = 1;
 		Specular.camera.update();
@@ -263,15 +282,18 @@ public class GameState extends State {
 			gameInputProcessor.getShootStick().render(game.batch);
 			gameInputProcessor.getMoveStick().render(game.batch);
 		
-//			player.renderLifebar(game.batch);
-		
-			//Debugging
+			//Debugging information
 			arial15.draw(game.batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 10);
 			arial15.draw(game.batch, "Enities: " + entities.size, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 30);
 			arial15.draw(game.batch, "Player Life: " + player.getLife(), -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 50);
 			arial15.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
-							-Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 70);/**/
+							-Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 70);
+			
+			if(gameMode == GameModes.TIMEATTACK)
+				arial15.draw(game.batch, "Time Left: " + timeLeft, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 90);
 		}
+		
+		//Drawing score in the middle top of the screen
 		Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
 				Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
 
@@ -307,16 +329,28 @@ public class GameState extends State {
 		scoreMultiplier = multiplier < 1 ? 1 : multiplier;
 	}
 	
+	public void setGameOver(boolean over) {
+		gameOver = over;
+	}
+	
 	public Specular getGame() {
 		return game;
 	}
 	
-	public GameInputProcessor getProcessor() {
+	public GameInputProcessor getGameProcessor() {
 		return gameInputProcessor;
+	}
+	
+	public Stage getStage() {
+		return stage;
 	}
 	
 	public HashMap<String, Setting> getSettings() {
 		return settings;
+	}
+	
+	public Array<Bullet> getBullets() {
+		return bullets;
 	}
 	
 	public Array<Enemy> getEnemies() {
@@ -329,6 +363,10 @@ public class GameState extends State {
 	
 	public Player getPlayer() {
 		return player;
+	}
+	
+	public ParticleSpawnSystem getParticleSpawnSystem() {
+		return pass;
 	}
 	
 	public Map getCurrentMap() {
@@ -367,17 +405,19 @@ public class GameState extends State {
 		enemies.clear();
 		bullets.clear();
 		
-		//Reset tick counter
-		ticks = 0;
-		
 		//Adding player and setting up input processor
 		pss.spawn(1);
 		input.setInputProcessor(gameInputProcessor);
 		
+		//Setting up the right gamemode
+		gameMode = GameModes.RANKED;
+		timeLeft = 30000f;	//30s before time runs out (May be changed)
+		
+		ticks = 0;
 		lastTickTime = System.nanoTime();
 		EnemyVirus.virusAmount = 0;
 	}
-	
+
 	@Override
 	public void show() {
 		super.show();
@@ -490,9 +530,5 @@ public class GameState extends State {
 		
 		enemies.clear();
 		bullets.clear();
-	}
-
-	public ParticleSpawnSystem getParticleSpawner() {
-		return pass;
 	}
 }

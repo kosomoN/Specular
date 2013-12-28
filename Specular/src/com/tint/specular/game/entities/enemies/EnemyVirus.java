@@ -1,12 +1,12 @@
 package com.tint.specular.game.entities.enemies;
 
+import static com.tint.specular.game.entities.enemies.EnemyVirus.Behavior.POINTLESS;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
-
-import static com.tint.specular.game.entities.enemies.EnemyVirus.Behavior.*;
 
 /**
  * 
@@ -109,6 +109,11 @@ public class EnemyVirus extends Enemy {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public int getValue() {
+		return 5;
 	}
 
 	@Override

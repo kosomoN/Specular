@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
-import com.tint.specular.game.entities.Player;
 import com.tint.specular.utils.Util;
 
 /**
@@ -84,10 +83,8 @@ public class EnemyBooster extends Enemy {
 	}
 
 	@Override
-	public void hit(Player shooter) {
-		super.hit(shooter);
-		if(life <= 0)
-			shooter.addScore(50);
+	public int getValue() {
+		return 50;
 	}
 	
 	@Override

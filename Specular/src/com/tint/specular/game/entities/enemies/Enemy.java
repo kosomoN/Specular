@@ -3,7 +3,6 @@ package com.tint.specular.game.entities.enemies;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
-import com.tint.specular.game.entities.Player;
 
 /**
  * 
@@ -50,19 +49,20 @@ public abstract class Enemy implements Entity {
 		slowdown = slowdown < 0 ? 0 : slowdown;
 	}
 	
-	public void hit(Player shooter) {
+	public void hit() {
 		life--;
 		if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
 				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
 				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
 				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
 			if(life == 0)
-				gs.getParticleSpawner().spawn(this, 15, true);
+				gs.getParticleSpawnSystem().spawn(this, 15, true);
 			else
-				gs.getParticleSpawner().spawn(this, 6, false);
+				gs.getParticleSpawnSystem().spawn(this, 6, false);
 		}
-		
 	}
+	
+	public abstract int getValue();
 	
 	public float getX() { return x;	}
 	public float getY() { return y; }

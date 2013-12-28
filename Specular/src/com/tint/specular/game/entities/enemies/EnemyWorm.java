@@ -125,6 +125,10 @@ public class EnemyWorm extends Enemy {
 		}
 	}
 	
+	public int getValue() {
+		return 100;
+	}
+	
 	@Override
 	public float getInnerRadius() {
 		return 0;

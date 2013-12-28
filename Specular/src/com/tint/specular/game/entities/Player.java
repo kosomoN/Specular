@@ -103,13 +103,13 @@ public class Player implements Entity {
 	}
 	
 	public void updateMovement() {
-		if(gs.getProcessor().isWDown())
+		if(gs.getGameProcessor().isWDown())
 			changeSpeed(0, 0.6f);
-		if(gs.getProcessor().isADown())
+		if(gs.getGameProcessor().isADown())
 			changeSpeed(-0.6f, 0);
-		if(gs.getProcessor().isSDown())
+		if(gs.getGameProcessor().isSDown())
 			changeSpeed(0, -0.6f);
-		if(gs.getProcessor().isDDown())
+		if(gs.getGameProcessor().isDDown())
 			changeSpeed(0.6f, 0);
 		/*
 		changeSpeed(Gdx.input.getAccelerometerX() * 0.1f * 0.6f,
@@ -117,7 +117,7 @@ public class Player implements Entity {
 		
 		float aFourthOfWidthSqrd = Specular.camera.viewportWidth / 8 * Specular.camera.viewportWidth / 8;
 		
-		AnalogStick moveStick = gs.getProcessor().getMoveStick();;
+		AnalogStick moveStick = gs.getGameProcessor().getMoveStick();;
 		float moveDx = moveStick.getXHead() - moveStick.getXBase();
 		float moveDy = moveStick.getYHead() - moveStick.getYBase();
 		float distBaseToHead = moveDx * moveDx + moveDy * moveDy;
@@ -140,12 +140,12 @@ public class Player implements Entity {
 	public void updateShooting() {
 		timeSinceLastFire += 1;
 		
-		if(gs.getProcessor().getShootStick().isActive()) {
+		if(gs.getGameProcessor().getShootStick().isActive()) {
 			if(timeSinceLastFire >= fireRate) {
 				
-				float direction = (float) (Math.toDegrees(Math.atan2(gs.getProcessor().getShootStick().getYHead()
-					- gs.getProcessor().getShootStick().getYBase(), gs.getProcessor().getShootStick().getXHead()
-					- gs.getProcessor().getShootStick().getXBase())));
+				float direction = (float) (Math.toDegrees(Math.atan2(gs.getGameProcessor().getShootStick().getYHead()
+					- gs.getGameProcessor().getShootStick().getYBase(), gs.getGameProcessor().getShootStick().getXHead()
+					- gs.getGameProcessor().getShootStick().getXBase())));
 
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
 				int spaces = bulletBurst - 1;
@@ -228,6 +228,10 @@ public class Player implements Entity {
 		this.score += score * gs.getScoreMultiplier();
 	}
 	
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
 	public void changeSpeed(float dx, float dy) {
 		this.dx += dx;
 		this.dy += dy;
@@ -244,6 +248,7 @@ public class Player implements Entity {
 	public void setBulletBurst(int burst) {	bulletBurst = burst; }
 	public void setLife(int life) { this.life = life; }
 	public void setHit(boolean hit) { isHit = hit; }
+	public void kill() { life = 0; }
 	
 	//GETTERS
 	public float getCenterX() { return centerx; }
