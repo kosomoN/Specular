@@ -59,7 +59,6 @@ public class ParticleSpawnSystem extends SpawnSystem {
 				}
 				Enemy e = (Enemy) ent;
 				//Particle
-				//TODO Remember to uncomment if u are to use particles
 				p = particlePool.obtain();
 				p.reUse(e.getX(), e.getY(),
 						i * direction + offset, e.getDx(), e.getDy(),
@@ -78,7 +77,6 @@ public class ParticleSpawnSystem extends SpawnSystem {
 				//Adding particle to the game
 				gs.addEntity(p);
 			} else {
-				System.err.println("Entity is no Player or Enemy - ParticleSpawnSystem [spawn()]");
 				break;
 			}
 		}

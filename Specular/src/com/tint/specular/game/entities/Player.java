@@ -193,7 +193,7 @@ public class Player implements Entity {
 	        			
 	        			if(getLife() > 0)
 	        				addLives(-1);
-	        			
+	        				
 	        			//Repel effect after collision
 	        			double repelAngle = Math.atan2(e.getY() - centery, e.getX() - centerx);
 	        			
@@ -245,6 +245,11 @@ public class Player implements Entity {
 	//SETTERS
 	public void setCenterX(float x) { this.centerx = x; }
 	public void setCenterY(float y) { this.centery = y;	}
+	/**
+	 * Takes the amount of updates as rate of fire, not any specific "time"
+	 * @param fireRate
+	 */
+	public void setFireRate(float fireRate) { this.fireRate = fireRate; }
 	public void setBulletBurst(int burst) {	bulletBurst = burst; }
 	public void setLife(int life) { this.life = life; }
 	public void setHit(boolean hit) { isHit = hit; }

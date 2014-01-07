@@ -92,7 +92,7 @@ public class MenuInputProcessor implements InputProcessor{
 		} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
 			profileBtn.setTexture(profileTexPr);
 		} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
-				optionsBtn.setTexture(optionsTexPr);
+			optionsBtn.setTexture(optionsTexPr);
 		}
 		return false;
 	}

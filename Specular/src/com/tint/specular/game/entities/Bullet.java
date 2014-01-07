@@ -16,6 +16,8 @@ import com.tint.specular.utils.Util;
 
 public class Bullet implements Entity {
 	
+	public static float damage = 1;
+	
 	private static Texture bulletTex;
 	private static int size;
 	
@@ -72,7 +74,7 @@ public class Bullet implements Entity {
 	public float getY() { return y; }
 	public float getWidth() { return size; }
 	public float getHeight() { return size; }
-
+	
 	@Override
 	public void dispose() {
 		bulletTex.dispose();

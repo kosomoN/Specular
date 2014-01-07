@@ -21,7 +21,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 	
 	public void spawn(Enemy e) {
 		Random rand = new Random();
-		int powerUpID = rand.nextInt(5);
+		int powerUpID = rand.nextInt(7);
 		
 		float x = e.getX(), y = e.getY();
 		
@@ -46,5 +46,9 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 			gs.addEntity(new ScoreMultiplier(x, y, gs));
 		else if(powerUpID == 4)
 			gs.addEntity(new SlowdownEnemies(x, y, gs));
+		else if(powerUpID == 5)
+			gs.addEntity(new FireRateBoost(x, y, gs));
+		else if(powerUpID == 6)
+			gs.addEntity(new ComboDamageBooster(x, y, gs));
 	}
 }

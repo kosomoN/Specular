@@ -12,12 +12,12 @@ import com.tint.specular.game.entities.Entity;
 
 public abstract class Enemy implements Entity {
 	
-	//FIELDS
 	protected float x, y, dx, dy;
 	protected float direction;
 	protected float slowdown;
 	
 	protected int life;
+	protected static int MAX_LIFE;
 	protected boolean isHit;
 	
 	protected GameState gs;
@@ -27,6 +27,7 @@ public abstract class Enemy implements Entity {
 		this.y = y;
 		this.gs = gs;
 		this.life = life;
+		MAX_LIFE = life;
 	}
 	
 	@Override
@@ -34,7 +35,6 @@ public abstract class Enemy implements Entity {
 		return life <= 0;
 	}
 
-	//SETTERS
 	/**
 	 * 
 	 * @param slowdown - Max value 1, minimum value 0.
@@ -49,8 +49,8 @@ public abstract class Enemy implements Entity {
 		slowdown = slowdown < 0 ? 0 : slowdown;
 	}
 	
-	public void hit() {
-		life--;
+	public void hit(float damage) {
+		life -= damage;
 		if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
 				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
 				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
@@ -60,6 +60,12 @@ public abstract class Enemy implements Entity {
 			else
 				gs.getParticleSpawnSystem().spawn(this, 6, false);
 		}
+	}
+	
+	public void addLife(int life) {
+		this.life += life;
+		if(this.life > MAX_LIFE)
+			this.life = MAX_LIFE;
 	}
 	
 	public abstract int getValue();

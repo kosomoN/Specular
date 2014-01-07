@@ -18,9 +18,9 @@ public class PlayerSpawnSystem extends SpawnSystem {
 		super(gs);
 	}
 	
-	public void spawn(int playerAmount) {
+	public void spawn() {
 		int x, y;
-		int playersSpawned = 0;
+		boolean playersSpawned = false;
 		
 		outer :
 		do {
@@ -41,7 +41,7 @@ public class PlayerSpawnSystem extends SpawnSystem {
 			}
 			
 			gs.addEntity(new Player(gs, x, y));
-			playersSpawned++;
-		} while(playersSpawned < playerAmount);
+			playersSpawned = true;
+		} while(!playersSpawned);
 	}
 }
