@@ -126,7 +126,7 @@ public class EnemyWorm extends Enemy {
 	}
 	
 	public int getValue() {
-		return 100;
+		return 10;
 	}
 	
 	@Override

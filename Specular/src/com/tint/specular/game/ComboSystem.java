@@ -19,9 +19,9 @@ public class ComboSystem {
 			deactivate();
 	}
 	
-	public void activate() {
+	public void activate(int enemiesAlive) {
 		activated = true;
-		timer = 500;
+		timer = 500 - enemiesAlive * 2.5f;
 		combo++;
 	}
 	

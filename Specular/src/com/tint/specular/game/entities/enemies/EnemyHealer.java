@@ -55,7 +55,7 @@ public class EnemyHealer extends Enemy {
 
 	@Override
 	public int getValue() {
-		return 25;
+		return 4;
 	}
 
 	@Override

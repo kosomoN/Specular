@@ -47,7 +47,6 @@ public class ParticleSpawnSystem extends SpawnSystem {
 			offset = rand.nextInt(50) - 25;
 			
 			if(ent instanceof EnemyStupid) {
-				System.err.println("EnemyStupid doesn't have particles");
 			} else if(ent instanceof Enemy) {
 				//Change the type
 				if(ent instanceof EnemyNormal) {

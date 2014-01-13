@@ -19,7 +19,7 @@ public class EnemyFast extends Enemy {
 	private float rotation;
 
 	public EnemyFast(float x, float y, GameState gs) {
-		super(x, y, gs, 3);
+		super(x, y, gs, 5);
 	}
 
 	@Override
@@ -49,7 +49,7 @@ public class EnemyFast extends Enemy {
 
 	@Override
 	public int getValue() {
-		return 30;
+		return 3;
 	}
 	
 	@Override

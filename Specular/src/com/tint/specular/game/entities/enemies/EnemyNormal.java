@@ -21,7 +21,7 @@ public class EnemyNormal extends Enemy {
 	private double angle;
 	
 	public EnemyNormal(float x, float y, GameState gs) {
-		super(x, y, gs, 5);
+		super(x, y, gs, 3);
 		
 	    if(Math.random() < 0.5) {
 	    	offset = (float) Math.toRadians(60);
@@ -75,7 +75,7 @@ public class EnemyNormal extends Enemy {
 
 	@Override
 	public int getValue() {
-		return 10;
+		return 2;
 	}
 	
 	@Override

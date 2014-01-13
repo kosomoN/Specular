@@ -174,10 +174,7 @@ public class GameState extends State {
 		
 		// Updating combos and score multiplier
 		cs.update();
-		if(cs.getCombo() >= 2)
-			setScoreMultiplier(0.5f * cs.getCombo());
-		else
-			setScoreMultiplier(1);
+			setScoreMultiplier(cs.getCombo());
 				
 		if(player != null && !player.isDead()) {
 			// Checking if any bullet hit an enemy
@@ -186,14 +183,15 @@ public class GameState extends State {
 					if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
 							e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
 						
-						e.hit(Bullet.damage * damageBooster);
+						// Add " * damageBooster"
+						e.hit(Bullet.damage);
 						b.hit();
 						
 						// Rewarding player depending on game mode
 						if(e.getLife() <= 0) {
 							gameMode.enemyKilled(e);
 							
-							cs.activate();
+							cs.activate(enemies.size);
 							
 							// Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
 							Random r = new Random();
@@ -306,6 +304,9 @@ public class GameState extends State {
 		// Drawing score in the middle top of the screen
 		Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
 				Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
+		// Drawing combo on screen
+		Util.writeCentered(game.batch, font50, cs.getCombo() + "x", 0,
+				Specular.camera.viewportHeight / 2 - font50.getCapHeight() * 2 - 30);
 
 		game.batch.end();
 		
@@ -386,7 +387,7 @@ public class GameState extends State {
 	private void reset() {
 		clearLists();
 		
-		gameMode = new TimeAttack(this);
+		gameMode = new Ranked(this);
 		
 		// Adding player and setting up input processor
 		pss.spawn();

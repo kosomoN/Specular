@@ -113,7 +113,7 @@ public class EnemyVirus extends Enemy {
 
 	@Override
 	public int getValue() {
-		return 5;
+		return 1;
 	}
 
 	@Override

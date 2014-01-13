@@ -22,7 +22,7 @@ public class EnemyBooster extends Enemy {
 	private int boostingDelay;
 	
 	public EnemyBooster(float x, float y, GameState gs) {
-		super(x, y, gs, 1);
+		super(x, y, gs, 3);
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class EnemyBooster extends Enemy {
 
 	@Override
 	public int getValue() {
-		return 50;
+		return 5;
 	}
 	
 	@Override
