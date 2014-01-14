@@ -1,12 +1,9 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
-import com.tint.specular.utils.Util;
 
 /**
  * 
@@ -16,20 +13,13 @@ import com.tint.specular.utils.Util;
 
 public abstract class PowerUp implements Entity {
 	
-	private float x, y;
-	private Texture texture;
+	protected float x, y;
 	protected GameState gs;
 	
 	public PowerUp(float x, float y, GameState gs) {
 		this.x = x;
 		this.y = y;
 		this.gs = gs;
-		texture = new Texture(Gdx.files.internal("graphics/game/PowerUp.png"));
-	}
-	
-	@Override
-	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, texture, x, y, 0);
 	}
 	
 	@Override
@@ -51,11 +41,6 @@ public abstract class PowerUp implements Entity {
 	
 	public float getCenterX() { return x; }
 	public float getCenterY() {	return y; }
-	public float getRadius() { return texture.getWidth() / 2; }
-	public Texture getTexture() { return texture; }
-	
-	@Override
-	public void dispose() {
-		texture.dispose();
-	}
+	public abstract float getRadius();
+	public abstract Texture getTexture();
 }

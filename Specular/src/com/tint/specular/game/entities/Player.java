@@ -39,35 +39,42 @@ public class Player implements Entity {
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
+	private float spawnTimer;
 	
 	private int life = 3, lifeY = 512, targetLifeY = 512;
-	
 	private int bulletBurst = 3;
 	private int score = 0;
 	
 	private boolean isHit;
 	
 	//CONSTRUCTOR
-	public Player(GameState gs, float x, float y) {
+	public Player(GameState gs, float x, float y, int lives) {
 		this.gs = gs;
 		centerx = x;
 		centery = y;
-		reset();
+		setLife(lives);
 	}
-
 	
 	//RENDER&UPDATE loop
 /*_____________________________________________________________________*/
 	
 	@Override
 	public void render(SpriteBatch batch) {
-		animFrameTime += Gdx.graphics.getDeltaTime();
-		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
-		batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
+		if(isHit) {
+			// Death / Spawn animation
+			
+		} else {
+			animFrameTime += Gdx.graphics.getDeltaTime();
+			TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
+			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
+		}
 	}
 	
 	@Override
 	public boolean update() {
+		if(isHit)
+			spawnTimer -= GameState.TICK_LENGTH / 1000000;
+		
 		//Update lifebar
 		if(lifeY != targetLifeY) {
 			if(lifeY - targetLifeY > 0)
@@ -76,11 +83,14 @@ public class Player implements Entity {
 				lifeY += 2;
 		}
 		
-		//Moving
-		updateMovement();
-		
-		//Shooting
-		updateShooting();
+		// Taking control away when player is hit and respawning
+		if(!isHit) {
+			//Moving
+			updateMovement();
+			
+			//Shooting
+			updateShooting();
+		}
 		
 		//Movement
         dx *= FRICTION;
@@ -180,27 +190,28 @@ public class Player implements Entity {
 	}
 	
 	public void updateHitDetection() {
-        if(!isHit) {
-	        for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
-	        	Enemy e = it.next();
-        		if(e.getLife() > 0) {
-        			float distX = centerx - e.getX();
-        			float distY = centery - e.getY();
-	        		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
-	        			
-	        			gs.getEntities().removeValue(e, true);
-	        			it.remove();
-	        			
-	        			if(getLife() > 0)
-	        				addLives(-1);
-	        				
-	        			//Repel effect after collision
+        for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
+        	Enemy e = it.next();
+    		if(e.getLife() > 0) {
+    			float distX = centerx - e.getX();
+    			float distY = centery - e.getY();
+        		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
+        			// Removing entity from lists
+        			gs.getEntities().removeValue(e, true);
+        			it.remove();
+        			
+        			if(shields.size > 0) {
+	        			//Repel effect after collision with shield
 	        			double repelAngle = Math.atan2(e.getY() - centery, e.getX() - centerx);
-	        			
 	        			setSpeed((float) (Math.cos(repelAngle) * -dx * 0.5f), (float) (Math.sin(repelAngle) * -dy * 0.5f));
-		        	}
-        		}
-	        }
+	        			shields.removeIndex(shields.size - 1);
+        			} else {
+    					addLives(-1);
+    					spawnTimer = 2000;
+    					isHit = true;
+        			}
+	        	}
+    		}
         }
 	}
 /*_____________________________________________________________________*/
@@ -243,8 +254,11 @@ public class Player implements Entity {
 	}
 	
 	//SETTERS
-	public void setCenterX(float x) { this.centerx = x; }
-	public void setCenterY(float y) { this.centery = y;	}
+	public void setCenterPosition(float x, float y) {
+		centerx = x;
+		centery = y;
+	}
+	
 	/**
 	 * Takes the amount of updates as rate of fire, not any specific "time"
 	 * @param fireRate
@@ -260,12 +274,14 @@ public class Player implements Entity {
 	public float getCenterY() { return centery;	}
 	public float getDeltaX() { return dx; }
 	public float getDeltaY() { return dy; }
+	public float getSpawnTimer() { return spawnTimer; }
 	public static float getRadius() { return (anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
 	public Array<Shield> getShields() { return shields; }
 	public int getScore() { return score; }
 	public boolean hasShield() { return shields.size > 0; }
+	public boolean isHit() { return isHit; }
 	public boolean isDead() { return life <= 0; }
 	public GameState getGameState() { return gs; }
 	
@@ -275,11 +291,6 @@ public class Player implements Entity {
 		anim = Util.getAnimation(playerTex, 64, 64, 1 / 16f, 0, 0, 7, 3);
 	}
 	
-	public void reset() {
-		setLife(3);
-//		shield = new Shield(this, shieldLayer1);
-	}
-
 	@Override
 	public void dispose() {
 		playerTex.dispose();

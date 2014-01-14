@@ -18,7 +18,7 @@ public class PlayerSpawnSystem extends SpawnSystem {
 		super(gs);
 	}
 	
-	public void spawn() {
+	public void spawn(int lives, boolean respawn) {
 		int x, y;
 		boolean playersSpawned = false;
 		
@@ -40,7 +40,11 @@ public class PlayerSpawnSystem extends SpawnSystem {
 				}
 			}
 			
-			gs.addEntity(new Player(gs, x, y));
+			if(respawn)
+				gs.getPlayer().setCenterPosition(x, y);
+			else
+				gs.addEntity(new Player(gs, x, y, lives));
+			
 			playersSpawned = true;
 		} while(!playersSpawned);
 	}

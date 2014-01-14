@@ -35,7 +35,7 @@ public class MultiplayerGameState extends GameState {
 	
 	public void connectClient(Client client) {
 		clients.add(client);
-		pss.spawn();
+		pss.spawn(3, false);
 //		client.setPlayer(getPlayers().get(getPlayers().size - 1));
 	}
 	

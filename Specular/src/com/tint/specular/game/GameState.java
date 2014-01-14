@@ -25,9 +25,27 @@ import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
-import com.tint.specular.game.entities.enemies.*;
-import com.tint.specular.game.gamemodes.*;
-import com.tint.specular.game.spawnsystems.*;
+import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.game.entities.enemies.EnemyBooster;
+import com.tint.specular.game.entities.enemies.EnemyFast;
+import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyStupid;
+import com.tint.specular.game.entities.enemies.EnemyVirus;
+import com.tint.specular.game.entities.enemies.EnemyWorm;
+import com.tint.specular.game.gamemodes.GameMode;
+import com.tint.specular.game.gamemodes.Ranked;
+import com.tint.specular.game.powerups.AddLife;
+import com.tint.specular.game.powerups.BulletBurst_3;
+import com.tint.specular.game.powerups.BulletBurst_5;
+import com.tint.specular.game.powerups.ComboDamageBooster;
+import com.tint.specular.game.powerups.FireRateBoost;
+import com.tint.specular.game.powerups.ScoreMultiplier;
+import com.tint.specular.game.powerups.ShieldUpgrade;
+import com.tint.specular.game.powerups.SlowdownEnemies;
+import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
+import com.tint.specular.game.spawnsystems.ParticleSpawnSystem;
+import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
+import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.map.Map;
@@ -60,9 +78,14 @@ public class GameState extends State {
 	private Stage stage;
 	private float camOffsetX, camOffsetY;
 	
+	// Game events
+	private boolean preparationDone;
+	private boolean deathDone;
+	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	private float unprocessed;
+	private float deathTimer;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
 	
@@ -103,18 +126,18 @@ public class GameState extends State {
 		// Loading gameover texture
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Game Over Title.png"));
 		
-		// Initialising map handler for handling many maps
+		// Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
 		mapHandler.addMap("Map", mapTexture, parallax, mapTexture.getWidth(), mapTexture.getHeight());
 		currentMap = mapHandler.getMap("Map");
 		
-		// Initialising font
+		// Initializing font
 		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
 		font50 = fontGen.generateFont(50, FONT_CHARACTERS, false);
 		font50.setColor(Color.RED);
 		fontGen.dispose();
 		
-		// Initialising entities and analogstick statically
+		// Initializing entities and analogstick statically
 		Player.init();
 		Bullet.init();
 		Particle.init();
@@ -125,6 +148,16 @@ public class GameState extends State {
 		EnemyWorm.init();
 		EnemyVirus.init();
 		AnalogStick.init();
+		
+		// Initializing power-ups
+		AddLife.init();
+		BulletBurst_3.init();
+		BulletBurst_5.init();
+		ComboDamageBooster.init();
+		FireRateBoost.init();
+		ScoreMultiplier.init();
+		ShieldUpgrade.init();
+		SlowdownEnemies.init();
 		
 		ess = new EnemySpawnSystem(this, enemies);
 		pss = new PlayerSpawnSystem(this);
@@ -149,94 +182,102 @@ public class GameState extends State {
 	}
 	
 	protected void update() {
-		// Adding played time
-		ticks++;
-		
-		//Adding nice cam effect
-		/*if(player.getCenterX() < Specular.camera.viewportWidth / 2) {
-			camOffsetX = Specular.camera.viewportWidth / 2 - player.getCenterX();
-		} else if(player.getCenterX() > getCurrentMap().getWidth() - Specular.camera.viewportWidth / 2) {
-			camOffsetX = (getCurrentMap().getWidth() - Specular.camera.viewportWidth / 2) - player.getCenterX();
-		}
-		
-		if(player.getCenterY() < Specular.camera.viewportHeight / 2) {
-			camOffsetY = Specular.camera.viewportHeight / 2 - player.getCenterY();
-		} else if(player.getCenterY() > getCurrentMap().getHeight() - Specular.camera.viewportHeight / 2) {
-			camOffsetY = -(getCurrentMap().getHeight() - Specular.camera.viewportHeight / 2) - player.getCenterY();
-		}*/
-		
-		// Update game mode, enemy spawning and player hit detection
-		if(!gameMode.isGameOver()) {
-			gameMode.update(TICK_LENGTH / 1000000);
-			ess.update(ticks);
-			player.updateHitDetection();
-		}
-		
-		// Updating combos and score multiplier
-		cs.update();
+		if(!preparationDone) {
+			// Code for things before actual game start
+			preparationDone = true;
+		} else {
+			// Adding played time
+			if(entities.contains(player, true))
+				ticks++;
+						
+			if(gameMode.isGameOver()) {
+				// Code for death animation
+				deathTimer -= TICK_LENGTH / 1000000;
+				deathDone = deathTimer <= 0;
+			} else {
+				// Update game mode, enemy spawning and player hit detection
+				gameMode.update(TICK_LENGTH / 1000000);
+				ess.update(ticks);
+				player.updateHitDetection();
+			}
+			
+			// Updating combos and score multiplier
+			cs.update();
 			setScoreMultiplier(cs.getCombo());
-				
-		if(player != null && !player.isDead()) {
-			// Checking if any bullet hit an enemy
-			for(Bullet b : bullets) {
-				for(Enemy e : enemies) {
-					if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
-							e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
-						
-						// Add " * damageBooster"
-						e.hit(Bullet.damage);
-						b.hit();
-						
-						// Rewarding player depending on game mode
-						if(e.getLife() <= 0) {
-							gameMode.enemyKilled(e);
+					
+			if(player != null && !player.isDead()) {
+				// Checking if any bullet hit an enemy
+				for(Bullet b : bullets) {
+					for(Enemy e : enemies) {
+						if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
+								e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
 							
-							cs.activate(enemies.size);
+							// Add " * damageBooster" to enable combo damage
+							e.hit(Bullet.damage);
+							b.hit();
 							
-							// Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
-							Random r = new Random();
-							if(enablePowerUps)
-								if(r.nextInt(100) < 10 / (enemies.size % 100 > 0 ? Math.floor(enemies.size) : 1))
-									puss.spawn(e);
-							
-							break;
+							// Rewarding player depending on game mode
+							if(e.getLife() <= 0) {
+								gameMode.enemyKilled(e);
+								
+								cs.activate(enemies.size);
+								
+								// Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
+								Random r = new Random();
+								if(enablePowerUps)
+									if(r.nextInt(100) < 10 / (enemies.size % 100 > 0 ? Math.floor(enemies.size) : 1))
+										puss.spawn(e);
+								
+								break;
+							}
 						}
 					}
 				}
+				
+				if(player.isHit() && player.getSpawnTimer() <= 0) {
+		        	pss.spawn(player.getLife(), true);
+		        	player.setHit(false);
+		        }
 			}
-		}
-		
-		
-		boolean playerKilled = false;		// A variable to keep track of player status
-		
-		// Removing destroyed entities
-		for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
-			Entity ent = it.next();
 			
-			if(ent.update()) {
-				if(ent instanceof Particle)
-					pass.getPool().free((Particle) ent);
-				else if(ent instanceof Enemy)
-					enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
-				else if(ent instanceof Bullet)
-					bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
-				else if(ent instanceof Player) {
-					gameMode.playerKilled();
-					playerKilled = true;
+			
+			boolean playerKilled = false;		// A variable to keep track of player status
+			
+			// Removing destroyed entities
+			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
+				Entity ent = it.next();
+				
+				if(ent.update()) {
+					if(ent instanceof Particle)
+						pass.getPool().free((Particle) ent);
+					else if(ent instanceof Enemy)
+						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
+					else if(ent instanceof Bullet)
+						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
+					else if(ent instanceof Player) {
+						gameMode.playerKilled();
+						playerKilled = true;
+					}
+					it.remove();
 				}
-				it.remove();
 			}
-		}
-		
-		if(playerKilled) {
-			if(!gameMode.isGameOver()) {
-				clearLists();
-				resetGameTime();
-				pss.spawn();
+			
+			if(playerKilled) {
+				// Time attack
+				if(!gameMode.isGameOver()) {
+					clearLists();
+					resetGameTime();
+					pss.spawn(3, false);
+				}
+				// Ranked
+				else {
+					deathTimer = 2000;
+					deathDone = false;
+				}
 			}
+			
+			CameraShake.update();
 		}
-		
-		CameraShake.update();
 	}
 	
 	protected void renderGame() {
@@ -257,19 +298,6 @@ public class GameState extends State {
 		
 		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
 		CameraShake.moveCamera();
-		/*float zoom = 1;
-		float time = timePlayedInMillis % 3000;
-		if(time > 2500) {
-			if(time == 2990) {
-				CameraShake.shake(0.5f, 0.03f);
-			} else if(time > 2950) {
-				zoom = 1 - ((1 - ((time - 2950) / 50)) * (1 - ((time - 2950) / 50))) * 0.25f;
-			} else {
-				zoom = 1 - (1 - (1 - ((time - 2500) / 450)) * (1 - ((time - 2500) / 450))) * 0.25f;
-				System.out.println(zoom);
-			}
-		}
-		Specular.camera.zoom = zoom;*/
 		Specular.camera.update();
 		
 		// Rendering map and entities
@@ -310,19 +338,22 @@ public class GameState extends State {
 
 		game.batch.end();
 		
+		
 		if(gameMode.isGameOver()) {
-			game.batch.begin();
-			game.batch.draw(gameOverTex, -Gdx.graphics.getWidth() * 3 / 4, 30);
-			font50.draw(game.batch, String.valueOf(player.getScore()), -50, 100);
-			game.batch.end();
-			
-			stage.act();
-			stage.draw();
+			if(deathDone) {
+				game.batch.begin();
+				game.batch.draw(gameOverTex, -Gdx.graphics.getWidth() * 3 / 4, 30);
+				font50.draw(game.batch, String.valueOf(player.getScore()), -50, 100);
+				game.batch.end();
+				
+				stage.act();
+				stage.draw();
+			}
 		}
 		
 		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
 	}
-
+	
 	public void addEntity(Entity entity) {
 		if(entity instanceof Player)
 			player = (Player) entity;
@@ -390,7 +421,7 @@ public class GameState extends State {
 		gameMode = new Ranked(this);
 		
 		// Adding player and setting up input processor
-		pss.spawn();
+		pss.spawn(3, false);
 		input.setInputProcessor(gameInputProcessor);
 		
 		resetGameTime();
