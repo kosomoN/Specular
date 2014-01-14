@@ -32,6 +32,7 @@ public class Player implements Entity {
 	private static Animation anim;
 	private static Texture playerTex;
 	private static Array<Texture> shieldTextures = new Array<Texture>();
+	private static int radius;
 	
 	private GameState gs;
 	private Array<Shield> shields = new Array<Shield>();
@@ -275,7 +276,7 @@ public class Player implements Entity {
 	public float getDeltaX() { return dx; }
 	public float getDeltaY() { return dy; }
 	public float getSpawnTimer() { return spawnTimer; }
-	public static float getRadius() { return (anim.getKeyFrame(0).getRegionWidth() - 10) / 2; }
+	public static float getRadius() { return radius; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
 	public Array<Shield> getShields() { return shields; }
@@ -288,7 +289,9 @@ public class Player implements Entity {
 	public static void init() {
 		playerTex  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
 		playerTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		anim = Util.getAnimation(playerTex, 64, 64, 1 / 16f, 0, 0, 7, 3);
+		anim = Util.getAnimation(playerTex, 128, 128, 1 / 16f, 0, 0, 7, 3);
+		
+		radius = (anim.getKeyFrame(0).getRegionWidth() - 10) / 2;
 	}
 	
 	@Override

@@ -18,7 +18,7 @@ public interface Facebook {
 	}
 	
 	public interface HighscoreCallback {
-		public void gotHighscores(Object[] scores);
+		public void gotHighscores(String[] scores);
 	}
 	public void getHighScores(HighscoreCallback highscoreCallback);
 }

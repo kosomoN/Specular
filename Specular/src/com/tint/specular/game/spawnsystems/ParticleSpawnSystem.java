@@ -46,13 +46,17 @@ public class ParticleSpawnSystem extends SpawnSystem {
 		for(int i = 0; i < amount; i++) {
 			offset = rand.nextInt(50) - 25;
 			
-			if(ent instanceof EnemyStupid) {
-			} else if(ent instanceof Enemy) {
+			if(ent instanceof Enemy) {
 				//Change the type
+				
 				if(ent instanceof EnemyNormal) {
 					type = Type.ENEMY_NORMAL;
-				} else if(ent instanceof EnemyFast || ent instanceof EnemyVirus) {
+				} else if(ent instanceof EnemyFast) {
 					type = Type.ENEMY_FAST;
+				} else if(ent instanceof EnemyStupid) {
+					type = Type.ENEMY_STUPID;
+				} else if(ent instanceof EnemyVirus) {
+					type = Type.ENEMY_VIRUS;
 				} else if(ent instanceof EnemyBooster) {
 					type = Type.ENEMY_BOOSTER;
 				}

@@ -25,7 +25,8 @@ public class MainActivity extends AndroidApplication {
 	
     private GraphUser fbuser;
     
-    @Override
+    
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -139,7 +140,8 @@ public class MainActivity extends AndroidApplication {
 						for(GraphObject go : response.getGraphObject().getPropertyAsList("data", GraphObject.class)) {
 							scores.add(go.getPropertyAs("user", GraphObject.class).getProperty("name") + ": " + go.getProperty("score"));
 						}
-						highscoreCallback.gotHighscores(scores.toArray());
+						String[] array = scores.toArray(new String[scores.size()]);
+						highscoreCallback.gotHighscores(array);
 					}
 				});
 				MainActivity.this.runOnUiThread(new Runnable() {

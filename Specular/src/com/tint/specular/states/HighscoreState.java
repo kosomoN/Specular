@@ -5,13 +5,13 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.tint.specular.Specular;
+import com.tint.specular.ui.HighscoreList;
 
 /**
  * 
@@ -23,7 +23,6 @@ public class HighscoreState extends State {
 	
 	private Stage stage;
 	private boolean shouldUpdate;
-	private Object[] oldScores = new String[] {"Loading..."};
 	
 	public HighscoreState(Specular game) {
 		super(game);
@@ -41,7 +40,6 @@ public class HighscoreState extends State {
 		
 		Gdx.gl.glClearColor(0.2f, 0, 0, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
 		stage.act();
 		stage.draw();
 		
@@ -59,31 +57,26 @@ public class HighscoreState extends State {
 		
 		Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
-		if(Specular.facebook.isLoggedIn()) {
+		if(!Specular.facebook.isLoggedIn()) {
 			
-			final List list = new List(oldScores, skin);
-			list.setSelectable(false);
-			list.setSelectedIndex(-1);
+			final HighscoreList list = new HighscoreList();
 			
 			Specular.facebook.getHighScores(new Facebook.HighscoreCallback() {
 
 				@Override
-				public void gotHighscores(Object[] scores) {
+				public void gotHighscores(String[] scores) {
 					if(scores != null) {
-						oldScores = scores;
 						list.setItems(scores);
-						list.setSelectedIndex(-1);
 					} else {
 						list.setItems(new String[] {"Failed to load highscores"});
 					}
 				}
-				
 			});
 			
 			ScrollPane sp = new ScrollPane(list);
-			sp.getStyle().background = skin.getDrawable("black");
-			sp.setSize(Gdx.graphics.getWidth() / 2 - 37, Gdx.graphics.getHeight() - 50);
-			sp.setPosition(Gdx.graphics.getWidth() / 2 + 25 / 2, 25);
+//			sp.getStyle().background = skin.getDrawable("black");
+			sp.setSize(Gdx.graphics.getWidth() / 2 - 37, Gdx.graphics.getHeight() - 500);
+			sp.setPosition(Gdx.graphics.getWidth() / 2 + 25 / 2, 0);
 	
 			Table table = new Table();
 			table.setSize(Gdx.graphics.getWidth() / 2 - 37, Gdx.graphics.getHeight() - 50);

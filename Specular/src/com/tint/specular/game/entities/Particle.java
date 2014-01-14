@@ -17,7 +17,7 @@ import com.tint.specular.utils.Util;
 public class Particle implements Entity, Poolable {
 	
 	public enum Type {
-		PLAYER, ENEMY_NORMAL, ENEMY_FAST, ENEMY_BOOSTER;
+		PLAYER, ENEMY_NORMAL, ENEMY_STUPID, ENEMY_FAST, ENEMY_BOOSTER, ENEMY_VIRUS;
 	}
 	
 	//FIELDS
@@ -68,11 +68,11 @@ public class Particle implements Entity, Poolable {
 		
 		//Loop through image and create sub-images
 		for(int i = 0; i < 2; i++) {
-			for(int j = 0; j < 2; j++) {
-				textures[i * 2 + j] = new TextureRegion(smallBase, j * smallBase.getWidth() / 2, i * smallBase.getWidth() / 2,
-																		smallBase.getWidth() / 2, smallBase.getWidth() / 2);
-				textures[i * 2 + j + 4] = new TextureRegion(bigBase, j * bigBase.getWidth() / 2, i * bigBase.getWidth() / 2,
-						bigBase.getWidth() / 2, bigBase.getWidth() / 2);
+			for(int j = 0; j < 3; j++) {
+				textures[i * 3 + j] = new TextureRegion(smallBase, j * smallBase.getWidth() / 3, i * smallBase.getWidth() / 3,
+																		smallBase.getWidth() / 3, smallBase.getWidth() / 3);
+				textures[i * 3 + j + 6] = new TextureRegion(bigBase, j * bigBase.getWidth() / 3, i * bigBase.getWidth() / 3,
+						bigBase.getWidth() / 3, bigBase.getWidth() / 3);
 			}
 		}
 	}
@@ -99,7 +99,7 @@ public class Particle implements Entity, Poolable {
 		dx += initialDx;
 		dy += initialDy;
 		
-		this.textureIndexInArray = type.ordinal() + (large ? 4 : 0); //This is just a variable to make getting the subimage easier
+		this.textureIndexInArray = type.ordinal() + (large ? 6 : 0); //This is just a variable to make getting the subimage easier
 		this.type = type;
 		
 		lifetime = (int) (250 + Math.random() * 250);
