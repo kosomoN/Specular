@@ -23,9 +23,9 @@ public class PlayerSpawnSystem extends SpawnSystem {
 		boolean playersSpawned = false;
 		
 		outer :
-		do {
-			x = (int) (rand.nextInt(gs.getCurrentMap().getWidth() - (int) (Player.getRadius() * 2)) + Player.getRadius());
-			y = (int) (rand.nextInt(gs.getCurrentMap().getHeight() - (int) (Player.getRadius() * 2)) + Player.getRadius());
+		do { //23 to compensate for the walls
+			x = (int) (rand.nextInt(gs.getCurrentMap().getWidth() - 23 * 2 - (int) (Player.getRadius() * 2)) + Player.getRadius() + 23);
+			y = (int) (rand.nextInt(gs.getCurrentMap().getHeight() - 23 * 2- (int) (Player.getRadius() * 2)) + Player.getRadius() + 23);
 			
 			for(Entity ent : gs.getEntities()) {
 				if(ent instanceof Enemy) {

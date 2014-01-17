@@ -44,8 +44,9 @@ public class Specular extends Game {
 	public void create() {
 		
 		float displayAspectRatio = (float) Gdx.graphics.getWidth() / Gdx.graphics.getHeight();
-		float cameraAspectRatio = (float) (WIDTH/ HEIGHT);
+		float cameraAspectRatio = (float) WIDTH / HEIGHT;
 		float w, h;
+		System.out.println(displayAspectRatio + " " + cameraAspectRatio);
 		if(displayAspectRatio > cameraAspectRatio) {
 			h = HEIGHT;
 			w = HEIGHT * displayAspectRatio;

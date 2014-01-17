@@ -17,7 +17,7 @@ import com.tint.specular.ui.Button;
 public class MenuInputProcessor implements InputProcessor{
 	
 	private Texture playTex, profileTex, optionsTex, playTexPr, profileTexPr, optionsTexPr;
-	private Button playBtn, profileBtn, optionsBtn;
+	private Button playBtn, profileBtn;//, optionsBtn;
 	private Music music;
 	private Specular game;
 	
@@ -41,7 +41,7 @@ public class MenuInputProcessor implements InputProcessor{
 		height = (int) (128);
 		width = 512;
 		
-		optionsBtn = new Button(x, y, width, height);
+//		optionsBtn = new Button(x, y, width, height);
 		
 		x = 1000;
 		y = (int) (114);
@@ -53,13 +53,13 @@ public class MenuInputProcessor implements InputProcessor{
 		
 		// Set button textures
 		playTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play 780 490.png"));
-		optionsTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options.png"));
+//		optionsTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options.png"));
 		profileTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles 1000 710.png"));
 		playTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play Pressed.png"));
-		optionsTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options Pressed.png"));
+//		optionsTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options Pressed.png"));
 		profileTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles Pressed.png"));
 		playBtn.setTexture(playTex);
-		optionsBtn.setTexture(optionsTex);
+//		optionsBtn.setTexture(optionsTex);
 		profileBtn.setTexture(profileTex);
 	}
 
@@ -91,8 +91,8 @@ public class MenuInputProcessor implements InputProcessor{
 			playBtn.setTexture(playTexPr);
 		} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
 			profileBtn.setTexture(profileTexPr);
-		} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
-			optionsBtn.setTexture(optionsTexPr);
+//		} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
+//			optionsBtn.setTexture(optionsTexPr);
 		}
 		return false;
 	}
@@ -105,7 +105,7 @@ public class MenuInputProcessor implements InputProcessor{
 		float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 		
 		profileBtn.setTexture(profileTex);
-		optionsBtn.setTexture(optionsTex);
+//		optionsBtn.setTexture(optionsTex);
 		playBtn.setTexture(playTex);
 			
 		// It then checks if that touchpoint collides with the buttons on screen
@@ -115,7 +115,7 @@ public class MenuInputProcessor implements InputProcessor{
 			game.enterState(States.SINGLEPLAYER_GAMESTATE);
 		} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
 			game.enterState(States.PROFILE_STATE);
-		} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
+//		} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
 
 		}
 		return false;
@@ -140,7 +140,6 @@ public class MenuInputProcessor implements InputProcessor{
 		return playBtn; }
 	public Button getProfileBtn() {
 		return profileBtn; }
-	public Button getOptionsBtn() {
-		return optionsBtn; }
+//	public Button getOptionsBtn() { return optionsBtn; }
 
 }

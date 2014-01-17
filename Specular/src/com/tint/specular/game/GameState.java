@@ -204,7 +204,7 @@ public class GameState extends State {
 					// Update game mode, enemy spawning and player hit detection
 					gameMode.update(TICK_LENGTH / 1000000);
 					ess.update(ticks);
-//					player.updateHitDetection();
+					player.updateHitDetection();
 				}
 				
 				// Updating combos and score multiplier
@@ -535,7 +535,8 @@ public class GameState extends State {
 		reset();
 		
 		music.play();
-		music.setVolume(0.01f);
+		music.setLooping(true);
+		music.setVolume(0.3f);
 		gameInputProcessor = new GameInputProcessor(game);
 		input.setInputProcessor(gameInputProcessor);
 	}

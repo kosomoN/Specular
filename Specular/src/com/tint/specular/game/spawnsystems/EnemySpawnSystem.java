@@ -36,12 +36,10 @@ public class EnemySpawnSystem extends SpawnSystem {
 		
 		//Remove this in case you are going to use the concept above
 		if(enemyList.size < ticks / 100) {
-			int randomId = rand.nextInt(10);
-			if(randomId < 4) {
-				putIntoGame(new EnemyStupid(0, 0, gs));
-			} else if(randomId < 7) {
+			int randomId = rand.nextInt(6);
+			if(randomId < 3) {
 				putIntoGame(new EnemyNormal(0, 0, gs));
-			} else if(randomId < 9) {
+			} else if(randomId < 5) {
 				putIntoGame(new EnemyFast(0, 0, gs));
 			} else {
 				putIntoGame(new EnemyBooster(0, 0, gs));
