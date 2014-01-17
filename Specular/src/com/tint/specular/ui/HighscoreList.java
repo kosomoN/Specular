@@ -17,7 +17,7 @@ public class HighscoreList extends Widget implements Cullable {
 	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzåäöABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
 	
 	private Rectangle cullingArea;
-	private String[] highscores = new String[] {"Onni Kosomaa", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading...", "Loading..."};
+	private String[] highscores = new String[] {"Loading..."};
 	private BitmapFont font;
 	private float prefHeight;
 	
@@ -27,7 +27,7 @@ public class HighscoreList extends Widget implements Cullable {
 		if(itemBackground == null) {
 //			itemBackground = new Texture(Gdx.files.internal("graphics/menu/highscore/HighscoreItem.png"));
 			FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
-			font = fontGen.generateFont(30 * Gdx.graphics.getWidth() / 1920, FONT_CHARACTERS, false);
+			font = fontGen.generateFont(50 * Gdx.graphics.getWidth() / 1920, FONT_CHARACTERS, false);
 			font.setColor(Color.WHITE);
 			fontGen.dispose();
 			

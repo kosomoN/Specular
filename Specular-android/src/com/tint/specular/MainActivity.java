@@ -2,13 +2,15 @@ package com.tint.specular;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
-
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.facebook.HttpMethod;
@@ -24,7 +26,6 @@ import com.tint.specular.states.Facebook;
 public class MainActivity extends AndroidApplication {
 	
     private GraphUser fbuser;
-    
     
 	@Override
     public void onCreate(Bundle savedInstanceState) {

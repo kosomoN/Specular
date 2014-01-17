@@ -5,6 +5,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -88,11 +89,13 @@ public class GameState extends State {
 	private float deathTimer;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
+	private boolean paused = false;
 	
 	// Fields that affect score or gameplay
 	private double scoreMultiplier = 1;
 	private float damageBooster = 1f;
 	private boolean enablePowerUps = true;
+	private int enemiesKilled;
 	
 	// Lists for keeping track of entities in the world
 	private Array<Entity> entities = new Array<Entity>(false, 128);
@@ -181,102 +184,113 @@ public class GameState extends State {
         renderGame();
 	}
 	
+	
+	
 	protected void update() {
-		if(!preparationDone) {
-			// Code for things before actual game start
-			preparationDone = true;
-		} else {
-			// Adding played time
-			if(entities.contains(player, true))
-				ticks++;
-						
-			if(gameMode.isGameOver()) {
-				// Code for death animation
-				deathTimer -= TICK_LENGTH / 1000000;
-				deathDone = deathTimer <= 0;
+		if(!paused) {
+			if(!preparationDone) {
+				// Code for things before actual game start
+				preparationDone = true;
 			} else {
-				// Update game mode, enemy spawning and player hit detection
-				gameMode.update(TICK_LENGTH / 1000000);
-				ess.update(ticks);
-				player.updateHitDetection();
-			}
-			
-			// Updating combos and score multiplier
-			cs.update();
-			setScoreMultiplier(cs.getCombo());
-					
-			if(player != null && !player.isDead()) {
-				// Checking if any bullet hit an enemy
-				for(Bullet b : bullets) {
-					for(Enemy e : enemies) {
-						if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
-								e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
+				// Adding played time
+				if(entities.contains(player, true))
+					ticks++;
 							
-							// Add " * damageBooster" to enable combo damage
-							e.hit(Bullet.damage);
-							b.hit();
-							
-							// Rewarding player depending on game mode
-							if(e.getLife() <= 0) {
-								gameMode.enemyKilled(e);
+				if(gameMode.isGameOver()) {
+					// Code for death animation
+					deathTimer -= TICK_LENGTH / 1000000;
+					deathDone = deathTimer <= 0;
+				} else {
+					// Update game mode, enemy spawning and player hit detection
+					gameMode.update(TICK_LENGTH / 1000000);
+					ess.update(ticks);
+//					player.updateHitDetection();
+				}
+				
+				// Updating combos and score multiplier
+				cs.update();
+				setScoreMultiplier(cs.getCombo());
+						
+				if(player != null && !player.isDead()) {
+					// Checking if any bullet hit an enemy
+					for(Bullet b : bullets) {
+						for(Enemy e : enemies) {
+							if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
+									e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
 								
-								cs.activate(enemies.size);
+								// Add " * damageBooster" to enable combo damage
+								e.hit(Bullet.damage);
+								b.hit();
 								
-								// Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
-								Random r = new Random();
-								if(enablePowerUps)
-									if(r.nextInt(100) < 10 / (enemies.size % 100 > 0 ? Math.floor(enemies.size) : 1))
-										puss.spawn(e);
+								//Adding a small camerashake
+								CameraShake.shake(0.1f, 0.05f);
 								
-								break;
+								// Rewarding player depending on game mode
+								if(e.getLife() <= 0) {
+									gameMode.enemyKilled(e);
+									
+									cs.activate(enemies.size);
+									
+									enemiesKilled++;
+									
+									CameraShake.shake(0.2f, 0.1f);
+									
+									// Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
+									Random r = new Random();
+									if(enablePowerUps)
+										if(r.nextInt(100) < 10 / (enemies.size % 100 > 0 ? Math.floor(enemies.size) : 1))
+											puss.spawn(e);
+									
+									break;
+								}
 							}
 						}
 					}
+					
+					if(player.isHit() && player.getSpawnTimer() <= 0) {
+			        	pss.spawn(player.getLife(), true);
+			        	player.setHit(false);
+			        }
 				}
 				
-				if(player.isHit() && player.getSpawnTimer() <= 0) {
-		        	pss.spawn(player.getLife(), true);
-		        	player.setHit(false);
-		        }
-			}
-			
-			
-			boolean playerKilled = false;		// A variable to keep track of player status
-			
-			// Removing destroyed entities
-			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
-				Entity ent = it.next();
 				
-				if(ent.update()) {
-					if(ent instanceof Particle)
-						pass.getPool().free((Particle) ent);
-					else if(ent instanceof Enemy)
-						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
-					else if(ent instanceof Bullet)
-						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
-					else if(ent instanceof Player) {
-						gameMode.playerKilled();
-						playerKilled = true;
+				boolean playerKilled = false;		// A variable to keep track of player status
+				
+				// Removing destroyed entities
+				for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
+					Entity ent = it.next();
+					
+					if(ent.update()) {
+						if(ent instanceof Particle)
+							pass.getPool().free((Particle) ent);
+						else if(ent instanceof Enemy)
+							enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
+						else if(ent instanceof Bullet)
+							bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
+						else if(ent instanceof Player) {
+							gameMode.playerKilled();
+							playerKilled = true;
+						}
+						it.remove();
 					}
-					it.remove();
 				}
+				
+				if(playerKilled) {
+					// Time attack
+					if(!gameMode.isGameOver()) {
+						clearLists();
+						resetGameTime();
+						pss.spawn(3, false);
+					}
+					// Ranked
+					else {
+						deathTimer = 2000;
+						deathDone = false;
+					}
+				}
+				
+				CameraShake.update();
 			}
-			
-			if(playerKilled) {
-				// Time attack
-				if(!gameMode.isGameOver()) {
-					clearLists();
-					resetGameTime();
-					pss.spawn(3, false);
-				}
-				// Ranked
-				else {
-					deathTimer = 2000;
-					deathDone = false;
-				}
-			}
-			
-			CameraShake.update();
 		}
 	}
 	
@@ -318,13 +332,13 @@ public class GameState extends State {
 		if(!gameMode.isGameOver()) {
 			gameInputProcessor.getShootStick().render(game.batch);
 			gameInputProcessor.getMoveStick().render(game.batch);
-		
+		/*
 			// Debugging information
 			arial15.draw(game.batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 10);
 			arial15.draw(game.batch, "Enities: " + entities.size, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 30);
 			arial15.draw(game.batch, "Player Life: " + player.getLife(), -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 50);
 			arial15.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
-							-Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 70);
+							-Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 70);*/
 			
 			gameMode.render(game.batch);
 		}
@@ -393,6 +407,10 @@ public class GameState extends State {
 		return arial15;
 	}
 	
+	public int getEnemiesKilled() {
+		return enemiesKilled;
+	}
+
 	// Reset stuff
 	/**
 	 * Reset all entities
@@ -425,6 +443,8 @@ public class GameState extends State {
 		input.setInputProcessor(gameInputProcessor);
 		
 		resetGameTime();
+		
+		enemiesKilled = 0;
 		
 		// Disable or enable virus spawn in start, > 0 = enable & < 0 = disable
 		EnemyVirus.virusAmount = 0;
@@ -523,8 +543,14 @@ public class GameState extends State {
 	@Override
 	public void resume() {
 		super.resume();
-		
 		lastTickTime = System.nanoTime();
+		paused = false;
+	}
+
+	@Override
+	public void pause() {
+		super.pause();
+		paused = true;
 	}
 
 	@Override

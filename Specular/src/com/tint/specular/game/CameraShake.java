@@ -28,8 +28,14 @@ public class CameraShake {
 		Specular.camera.position.add(rand.nextFloat() * 100 * shakeIntensity, rand.nextFloat() * 100 * shakeIntensity, 0);
 	}
 	
-	public static void shake(float intensity, float decay) {
+	/**
+	 * High intensity low decay - much shake in a short period of time
+	 * Low intensity high decay - little shake in a long period of time
+	 * @param intensity Also works as timer
+	 * @param decaySpeed This is subtracted from the intensity every tick
+	 */
+	public static void shake(float intensity, float decaySpeed) {
 		shakeIntensity = intensity;
-		shakeDecay = decay;
+		shakeDecay = decaySpeed;
 	}
 }

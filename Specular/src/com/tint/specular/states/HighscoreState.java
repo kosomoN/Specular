@@ -57,7 +57,7 @@ public class HighscoreState extends State {
 		
 		Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
-		if(!Specular.facebook.isLoggedIn()) {
+		if(Specular.facebook.isLoggedIn()) {
 			
 			final HighscoreList list = new HighscoreList();
 			
@@ -75,7 +75,7 @@ public class HighscoreState extends State {
 			
 			ScrollPane sp = new ScrollPane(list);
 //			sp.getStyle().background = skin.getDrawable("black");
-			sp.setSize(Gdx.graphics.getWidth() / 2 - 37, Gdx.graphics.getHeight() - 500);
+			sp.setSize(Gdx.graphics.getWidth() / 2 - 37, Gdx.graphics.getHeight() - 25);
 			sp.setPosition(Gdx.graphics.getWidth() / 2 + 25 / 2, 0);
 	
 			Table table = new Table();
@@ -125,6 +125,4 @@ public class HighscoreState extends State {
 		
 		stage.dispose();
 	}
-	
-	
 }

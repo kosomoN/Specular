@@ -16,6 +16,8 @@ import com.tint.specular.utils.Util;
 
 public class Bullet implements Entity {
 	
+	private static final float SPEED = 25;
+
 	public static float damage = 1;
 	
 	private static Texture bulletTex;
@@ -30,11 +32,11 @@ public class Bullet implements Entity {
 	public Bullet(float x, float y, float direction, float initialDx, float initialDy, GameState gs, Player shooter) {
 		this.x = x;
 		this.y = y;
-		direction += Math.random() * 10 - 5;
+		direction += Math.random() * 6 - 3;
 		float cos = (float) Math.cos(Math.toRadians(direction));
 		float sin = (float) Math.sin(Math.toRadians(direction));
-		this.dx = cos * 15;
-		this.dy = sin * 15;
+		this.dx = cos * SPEED;
+		this.dy = sin * SPEED;
 
 		//Move the bullet away from the player center
 		this.x += cos * 28;
