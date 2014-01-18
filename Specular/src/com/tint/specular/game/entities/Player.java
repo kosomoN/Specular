@@ -191,16 +191,13 @@ public class Player implements Entity {
 	}
 	
 	public void updateHitDetection() {
+		boolean clearEnemies = false;
         for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
     		if(e.getLife() > 0) {
     			float distX = centerx - e.getX();
     			float distY = centery - e.getY();
         		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
-        			// Removing entity from lists
-        			gs.getEntities().removeValue(e, true);
-        			it.remove();
-        			
         			if(shields.size > 0) {
 	        			//Repel effect after collision with shield
 	        			double repelAngle = Math.atan2(e.getY() - centery, e.getX() - centerx);
@@ -210,9 +207,18 @@ public class Player implements Entity {
     					addLives(-1);
     					spawnTimer = 2000;
     					isHit = true;
+    					clearEnemies = true;
         			}
 	        	}
     		}
+        }
+        if(clearEnemies) {
+        	// Removing all enemies from lists
+        	for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
+            	Enemy e = it.next();
+            	gs.getEntities().removeValue(e, true);
+            	it.remove();
+        	}
         }
 	}
 /*_____________________________________________________________________*/

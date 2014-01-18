@@ -5,7 +5,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -203,8 +202,10 @@ public class GameState extends State {
 				} else {
 					// Update game mode, enemy spawning and player hit detection
 					gameMode.update(TICK_LENGTH / 1000000);
-					ess.update(ticks);
 					player.updateHitDetection();
+					// So that they don't spawn while death animation is playing
+					if(player.getSpawnTimer() <= 0)
+						ess.update(ticks);
 				}
 				
 				// Updating combos and score multiplier
@@ -222,7 +223,7 @@ public class GameState extends State {
 								e.hit(Bullet.damage);
 								b.hit();
 								
-								//Adding a small camerashake
+								// Adding a small camerashake
 								CameraShake.shake(0.1f, 0.05f);
 								
 								// Rewarding player depending on game mode
@@ -340,24 +341,23 @@ public class GameState extends State {
 			arial15.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
 							-Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 70);*/
 			
+			// Drawing score in the middle top of the screen
+			Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
+					Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
+			// Drawing combo on screen
+			Util.writeCentered(game.batch, font50, cs.getCombo() + "x", 0,
+					Specular.camera.viewportHeight / 2 - font50.getCapHeight() * 2 - 30);
 			gameMode.render(game.batch);
 		}
 		
-		// Drawing score in the middle top of the screen
-		Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
-				Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
-		// Drawing combo on screen
-		Util.writeCentered(game.batch, font50, cs.getCombo() + "x", 0,
-				Specular.camera.viewportHeight / 2 - font50.getCapHeight() * 2 - 30);
-
 		game.batch.end();
 		
 		
 		if(gameMode.isGameOver()) {
 			if(deathDone) {
 				game.batch.begin();
-				game.batch.draw(gameOverTex, -Gdx.graphics.getWidth() * 3 / 4, 30);
-				font50.draw(game.batch, String.valueOf(player.getScore()), -50, 100);
+				game.batch.draw(gameOverTex, -Gdx.graphics.getWidth() * 3 / 4 * Specular.widthRatioTo1280, 70 * Specular.heightRatioTo720);
+				font50.draw(game.batch, String.valueOf(player.getScore()), -50 * Gdx.graphics.getWidth() / 720, 150 * Specular.heightRatioTo720);
 				game.batch.end();
 				
 				stage.act();
@@ -453,7 +453,6 @@ public class GameState extends State {
 	@Override
 	public void show() {
 		super.show();
-		
 		/*
 		 * All the positions are made after the resolution 1280x720
 		 */
@@ -466,8 +465,8 @@ public class GameState extends State {
 		retryStyle.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Retry pressed.png"))));
 		
 		ImageButton retry = new ImageButton(retryStyle);
-		retry.setSize(520, 169);
-		retry.setPosition(400, 150);
+		retry.setSize(520 * Specular.widthRatioTo1280, 169 * Specular.heightRatioTo720);
+		retry.setPosition(400 * Specular.widthRatioTo1280, 200 * Specular.heightRatioTo720);
 		
 		retry.addListener(new ChangeListener() {
 
@@ -484,8 +483,8 @@ public class GameState extends State {
 		menuStyle.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Main menu button 90 820.png"))));
 		
 		ImageButton menu = new ImageButton(menuStyle);
-		menu.setSize(590, 126.5f);
-		menu.setPosition(65, -40);
+		menu.setSize(590 * Specular.widthRatioTo1280, 126.5f * Specular.heightRatioTo720);
+		menu.setPosition(65 * Specular.widthRatioTo1280, 10 * Specular.heightRatioTo720);
 		
 		menu.addListener(new ChangeListener() {
 
@@ -503,8 +502,8 @@ public class GameState extends State {
 		postStyle.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Post 1250 790.png"))));
 		
 		ImageButton postScore = new ImageButton(postStyle);
-		postScore.setSize(340, 170);
-		postScore.setPosition(835, -30);
+		postScore.setSize(340 * Specular.widthRatioTo1280, 170 * Specular.heightRatioTo720);
+		postScore.setPosition(835 * Specular.widthRatioTo1280, 30 * Specular.heightRatioTo720);
 		
 		postScore.addListener(new ChangeListener() {
 
