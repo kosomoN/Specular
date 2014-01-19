@@ -92,9 +92,10 @@ public class GameState extends State {
 	
 	// Fields that affect score or gameplay
 	private double scoreMultiplier = 1;
-	private float damageBooster = 1f;
+	private double damageBooster = 1f;
 	private boolean enablePowerUps = true;
 	private int enemiesKilled;
+	private int comboToNextScoreMult = 2;
 	
 	// Lists for keeping track of entities in the world
 	private Array<Entity> entities = new Array<Entity>(false, 128);
@@ -210,7 +211,16 @@ public class GameState extends State {
 				
 				// Updating combos and score multiplier
 				cs.update();
-				setScoreMultiplier(cs.getCombo());
+				if(cs.getCombo() >= comboToNextScoreMult) {
+					setScoreMultiplier(scoreMultiplier + 0.1f);
+					comboToNextScoreMult = (int) (scoreMultiplier * 10);
+				}
+				// Updating damage booster
+				if(cs.getCombo() > 10)
+					damageBooster = cs.getCombo() / 10;
+				else
+					damageBooster = 1;
+				
 						
 				if(player != null && !player.isDead()) {
 					// Checking if any bullet hit an enemy
@@ -220,7 +230,7 @@ public class GameState extends State {
 									e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
 								
 								// Add " * damageBooster" to enable combo damage
-								e.hit(Bullet.damage);
+								e.hit(Bullet.damage * damageBooster);
 								b.hit();
 								
 								// Adding a small camerashake
@@ -441,6 +451,8 @@ public class GameState extends State {
 		// Adding player and setting up input processor
 		pss.spawn(3, false);
 		input.setInputProcessor(gameInputProcessor);
+		
+		Shield.init(player);
 		
 		resetGameTime();
 		

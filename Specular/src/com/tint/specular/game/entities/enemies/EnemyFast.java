@@ -19,7 +19,7 @@ public class EnemyFast extends Enemy {
 	private float rotation;
 
 	public EnemyFast(float x, float y, GameState gs) {
-		super(x, y, gs, 5);
+		super(x, y, gs, 4);
 	}
 
 	@Override

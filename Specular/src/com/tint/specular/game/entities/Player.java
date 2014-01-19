@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.Shield;
@@ -31,11 +30,9 @@ public class Player implements Entity {
 	
 	private static Animation anim;
 	private static Texture playerTex;
-	private static Array<Texture> shieldTextures = new Array<Texture>();
 	private static int radius;
 	
 	private GameState gs;
-	private Array<Shield> shields = new Array<Shield>();
 	
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
@@ -43,6 +40,7 @@ public class Player implements Entity {
 	private float spawnTimer;
 	
 	private int life = 3, lifeY = 512, targetLifeY = 512;
+	private int shields;
 	private int bulletBurst = 3;
 	private int score = 0;
 	
@@ -54,6 +52,9 @@ public class Player implements Entity {
 		centerx = x;
 		centery = y;
 		setLife(lives);
+		addShield();
+		addShield();
+		addShield();
 	}
 	
 	//RENDER&UPDATE loop
@@ -67,6 +68,8 @@ public class Player implements Entity {
 		} else {
 			animFrameTime += Gdx.graphics.getDeltaTime();
 			TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
+			if(shields > 0)
+				Shield.render(batch);
 			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
 		}
 	}
@@ -198,11 +201,13 @@ public class Player implements Entity {
     			float distX = centerx - e.getX();
     			float distY = centery - e.getY();
         		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
-        			if(shields.size > 0) {
+        			if(shields > 0) {
 	        			//Repel effect after collision with shield
-	        			double repelAngle = Math.atan2(e.getY() - centery, e.getX() - centerx);
-	        			setSpeed((float) (Math.cos(repelAngle) * -dx * 0.5f), (float) (Math.sin(repelAngle) * -dy * 0.5f));
-	        			shields.removeIndex(shields.size - 1);
+	        			setSpeed(dx + e.getDx(), dy + e.getDy());
+	        			
+	        			gs.getEntities().removeValue(e, true);
+        				it.remove();
+	        			shields--;
         			} else {
     					addLives(-1);
     					spawnTimer = 2000;
@@ -225,8 +230,7 @@ public class Player implements Entity {
 
 	//POWER-UPS
 	public void addShield() {
-		if(shields.size < shieldTextures.size)
-			shields.add(new Shield(this, shieldTextures.get(shields.size)));
+		shields++;
 	}
 	
 	public void addLives(int livesToAdd) {
@@ -285,9 +289,8 @@ public class Player implements Entity {
 	public static float getRadius() { return radius; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
-	public Array<Shield> getShields() { return shields; }
 	public int getScore() { return score; }
-	public boolean hasShield() { return shields.size > 0; }
+	public boolean hasShield() { return shields > 0; }
 	public boolean isHit() { return isHit; }
 	public boolean isDead() { return life <= 0; }
 	public GameState getGameState() { return gs; }

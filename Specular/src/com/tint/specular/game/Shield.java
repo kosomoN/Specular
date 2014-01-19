@@ -1,5 +1,6 @@
 package com.tint.specular.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.entities.Player;
@@ -13,36 +14,15 @@ import com.tint.specular.utils.Util;
 
 public class Shield {
 	
-	private Player player;
-	private Texture texture;
-	private float durability = 100;
+	private static Player player;
+	private static Texture texture;
 	
-	public Shield(Player player, Texture texture) {
-		this.player = player;
-		this.texture = texture;
+	public static void init(Player player) {
+		Shield.player = player;
+		texture = new Texture(Gdx.files.internal("graphics/game/Shield.png"));
 	}
 	
-	public void render(SpriteBatch batch) {
+	public static void render(SpriteBatch batch) {
 		Util.drawCentered(batch, texture, player.getCenterX(), player.getCenterY(), 0);
-	}
-	
-	public boolean update() {
-		return durability <= 0;
-	}
-	
-	public void decreaseDurability(float decrease) {
-		durability -= decrease;
-	}
-	
-	public void increaseDurability(float increase) {
-		durability += increase;
-	}
-	
-	public float getRadius() {
-		return texture.getWidth();
-	}
-	
-	public float getDurability() {
-		return durability;
 	}
 }

@@ -22,7 +22,7 @@ public class EnemyStupid extends Enemy {
 	private double angle;
 	
 	public EnemyStupid(float x, float y, GameState gs) {
-		super(x, y, gs, 2);
+		super(x, y, gs, 1);
 		angle = Math.random() * 360;
 	}
 	

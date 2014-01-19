@@ -49,7 +49,7 @@ public abstract class Enemy implements Entity {
 		slowdown = slowdown < 0 ? 0 : slowdown;
 	}
 	
-	public void hit(float damage) {
+	public void hit(double damage) {
 		life -= damage;
 		if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
 				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&

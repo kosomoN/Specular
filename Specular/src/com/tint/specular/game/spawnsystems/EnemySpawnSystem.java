@@ -7,7 +7,6 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
-import com.tint.specular.game.entities.enemies.EnemyStupid;
 
 /**
  * 
