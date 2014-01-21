@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.Shield;
@@ -28,8 +29,8 @@ public class Player implements Entity {
 	private static final float SPEED = 0.125f;
 	private static final float FRICTION = 0.95f;
 	
-	private static Animation anim;
-	private static Texture playerTex;
+	private static Animation anim, spawnAnim;
+	private static Texture playerTex, playerSpawnTex;
 	private static int radius;
 	
 	private GameState gs;
@@ -38,7 +39,7 @@ public class Player implements Entity {
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
 	
-	private int life = 3, lifeY = 512, targetLifeY = 512;
+	private int life = 3;
 	private int shields;
 	private int bulletBurst = 3;
 	private int score = 0;
@@ -60,7 +61,6 @@ public class Player implements Entity {
 	public void render(SpriteBatch batch) {
 		if(isHit) {
 			// Death / Spawn animation
-			
 		} else {
 			animFrameTime += Gdx.graphics.getDeltaTime();
 			TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
@@ -72,14 +72,6 @@ public class Player implements Entity {
 	
 	@Override
 	public boolean update() {
-		//Update lifebar
-		if(lifeY != targetLifeY) {
-			if(lifeY - targetLifeY > 0)
-				lifeY -= 2;
-			else
-				lifeY += 2;
-		}
-		
 		// Taking control away when player is hit and respawning
 		if(!isHit) {
 			//Moving
@@ -187,8 +179,8 @@ public class Player implements Entity {
 	}
 	
 	public void updateHitDetection() {
-		boolean clearEnemies = false;
-        for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
+        boolean clearEnemies = false;
+		for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
     		if(e.getLife() > 0) {
     			float distX = centerx - e.getX();
@@ -234,15 +226,6 @@ public class Player implements Entity {
 	
 	public void addLives(int livesToAdd) {
 		life = life + livesToAdd < 3 ? life + livesToAdd : 3;
-		
-		if(life == 3)
-			targetLifeY = 512;
-		else if(life == 2)
-			targetLifeY = 408;
-		else if(life == 1)
-			targetLifeY = 265;
-		else if(life <= 0)
-			targetLifeY = 0;
 	}
 	
 	public void addScore(int score) {
@@ -298,6 +281,10 @@ public class Player implements Entity {
 		playerTex  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
 		playerTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(playerTex, 128, 128, 1 / 16f, 0, 0, 7, 3);
+		
+		playerSpawnTex  = new Texture(Gdx.files.internal("graphics/game/Player Spawn Anim.png"));
+		playerSpawnTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		spawnAnim = Util.getAnimation(playerSpawnTex, 128, 128, 1 / 16f, 0, 0, 7, 3);
 		
 		radius = (anim.getKeyFrame(0).getRegionWidth() - 10) / 2;
 	}

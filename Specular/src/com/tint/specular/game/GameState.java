@@ -59,8 +59,6 @@ import com.tint.specular.utils.Util;
 
 public class GameState extends State {
 	
-	private ShapeRenderer render = new ShapeRenderer();
-	
 	// Different spawnsystems and a system for keeping track of combos
 	protected EnemySpawnSystem ess;
 	protected PlayerSpawnSystem pss;
@@ -114,7 +112,7 @@ public class GameState extends State {
 	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
 	
 	// Art
-	private Texture gameOverTex;
+	private Texture hud, gameOverTex;
 	private Music music;
 	
 	public GameState(Specular game) {
@@ -126,6 +124,8 @@ public class GameState extends State {
 		
 		// Loading gameover texture
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Game Over Title.png"));
+		
+		hud = new Texture(Gdx.files.internal("graphics/game/HUD.png"));
 		
 		// Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
@@ -228,7 +228,7 @@ public class GameState extends State {
 								e.hit(Bullet.damage * damageBooster);
 								b.hit();
 								
-								// Adding a small camerashake
+								//Adding a small camerashake
 								CameraShake.shake(0.1f, 0.05f);
 								
 								// Rewarding player depending on game mode
@@ -239,6 +239,7 @@ public class GameState extends State {
 									
 									enemiesKilled++;
 									
+									//Adding a stronger camera shake when the enemy dies
 									CameraShake.shake(0.2f, 0.1f);
 									
 									// Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
@@ -357,6 +358,9 @@ public class GameState extends State {
 			arial15.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
 							-Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 70);*/
 			
+			
+			//Drawing HUD
+			game.batch.draw(hud, -hud.getWidth() / 2, -hud.getHeight() / 2, hud.getWidth(), Specular.camera.viewportHeight);
 			// Drawing score in the middle top of the screen
 			Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
 					Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
@@ -368,7 +372,6 @@ public class GameState extends State {
 		
 		game.batch.end();
 		
-		
 		if(gameMode.isGameOver()) {
 			game.batch.begin();
 			game.batch.draw(gameOverTex, Specular.camera.viewportWidth * (-Specular.camera.viewportWidth / 2 / 1920f), Specular.camera.viewportHeight * (70 / 1080f),
@@ -379,15 +382,7 @@ public class GameState extends State {
 			ggInputProcessor.getMenuBtn().renderTexture(game.batch);
 			ggInputProcessor.getPostBtn().renderTexture(game.batch);
 			
-			// Drawing 1080p coordinates
-//			arial15.draw(game.batch, "X: " + (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 10);
-//			arial15.draw(game.batch, "Y: " + (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 30);
 			game.batch.end();
-			
-//			ggInputProcessor.getRetryBtn().renderShape(render);//Texture(game.batch);
-//			ggInputProcessor.getMenuBtn().renderShape(render);//Texture(game.batch);
-//			ggInputProcessor.getPostBtn().renderShape(render);//Texture(game.batch);
-			
 		}
 		
 		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);

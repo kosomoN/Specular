@@ -1,5 +1,7 @@
 package com.tint.specular.game.entities;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,8 +29,12 @@ public class Particle implements Entity, Poolable {
 	private GameState gs;
 	private Type type;
 	private int textureIndexInArray;
+	private float rotation;
+	
+	private static final float ROTATION_SPEED = 2;
 	private static TextureRegion[] textures;
 	private static Texture bigBase, smallBase;
+	private static Random rand = new Random();
 	
 	public Particle(GameState gs) {
 		this.gs = gs;
@@ -52,7 +58,11 @@ public class Particle implements Entity, Poolable {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, textures[textureIndexInArray], x, y, 0);
+		rotation += ROTATION_SPEED;
+		float alpha = (lifetime / 250f) * (lifetime / 250f);
+		batch.setColor(1, 1, 1, alpha < 1 ? alpha : 1);
+		Util.drawCentered(batch, textures[textureIndexInArray], x, y, rotation);
+		batch.setColor(1, 1, 1, 1);
 	}
 	
 	public Type getType() { return type; }
@@ -102,7 +112,9 @@ public class Particle implements Entity, Poolable {
 		this.textureIndexInArray = type.ordinal() + (large ? 6 : 0); //This is just a variable to make getting the subimage easier
 		this.type = type;
 		
-		lifetime = (int) (250 + Math.random() * 250);
+		lifetime = 250 + rand.nextInt(250);
+		
+		rotation = rand.nextInt(360);
 	}
 	
 	@Override

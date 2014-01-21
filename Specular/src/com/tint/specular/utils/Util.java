@@ -112,7 +112,7 @@ public class Util {
 	 */
 	public static void drawCentered(SpriteBatch batch, TextureRegion tex, float centerx, float centery, float rotation) {
 		batch.draw(tex, centerx - tex.getRegionWidth() / 2, centery - tex.getRegionHeight() / 2,
-				centerx, centery, tex.getRegionWidth(), tex.getRegionHeight(), 1, 1, rotation);
+				tex.getRegionWidth() / 2, tex.getRegionHeight() / 2, tex.getRegionWidth(), tex.getRegionHeight(), 1, 1, rotation);
 	}
 	
 	public static void writeCentered(SpriteBatch batch, BitmapFont font, String s, float centerx, float centery) {
