@@ -80,11 +80,10 @@ public class MenuInputProcessor implements InputProcessor{
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		
 		// This seems to check whether the screen is being touched and if so where
 		float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 		float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
-			
+		
 		// It then checks if that touchpoint collides with the buttons on screen
 		// and acts accordingly
 		if(playBtn.isOver(touchpointx, touchpointy, true)) {

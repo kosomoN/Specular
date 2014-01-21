@@ -37,7 +37,6 @@ public class Player implements Entity {
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
-	private float spawnTimer;
 	
 	private int life = 3, lifeY = 512, targetLifeY = 512;
 	private int shields;
@@ -52,9 +51,6 @@ public class Player implements Entity {
 		centerx = x;
 		centery = y;
 		setLife(lives);
-		addShield();
-		addShield();
-		addShield();
 	}
 	
 	//RENDER&UPDATE loop
@@ -76,9 +72,6 @@ public class Player implements Entity {
 	
 	@Override
 	public boolean update() {
-		if(isHit)
-			spawnTimer -= GameState.TICK_LENGTH / 1000000;
-		
 		//Update lifebar
 		if(lifeY != targetLifeY) {
 			if(lifeY - targetLifeY > 0)
@@ -210,9 +203,15 @@ public class Player implements Entity {
 	        			shields--;
         			} else {
     					addLives(-1);
-    					spawnTimer = 2000;
     					isHit = true;
     					clearEnemies = true;
+    					
+    					if(life > 0) {
+    						gs.getParticleSpawnSystem().spawn(this, 100, false);
+    					} else {
+    						gs.getParticleSpawnSystem().spawn(this, 100, false);
+    						gs.getParticleSpawnSystem().spawn(this, 40, true);
+    					}
         			}
 	        	}
     		}
@@ -285,7 +284,7 @@ public class Player implements Entity {
 	public float getCenterY() { return centery;	}
 	public float getDeltaX() { return dx; }
 	public float getDeltaY() { return dy; }
-	public float getSpawnTimer() { return spawnTimer; }
+	public float getFireRate() { return fireRate; }
 	public static float getRadius() { return radius; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }

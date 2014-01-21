@@ -21,7 +21,7 @@ public class ShieldUpgrade extends PowerUp {
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/ShieldUpgrade.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/Shield.png"));
 	}
 
 	@Override

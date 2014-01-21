@@ -20,6 +20,8 @@ public abstract class Enemy implements Entity {
 	protected static int MAX_LIFE;
 	protected boolean isHit;
 	
+	private int timer; // Milliseconds
+	
 	protected GameState gs;
 	
 	public Enemy(float x, float y, GameState gs, int life) {
@@ -32,6 +34,11 @@ public abstract class Enemy implements Entity {
 	
 	@Override
 	public boolean update() {
+		if(timer > 0) {
+			timer -= GameState.TICK_LENGTH / 1000000; // Millisecond in nano
+		} else {
+			slowdown = 0;
+		}
 		return life <= 0;
 	}
 
@@ -42,9 +49,10 @@ public abstract class Enemy implements Entity {
 	 * the nearest accepted value
 	 */
 	public void setSlowdown(float slowdown) {
-		this.slowdown = slowdown;
+		this.slowdown += (1 - this.slowdown) * slowdown;
+		timer = 5000;
 		
-		//Checking boundaries
+		// Checking boundaries
 		slowdown = slowdown > 1 ? 1 : slowdown;
 		slowdown = slowdown < 0 ? 0 : slowdown;
 	}
@@ -74,6 +82,7 @@ public abstract class Enemy implements Entity {
 	public float getY() { return y; }
 	public float getDx() { return dx; }
 	public float getDy() { return dy; }
+	public float getSlowdown() { return slowdown; }
 
 	public int getLife() { return life; }
 	

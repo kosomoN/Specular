@@ -20,7 +20,7 @@ private static Texture texture;
 	
 	@Override
 	protected void affect(Player player) {
-		gs.setDamageBooster(1.5f);
+		gs.setDamageBooster(gs.getDamageBooster() * 1.5);
 	}
 
 	@Override

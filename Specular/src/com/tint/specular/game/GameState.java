@@ -1,26 +1,24 @@
 package com.tint.specular.game;
 
+import java.awt.peer.ScrollbarPeer;
 import java.util.Iterator;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
-import com.tint.specular.Specular.States;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Particle;
@@ -35,7 +33,6 @@ import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.gamemodes.GameMode;
 import com.tint.specular.game.gamemodes.Ranked;
 import com.tint.specular.game.powerups.AddLife;
-import com.tint.specular.game.powerups.BulletBurst_3;
 import com.tint.specular.game.powerups.BulletBurst_5;
 import com.tint.specular.game.powerups.ComboDamageBooster;
 import com.tint.specular.game.powerups.FireRateBoost;
@@ -48,9 +45,9 @@ import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
 import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.input.GameInputProcessor;
+import com.tint.specular.input.GameOverInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
-import com.tint.specular.states.Facebook.LoginCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.utils.Util;
 
@@ -61,6 +58,8 @@ import com.tint.specular.utils.Util;
  */
 
 public class GameState extends State {
+	
+	private ShapeRenderer render = new ShapeRenderer();
 	
 	// Different spawnsystems and a system for keeping track of combos
 	protected EnemySpawnSystem ess;
@@ -80,12 +79,10 @@ public class GameState extends State {
 	
 	// Game events
 	private boolean preparationDone;
-	private boolean deathDone;
 	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	private float unprocessed;
-	private float deathTimer;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
 	private boolean paused = false;
@@ -95,7 +92,7 @@ public class GameState extends State {
 	private double damageBooster = 1f;
 	private boolean enablePowerUps = true;
 	private int enemiesKilled;
-	private int comboToNextScoreMult = 2;
+//	private int comboToNextScoreMult = 2;
 	
 	// Lists for keeping track of entities in the world
 	private Array<Entity> entities = new Array<Entity>(false, 128);
@@ -109,6 +106,7 @@ public class GameState extends State {
 	// Input related fields
 	private Input input;
 	private GameInputProcessor gameInputProcessor;
+	private GameOverInputProcessor ggInputProcessor;
 	
 	// Custom and default fonts
 	private BitmapFont arial15 = new BitmapFont();
@@ -154,7 +152,6 @@ public class GameState extends State {
 		
 		// Initializing power-ups
 		AddLife.init();
-		BulletBurst_3.init();
 		BulletBurst_5.init();
 		ComboDamageBooster.init();
 		FireRateBoost.init();
@@ -198,23 +195,21 @@ public class GameState extends State {
 							
 				if(gameMode.isGameOver()) {
 					// Code for death animation
-					deathTimer -= TICK_LENGTH / 1000000;
-					deathDone = deathTimer <= 0;
 				} else {
 					// Update game mode, enemy spawning and player hit detection
 					gameMode.update(TICK_LENGTH / 1000000);
 					player.updateHitDetection();
 					// So that they don't spawn while death animation is playing
-					if(player.getSpawnTimer() <= 0)
+					if(!player.isHit())
 						ess.update(ticks);
 				}
 				
 				// Updating combos and score multiplier
 				cs.update();
-				if(cs.getCombo() >= comboToNextScoreMult) {
+				/*if(cs.getCombo() >= comboToNextScoreMult) {
 					setScoreMultiplier(scoreMultiplier + 0.1f);
 					comboToNextScoreMult = (int) (scoreMultiplier * 10);
-				}
+				}*/
 				// Updating damage booster
 				if(cs.getCombo() > 10)
 					damageBooster = cs.getCombo() / 10;
@@ -258,9 +253,18 @@ public class GameState extends State {
 						}
 					}
 					
-					if(player.isHit() && player.getSpawnTimer() <= 0) {
-			        	pss.spawn(player.getLife(), true);
-			        	player.setHit(false);
+					if(player.isHit()) {
+						boolean containsParticles = false;
+						for(Entity ent : entities) {
+							if(ent instanceof Particle) {
+								containsParticles = true;
+								continue;
+							}
+						}
+						if(!containsParticles) {
+				        	pss.spawn(player.getLife(), true);
+				        	player.setHit(false);
+						}
 			        }
 				}
 				
@@ -295,13 +299,15 @@ public class GameState extends State {
 					}
 					// Ranked
 					else {
-						deathTimer = 2000;
-						deathDone = false;
+						input.setInputProcessor(ggInputProcessor);
 					}
 				}
 				
 				CameraShake.update();
 			}
+		}
+		if(Gdx.input.isKeyPressed(Keys.G)) {
+			player.kill();
 		}
 	}
 	
@@ -364,15 +370,24 @@ public class GameState extends State {
 		
 		
 		if(gameMode.isGameOver()) {
-			if(deathDone) {
-				game.batch.begin();
-				game.batch.draw(gameOverTex, -Gdx.graphics.getWidth() * 3 / 4 * Specular.widthRatioTo1280, 70 * Specular.heightRatioTo720);
-				font50.draw(game.batch, String.valueOf(player.getScore()), -50 * Gdx.graphics.getWidth() / 720, 150 * Specular.heightRatioTo720);
-				game.batch.end();
-				
-				stage.act();
-				stage.draw();
-			}
+			game.batch.begin();
+			game.batch.draw(gameOverTex, Specular.camera.viewportWidth * (-Specular.camera.viewportWidth / 2 / 1920f), Specular.camera.viewportHeight * (70 / 1080f),
+					Specular.camera.viewportWidth * (1920 / 1920f), Specular.camera.viewportHeight * (512 / 1080f));
+			font50.draw(game.batch, String.valueOf(player.getScore()), Specular.camera.viewportWidth * (-50 / 1920f), Specular.camera.viewportHeight * (150 / 1080f));
+			
+			ggInputProcessor.getRetryBtn().renderTexture(game.batch);
+			ggInputProcessor.getMenuBtn().renderTexture(game.batch);
+			ggInputProcessor.getPostBtn().renderTexture(game.batch);
+			
+			// Drawing 1080p coordinates
+//			arial15.draw(game.batch, "X: " + (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 10);
+//			arial15.draw(game.batch, "Y: " + (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 30);
+			game.batch.end();
+			
+//			ggInputProcessor.getRetryBtn().renderShape(render);//Texture(game.batch);
+//			ggInputProcessor.getMenuBtn().renderShape(render);//Texture(game.batch);
+//			ggInputProcessor.getPostBtn().renderShape(render);//Texture(game.batch);
+			
 		}
 		
 		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
@@ -390,7 +405,7 @@ public class GameState extends State {
 	}
 	
 	public void setScoreMultiplier(double multiplier) { scoreMultiplier = multiplier < 1 ? 1 : multiplier; }
-	public void setDamageBooster(float damageBooster) { this.damageBooster = damageBooster; }
+	public void setDamageBooster(double damageBooster) { this.damageBooster = damageBooster; }
 	
 	public Specular getGame() {	return game; }
 	public GameInputProcessor getGameProcessor() { return gameInputProcessor; }
@@ -404,6 +419,7 @@ public class GameState extends State {
 	public ParticleSpawnSystem getParticleSpawnSystem() { return pass; }
 	public Map getCurrentMap() { return currentMap;	}
 	
+	public double getDamageBooster() { return damageBooster; }
 	public double getScoreMultiplier() { return scoreMultiplier; }
 	
 	/** Get a custom BitmapFont based on its size. If ther is no font with that size it returns default font.
@@ -443,20 +459,17 @@ public class GameState extends State {
 	/**
 	 * Total reset
 	 */
-	private void reset() {
+	public void reset() {
 		clearLists();
 		
 		gameMode = new Ranked(this);
-		
+		enemiesKilled = 0;
 		// Adding player and setting up input processor
 		pss.spawn(3, false);
 		input.setInputProcessor(gameInputProcessor);
 		
 		Shield.init(player);
-		
 		resetGameTime();
-		
-		enemiesKilled = 0;
 		
 		// Disable or enable virus spawn in start, > 0 = enable & < 0 = disable
 		EnemyVirus.virusAmount = 0;
@@ -465,90 +478,13 @@ public class GameState extends State {
 	@Override
 	public void show() {
 		super.show();
-		/*
-		 * All the positions are made after the resolution 1280x720
-		 */
-		// Scene2d stuff
-		stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		
-		// Setting up the style for the retry button
-		ImageButtonStyle retryStyle = new ImageButtonStyle();
-		retryStyle.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Retry 600 550.png"))));
-		retryStyle.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Retry pressed.png"))));
-		
-		ImageButton retry = new ImageButton(retryStyle);
-		retry.setSize(520 * Specular.widthRatioTo1280, 169 * Specular.heightRatioTo720);
-		retry.setPosition(400 * Specular.widthRatioTo1280, 200 * Specular.heightRatioTo720);
-		
-		retry.addListener(new ChangeListener() {
-
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				reset();
-			}
-		});
-		stage.addActor(retry);
-		
-		// Setting up the style for the back to main menu button
-		ImageButtonStyle menuStyle = new ImageButtonStyle();
-		menuStyle.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Main menu button pressed.png"))));
-		menuStyle.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Main menu button 90 820.png"))));
-		
-		ImageButton menu = new ImageButton(menuStyle);
-		menu.setSize(590 * Specular.widthRatioTo1280, 126.5f * Specular.heightRatioTo720);
-		menu.setPosition(65 * Specular.widthRatioTo1280, 10 * Specular.heightRatioTo720);
-		
-		menu.addListener(new ChangeListener() {
-
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				game.enterState(States.MAINMENUSTATE);
-			}
-
-		});
-		stage.addActor(menu);
-		
-		// Setting up the style for the post highscore button
-		ImageButtonStyle postStyle = new ImageButtonStyle();
-		postStyle.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Post 1250 790.png"))));
-		postStyle.down = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/gameover/Post 1250 790.png"))));
-		
-		ImageButton postScore = new ImageButton(postStyle);
-		postScore.setSize(340 * Specular.widthRatioTo1280, 170 * Specular.heightRatioTo720);
-		postScore.setPosition(835 * Specular.widthRatioTo1280, 30 * Specular.heightRatioTo720);
-		
-		postScore.addListener(new ChangeListener() {
-
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				if(!Specular.facebook.isLoggedIn()) {
-					Specular.facebook.login(new LoginCallback() {
-						@Override
-						public void loginSuccess() {
-							Specular.facebook.postHighscore(player.getScore());
-							game.enterState(States.MAINMENUSTATE);
-						}
-
-						@Override
-						public void loginFailed() {
-							game.enterState(States.MAINMENUSTATE);
-						}
-					});
-				} else {
-					Specular.facebook.postHighscore(player.getScore());
-					game.enterState(States.MAINMENUSTATE);
-				}
-			}
-			
-		});
-		stage.addActor(postScore);
-		
 		reset();
 		
 		music.play();
 		music.setLooping(true);
 		music.setVolume(0.3f);
 		gameInputProcessor = new GameInputProcessor(game);
+		ggInputProcessor = new GameOverInputProcessor(game, this);
 		input.setInputProcessor(gameInputProcessor);
 	}
 	

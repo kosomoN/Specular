@@ -26,7 +26,6 @@ public class Specular extends Game {
 	}
 	
 	private static final int WIDTH = 1920, HEIGHT = 1080;
-	public static float widthRatioTo1280, heightRatioTo720;
 	
 	public static Facebook facebook;
 	
@@ -42,9 +41,6 @@ public class Specular extends Game {
 	
 	@Override
 	public void create() {
-		widthRatioTo1280 = Gdx.graphics.getWidth() / 1280;
-		heightRatioTo720 = Gdx.graphics.getHeight() / 720;
-		
 		float displayAspectRatio = (float) Gdx.graphics.getWidth() / Gdx.graphics.getHeight();
 		float cameraAspectRatio = (float) WIDTH / HEIGHT;
 		float w, h;

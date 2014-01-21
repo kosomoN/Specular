@@ -21,7 +21,7 @@ public class AddLife extends PowerUp {
 	}
 
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/AddLife.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/Life.png"));
 	}
 	
 	@Override

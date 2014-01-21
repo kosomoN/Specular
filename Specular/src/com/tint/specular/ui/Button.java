@@ -34,6 +34,10 @@ public class Button {
 		batch.draw(texture, hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
 	}
 	
+	public void renderTexture(SpriteBatch batch, float x, float y, float width, float height) {
+		batch.draw(texture, x, y, width, height);
+	}
+	
 	public void renderShape(ShapeRenderer shape) {
 		shape.begin(ShapeType.Filled);
 		shape.setColor(Color.RED);

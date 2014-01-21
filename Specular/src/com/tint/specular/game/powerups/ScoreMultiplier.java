@@ -14,19 +14,58 @@ import com.tint.specular.utils.Util;
  */
 
 public class ScoreMultiplier extends PowerUp {
-private static Texture texture;
+	private static Texture texture;
+	private int increaseRate = 60;
+	private int timeSinceLastIncrease;
+	private int timeAlive = 300; // updates
+	private int longestTime;
+	private int lastTime;
+	private boolean activated;
 	
 	public ScoreMultiplier(float x, float y, GameState gs) {
 		super(x, y, gs);
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/ScoreMultiplier.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/Multiplier.png"));
 	}
 	
 	@Override
 	protected void affect(Player player) {
-		gs.setScoreMultiplier(gs.getScoreMultiplier() + 2);
+		gs.setScoreMultiplier(gs.getScoreMultiplier() + 0.01);
+	}
+
+	@Override
+	public boolean update() {
+		if(activated)
+			timeAlive--;
+		
+		if(super.update()) {
+			System.out.println(gs.getScoreMultiplier());
+			timeSinceLastIncrease++;
+			activated = true;
+			
+			if(timeSinceLastIncrease >= increaseRate) {
+				affect(null);
+				timeSinceLastIncrease = 0;
+			}
+		} else {
+			timeSinceLastIncrease = 0;
+			
+			lastTime = 300 - timeAlive - lastTime;
+			if(lastTime > longestTime)
+				longestTime = lastTime;
+		}
+		
+		if(timeAlive <= 0) {
+			System.out.println("done");
+			// +0.5 score multiplier for the longest time on powerup
+			if(longestTime == 0)
+				gs.setScoreMultiplier(gs.getScoreMultiplier() + 300 / 60 * 0.5);
+			else
+				gs.setScoreMultiplier(gs.getScoreMultiplier() + longestTime / 60 * 0.5);
+		}
+		return timeAlive <= 0;
 	}
 
 	@Override

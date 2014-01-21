@@ -21,12 +21,12 @@ private static Texture texture;
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/FireRate.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/Firerate.png"));
 	}
 	
 	@Override
 	protected void affect(Player player) {
-		player.setFireRate(5f);
+		player.setFireRate(player.getFireRate() / 2);
 	}
 
 	@Override

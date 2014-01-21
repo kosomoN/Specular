@@ -21,7 +21,7 @@ private static Texture texture;
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/BulletBurst5.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/5 Burst.png"));
 	}
 	
 	@Override
