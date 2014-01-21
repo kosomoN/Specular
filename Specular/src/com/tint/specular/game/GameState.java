@@ -119,7 +119,7 @@ public class GameState extends State {
 		super(game);
 		
 		// Loading map texture from a internal directory
-		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Level2.png"));
+		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Level.png"));
 		Texture parallax = new Texture(Gdx.files.internal("graphics/game/Parallax.png"));
 		
 		// Loading gameover texture
@@ -166,7 +166,7 @@ public class GameState extends State {
 		cs = new ComboSystem();
 		
 		input = Gdx.input;
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.ogg"));
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.mp3"));
 	}
 
 	@Override

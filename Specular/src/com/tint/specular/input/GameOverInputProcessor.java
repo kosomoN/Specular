@@ -41,7 +41,7 @@ public class GameOverInputProcessor implements InputProcessor{
 		
 		// Initializing buttons
 		/*
-		 * This is MADNESS!! 
+		 * This is MADNESS!! MADNESS? THIS. IS. TINT GAMES!!!
 		 * 
 		 */
 		retry = new Button(Specular.camera.viewportWidth * (600 / 1920f), 	// x

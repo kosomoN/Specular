@@ -24,8 +24,8 @@ public class MainmenuState extends State {
 		super(game);
 		
 		GLTexture.setEnforcePotImages(false);
-		title = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Title.png"));
 		background = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Title Background.png"));
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/01.mp3"));
 		
 	}
 	
@@ -42,8 +42,7 @@ public class MainmenuState extends State {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 		game.batch.begin();
-		game.batch.draw(title,0,692);
-		game.batch.draw(background,0,-94);
+		game.batch.draw(background,0,0);
 		menuInputProcessor.getPlayBtn().renderTexture(game.batch);
 		menuInputProcessor.getProfileBtn().renderTexture(game.batch);
 //		menuInputProcessor.getOptionsBtn().renderTexture(game.batch);
@@ -60,7 +59,8 @@ public class MainmenuState extends State {
 		Specular.camera.position.set(Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight / 2, 0);
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
-		menuInputProcessor = new MenuInputProcessor(game);
+		menuInputProcessor = new MenuInputProcessor(game,this);
+		music.play();
 		Gdx.input.setInputProcessor(menuInputProcessor);
 	}
 
@@ -73,5 +73,11 @@ public class MainmenuState extends State {
 	public void dispose() {
 		super.dispose();
 		music.dispose();
+	}
+
+	public void stopMusic() {
+		music.stop();
+		// TODO Auto-generated method stub
+		
 	}
 }

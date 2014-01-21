@@ -21,7 +21,7 @@ private static Texture texture;
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/Firerate.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/FireRate.png"));
 	}
 	
 	@Override
