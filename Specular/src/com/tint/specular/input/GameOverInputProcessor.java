@@ -50,33 +50,19 @@ public class GameOverInputProcessor implements InputProcessor{
 		retry.setTexture(retryTex);
 		System.out.println(retry.getY());
 		
-		menu = new Button(Specular.camera.viewportWidth * (98 / 1920f) - Specular.camera.viewportWidth / 2,		// x
-				Specular.camera.viewportHeight * (15 / 1080f) - Specular.camera.viewportHeight / 2,				// y
+		menu = new Button(Specular.camera.viewportWidth * (98 / 1920f),		// x
+				Specular.camera.viewportHeight * (15 / 1080f),				// y
 				Specular.camera.viewportWidth * (885 / 1920f), Specular.camera.viewportHeight * (190 / 1080f)); // width, height
 		menu.setTexture(menuTex);
 		
-		post = new Button(Specular.camera.viewportWidth * (1253 / 1920f) - Specular.camera.viewportWidth / 2,	// x
-				Specular.camera.viewportHeight * (45 / 1080f) - Specular.camera.viewportHeight / 2,				// y
+		post = new Button(Specular.camera.viewportWidth * (1253 / 1920f),	// x
+				Specular.camera.viewportHeight * (45 / 1080f),				// y
 				Specular.camera.viewportWidth * (510 / 1920f), Specular.camera.viewportHeight * (225 / 1080f)); // width, height
 		post.setTexture(postTex);
 	}
 	
 	@Override
 	public boolean keyDown(int keycode) {
-		retry = new Button(Specular.camera.viewportWidth * (600 / 1920f) - Specular.camera.viewportWidth / 2, 	// x
-				Specular.camera.viewportHeight * (300 / 1080f) - Specular.camera.viewportHeight / 2,			// y
-				Specular.camera.viewportWidth * (780 / 1920f), Specular.camera.viewportHeight * (254 / 1080f)); // width, height
-		retry.setTexture(retryTex);
-		
-		menu = new Button(Specular.camera.viewportWidth * (98 / 1920f) - Specular.camera.viewportWidth / 2,		// x
-				Specular.camera.viewportHeight * (15 / 1080f) - Specular.camera.viewportHeight / 2,				// y
-				Specular.camera.viewportWidth * (885 / 1920f), Specular.camera.viewportHeight * (190 / 1080f)); // width, height
-		menu.setTexture(menuTex);
-		
-		post = new Button(Specular.camera.viewportWidth * (1253 / 1920f) - Specular.camera.viewportWidth / 2,	// x
-				Specular.camera.viewportHeight * (45 / 1080f) - Specular.camera.viewportHeight / 2,				// y
-				Specular.camera.viewportWidth * (510 / 1920f), Specular.camera.viewportHeight * (225 / 1080f)); // width, height
-		post.setTexture(postTex);
 		return false;
 	}
 	
@@ -106,8 +92,8 @@ public class GameOverInputProcessor implements InputProcessor{
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Gdx.graphics.getWidth();
-		float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Gdx.graphics.getHeight();
+		float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
+		float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 		
 		retry.setTexture(retryTex);
 		menu.setTexture(menuTex);

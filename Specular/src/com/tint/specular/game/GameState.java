@@ -1,6 +1,5 @@
 package com.tint.specular.game;
 
-import java.awt.peer.ScrollbarPeer;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -13,9 +12,6 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
@@ -378,9 +374,12 @@ public class GameState extends State {
 					Specular.camera.viewportWidth * (1920 / 1920f), Specular.camera.viewportHeight * (512 / 1080f));
 			font50.draw(game.batch, String.valueOf(player.getScore()), Specular.camera.viewportWidth * (-50 / 1920f), Specular.camera.viewportHeight * (150 / 1080f));
 			
-			ggInputProcessor.getRetryBtn().renderTexture(game.batch);
-			ggInputProcessor.getMenuBtn().renderTexture(game.batch);
-			ggInputProcessor.getPostBtn().renderTexture(game.batch);
+			ggInputProcessor.getRetryBtn().renderTexture(game.batch, ggInputProcessor.getRetryBtn().getX() - Specular.camera.viewportWidth / 2,
+					ggInputProcessor.getRetryBtn().getY() - Specular.camera.viewportHeight / 2);
+			ggInputProcessor.getMenuBtn().renderTexture(game.batch, ggInputProcessor.getMenuBtn().getX() - Specular.camera.viewportWidth / 2,
+					ggInputProcessor.getMenuBtn().getY() - Specular.camera.viewportHeight / 2);
+			ggInputProcessor.getPostBtn().renderTexture(game.batch, ggInputProcessor.getPostBtn().getX() - Specular.camera.viewportWidth / 2,
+					ggInputProcessor.getPostBtn().getY() - Specular.camera.viewportHeight / 2);
 			
 			game.batch.end();
 		}

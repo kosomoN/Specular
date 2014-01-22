@@ -34,8 +34,8 @@ public class Button {
 		batch.draw(texture, hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
 	}
 	
-	public void renderTexture(SpriteBatch batch, float x, float y, float width, float height) {
-		batch.draw(texture, x, y, width, height);
+	public void renderTexture(SpriteBatch batch, float x, float y) {
+		batch.draw(texture, x, y, hitbox.getWidth(), hitbox.getHeight());
 	}
 	
 	public void renderShape(ShapeRenderer shape) {
