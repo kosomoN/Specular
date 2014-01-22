@@ -5,7 +5,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -303,9 +302,6 @@ public class GameState extends State {
 				CameraShake.update();
 			}
 		}
-		if(Gdx.input.isKeyPressed(Keys.G)) {
-			player.kill();
-		}
 	}
 	
 	protected void renderGame() {
@@ -372,7 +368,7 @@ public class GameState extends State {
 			game.batch.begin();
 			game.batch.draw(gameOverTex, Specular.camera.viewportWidth * (-Specular.camera.viewportWidth / 2 / 1920f), Specular.camera.viewportHeight * (70 / 1080f),
 					Specular.camera.viewportWidth * (1920 / 1920f), Specular.camera.viewportHeight * (512 / 1080f));
-			font50.draw(game.batch, String.valueOf(player.getScore()), Specular.camera.viewportWidth * (-50 / 1920f), Specular.camera.viewportHeight * (150 / 1080f));
+			font50.draw(game.batch, String.valueOf(player.getScore()), Specular.camera.viewportWidth * (-50 / 1920f), Specular.camera.viewportHeight * (200 / 1080f));
 			
 			ggInputProcessor.getRetryBtn().renderTexture(game.batch, ggInputProcessor.getRetryBtn().getX() - Specular.camera.viewportWidth / 2,
 					ggInputProcessor.getRetryBtn().getY() - Specular.camera.viewportHeight / 2);
