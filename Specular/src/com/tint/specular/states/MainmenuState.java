@@ -16,7 +16,7 @@ import com.tint.specular.input.MenuInputProcessor;
 
 public class MainmenuState extends State {
 	
-	private Texture title, background;
+	private Texture background;
 	private Music music;
 	private MenuInputProcessor menuInputProcessor;
 	
@@ -77,7 +77,6 @@ public class MainmenuState extends State {
 
 	public void stopMusic() {
 		music.stop();
-		// TODO Auto-generated method stub
 		
 	}
 }
