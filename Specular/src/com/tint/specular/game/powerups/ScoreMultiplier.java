@@ -41,7 +41,6 @@ public class ScoreMultiplier extends PowerUp {
 			timeAlive--;
 		
 		if(super.update()) {
-			System.out.println(gs.getScoreMultiplier());
 			timeSinceLastIncrease++;
 			activated = true;
 			
@@ -58,7 +57,6 @@ public class ScoreMultiplier extends PowerUp {
 		}
 		
 		if(timeAlive <= 0) {
-			System.out.println("done");
 			// +0.5 score multiplier for the longest time on powerup
 			if(longestTime == 0)
 				gs.setScoreMultiplier(gs.getScoreMultiplier() + 300 / 60 * 0.5);

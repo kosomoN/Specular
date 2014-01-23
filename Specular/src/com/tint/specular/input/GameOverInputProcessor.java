@@ -37,7 +37,7 @@ public class GameOverInputProcessor implements InputProcessor{
 		menuPressedTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Main menu button pressed.png"));
 
 		postTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Post 1250 790.png"));
-		postPressedTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Post 1250 790.png"));
+		postPressedTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Post Pressed.png"));
 		
 		// Initializing buttons
 		/*
@@ -48,7 +48,6 @@ public class GameOverInputProcessor implements InputProcessor{
 				Specular.camera.viewportHeight * (300 / 1080f),			// y
 				Specular.camera.viewportWidth * (780 / 1920f), Specular.camera.viewportHeight * (254 / 1080f)); // width, height
 		retry.setTexture(retryTex);
-		System.out.println(retry.getY());
 		
 		menu = new Button(Specular.camera.viewportWidth * (98 / 1920f),		// x
 				Specular.camera.viewportHeight * (15 / 1080f),				// y

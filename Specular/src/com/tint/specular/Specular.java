@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.SingleplayerGameState;
@@ -31,7 +30,6 @@ public class Specular extends Game {
 	
 	private Map<States, State> states = new EnumMap<Specular.States, State>(States.class);
 	
-	public Preferences prefs;
 	public static OrthographicCamera camera;
 	public SpriteBatch batch;
 	
@@ -54,7 +52,6 @@ public class Specular extends Game {
 		}
 		camera = new OrthographicCamera(w, h);
 		batch = new SpriteBatch();
-		prefs = Gdx.app.getPreferences("Preferences");
 		
 		Gdx.input.setCatchBackKey(true);
 		
@@ -83,6 +80,5 @@ public class Specular extends Game {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		prefs.flush();
 	}
 }

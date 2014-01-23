@@ -1,7 +1,6 @@
 package com.tint.specular.game;
 
 import java.util.Iterator;
-import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -22,14 +21,13 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
-import com.tint.specular.game.entities.enemies.EnemyStupid;
+import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.gamemodes.GameMode;
 import com.tint.specular.game.gamemodes.Ranked;
 import com.tint.specular.game.powerups.AddLife;
 import com.tint.specular.game.powerups.BulletBurst_5;
-import com.tint.specular.game.powerups.ComboDamageBooster;
 import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
@@ -79,6 +77,7 @@ public class GameState extends State {
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
 	private boolean paused = false;
+	private int powerUpSpawnTime = 600;		// 10 sec in updates / ticks
 	
 	// Fields that affect score or gameplay
 	private double scoreMultiplier = 1;
@@ -137,7 +136,7 @@ public class GameState extends State {
 		Player.init();
 		Bullet.init();
 		Particle.init();
-		EnemyStupid.init();
+		EnemyWanderer.init();
 		EnemyNormal.init();
 		EnemyFast.init();
 		EnemyBooster.init();
@@ -148,7 +147,6 @@ public class GameState extends State {
 		// Initializing power-ups
 		AddLife.init();
 		BulletBurst_5.init();
-		ComboDamageBooster.init();
 		FireRateBoost.init();
 		ScoreMultiplier.init();
 		ShieldUpgrade.init();
@@ -199,18 +197,23 @@ public class GameState extends State {
 						ess.update(ticks);
 				}
 				
-				// Updating combos and score multiplier
+				// Updating combos
 				cs.update();
-				/*if(cs.getCombo() >= comboToNextScoreMult) {
-					setScoreMultiplier(scoreMultiplier + 0.1f);
-					comboToNextScoreMult = (int) (scoreMultiplier * 10);
-				}*/
+				
 				// Updating damage booster
 				if(cs.getCombo() > 10)
 					damageBooster = cs.getCombo() / 10;
 				else
 					damageBooster = 1;
 				
+				// Update power-ups
+				powerUpSpawnTime--;
+				if(powerUpSpawnTime < 0) {
+					if(enablePowerUps) {
+						puss.spawn();
+						powerUpSpawnTime = 600;
+					}
+				}
 						
 				if(player != null && !player.isDead()) {
 					// Checking if any bullet hit an enemy
@@ -236,13 +239,6 @@ public class GameState extends State {
 									
 									//Adding a stronger camera shake when the enemy dies
 									CameraShake.shake(0.2f, 0.1f);
-									
-									// Chance every kill to generate a power-up decreases as the amount of enemies on screen increases
-									Random r = new Random();
-									if(enablePowerUps)
-										if(r.nextInt(100) < 10 / (enemies.size % 100 > 0 ? Math.floor(enemies.size) : 1))
-											puss.spawn(e);
-									
 									break;
 								}
 							}
@@ -331,6 +327,8 @@ public class GameState extends State {
 		for(Entity ent : entities) {
 			ent.render(game.batch);
 		}
+		if(player.hasShield())
+			Shield.render(game.batch);
 		
 		// Re-positioning camera for HUD
 		Specular.camera.position.set(0, 0, 0);

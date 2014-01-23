@@ -14,8 +14,10 @@ import com.tint.specular.utils.Util;
 
 public class Shield {
 	
+	private static final float ROTATION_SPEED = 5;
 	private static Player player;
 	private static Texture texture;
+	private static float rotation;
 	
 	public static void init(Player player) {
 		Shield.player = player;
@@ -23,6 +25,7 @@ public class Shield {
 	}
 	
 	public static void render(SpriteBatch batch) {
-		Util.drawCentered(batch, texture, player.getCenterX(), player.getCenterY(), 0);
+		rotation -= ROTATION_SPEED;
+		Util.drawCentered(batch, texture, player.getCenterX(), player.getCenterY(), rotation);
 	}
 }

@@ -3,8 +3,11 @@ package com.tint.specular.game.spawnsystems;
 import java.util.Random;
 
 import com.tint.specular.game.GameState;
-import com.tint.specular.game.entities.enemies.Enemy;
-import com.tint.specular.game.powerups.*;
+import com.tint.specular.game.powerups.AddLife;
+import com.tint.specular.game.powerups.BulletBurst_5;
+import com.tint.specular.game.powerups.FireRateBoost;
+import com.tint.specular.game.powerups.ScoreMultiplier;
+import com.tint.specular.game.powerups.SlowdownEnemies;
 
 /**
  * 
@@ -19,22 +22,11 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		super(gs);
 	}
 	
-	public void spawn(Enemy e) {
+	public void spawn() {
 		Random rand = new Random();
 		int powerUpID = rand.nextInt(5);
 		
-		float x = e.getX(), y = e.getY();
-		
-		//Checking so that no powerup spawns "outside" the map
-		if(x > gs.getCurrentMap().getWidth() - 32)
-			x = gs.getCurrentMap().getWidth() - 32;
-		else if(x < 32)
-			x = 32;
-		
-		if(y > gs.getCurrentMap().getHeight() - 32)
-			y = gs.getCurrentMap().getHeight() - 32;
-		else if(y < 32)
-			y = 32;
+		float x = rand.nextInt(gs.getCurrentMap().getWidth() - 64) + 32, y = rand.nextInt(gs.getCurrentMap().getHeight() - 64) + 32;
 		
 		if(powerUpID == 0)
 			gs.addEntity(new AddLife(x, y, gs));

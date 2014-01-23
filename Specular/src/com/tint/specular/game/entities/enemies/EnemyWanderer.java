@@ -13,7 +13,7 @@ import com.tint.specular.utils.Util;
  *
  */
 
-public class EnemyStupid extends Enemy {
+public class EnemyWanderer extends Enemy {
 
 	private static Texture texture;
 	private float rotation;
@@ -21,7 +21,7 @@ public class EnemyStupid extends Enemy {
 	private float timeSinceLastDirChange;
 	private double angle;
 	
-	public EnemyStupid(float x, float y, GameState gs) {
+	public EnemyWanderer(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
 		angle = Math.random() * 360;
 	}

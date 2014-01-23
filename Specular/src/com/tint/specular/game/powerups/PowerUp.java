@@ -15,6 +15,7 @@ public abstract class PowerUp implements Entity {
 	
 	protected float x, y;
 	protected GameState gs;
+	protected float despawnTime = 300; // 5s
 	
 	public PowerUp(float x, float y, GameState gs) {
 		this.x = x;
@@ -24,12 +25,13 @@ public abstract class PowerUp implements Entity {
 	
 	@Override
 	public boolean update() {
+		despawnTime--;
 		if((getCenterX() - gs.getPlayer().getCenterX()) * (getCenterX() - gs.getPlayer().getCenterX()) + (getCenterY() - gs.getPlayer().getCenterY()) * (getCenterY() - gs.getPlayer().getCenterY())
 				< (Player.getRadius() + getRadius()) * (Player.getRadius() + getRadius())) {
 			affect(gs.getPlayer());
 			return true;
 		}
-		return false;
+		return despawnTime <= 0;
 	}
 	
 	protected abstract void affect(Player p);

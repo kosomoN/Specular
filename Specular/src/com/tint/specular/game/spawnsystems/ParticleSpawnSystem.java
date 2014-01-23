@@ -12,7 +12,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
-import com.tint.specular.game.entities.enemies.EnemyStupid;
+import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 
 /**
@@ -53,7 +53,7 @@ public class ParticleSpawnSystem extends SpawnSystem {
 					type = Type.ENEMY_NORMAL;
 				} else if(ent instanceof EnemyFast) {
 					type = Type.ENEMY_FAST;
-				} else if(ent instanceof EnemyStupid) {
+				} else if(ent instanceof EnemyWanderer) {
 					type = Type.ENEMY_STUPID;
 				} else if(ent instanceof EnemyVirus) {
 					type = Type.ENEMY_VIRUS;
