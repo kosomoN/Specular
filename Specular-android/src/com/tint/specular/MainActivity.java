@@ -2,15 +2,13 @@ package com.tint.specular;
 
 import java.util.ArrayList;
 import java.util.List;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
+
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
+
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.facebook.HttpMethod;
@@ -78,6 +76,7 @@ public class MainActivity extends AndroidApplication {
 							}).executeAsync();
 							callback.loginSuccess();
 						} else if(state.equals(SessionState.CLOSED) || state.equals(SessionState.CLOSED_LOGIN_FAILED)) {
+							Log.i("Specular Facebook", "Login failed", exception);
 							callback.loginFailed();
 						}
 					}
