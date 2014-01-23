@@ -15,8 +15,8 @@ public class Main {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Specular";
 		cfg.useGL20 = false;
-		cfg.width = 1280;
-		cfg.height = 720;
+		cfg.width = 1920;
+		cfg.height = 1080;
 		
 		//There is no need to implement Facebook highscores in the desktop-version, so these are left empty
 		new LwjglApplication(new Specular(new Facebook() {
