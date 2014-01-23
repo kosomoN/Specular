@@ -116,6 +116,6 @@ public class Util {
 	}
 	
 	public static void writeCentered(SpriteBatch batch, BitmapFont font, String s, float centerx, float centery) {
-		font.draw(batch, s, centerx - s.length() * font.getSpaceWidth() / 2, centery + font.getCapHeight() / 2);
+		font.draw(batch, s, centerx - font.getBounds(s).width / 2, centery + font.getCapHeight() / 2);
 	}
 }

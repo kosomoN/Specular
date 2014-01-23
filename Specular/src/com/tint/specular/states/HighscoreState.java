@@ -42,9 +42,6 @@ public class HighscoreState extends State {
 			createUi();
 		}
 
-		if(Gdx.input.isKeyPressed(Keys.BACK))
-			game.enterState(Specular.States.MAINMENUSTATE);
-		
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		if(isLoggedIn) {
 			game.batch.setColor(Color.WHITE);
@@ -56,6 +53,9 @@ public class HighscoreState extends State {
 		stage.draw();
 		
 //		Table.drawDebug(stage);
+		
+		if(Gdx.input.isKeyPressed(Keys.BACK))
+			game.enterState(Specular.States.MAINMENUSTATE);
 	}
 
 	@Override

@@ -352,7 +352,7 @@ public class GameState extends State {
 			//Drawing HUD
 			game.batch.draw(hud, -hud.getWidth() / 2, -hud.getHeight() / 2, hud.getWidth(), Specular.camera.viewportHeight);
 			// Drawing score in the middle top of the screen
-			Util.writeCentered(game.batch, font50, "SCORE: " + player.getScore(), 0,
+			Util.writeCentered(game.batch, font50, String.valueOf(player.getScore()), 0,
 					Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
 			// Drawing combo on screen
 			Util.writeCentered(game.batch, font50, cs.getCombo() + "x", 0,
