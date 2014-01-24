@@ -76,7 +76,7 @@ public class MainActivity extends AndroidApplication {
 							}).executeAsync();
 							callback.loginSuccess();
 						} else if(state.equals(SessionState.CLOSED) || state.equals(SessionState.CLOSED_LOGIN_FAILED)) {
-							Log.i("Specular Facebook", "Login failed", exception);
+							Log.e("Specular Facebook", "Login failed", exception);
 							callback.loginFailed();
 						}
 					}

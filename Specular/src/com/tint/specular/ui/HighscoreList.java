@@ -28,7 +28,7 @@ public class HighscoreList extends Widget implements Cullable, Disposable {
 		highscoreText = new Texture(Gdx.files.internal("graphics/menu/highscore/Highscores.png"));
 		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
 		font = fontGen.generateFont(30, FONT_CHARACTERS, false);
-		font.setColor(new Color(0.7f, 0, 0, 1));
+		font.setColor(new Color(0.96f, 0.05f, 0.05f, 1));
 		fontGen.dispose();
 		
 		textOffsetY = (rowHeight - font.getLineHeight()) / 2;

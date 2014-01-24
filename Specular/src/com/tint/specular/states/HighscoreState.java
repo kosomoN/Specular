@@ -41,7 +41,7 @@ public class HighscoreState extends State {
 			shouldUpdate = false;
 			createUi();
 		}
-		
+
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		if(isLoggedIn) {
 			game.batch.setColor(Color.WHITE);
@@ -63,7 +63,6 @@ public class HighscoreState extends State {
 		super.show();
 		createUi();
 		background = new Texture(Gdx.files.internal("graphics/menu/highscore/Frames.png"));
-		Gdx.input.setCatchBackKey(true);
 	}
 	
 	private void createUi() {
@@ -149,7 +148,8 @@ public class HighscoreState extends State {
 	@Override
 	public void dispose() {
 		super.dispose();
-		list.dispose();
+		if(list != null)
+			list.dispose();
 		stage.dispose();
 		background.dispose();
 	}
