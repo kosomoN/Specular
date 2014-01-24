@@ -202,7 +202,7 @@ public class Player implements Entity {
         		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
         			if(shields > 0) {
 	        			//Repel effect after collision with shield
-	        			setSpeed(dx + e.getDx(), dy + e.getDy());
+//	        			setSpeed(dx + e.getDx(), dy + e.getDy());
 	        			
 	        			gs.getEntities().removeValue(e, true);
         				it.remove();
@@ -235,7 +235,8 @@ public class Player implements Entity {
 
 	//POWER-UPS
 	public void addShield() {
-		shields++;
+		if(shields < 3)
+			shields++;
 	}
 	
 	public void addLives(int livesToAdd) {

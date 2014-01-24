@@ -14,7 +14,7 @@ import com.tint.specular.utils.Util;
 
 public class Shield {
 	
-	private static final float ROTATION_SPEED = 5;
+	private static final float ROTATION_SPEED = 3;
 	private static Player player;
 	private static Texture texture;
 	private static float rotation;
