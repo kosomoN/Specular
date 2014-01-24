@@ -472,7 +472,7 @@ public class GameState extends State {
 		super.show();
 		music.play();
 		music.setLooping(true);
-		music.setVolume(0.1f);
+		music.setVolume(0.5f);
 		gameInputProcessor = new GameInputProcessor(game);
 		ggInputProcessor = new GameOverInputProcessor(game, this);
 		
