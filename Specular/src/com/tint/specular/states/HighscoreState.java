@@ -63,6 +63,7 @@ public class HighscoreState extends State {
 		super.show();
 		createUi();
 		background = new Texture(Gdx.files.internal("graphics/menu/highscore/Frames.png"));
+		Gdx.input.setCatchBackKey(true);
 	}
 	
 	private void createUi() {

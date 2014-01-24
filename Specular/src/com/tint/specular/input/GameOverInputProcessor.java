@@ -25,6 +25,8 @@ public class GameOverInputProcessor implements InputProcessor{
 	private Texture menuTex, menuPressedTex;
 	private Texture postTex, postPressedTex;
 	
+	private boolean touch;
+	
 	public GameOverInputProcessor(Specular game, GameState gs) {
 		this.game = game;
 		this.gs = gs;
@@ -86,6 +88,7 @@ public class GameOverInputProcessor implements InputProcessor{
 		else if(post.isOver(touchpointx, touchpointy, true))
 			post.setTexture(postPressedTex);
 			
+		touch = true;
 		return false;
 	}
 
@@ -98,31 +101,35 @@ public class GameOverInputProcessor implements InputProcessor{
 		menu.setTexture(menuTex);
 		post.setTexture(postTex);
 		
-		if(retry.isOver(touchpointx, touchpointy, true)) {
-			// Restart game
-			gs.reset();
-		} else if(menu.isOver(touchpointx, touchpointy, true)) {
-			// Return to menu
-			game.enterState(States.MAINMENUSTATE);
-			gs.stopGameMusic();
-		} else if(post.isOver(touchpointx, touchpointy, true)) {
-			// Post score to Facebook
-			if(!Specular.facebook.isLoggedIn()) {
-				Specular.facebook.login(new LoginCallback() {
-					@Override
-					public void loginSuccess() {
-						Specular.facebook.postHighscore(gs.getPlayer().getScore());
-						game.enterState(States.MAINMENUSTATE);
-					}
-
-					@Override
-					public void loginFailed() {
-						game.enterState(States.MAINMENUSTATE);
-					}
-				});
-			} else {
-				Specular.facebook.postHighscore(gs.getPlayer().getScore());
+		if(touch) {
+			if(retry.isOver(touchpointx, touchpointy, true)) {
+				// Restart game
+				gs.reset();
+			} else if(menu.isOver(touchpointx, touchpointy, true)) {
+				// Return to menu
 				game.enterState(States.MAINMENUSTATE);
+				gs.stopGameMusic();
+			} else if(post.isOver(touchpointx, touchpointy, true)) {
+				// Post score to Facebook
+				if(!Specular.facebook.isLoggedIn()) {
+					Specular.facebook.login(new LoginCallback() {
+						@Override
+						public void loginSuccess() {
+							Specular.facebook.postHighscore(gs.getPlayer().getScore());
+							game.enterState(States.MAINMENUSTATE);
+						}
+	
+						@Override
+						public void loginFailed() {
+							gs.stopGameMusic();
+							game.enterState(States.MAINMENUSTATE);
+						}
+					});
+				} else {
+					Specular.facebook.postHighscore(gs.getPlayer().getScore());
+					gs.stopGameMusic();
+					game.enterState(States.MAINMENUSTATE);
+				}
 			}
 		}
 		

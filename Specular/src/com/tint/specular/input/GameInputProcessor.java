@@ -14,6 +14,7 @@ import com.tint.specular.Specular;
 public class GameInputProcessor implements InputProcessor {
 
 	private boolean w, a, s, d;
+	private boolean touch;
 	
 	private AnalogStick shoot, move;
 	
@@ -77,16 +78,20 @@ public class GameInputProcessor implements InputProcessor {
 						- (viewporty - Specular.camera.viewportHeight / 2));
 				shoot.setPointer(pointer);
 			}
+			
+			touch = true;
 
 			return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if(move.getPointer() == pointer) {
-			move.setPointer(-1);
-		} else if(shoot.getPointer() == pointer) {
-			shoot.setPointer(-1);
+		if(touch) {
+			if(move.getPointer() == pointer) {
+				move.setPointer(-1);
+			} else if(shoot.getPointer() == pointer) {
+				shoot.setPointer(-1);
+			}
 		}
 		
 		return false;
@@ -141,5 +146,13 @@ public class GameInputProcessor implements InputProcessor {
 	
 	public AnalogStick getShootStick() {
 		return shoot;
+	}
+	
+	public void reset() {
+		touch = false;
+		
+		// Resettng them
+		shoot.setPointer(-1);
+		move.setPointer(-1);
 	}
 }

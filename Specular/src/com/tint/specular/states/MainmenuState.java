@@ -77,6 +77,5 @@ public class MainmenuState extends State {
 
 	public void stopMusic() {
 		music.stop();
-		
 	}
 }

@@ -4,7 +4,6 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -22,8 +21,8 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
-import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
+import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.gamemodes.GameMode;
 import com.tint.specular.game.gamemodes.Ranked;
@@ -460,6 +459,8 @@ public class GameState extends State {
 		enemiesKilled = 0;
 		// Adding player and setting up input processor
 		pss.spawn(3, false);
+		
+		gameInputProcessor.reset();
 		input.setInputProcessor(gameInputProcessor);
 		
 		Shield.init(player);
@@ -472,14 +473,13 @@ public class GameState extends State {
 	@Override
 	public void show() {
 		super.show();
-		reset();
-		
 		music.play();
 		music.setLooping(true);
 		music.setVolume(0.3f);
 		gameInputProcessor = new GameInputProcessor(game);
 		ggInputProcessor = new GameOverInputProcessor(game, this);
-		input.setInputProcessor(gameInputProcessor);
+		
+		reset();
 	}
 	
 	@Override
