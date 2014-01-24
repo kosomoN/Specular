@@ -290,6 +290,10 @@ public class Player implements Entity {
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
 	public int getScore() { return score; }
+	public int getShields() {
+		return shields;
+	}
+
 	public boolean hasShield() { return shields > 0; }
 	public boolean isHit() { return isHit; }
 	public boolean isSpawning() { return spawning; }

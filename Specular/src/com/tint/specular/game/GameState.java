@@ -42,6 +42,7 @@ import com.tint.specular.input.GameOverInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.State;
+import com.tint.specular.ui.HUD;
 import com.tint.specular.utils.Util;
 
 /**
@@ -98,12 +99,14 @@ public class GameState extends State {
 	
 	// Custom and default fonts
 	private BitmapFont arial15 = new BitmapFont();
-	private BitmapFont scoreFont, multiplierFont, timeFont;
+	private BitmapFont scoreFont, multiplierFont;
 	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
 	
 	// Art
-	private Texture hud, gameOverTex;
+	private HUD hud;
+	private Texture gameOverTex;
 	private Music music;
+
 	
 	public GameState(Specular game) {
 		super(game);
@@ -115,7 +118,8 @@ public class GameState extends State {
 		// Loading gameover texture
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Game Over Title.png"));
 		
-		hud = new Texture(Gdx.files.internal("graphics/game/HUD.png"));
+		//Loading HUD
+		hud = new HUD(this);
 		
 		// Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
@@ -124,14 +128,11 @@ public class GameState extends State {
 		
 		// Initializing font
 		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
-		scoreFont = fontGen.generateFont(50, FONT_CHARACTERS, false);
+		scoreFont = fontGen.generateFont(64, FONT_CHARACTERS, false);
 		scoreFont.setColor(Color.RED);
 		
 		multiplierFont = fontGen.generateFont(40, FONT_CHARACTERS, false);
 		multiplierFont.setColor(Color.RED);
-		
-		timeFont = fontGen.generateFont(30, FONT_CHARACTERS, false);
-		timeFont.setColor(Color.RED);
 		
 		fontGen.dispose();
 		
@@ -180,7 +181,6 @@ public class GameState extends State {
 	
 	
 	protected void update() {
-		System.out.println(enemies.size);
 		if(!paused) {
 			// Adding played time
 			if(entities.contains(player, true))
@@ -198,14 +198,6 @@ public class GameState extends State {
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isHit())
 					ess.update(ticks);
-			}
-			
-			// Updating combos
-			cs.update();
-			
-			if(cs.getCombo() > 3) {
-				setScoreMultiplier(scoreMultiplier + 1);
-				cs.resetCombo();
 			}
 			
 			// Update power-ups
@@ -263,6 +255,13 @@ public class GameState extends State {
 		        }
 			}
 			
+			// Updating combos
+			cs.update();
+			
+			if(cs.getCombo() > 7) {
+				setScoreMultiplier(scoreMultiplier + 1);
+				cs.resetCombo();
+			}
 			
 			boolean playerKilled = false;		// A variable to keep track of player status
 			
@@ -344,24 +343,15 @@ public class GameState extends State {
 			gameInputProcessor.getMoveStick().render(game.batch);
 
 			//Drawing HUD
-			game.batch.draw(hud, -hud.getWidth() / 2, -hud.getHeight() / 2, hud.getWidth(), Specular.camera.viewportHeight);
+			hud.render(game.batch);
+			
 			// Drawing SCORE in the middle top of the screen
 			Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
-					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() - 5);
+					Specular.camera.viewportHeight / 2 - 36);
 			// Drawing MULTIPLIER on screen
 			Util.writeCentered(game.batch, multiplierFont, (int) scoreMultiplier + "x", 0,
-					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() * 2 - 30);
-			// Drawing TIME on screen
-			Util.writeCentered(game.batch, timeFont, (int) (ticks * TICK_LENGTH / 1000000000) + " sec", 0,
-					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() * 2 - 90);
-			// Drawing COMBO on screen
-			Util.writeCentered(game.batch, scoreFont, String.valueOf(cs.getCombo()), 380,
-					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() - 5);
-			// Drawing LIVES on screen
-			Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getLife()), -380,
-					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() - 5);
+					Specular.camera.viewportHeight / 2 - 98);
 			gameMode.render(game.batch);
-			
 		}
 		
 		game.batch.end();
@@ -412,7 +402,7 @@ public class GameState extends State {
 	
 	public double getScoreMultiplier() { return scoreMultiplier; }
 	
-	/** Get a custom BitmapFont based on its size. If ther is no font with that size it returns default font.
+	/** Get a custom BitmapFont based on its size. If there is no font with that size it returns default font.
 	 * @param size - The size of the wanted font
 	 * @return The custom or default font
 	 */
@@ -427,6 +417,10 @@ public class GameState extends State {
 		return enemiesKilled;
 	}
 	
+	public ComboSystem getComboSystem() {
+		return cs;
+	}
+
 	public void stopGameMusic() {
 		music.stop();
 	}
