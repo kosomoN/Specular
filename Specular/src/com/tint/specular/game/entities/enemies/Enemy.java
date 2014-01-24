@@ -38,6 +38,7 @@ public abstract class Enemy implements Entity {
 			slowdownTimer -= GameState.TICK_LENGTH / 1000000; // Millisecond in nano
 		} else {
 			slowdown = 0;
+			slowdownTimer = 0;
 		}
 		return life <= 0;
 	}
@@ -50,7 +51,7 @@ public abstract class Enemy implements Entity {
 	 */
 	public void setSlowdown(float slowdown) {
 		this.slowdown += (1 - this.slowdown) * slowdown;
-		slowdownTimer = 5000;
+		slowdownTimer += 5000;
 		
 		// Checking boundaries
 		slowdown = slowdown > 1 ? 1 : slowdown;

@@ -41,7 +41,7 @@ public class HighscoreState extends State {
 			shouldUpdate = false;
 			createUi();
 		}
-
+		
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		if(isLoggedIn) {
 			game.batch.setColor(Color.WHITE);

@@ -37,13 +37,14 @@ public class Player implements Entity {
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
+	private float fireRateTimer;	// In ticks
 	
 	private int life = 3;
 	private int shields;
 	private int bulletBurst = 3;
 	private int score = 0;
 	
-	private boolean isHit;
+	private boolean isHit, spawning;
 	
 	//CONSTRUCTOR
 	public Player(GameState gs, float x, float y, int lives) {
@@ -58,10 +59,17 @@ public class Player implements Entity {
 	
 	@Override
 	public void render(SpriteBatch batch) {
-		if(isHit) {
-			// Death / Spawn animation
+		animFrameTime += Gdx.graphics.getDeltaTime();
+		if(spawning) {
+			// Spawn animation
+			TextureRegion frame = spawnAnim.getKeyFrame(animFrameTime, false);
+			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
+			if(spawnAnim.isAnimationFinished(animFrameTime)) {
+				spawning = false;
+			}
+		} else if(isHit) {
+			
 		} else {
-			animFrameTime += Gdx.graphics.getDeltaTime();
 			TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
 			if(shields > 0)
 				Shield.render(batch);
@@ -71,8 +79,15 @@ public class Player implements Entity {
 	
 	@Override
 	public boolean update() {
+		// Updating fire rate
+		if(fireRateTimer > 0) {
+			fireRateTimer--;
+		} else {
+			fireRate = 10f;
+		}
+		
 		// Taking control away when player is hit and respawning
-		if(!isHit) {
+		if(!isHit && !spawning) {
 			//Moving
 			updateMovement();
 			
@@ -255,7 +270,11 @@ public class Player implements Entity {
 	 * Takes the amount of updates as rate of fire, not any specific "time"
 	 * @param fireRate
 	 */
-	public void setFireRate(float fireRate) { this.fireRate = fireRate; }
+	public void setFireRate(float fireRate) {
+		this.fireRate = fireRate;
+		fireRateTimer = 600; // 10s
+	}
+	
 	public void setBulletBurst(int burst) {	bulletBurst = burst; }
 	public void setLife(int life) { this.life = life; }
 	public void setHit(boolean hit) { isHit = hit; }
@@ -273,8 +292,14 @@ public class Player implements Entity {
 	public int getScore() { return score; }
 	public boolean hasShield() { return shields > 0; }
 	public boolean isHit() { return isHit; }
+	public boolean isSpawning() { return spawning; }
 	public boolean isDead() { return life <= 0; }
 	public GameState getGameState() { return gs; }
+	
+	public void respawn() {
+		animFrameTime = 0;
+		spawning = true;
+	}
 	
 	public static void init() {
 		playerTex  = new Texture(Gdx.files.internal("graphics/game/Player.png"));

@@ -104,6 +104,7 @@ public class GameOverInputProcessor implements InputProcessor{
 		} else if(menu.isOver(touchpointx, touchpointy, true)) {
 			// Return to menu
 			game.enterState(States.MAINMENUSTATE);
+			gs.stopGameMusic();
 		} else if(post.isOver(touchpointx, touchpointy, true)) {
 			// Post score to Facebook
 			if(!Specular.facebook.isLoggedIn()) {

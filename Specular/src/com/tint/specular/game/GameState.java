@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -193,7 +194,7 @@ public class GameState extends State {
 					gameMode.update(TICK_LENGTH / 1000000);
 					player.updateHitDetection();
 					// So that they don't spawn while death animation is playing
-					if(!player.isHit())
+					if(!player.isSpawning() && !player.isHit())
 						ess.update(ticks);
 				}
 				
@@ -254,6 +255,7 @@ public class GameState extends State {
 							}
 						}
 						if(!containsParticles) {
+							player.respawn();
 				        	pss.spawn(player.getLife(), true);
 				        	player.setHit(false);
 						}
@@ -423,6 +425,10 @@ public class GameState extends State {
 	
 	public int getEnemiesKilled() {
 		return enemiesKilled;
+	}
+	
+	public void stopGameMusic() {
+		music.stop();
 	}
 
 	// Reset stuff

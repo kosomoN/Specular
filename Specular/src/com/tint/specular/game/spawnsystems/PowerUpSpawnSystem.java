@@ -6,6 +6,7 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.powerups.AddLife;
 import com.tint.specular.game.powerups.BulletBurst_5;
 import com.tint.specular.game.powerups.FireRateBoost;
+import com.tint.specular.game.powerups.PowerUp;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.SlowdownEnemies;
 
@@ -22,6 +23,9 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		super(gs);
 	}
 	
+	/**
+	 * Spawns a random power-up at a random location
+	 */
 	public void spawn() {
 		Random rand = new Random();
 		int powerUpID = rand.nextInt(5);
@@ -38,5 +42,16 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 			gs.addEntity(new ScoreMultiplier(x, y, gs));
 		else if(powerUpID == 4)
 			gs.addEntity(new SlowdownEnemies(x, y, gs));
+	}
+	
+	/**
+	 * Use to spawn one specific powerup at random location
+	 * @param pu - The power-up to spawn
+	 */
+	public void spawn(PowerUp pu) {
+		float x = rand.nextInt(gs.getCurrentMap().getWidth() - 64) + 32, y = rand.nextInt(gs.getCurrentMap().getHeight() - 64) + 32;
+		pu.setPosition(x, y);
+		
+		gs.addEntity(pu);
 	}
 }

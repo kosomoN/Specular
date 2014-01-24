@@ -40,11 +40,14 @@ public class PlayerSpawnSystem extends SpawnSystem {
 				}
 			}
 			
-			if(respawn)
+			if(respawn) {
 				gs.getPlayer().setCenterPosition(x, y);
-			else
+				gs.getPlayer().respawn();
+			} else {
 				gs.addEntity(new Player(gs, x, y, lives));
-			
+				gs.getPlayer().respawn();
+			}
+				
 			playersSpawned = true;
 		} while(!playersSpawned);
 	}
