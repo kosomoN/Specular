@@ -31,6 +31,10 @@ public class ComboSystem {
 		combo = 0;
 	}
 	
+	public void resetCombo() {
+		combo = 0;
+	}
+	
 	public int getCombo() {
 		return combo;
 	}

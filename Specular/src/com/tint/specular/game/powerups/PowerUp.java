@@ -15,7 +15,7 @@ public abstract class PowerUp implements Entity {
 	
 	protected float x, y;
 	protected GameState gs;
-	protected float despawnTime = 300; // 5s
+	protected float despawnTime = 900; // 15s
 	
 	public PowerUp(float x, float y, GameState gs) {
 		this.x = x;

@@ -37,8 +37,11 @@ public class ScoreMultiplier extends PowerUp {
 
 	@Override
 	public boolean update() {
-		if(activated)
+		//Own timing system
+		if(activated) {
 			timeAlive--;
+			despawnTime++;
+		}
 		
 		if(super.update()) {
 			timeSinceLastIncrease++;
@@ -54,14 +57,6 @@ public class ScoreMultiplier extends PowerUp {
 			lastTime = 300 - timeAlive - lastTime;
 			if(lastTime > longestTime)
 				longestTime = lastTime;
-		}
-		
-		if(timeAlive <= 0) {
-			// +0.5 score multiplier for the longest time on powerup
-			if(longestTime == 0)
-				gs.setScoreMultiplier(gs.getScoreMultiplier() + 300 / 60 * 0.5);
-			else
-				gs.setScoreMultiplier(gs.getScoreMultiplier() + longestTime / 60 * 0.5);
 		}
 		return timeAlive <= 0;
 	}

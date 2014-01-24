@@ -68,9 +68,6 @@ public class GameState extends State {
 	private Stage stage;
 	private float camOffsetX, camOffsetY;
 	
-	// Game events
-	private boolean preparationDone;
-	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	private float unprocessed;
@@ -81,7 +78,6 @@ public class GameState extends State {
 	
 	// Fields that affect score or gameplay
 	private double scoreMultiplier = 1;
-	private double damageBooster = 1f;
 	private boolean enablePowerUps = true;
 	private int enemiesKilled;
 //	private int comboToNextScoreMult = 2;
@@ -102,7 +98,7 @@ public class GameState extends State {
 	
 	// Custom and default fonts
 	private BitmapFont arial15 = new BitmapFont();
-	private BitmapFont font50;
+	private BitmapFont scoreFont, multiplierFont, timeFont;
 	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
 	
 	// Art
@@ -128,8 +124,15 @@ public class GameState extends State {
 		
 		// Initializing font
 		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
-		font50 = fontGen.generateFont(50, FONT_CHARACTERS, false);
-		font50.setColor(Color.RED);
+		scoreFont = fontGen.generateFont(50, FONT_CHARACTERS, false);
+		scoreFont.setColor(Color.RED);
+		
+		multiplierFont = fontGen.generateFont(40, FONT_CHARACTERS, false);
+		multiplierFont.setColor(Color.RED);
+		
+		timeFont = fontGen.generateFont(30, FONT_CHARACTERS, false);
+		timeFont.setColor(Color.RED);
+		
 		fontGen.dispose();
 		
 		// Initializing entities and analogstick statically
@@ -177,127 +180,125 @@ public class GameState extends State {
 	
 	
 	protected void update() {
+		System.out.println(enemies.size);
 		if(!paused) {
-			if(!preparationDone) {
-				// Code for things before actual game start
-				preparationDone = true;
-			} else {
-				// Adding played time
-				if(entities.contains(player, true))
-					ticks++;
-							
-				if(gameMode.isGameOver()) {
-					// Code for death animation
-				} else {
-					// Update game mode, enemy spawning and player hit detection
-					gameMode.update(TICK_LENGTH / 1000000);
-					player.updateHitDetection();
-					// So that they don't spawn while death animation is playing
-					if(!player.isSpawning() && !player.isHit())
-						ess.update(ticks);
-				}
-				
-				// Updating combos
-				cs.update();
-				
-				// Updating damage booster
-				if(cs.getCombo() > 10)
-					damageBooster = cs.getCombo() / 10;
-				else
-					damageBooster = 1;
-				
-				// Update power-ups
-				powerUpSpawnTime--;
-				if(powerUpSpawnTime < 0) {
-					if(enablePowerUps) {
-						puss.spawn();
-						powerUpSpawnTime = 600;
-					}
-				}
+			// Adding played time
+			if(entities.contains(player, true))
+				ticks++;
+			
+			if(scoreMultiplier > 1)
+				scoreMultiplier -= (int) (enemies.size / 10) / 120f;
 						
-				if(player != null && !player.isDead()) {
-					// Checking if any bullet hit an enemy
-					for(Bullet b : bullets) {
-						for(Enemy e : enemies) {
-							if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
-									e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
-								
-								// Add " * damageBooster" to enable combo damage
-								e.hit(Bullet.damage * damageBooster);
-								b.hit();
-								
-								//Adding a small camerashake
-								CameraShake.shake(0.1f, 0.05f);
-								
-								// Rewarding player depending on game mode
-								if(e.getLife() <= 0) {
-									gameMode.enemyKilled(e);
-									
-									cs.activate(enemies.size);
-									
-									enemiesKilled++;
-									
-									//Adding a stronger camera shake when the enemy dies
-									CameraShake.shake(0.2f, 0.1f);
-									break;
-								}
-							}
-						}
-					}
-					
-					if(player.isHit()) {
-						boolean containsParticles = false;
-						for(Entity ent : entities) {
-							if(ent instanceof Particle) {
-								containsParticles = true;
-								continue;
-							}
-						}
-						if(!containsParticles) {
-							player.respawn();
-				        	pss.spawn(player.getLife(), true);
-				        	player.setHit(false);
-						}
-			        }
-				}
-				
-				
-				boolean playerKilled = false;		// A variable to keep track of player status
-				
-				// Removing destroyed entities
-				for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
-					Entity ent = it.next();
-					
-					if(ent.update()) {
-						if(ent instanceof Particle)
-							pass.getPool().free((Particle) ent);
-						else if(ent instanceof Enemy)
-							enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
-						else if(ent instanceof Bullet)
-							bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
-						else if(ent instanceof Player) {
-							gameMode.playerKilled();
-							playerKilled = true;
-						}
-						it.remove();
-					}
-				}
-				
-				if(playerKilled) {
-					// Time attack
-					if(!gameMode.isGameOver()) {
-						clearLists();
-						resetGameTime();
-						pss.spawn(3, false);
-					}
-					// Ranked
-					else {
-						input.setInputProcessor(ggInputProcessor);
-					}
-				}
-				
-				CameraShake.update();
+			if(gameMode.isGameOver()) {
+				// Code for death animation
+			} else {
+				// Update game mode, enemy spawning and player hit detection
+				gameMode.update(TICK_LENGTH / 1000000);
+				player.updateHitDetection();
+				// So that they don't spawn while death animation is playing
+				if(!player.isSpawning() && !player.isHit())
+					ess.update(ticks);
 			}
+			
+			// Updating combos
+			cs.update();
+			
+			if(cs.getCombo() > 3) {
+				setScoreMultiplier(scoreMultiplier + 1);
+				cs.resetCombo();
+			}
+			
+			// Update power-ups
+			powerUpSpawnTime--;
+			if(powerUpSpawnTime < 0) {
+				if(enablePowerUps) {
+					puss.spawn();
+					powerUpSpawnTime = 600;
+				}
+			}
+					
+			if(player != null && !player.isDead()) {
+				// Checking if any bullet hit an enemy
+				for(Bullet b : bullets) {
+					for(Enemy e : enemies) {
+						if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
+								e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
+							
+							// Add " * damageBooster" to enable combo damage
+							e.hit(Bullet.damage);
+							b.hit();
+							
+							//Adding a small camerashake
+							CameraShake.shake(0.1f, 0.05f);
+							
+							// Rewarding player depending on game mode
+							if(e.getLife() <= 0) {
+								gameMode.enemyKilled(e);
+								
+								cs.activate(enemies.size);
+								
+								enemiesKilled++;
+								
+								//Adding a stronger camera shake when the enemy dies
+								CameraShake.shake(0.2f, 0.1f);
+								break;
+							}
+						}
+					}
+				}
+				
+				if(player.isHit()) {
+					boolean containsParticles = false;
+					for(Entity ent : entities) {
+						if(ent instanceof Particle) {
+							containsParticles = true;
+							continue;
+						}
+					}
+					if(!containsParticles) {
+						player.respawn();
+			        	pss.spawn(player.getLife(), true);
+			        	player.setHit(false);
+					}
+		        }
+			}
+			
+			
+			boolean playerKilled = false;		// A variable to keep track of player status
+			
+			// Removing destroyed entities
+			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
+				Entity ent = it.next();
+				
+				if(ent.update()) {
+					if(ent instanceof Particle)
+						pass.getPool().free((Particle) ent);
+					else if(ent instanceof Enemy)
+						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
+					else if(ent instanceof Bullet)
+						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
+					else if(ent instanceof Player) {
+						gameMode.playerKilled();
+						playerKilled = true;
+					}
+					it.remove();
+				}
+			}
+			
+			if(playerKilled) {
+				// Time attack
+				if(!gameMode.isGameOver()) {
+					clearLists();
+					resetGameTime();
+					pss.spawn(3, false);
+				}
+				// Ranked
+				else {
+					input.setInputProcessor(ggInputProcessor);
+				}
+			}
+			
+			CameraShake.update();
 		}
 	}
 	
@@ -341,24 +342,26 @@ public class GameState extends State {
 		if(!gameMode.isGameOver()) {
 			gameInputProcessor.getShootStick().render(game.batch);
 			gameInputProcessor.getMoveStick().render(game.batch);
-		/*
-			// Debugging information
-			arial15.draw(game.batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 10);
-			arial15.draw(game.batch, "Enities: " + entities.size, -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 30);
-			arial15.draw(game.batch, "Player Life: " + player.getLife(), -Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 50);
-			arial15.draw(game.batch, "Memory Usage: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024f / 1024,
-							-Specular.camera.viewportWidth / 2 + 10, Specular.camera.viewportHeight / 2 - 70);*/
-			
-			
+
 			//Drawing HUD
 			game.batch.draw(hud, -hud.getWidth() / 2, -hud.getHeight() / 2, hud.getWidth(), Specular.camera.viewportHeight);
-			// Drawing score in the middle top of the screen
-			Util.writeCentered(game.batch, font50, String.valueOf(player.getScore()), 0,
-					Specular.camera.viewportHeight / 2 - font50.getCapHeight() - 10);
-			// Drawing combo on screen
-			Util.writeCentered(game.batch, font50, cs.getCombo() + "x", 0,
-					Specular.camera.viewportHeight / 2 - font50.getCapHeight() * 2 - 30);
+			// Drawing SCORE in the middle top of the screen
+			Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
+					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() - 5);
+			// Drawing MULTIPLIER on screen
+			Util.writeCentered(game.batch, multiplierFont, (int) scoreMultiplier + "x", 0,
+					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() * 2 - 30);
+			// Drawing TIME on screen
+			Util.writeCentered(game.batch, timeFont, (int) (ticks * TICK_LENGTH / 1000000000) + " sec", 0,
+					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() * 2 - 90);
+			// Drawing COMBO on screen
+			Util.writeCentered(game.batch, scoreFont, String.valueOf(cs.getCombo()), 380,
+					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() - 5);
+			// Drawing LIVES on screen
+			Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getLife()), -380,
+					Specular.camera.viewportHeight / 2 - scoreFont.getCapHeight() - 5);
 			gameMode.render(game.batch);
+			
 		}
 		
 		game.batch.end();
@@ -367,7 +370,7 @@ public class GameState extends State {
 			game.batch.begin();
 			game.batch.draw(gameOverTex, Specular.camera.viewportWidth * (-Specular.camera.viewportWidth / 2 / 1920f), Specular.camera.viewportHeight * (70 / 1080f),
 					Specular.camera.viewportWidth * (1920 / 1920f), Specular.camera.viewportHeight * (512 / 1080f));
-			font50.draw(game.batch, String.valueOf(player.getScore()), Specular.camera.viewportWidth * (-50 / 1920f), Specular.camera.viewportHeight * (200 / 1080f));
+			scoreFont.draw(game.batch, String.valueOf(player.getScore()), Specular.camera.viewportWidth * (-50 / 1920f), Specular.camera.viewportHeight * (200 / 1080f));
 			
 			ggInputProcessor.getRetryBtn().renderTexture(game.batch, ggInputProcessor.getRetryBtn().getX() - Specular.camera.viewportWidth / 2,
 					ggInputProcessor.getRetryBtn().getY() - Specular.camera.viewportHeight / 2);
@@ -394,7 +397,6 @@ public class GameState extends State {
 	}
 	
 	public void setScoreMultiplier(double multiplier) { scoreMultiplier = multiplier < 1 ? 1 : multiplier; }
-	public void setDamageBooster(double damageBooster) { this.damageBooster = damageBooster; }
 	
 	public Specular getGame() {	return game; }
 	public GameInputProcessor getGameProcessor() { return gameInputProcessor; }
@@ -408,7 +410,6 @@ public class GameState extends State {
 	public ParticleSpawnSystem getParticleSpawnSystem() { return pass; }
 	public Map getCurrentMap() { return currentMap;	}
 	
-	public double getDamageBooster() { return damageBooster; }
 	public double getScoreMultiplier() { return scoreMultiplier; }
 	
 	/** Get a custom BitmapFont based on its size. If ther is no font with that size it returns default font.
@@ -417,7 +418,7 @@ public class GameState extends State {
 	 */
 	public BitmapFont getCustomFont(int size) {
 		if(size == 50)
-			return font50;
+			return scoreFont;
 		
 		return arial15;
 	}
