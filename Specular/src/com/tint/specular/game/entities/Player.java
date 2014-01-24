@@ -239,7 +239,7 @@ public class Player implements Entity {
 	}
 	
 	public void addLives(int livesToAdd) {
-		life = life + livesToAdd < 3 ? life + livesToAdd : 3;
+		life = life + livesToAdd < 4 ? life + livesToAdd : 4;
 	}
 	
 	public void addScore(int score) {

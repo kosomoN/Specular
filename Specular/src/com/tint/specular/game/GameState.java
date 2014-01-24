@@ -187,8 +187,10 @@ public class GameState extends State {
 				ticks++;
 			
 			if(scoreMultiplier > 1)
-				scoreMultiplier -= (int) (enemies.size / 10) / 120f;
-						
+				scoreMultiplier -= (int) (enemies.size / 10) / 240f;
+			else
+				scoreMultiplier = 1;
+			
 			if(gameMode.isGameOver()) {
 				// Code for death animation
 			} else {
@@ -470,7 +472,7 @@ public class GameState extends State {
 		super.show();
 		music.play();
 		music.setLooping(true);
-		music.setVolume(0.3f);
+		music.setVolume(0.1f);
 		gameInputProcessor = new GameInputProcessor(game);
 		ggInputProcessor = new GameOverInputProcessor(game, this);
 		
