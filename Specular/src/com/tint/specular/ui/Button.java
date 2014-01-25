@@ -1,16 +1,13 @@
 package com.tint.specular.ui;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
 import com.tint.specular.Specular;
 
 /**
  * 
- * @author Daniel Riissanen
+ * @author Onni Kosomaa (Daniel Riissanen)
  *
  */
 
@@ -18,31 +15,32 @@ public class Button {
 	
 	//FIELDS
 	private Rectangle hitbox;
-	private Texture texture;
+	private Texture upTexture, downTexture;
+	private SpriteBatch batch;
+	private boolean touched;
 	
-	public Button() {
-		hitbox = new Rectangle();
-	}
-	
-	public Button(float x, float y, float width, float height) {
+	public Button(float x, float y, float width, float height, SpriteBatch batch, Texture upTexture, Texture downTexture) {
+		this.batch = batch;
+		this.upTexture = upTexture;
+		this.downTexture = downTexture;
 		hitbox = new Rectangle(x, y, width, height);
 	}
 	
 	//RENDER&UPDATE loop
 /*_____________________________________________________________________*/
-	public void renderTexture(SpriteBatch batch) {
-		batch.draw(texture, hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
+	public void render() {
+		if(touched)
+			batch.draw(downTexture, hitbox.x, hitbox.y);
+		else
+			batch.draw(upTexture, hitbox.x, hitbox.y);
 	}
 	
-	public void renderTexture(SpriteBatch batch, float x, float y) {
-		batch.draw(texture, x, y, hitbox.getWidth(), hitbox.getHeight());
+	public void touchOver(float x, float y) {
+		touched = true;
 	}
 	
-	public void renderShape(ShapeRenderer shape) {
-		shape.begin(ShapeType.Filled);
-		shape.setColor(Color.RED);
-		shape.rect(hitbox.getX(), hitbox.getY(), hitbox.getWidth(), hitbox.getHeight());
-		shape.end();
+	public void touchUp() {
+		touched = false;
 	}
 	
 /*_____________________________________________________________________*/
@@ -56,7 +54,6 @@ public class Button {
 	}
 	
 	//SETTERS
-	public void setTexture(Texture texture) { this.texture = texture; }
 	public void setPosition(float x, float y) { hitbox.setPosition(x, y); }
 	public void setSize(float width, float height) { hitbox.setSize(width, height); }
 	
@@ -66,9 +63,9 @@ public class Button {
 	public float getWidth() { return hitbox.getWidth(); }
 	public float getHeight() { return hitbox.getHeight(); }
 	public Rectangle getHitbox() { return hitbox; }
-	public Texture getTexture() { return texture; }
 	
 	public void dispose() {
-		texture.dispose();
+		upTexture.dispose();
+		downTexture.dispose();
 	}
 }

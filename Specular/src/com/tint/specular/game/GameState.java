@@ -41,6 +41,7 @@ import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.input.GameOverInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
+import com.tint.specular.states.Facebook.LoginCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.HUD;
 import com.tint.specular.utils.Util;
@@ -296,6 +297,20 @@ public class GameState extends State {
 				// Ranked
 				else {
 					input.setInputProcessor(ggInputProcessor);
+					
+					if(!Specular.facebook.isLoggedIn()) {
+						Specular.facebook.login(new LoginCallback() {
+							@Override
+							public void loginSuccess() {
+								Specular.facebook.postHighscore(player.getScore());
+							}
+							
+							public void loginFailed() {
+							}
+						});
+					} else {
+						Specular.facebook.postHighscore(player.getScore());
+					}
 				}
 			}
 			
@@ -354,37 +369,28 @@ public class GameState extends State {
 			Util.writeCentered(game.batch, multiplierFont, (int) scoreMultiplier + "x", 0,
 					Specular.camera.viewportHeight / 2 - 98);
 			gameMode.render(game.batch);
+		} else if(gameMode.isGameOver()) {
+			game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, 70);
+			scoreFont.draw(game.batch, String.valueOf(player.getScore()), -190, Specular.camera.viewportHeight * (200 / 1080f));
+			
+			ggInputProcessor.getRetryBtn().render();
+			ggInputProcessor.getMenuBtn().render();
 		}
 		
 		game.batch.end();
-		
-		if(gameMode.isGameOver()) {
-			game.batch.begin();
-			game.batch.draw(gameOverTex, Specular.camera.viewportWidth * (-Specular.camera.viewportWidth / 2 / 1920f), Specular.camera.viewportHeight * (70 / 1080f),
-					Specular.camera.viewportWidth * (1920 / 1920f), Specular.camera.viewportHeight * (512 / 1080f));
-			scoreFont.draw(game.batch, String.valueOf(player.getScore()), Specular.camera.viewportWidth * (-50 / 1920f), Specular.camera.viewportHeight * (200 / 1080f));
-			
-			ggInputProcessor.getRetryBtn().renderTexture(game.batch, ggInputProcessor.getRetryBtn().getX() - Specular.camera.viewportWidth / 2,
-					ggInputProcessor.getRetryBtn().getY() - Specular.camera.viewportHeight / 2);
-			ggInputProcessor.getMenuBtn().renderTexture(game.batch, ggInputProcessor.getMenuBtn().getX() - Specular.camera.viewportWidth / 2,
-					ggInputProcessor.getMenuBtn().getY() - Specular.camera.viewportHeight / 2);
-			ggInputProcessor.getPostBtn().renderTexture(game.batch, ggInputProcessor.getPostBtn().getX() - Specular.camera.viewportWidth / 2,
-					ggInputProcessor.getPostBtn().getY() - Specular.camera.viewportHeight / 2);
-			
-			game.batch.end();
-		}
-		
+		//Required for the algorithm stopping the enemies from spawning on-screen
 		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
 	}
 	
 	public void addEntity(Entity entity) {
-		if(entity instanceof Player)
-			player = (Player) entity;
+
+		if(entity instanceof Bullet)
+			bullets.add((Bullet) entity);
 		else if(entity instanceof Enemy)
 			enemies.add((Enemy) entity);
-		else if(entity instanceof Bullet)
-			bullets.add((Bullet) entity);
-		
+		else if(entity instanceof Player)
+			player = (Player) entity;
+
 		entities.add(entity);
 	}
 	
@@ -465,6 +471,8 @@ public class GameState extends State {
 		
 		// Disable or enable virus spawn in start, > 0 = enable & < 0 = disable
 		EnemyVirus.virusAmount = 0;
+		
+		cs.resetCombo();
 	}
 
 	@Override

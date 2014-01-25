@@ -43,9 +43,9 @@ public class MainmenuState extends State {
 		
 		game.batch.begin();
 		game.batch.draw(background,0,0);
-		menuInputProcessor.getPlayBtn().renderTexture(game.batch);
-		menuInputProcessor.getProfileBtn().renderTexture(game.batch);
-//		menuInputProcessor.getOptionsBtn().renderTexture(game.batch);
+		menuInputProcessor.getPlayBtn().render();
+		menuInputProcessor.getProfileBtn().render();
+//		menuInputProcessor.getOptionsBtn().render();
 		game.batch.end();
 	}
 	
