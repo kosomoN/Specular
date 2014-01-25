@@ -98,6 +98,7 @@ public class MainActivity extends AndroidApplication {
 				if(!session.getPermissions().contains("publish_actions")) {
 					session.requestNewPublishPermissions(new NewPermissionsRequest(activity, "publish_actions"));
 					if(!session.getPermissions().contains("publish_actions")) {
+						Toast.makeText(getApplicationContext(), "Highscore posting failed: No publish permission", Toast.LENGTH_LONG).show();
 						return false;
 					}
 				}
@@ -111,7 +112,7 @@ public class MainActivity extends AndroidApplication {
 					final Request r = new Request(session, fbuser.getId() + "/scores", b, HttpMethod.POST, new Request.Callback() {
 						@Override
 						public void onCompleted(Response response) {
-							Log.i("Specular", "Highscore post response: " + response);
+							Toast.makeText(getApplicationContext(), "Highscore post response: " + response.getGraphObject().getInnerJSONObject().toString().contains("true"), Toast.LENGTH_LONG).show();
 						}
 					});
 					
