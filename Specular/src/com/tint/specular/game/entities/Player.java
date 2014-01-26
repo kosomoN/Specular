@@ -218,6 +218,8 @@ public class Player implements Entity {
     						gs.getParticleSpawnSystem().spawn(this, 100, false);
     						gs.getParticleSpawnSystem().spawn(this, 40, true);
     					}
+    					
+    					break;
         			}
 	        	}
     		}

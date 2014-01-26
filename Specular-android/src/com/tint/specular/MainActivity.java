@@ -3,6 +3,9 @@ package com.tint.specular;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,8 +39,11 @@ public class MainActivity extends AndroidApplication {
         cfg.useAccelerometer = false;
         cfg.useCompass = false;
         
+        //Check if user has previously logged in and in that case log in again
         Session.openActiveSession(activity, false, null);
         if(Session.getActiveSession() != null && Session.getActiveSession().isOpened()) {
+        	
+        	//Request user information
 			Request.newMeRequest(Session.getActiveSession(), new Request.GraphUserCallback() {
 				@Override
 				public void onCompleted(GraphUser user, Response response) {
@@ -60,8 +66,12 @@ public class MainActivity extends AndroidApplication {
 					@Override
 					public void call(final Session session, SessionState state, Exception exception) {
 						Log.i("Specular", state.toString());
+						
+						//If logged in
 						if (state.equals(SessionState.OPENED)) {
 							System.out.println("Opened");
+							
+							//Request user information
 							Request.newMeRequest(session, new Request.GraphUserCallback() {
 								@Override
 								public void onCompleted(GraphUser user, Response response) {
@@ -76,6 +86,7 @@ public class MainActivity extends AndroidApplication {
 							}).executeAsync();
 							callback.loginSuccess();
 						} else if(state.equals(SessionState.CLOSED) || state.equals(SessionState.CLOSED_LOGIN_FAILED)) {
+							//If failed
 							Log.e("Specular Facebook", "Login failed", exception);
 							callback.loginFailed();
 						}
@@ -93,29 +104,47 @@ public class MainActivity extends AndroidApplication {
 			}
 
 			@Override
-			public boolean postHighscore(int score) {
-				Session session = Session.getActiveSession();
+			public boolean postHighscore(final int score) {
+				final Session session = Session.getActiveSession();
+				
+				//Checking for publish permissions
 				if(!session.getPermissions().contains("publish_actions")) {
 					session.requestNewPublishPermissions(new NewPermissionsRequest(activity, "publish_actions"));
+					
+					//If not granted return
 					if(!session.getPermissions().contains("publish_actions")) {
 						Toast.makeText(getApplicationContext(), "Highscore posting failed: No publish permission", Toast.LENGTH_LONG).show();
 						return false;
 					}
 				}
+				
 				if(fbuser == null) {
 					System.err.println("User is null");
 					return false;
 				} else {
+					//Request own score
 					Bundle b = new Bundle();
 					b.putString("access_token", session.getAccessToken());
-					b.putInt("score", score);
-					final Request r = new Request(session, fbuser.getId() + "/scores", b, HttpMethod.POST, new Request.Callback() {
+					final Request r = new Request(session, fbuser.getId() + "/scores", b, HttpMethod.GET, new Request.Callback() {
 						@Override
 						public void onCompleted(Response response) {
-							Toast.makeText(getApplicationContext(), "Highscore post response: " + response.getGraphObject().getInnerJSONObject().toString().contains("true"), Toast.LENGTH_LONG).show();
+							try {
+								//Read score from JSON
+								JSONObject array = (JSONObject) response.getGraphObject().getInnerJSONObject().getJSONArray("data").get(0);
+								long oldScore = (Integer) array.get("score");
+								
+								//Send if new highscore
+								if(oldScore < score) {
+									sendHighscore(score, session);
+								}
+									
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
 						}
 					});
 					
+					//The request has to be run on the UI thread or bad things happen
 					MainActivity.this.runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -126,10 +155,24 @@ public class MainActivity extends AndroidApplication {
 				
 				return true;
 			}
+			
+
+			private void sendHighscore(int score, Session session) {
+				//Send a highscore post request
+				Bundle b = new Bundle();
+				b.putString("access_token", session.getAccessToken());
+				b.putInt("score", score);
+				new Request(session, fbuser.getId() + "/scores", b, HttpMethod.POST, new Request.Callback() {
+					@Override
+					public void onCompleted(Response response) {
+						Toast.makeText(getApplicationContext(), "Highscore post response: " + response.getGraphObject().getInnerJSONObject().toString().contains("true"), Toast.LENGTH_LONG).show();
+					}
+				}).executeAsync();
+			}
 
 			@Override
 			public void getHighScores(final HighscoreCallback highscoreCallback) {
-				
+				//Send highscore get request
 				Session session = Session.getActiveSession();
 				Bundle b = new Bundle();
 				b.putString("access_token", session.getAccessToken());
@@ -138,6 +181,8 @@ public class MainActivity extends AndroidApplication {
 					public void onCompleted(Response response) {
 						Log.i("Specular", "Highscore get response: " + response);
 						List<String> scores = new ArrayList<String>();
+						
+						//Read scores from list
 						for(GraphObject go : response.getGraphObject().getPropertyAsList("data", GraphObject.class)) {
 							scores.add(go.getPropertyAs("user", GraphObject.class).getProperty("name") + ": " + go.getProperty("score"));
 						}
@@ -145,6 +190,8 @@ public class MainActivity extends AndroidApplication {
 						highscoreCallback.gotHighscores(array);
 					}
 				});
+				
+				//The request has to be run on the UI thread or bad things happen
 				MainActivity.this.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
