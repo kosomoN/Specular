@@ -117,7 +117,7 @@ public class GameState extends State {
 		Texture parallax = new Texture(Gdx.files.internal("graphics/game/Parallax.png"));
 		
 		// Loading gameover texture
-		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
+		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Game Over Title.png"));
 		
 		//Loading HUD
 		hud = new HUD(this);
@@ -164,8 +164,39 @@ public class GameState extends State {
 		cs = new ComboSystem();
 		
 		input = Gdx.input;
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.mp3"));
-	}
+		
+		
+		//randomize music (Merg)
+		//Gonna update when a third track is added
+		
+		if ((Math.random() < 0.142)) {
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/01.mp3"));	
+			
+		} else if ((Math.random() < 0.285)) {
+			
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.mp3"));		
+		
+		} else if ((Math.random() < 0.426)) {
+			
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/03.mp3"));	
+		
+		} else if ((Math.random() < 0.568)) {	
+			
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/04.mp3"));	
+						
+		} else if ((Math.random() < 0.752)) {
+			
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/06.mp3"));				
+			
+		} else if ((Math.random() < 0.994)) {
+			
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/07.mp3"));	
+			
+		};
+}
+		
+
+	
 
 	@Override
 	public void render(float delta) {
@@ -178,6 +209,8 @@ public class GameState extends State {
         }
         renderGame();
 	}
+	
+	
 	
 	protected void update() {
 		if(!paused) {
@@ -322,10 +355,6 @@ public class GameState extends State {
 		
 //		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE ); //Amazing stuff happens xD; Answer(Daniel): Jup xD
 		
-		if(gameMode.isGameOver()) {
-			game.batch.setColor(0.6f, 0.6f, 0.6f, 1);
-		}
-		
 		//Positioning camera to the player
 		Specular.camera.position.set(player.getCenterX() / 2 + camOffsetX, player.getCenterY() / 2 + camOffsetY, 0);
 		Specular.camera.zoom = 1;
@@ -371,13 +400,12 @@ public class GameState extends State {
 			Util.writeCentered(game.batch, multiplierFont, (int) scoreMultiplier + "x", 0,
 					Specular.camera.viewportHeight / 2 - 98);
 			gameMode.render(game.batch);
-		} else {
-			game.batch.setColor(Color.WHITE);
-			game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
+		} else if(gameMode.isGameOver()) {
+			game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, 70);
+			scoreFont.draw(game.batch, String.valueOf(player.getScore()), -190, Specular.camera.viewportHeight * (200 / 1080f));
 			
 			ggInputProcessor.getRetryBtn().render();
 			ggInputProcessor.getMenuBtn().render();
-			ggInputProcessor.getHighscoreBtn().render();
 		}
 		
 		game.batch.end();
