@@ -60,6 +60,10 @@ public class HighscoreState extends State {
 		super.show();
 		createUi();
 		background = new Texture(Gdx.files.internal("graphics/menu/highscore/Frames.png"));
+		
+		Specular.camera.position.set(Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight / 2, 0);
+		Specular.camera.update();
+		game.batch.setProjectionMatrix(Specular.camera.combined);
 	}
 	
 	private void createUi() {

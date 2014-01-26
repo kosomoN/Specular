@@ -43,7 +43,7 @@ public class Particle implements Entity, Poolable {
 	@Override
 	public boolean update() {
 		//Lifetime update
-		lifetime -= 10;
+		lifetime -= 1;
 	
 		//Movement
 		x += dx;
@@ -59,7 +59,7 @@ public class Particle implements Entity, Poolable {
 	@Override
 	public void render(SpriteBatch batch) {
 		rotation += ROTATION_SPEED;
-		float alpha = (lifetime / 250f) * (lifetime / 250f);
+		float alpha = (lifetime / 25f) * (lifetime / 25f);
 		batch.setColor(1, 1, 1, alpha < 1 ? alpha : 1);
 		Util.drawCentered(batch, textures[textureIndexInArray], x, y, rotation);
 		batch.setColor(1, 1, 1, 1);
@@ -112,7 +112,7 @@ public class Particle implements Entity, Poolable {
 		this.textureIndexInArray = type.ordinal() + (large ? 6 : 0); //This is just a variable to make getting the subimage easier
 		this.type = type;
 		
-		lifetime = 250 + rand.nextInt(250);
+		lifetime = 25 + rand.nextInt(25);
 		
 		rotation = rand.nextInt(360);
 	}

@@ -15,8 +15,7 @@ public class GameOverInputProcessor extends InputAdapter {
 	private GameState gs;
 
 	// Buttons
-	private Button retry;
-	private Button menu;
+	private Button retry, menu, highscores;
 	
 	private boolean touch;
 	
@@ -24,16 +23,23 @@ public class GameOverInputProcessor extends InputAdapter {
 		this.game = game;
 		this.gs = gs;
 		
-		// Initializing button textures
-		Texture retryTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Retry 600 550.png"));
-		Texture retryPressedTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Retry pressed.png"));
-		
-		Texture menuTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Main menu button 90 820.png"));
-		Texture menuPressedTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Main menu button pressed.png"));
-		
 		// Initializing buttons
-		retry = new Button(-retryTex.getWidth() / 2, -100, 780, 254, game.batch, retryTex, retryPressedTex);
-		menu = new Button(-menuTex.getWidth() / 2, -400, 885, 190, game.batch, menuTex, menuPressedTex);
+		Texture retryTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Retry.png"));
+		Texture retryPressedTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Retry Pressed.png"));
+		
+		retry = new Button(-30, -526, retryTex.getWidth(), retryTex.getHeight(), game.batch, retryTex, retryPressedTex);
+		
+		
+		Texture menuTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Main Menu.png"));
+		Texture menuPressedTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Main Menu Pressed.png"));
+		
+		menu = new Button(-810, -526, menuTex.getWidth(), menuTex.getHeight(), game.batch, menuTex, menuPressedTex);
+		
+		
+		Texture highscoresTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Highscores.png"));
+		Texture highscoresPressedTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Highscores Pressed.png"));
+		
+		highscores = new Button(-420, -526, highscoresTex.getWidth(), highscoresTex.getHeight(), game.batch, highscoresTex, highscoresPressedTex);
 	}
 	
 	@Override
@@ -46,6 +52,8 @@ public class GameOverInputProcessor extends InputAdapter {
 			retry.touchOver(touchpointx, touchpointy);
 		else if(menu.isOver(touchpointx, touchpointy, false))
 			menu.touchOver(touchpointx, touchpointy);
+		else if(highscores.isOver(touchpointx, touchpointy, false))
+			highscores.touchOver(touchpointx, touchpointy);
 			
 		touch = true;
 		return false;
@@ -73,6 +81,15 @@ public class GameOverInputProcessor extends InputAdapter {
 			} else {
 				menu.touchUp();
 			}
+			
+			if(highscores.isOver(touchpointx, touchpointy, false)) {
+				
+				// Go to highscores
+				game.enterState(States.PROFILE_STATE);
+				gs.stopGameMusic();
+			} else {
+				highscores.touchUp();
+			}
 		}
 		
 		return false;
@@ -88,10 +105,17 @@ public class GameOverInputProcessor extends InputAdapter {
 		} else {
 			retry.touchUp();
 		}
+		
 		if(menu.isOver(touchpointx, touchpointy, false)) {
 			menu.touchOver(touchpointx, touchpointy);
 		} else {
 			menu.touchUp();
+		}
+		
+		if(highscores.isOver(touchpointx, touchpointy, false)) {
+			highscores.touchOver(touchpointx, touchpointy);
+		} else {
+			highscores.touchUp();
 		}
 		return false;
 	}
@@ -106,4 +130,5 @@ public class GameOverInputProcessor extends InputAdapter {
 
 	public Button getRetryBtn() { return retry; }
 	public Button getMenuBtn() { return menu; }
+	public Button getHighscoreBtn() { return highscores; }
 }

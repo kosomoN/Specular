@@ -23,7 +23,6 @@ import com.tint.specular.utils.Util;
 
 public class Player implements Entity {
 	
-	//FIELDS
 	private static final int MAX_DELTA_SPEED = 8;
 	private static final float SPEED = 0.125f;
 	private static final float FRICTION = 0.95f;
@@ -46,7 +45,6 @@ public class Player implements Entity {
 	
 	private boolean isHit, spawning;
 	
-	//CONSTRUCTOR
 	public Player(GameState gs, float x, float y, int lives) {
 		this.gs = gs;
 		centerx = x;
@@ -54,8 +52,6 @@ public class Player implements Entity {
 		setLife(lives);
 	}
 	
-	//RENDER&UPDATE loop
-/*_____________________________________________________________________*/
 	
 	@Override
 	public void render(SpriteBatch batch) {
@@ -88,10 +84,8 @@ public class Player implements Entity {
 		
 		// Taking control away when player is hit and respawning
 		if(!isHit && !spawning) {
-			//Moving
 			updateMovement();
 			
-			//Shooting
 			updateShooting();
 		}
 		
@@ -233,7 +227,6 @@ public class Player implements Entity {
         	}
         }
 	}
-/*_____________________________________________________________________*/
 
 	//POWER-UPS
 	public void addShield() {
@@ -263,7 +256,6 @@ public class Player implements Entity {
 		this.dy = dy;
 	}
 	
-	//SETTERS
 	public void setCenterPosition(float x, float y) {
 		centerx = x;
 		centery = y;
@@ -283,7 +275,6 @@ public class Player implements Entity {
 	public void setHit(boolean hit) { isHit = hit; }
 	public void kill() { life = 0; }
 	
-	//GETTERS
 	public float getCenterX() { return centerx; }
 	public float getCenterY() { return centery;	}
 	public float getDeltaX() { return dx; }

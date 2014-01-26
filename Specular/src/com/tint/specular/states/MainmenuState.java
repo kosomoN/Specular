@@ -1,6 +1,7 @@
 package com.tint.specular.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GLTexture;
@@ -20,7 +21,6 @@ public class MainmenuState extends State {
 	private Music music;
 	private MenuInputProcessor menuInputProcessor;
 	
-	
 	public MainmenuState(Specular game) {
 		super(game);
 		
@@ -31,15 +31,12 @@ public class MainmenuState extends State {
 		//randomize music
 		//Gonna update when a third track is added
 		
-		if ((Math.random() < 0.45)) {
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/01.mp3"));	
-			
-		} else {
-			
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.mp3"));		
-			
-		};
-}
+//		if ((Math.random() < 0.45)) {
+			music = Gdx.audio.newMusic(Gdx.files.internal("audio/01.mp3"));	
+//		} else {
+//			music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.mp3"));		
+//		};
+	}
 		
 		
 	
@@ -62,6 +59,9 @@ public class MainmenuState extends State {
 		menuInputProcessor.getProfileBtn().render();
 //		menuInputProcessor.getOptionsBtn().render();
 		game.batch.end();
+		
+		if(Gdx.input.isKeyPressed(Keys.BACK))
+			Gdx.app.exit();
 	}
 	
 	public void update(float delta) {
