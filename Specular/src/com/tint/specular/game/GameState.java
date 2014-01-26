@@ -117,7 +117,7 @@ public class GameState extends State {
 		Texture parallax = new Texture(Gdx.files.internal("graphics/game/Parallax.png"));
 		
 		// Loading gameover texture
-		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Game Over Title.png"));
+		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
 		
 		//Loading HUD
 		hud = new HUD(this);
@@ -186,11 +186,11 @@ public class GameState extends State {
 						
 		} else if ((Math.random() < 0.752)) {
 			
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/06.mp3"));				
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/05.mp3"));				
 			
-		} else if ((Math.random() < 0.994)) {
+		} else {
 			
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/07.mp3"));	
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/06.mp3"));	
 			
 		};
 }
