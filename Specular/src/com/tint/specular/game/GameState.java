@@ -119,6 +119,9 @@ public class GameState extends State {
 		// Loading gameover texture
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
 		
+		// Creating Array containing music file paths
+		String[] musicFileNames = new String[]{"01.mp3","02.mp3","03.mp3","04.mp3","05.mp3","06.mp3"};
+		
 		//Loading HUD
 		hud = new HUD(this);
 		
@@ -166,38 +169,12 @@ public class GameState extends State {
 		input = Gdx.input;
 		
 		
-		//randomize music (Merg)
-		//Gonna update when a third track is added
+		//randomize music, sorry merg, remade by Mental
 		
-		if ((Math.random() < 0.142)) {
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/01.mp3"));	
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + musicFileNames[(int)(Math.random()*musicFileNames.length)]));
 			
-		} else if ((Math.random() < 0.285)) {
-			
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.mp3"));		
-		
-		} else if ((Math.random() < 0.426)) {
-			
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/03.mp3"));	
-		
-		} else if ((Math.random() < 0.568)) {	
-			
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/04.mp3"));	
-						
-		} else if ((Math.random() < 0.752)) {
-			
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/05.mp3"));				
-			
-		} else {
-			
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/06.mp3"));	
-			
-		};
 }
 		
-
-	
-
 	@Override
 	public void render(float delta) {
 		long currTime = System.nanoTime();
@@ -354,7 +331,11 @@ public class GameState extends State {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 //		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE ); //Amazing stuff happens xD; Answer(Daniel): Jup xD
-		
+
+		if(gameMode.isGameOver()) {
+			game.batch.setColor(0.6f, 0.6f, 0.6f, 1);
+		}
+   
 		//Positioning camera to the player
 		Specular.camera.position.set(player.getCenterX() / 2 + camOffsetX, player.getCenterY() / 2 + camOffsetY, 0);
 		Specular.camera.zoom = 1;
@@ -400,12 +381,12 @@ public class GameState extends State {
 			Util.writeCentered(game.batch, multiplierFont, (int) scoreMultiplier + "x", 0,
 					Specular.camera.viewportHeight / 2 - 98);
 			gameMode.render(game.batch);
-		} else if(gameMode.isGameOver()) {
-			game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, 70);
-			scoreFont.draw(game.batch, String.valueOf(player.getScore()), -190, Specular.camera.viewportHeight * (200 / 1080f));
-			
+			} else {
+				game.batch.setColor(Color.WHITE);
+				game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
 			ggInputProcessor.getRetryBtn().render();
 			ggInputProcessor.getMenuBtn().render();
+			ggInputProcessor.getHighscoreBtn().render();
 		}
 		
 		game.batch.end();
