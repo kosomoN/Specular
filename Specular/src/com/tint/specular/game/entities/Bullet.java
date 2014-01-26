@@ -28,6 +28,8 @@ public class Bullet implements Entity {
 	private Circle hitbox;
 	private GameState gs;
 	private Player shooter;
+
+	private float direction;
 	
 	public Bullet(float x, float y, float direction, float initialDx, float initialDy, GameState gs, Player shooter) {
 		this.x = x;
@@ -44,11 +46,13 @@ public class Bullet implements Entity {
 		
 		this.gs = gs;
 		this.shooter = shooter;
+		
+		this.direction = direction - 90;
 	}
 
 	@Override
 	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, bulletTex, x, y, 0);
+		Util.drawCentered(batch, bulletTex, x, y, direction);
 	}
 	
 	@Override
