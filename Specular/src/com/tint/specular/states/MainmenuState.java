@@ -20,14 +20,29 @@ public class MainmenuState extends State {
 	private Music music;
 	private MenuInputProcessor menuInputProcessor;
 	
+	
 	public MainmenuState(Specular game) {
 		super(game);
 		
 		GLTexture.setEnforcePotImages(false);
 		background = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Title Background.png"));
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/01.mp3"));
 		
-	}
+		
+		//randomize music
+		//Gonna update when a third track is added
+		
+		if ((Math.random() < 0.45)) {
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/01.mp3"));	
+			
+		} else {
+			
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/02.mp3"));		
+			
+		};
+}
+		
+		
+	
 	
 	@Override
 	public void render(float delta) {
