@@ -9,9 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.tint.specular.Specular;
@@ -52,8 +51,6 @@ public class HighscoreState extends State {
 		stage.act();
 		stage.draw();
 		
-//		Table.drawDebug(stage);
-		
 		if(Gdx.input.isKeyPressed(Keys.BACK))
 			game.enterState(Specular.States.MAINMENUSTATE);
 	}
@@ -68,8 +65,6 @@ public class HighscoreState extends State {
 	private void createUi() {
 		stage = new Stage(Specular.camera.viewportWidth, Specular.camera.viewportHeight, false, game.batch);
 		stage.setCamera(Specular.camera);
-		
-		Skin skin = new Skin(Gdx.files.internal("data/uiskin.json"));
 		
 		if(Specular.facebook.isLoggedIn()) {
 			isLoggedIn = true;
@@ -93,46 +88,52 @@ public class HighscoreState extends State {
 			sp.setPosition(Specular.camera.viewportWidth * (850f / 1920), 0);
 	
 			stage.addActor(sp);
-			
-			Texture tex = new Texture(Gdx.files.internal("graphics/menu/highscore/Back.png"));
-			Texture pressedTex = new Texture(Gdx.files.internal("graphics/menu/highscore/Back Pressed.png"));
-			
-			Button backBtn = new Button(new TextureRegionDrawable(new TextureRegion(tex)), 
-									new TextureRegionDrawable(new TextureRegion(pressedTex)));
-			backBtn.setPosition(47, 0);
-			
-			backBtn.addListener(new ChangeListener() {
-				
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					game.enterState(Specular.States.MAINMENUSTATE);
-				}
-			});
-			
-			stage.addActor(backBtn);
 		} else {
-			TextButton loginBtn = new TextButton("Login", skin);
-			loginBtn.setSize(300, 100);
+			Image loginScreen = new Image(new Texture(Gdx.files.internal("graphics/menu/highscore/Login Background.png")));
+			stage.addActor(loginScreen);
+			
+			Texture tex = new Texture(Gdx.files.internal("graphics/menu/highscore/Login.png"));
+			Texture pressedTex = new Texture(Gdx.files.internal("graphics/menu/highscore/Login Pressed.png"));
+			
+			Button loginBtn = new Button(new TextureRegionDrawable(new TextureRegion(tex)), 
+					new TextureRegionDrawable(new TextureRegion(pressedTex)));
+			loginBtn.setPosition(1250, 15);
+			
 			loginBtn.addListener(new ChangeListener() {
-				
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {
-					Specular.facebook.login(new Facebook.LoginCallback() {
-						
-						@Override
-						public void loginSuccess() {
-							shouldUpdate = true;
-						}
+                    Specular.facebook.login(new Facebook.LoginCallback() {
+                        
+                        @Override
+                        public void loginSuccess() {
+                                shouldUpdate = true;
+                        }
 
-						@Override
-						public void loginFailed() {
-						}
-					});
+                        @Override
+                        public void loginFailed() {
+                        }
+                    });
 				}
 			});
 			
 			stage.addActor(loginBtn);
 		}
+		
+		Texture tex = new Texture(Gdx.files.internal("graphics/menu/highscore/Back.png"));
+		Texture pressedTex = new Texture(Gdx.files.internal("graphics/menu/highscore/Back Pressed.png"));
+		
+		Button backBtn = new Button(new TextureRegionDrawable(new TextureRegion(tex)), 
+								new TextureRegionDrawable(new TextureRegion(pressedTex)));
+		backBtn.setPosition(47, 0);
+		
+		backBtn.addListener(new ChangeListener() {
+			
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				game.enterState(Specular.States.MAINMENUSTATE);
+			}
+		});
+		stage.addActor(backBtn);
 		
 		Gdx.input.setInputProcessor(stage);
 	}
