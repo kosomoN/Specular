@@ -28,7 +28,7 @@ public class Client {
 		cam.update();
 		game.batch.setProjectionMatrix(cam.combined);
 		
-		return player.isDead();
+		return player.isGameOver();
 	}
 	
 	public void setPlayer(Player player) {

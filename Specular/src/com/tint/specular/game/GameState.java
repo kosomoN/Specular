@@ -235,7 +235,7 @@ public class GameState extends State {
 				}
 			}
 					
-			if(player != null && !player.isDead()) {
+			if(player != null && !player.isGameOver()) {
 				// Checking if any bullet hit an enemy
 				for(Bullet b : bullets) {
 					for(Enemy e : enemies) {
@@ -265,19 +265,10 @@ public class GameState extends State {
 					}
 				}
 				
-				if(player.isHit()) {
-					boolean containsParticles = false;
-					for(Entity ent : entities) {
-						if(ent instanceof Particle) {
-							containsParticles = true;
-							continue;
-						}
-					}
-					if(!containsParticles) {
-						player.respawn();
-			        	pss.spawn(player.getLife(), true);
-			        	player.setHit(false);
-					}
+				if(!player.isHit() && player.isDead()) {
+					System.out.println("J");
+					player.respawn();
+		        	pss.spawn(player.getLife(), true);
 		        }
 			}
 			

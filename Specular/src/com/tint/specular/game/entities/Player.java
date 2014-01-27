@@ -27,8 +27,8 @@ public class Player implements Entity {
 	private static final float SPEED = 0.125f;
 	private static final float FRICTION = 0.95f;
 	
-	private static Animation anim, spawnAnim;
-	private static Texture playerTex, playerSpawnTex;
+	private static Animation anim, spawnAnim, deathAnim;
+	private static Texture playerTex, playerSpawnTex, playerDeathTex;
 	private static int radius;
 	
 	private GameState gs;
@@ -37,13 +37,14 @@ public class Player implements Entity {
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
 	private float fireRateTimer;	// In ticks
+	private float burstTimer;
 	
 	private int life = 3;
 	private int shields;
 	private int bulletBurst = 3;
 	private int score = 0;
 	
-	private boolean isHit, spawning;
+	private boolean isHit, spawning, dead;
 	
 	public Player(GameState gs, float x, float y, int lives) {
 		this.gs = gs;
@@ -62,9 +63,17 @@ public class Player implements Entity {
 			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
 			if(spawnAnim.isAnimationFinished(animFrameTime)) {
 				spawning = false;
+				animFrameTime = 0;
 			}
 		} else if(isHit) {
-			
+			// Death animation
+			TextureRegion frame = deathAnim.getKeyFrame(animFrameTime, false);
+			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
+			if(deathAnim.isAnimationFinished(animFrameTime)) {
+				isHit  =  false;
+				dead = true;
+				animFrameTime = 0;
+			}
 		} else {
 			TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
 			if(shields > 0)
@@ -80,6 +89,13 @@ public class Player implements Entity {
 			fireRateTimer--;
 		} else {
 			fireRate = 10f;
+		}
+		
+		// Updating burst
+		if(burstTimer > 0) {
+			burstTimer--;
+		} else {
+			bulletBurst = 3;
 		}
 		
 		// Taking control away when player is hit and respawning
@@ -204,14 +220,8 @@ public class Player implements Entity {
         			} else {
     					addLives(-1);
     					isHit = true;
+    					animFrameTime = 0;
     					clearEnemies = true;
-    					
-    					if(life > 0) {
-    						gs.getParticleSpawnSystem().spawn(this, 100, false);
-    					} else {
-    						gs.getParticleSpawnSystem().spawn(this, 100, false);
-    						gs.getParticleSpawnSystem().spawn(this, 40, true);
-    					}
     					
     					break;
         			}
@@ -270,7 +280,10 @@ public class Player implements Entity {
 		fireRateTimer = 600; // 10s
 	}
 	
-	public void setBulletBurst(int burst) {	bulletBurst = burst; }
+	public void setBulletBurst(int burst) {
+		bulletBurst = burst;
+		burstTimer = 600;
+	}
 	public void setLife(int life) { this.life = life; }
 	public void setHit(boolean hit) { isHit = hit; }
 	public void kill() { life = 0; }
@@ -291,12 +304,14 @@ public class Player implements Entity {
 	public boolean hasShield() { return shields > 0; }
 	public boolean isHit() { return isHit; }
 	public boolean isSpawning() { return spawning; }
-	public boolean isDead() { return life <= 0; }
+	public boolean isDead() { return dead; }
+	public boolean isGameOver() { return life <= 0; }
 	public GameState getGameState() { return gs; }
 	
 	public void respawn() {
 		animFrameTime = 0;
 		spawning = true;
+		dead = false;
 	}
 	
 	public static void init() {
@@ -306,7 +321,11 @@ public class Player implements Entity {
 		
 		playerSpawnTex  = new Texture(Gdx.files.internal("graphics/game/Player Spawn Anim.png"));
 		playerSpawnTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		spawnAnim = Util.getAnimation(playerSpawnTex, 128, 128, 1 / 16f, 0, 0, 7, 3);
+		spawnAnim = Util.getAnimation(playerSpawnTex, 128, 128, 1 / 16f, 0, 0, 3, 3);
+		
+		playerDeathTex  = new Texture(Gdx.files.internal("graphics/game/Player Death Anim.png"));
+		playerDeathTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		deathAnim = Util.getAnimation(playerDeathTex, 128, 128, 1 / 16f, 0, 0, 3, 3);
 		
 		radius = (anim.getKeyFrame(0).getRegionWidth() - 10) / 2;
 	}
