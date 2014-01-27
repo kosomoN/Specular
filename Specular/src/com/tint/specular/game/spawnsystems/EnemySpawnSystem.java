@@ -7,6 +7,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyWanderer;
 
 /**
  * 
@@ -35,12 +36,14 @@ public class EnemySpawnSystem extends SpawnSystem {
 		
 		//Remove this in case you are going to use the concept above
 		if(enemyList.size < ticks / 100) {
-			int randomId = rand.nextInt(6);
-			if(randomId < 3) {
+			int randomId = rand.nextInt(10);
+			if(randomId < 4) { // 40%
 				putIntoGame(new EnemyNormal(0, 0, gs));
-			} else if(randomId < 5) {
+			} else if(randomId < 7) { // 30 %
+				putIntoGame(new EnemyWanderer(0, 0, gs));
+			} else if(randomId < 9) { // 20%
 				putIntoGame(new EnemyFast(0, 0, gs));
-			} else {
+			} else { // 10%
 				putIntoGame(new EnemyBooster(0, 0, gs));
 			}
 		}

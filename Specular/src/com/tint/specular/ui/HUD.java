@@ -7,7 +7,7 @@ import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 
 public class HUD {
-	private Texture hudTop, hudBottom, bar;
+	private Texture hudTop, hudBottom, bar, multiplierBar;
 	private GameState gs;
 	
 	public HUD(GameState gs) {
@@ -16,9 +16,17 @@ public class HUD {
 		hudTop = new Texture(Gdx.files.internal("graphics/game/HUD top.png"));
 		hudBottom = new Texture(Gdx.files.internal("graphics/game/HUD bottom.png"));
 		bar = new Texture(Gdx.files.internal("graphics/game/Bar.png"));
+		
+		multiplierBar = new Texture(Gdx.files.internal("graphics/game/MP Bar.png"));
 	}
 
-	public void render(SpriteBatch batch) {
+	public void render(SpriteBatch batch, float multiplierTimer) {
+		float multiplierPercent = 1 - multiplierTimer / 360;
+		float x = -multiplierBar.getWidth() / 2 * ( multiplierPercent);
+		
+		int width = (int) (multiplierBar.getWidth() * multiplierPercent);
+		batch.draw(multiplierBar, 0, 200, 0, 0, width, multiplierBar.getHeight());
+		
 		batch.draw(hudBottom, -hudBottom.getWidth() / 2, -Specular.camera.viewportHeight / 2);
 		batch.draw(hudTop, -hudTop.getWidth() / 2, Specular.camera.viewportHeight / 2 - hudTop.getHeight());
 		

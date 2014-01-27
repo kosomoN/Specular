@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -77,11 +78,12 @@ public class GameState extends State {
 	private long lastTickTime = System.nanoTime();
 	private boolean paused = false;
 	private int powerUpSpawnTime = 600;		// 10 sec in updates / ticks
+	private float scoreMultiplierTimer = 360; // 6 sec in updates / ticks
 	
 	// Fields that affect score or gameplay
-	private double scoreMultiplier = 1;
-	private boolean enablePowerUps = true;
+	private int scoreMultiplier = 1;
 	private int enemiesKilled;
+	private boolean enablePowerUps = true;
 //	private int comboToNextScoreMult = 2;
 	
 	// Lists for keeping track of entities in the world
@@ -195,17 +197,31 @@ public class GameState extends State {
 			if(entities.contains(player, true))
 				ticks++;
 			
-			if(scoreMultiplier > 1)
-				scoreMultiplier -= (int) (enemies.size / 10) / 240f;
-			else
-				scoreMultiplier = 1;
+			// Updating combos
+			cs.update();
 			
-			if(gameMode.isGameOver()) {
-				// Code for death animation
-			} else {
+			if(scoreMultiplier > 1) {
+				if(scoreMultiplierTimer < 360) {
+					float enemySizeDecrease = (float) scoreMultiplier / 2;
+					
+					scoreMultiplierTimer += enemySizeDecrease;
+					System.out.println(enemySizeDecrease);
+				} else {
+					scoreMultiplierTimer = 0;
+					scoreMultiplier--;
+				}
+			}
+
+			
+			if(cs.getCombo() > 7) {
+				setScoreMultiplier(scoreMultiplier + 1);
+				cs.resetCombo();
+			}
+			
+			if(!gameMode.isGameOver()) {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
-				player.updateHitDetection();
+//				player.updateHitDetection();
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isHit())
 					ess.update(ticks);
@@ -266,14 +282,6 @@ public class GameState extends State {
 		        }
 			}
 			
-			// Updating combos
-			cs.update();
-			
-			if(cs.getCombo() > 7) {
-				setScoreMultiplier(scoreMultiplier + 1);
-				cs.resetCombo();
-			}
-			
 			boolean playerKilled = false;		// A variable to keep track of player status
 			
 			// Removing destroyed entities
@@ -324,6 +332,10 @@ public class GameState extends State {
 			
 			CameraShake.update();
 		}
+		
+		if(input.isKeyPressed(Keys.F)) {
+			puss.spawn(new ScoreMultiplier(0, 0, this));
+		}
 	}
 	
 	protected void renderGame() {
@@ -372,16 +384,18 @@ public class GameState extends State {
 			gameInputProcessor.getMoveStick().render(game.batch);
 
 			//Drawing HUD
-			hud.render(game.batch);
+			hud.render(game.batch, scoreMultiplierTimer);
 			
 			// Drawing SCORE in the middle top of the screen
 			Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
 					Specular.camera.viewportHeight / 2 - 36);
 			// Drawing MULTIPLIER on screen
-			Util.writeCentered(game.batch, multiplierFont, (int) scoreMultiplier + "x", 0,
+			Util.writeCentered(game.batch, multiplierFont, Math.round(scoreMultiplier) + "x", 0,
 					Specular.camera.viewportHeight / 2 - 98);
+			Util.writeCentered(game.batch, multiplierFont, scoreMultiplierTimer + "", 0,
+					Specular.camera.viewportHeight / 2 - 180);
 			gameMode.render(game.batch);
-			} else {
+		} else {
 				game.batch.setColor(Color.WHITE);
 				game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
 			ggInputProcessor.getRetryBtn().render();
@@ -406,7 +420,9 @@ public class GameState extends State {
 		entities.add(entity);
 	}
 	
-	public void setScoreMultiplier(double multiplier) { scoreMultiplier = multiplier < 1 ? 1 : multiplier; }
+	public void setScoreMultiplier(int multiplier) {
+		scoreMultiplier = multiplier;
+	}
 	
 	public Specular getGame() {	return game; }
 	public GameInputProcessor getGameProcessor() { return gameInputProcessor; }
@@ -420,7 +436,7 @@ public class GameState extends State {
 	public ParticleSpawnSystem getParticleSpawnSystem() { return pass; }
 	public Map getCurrentMap() { return currentMap;	}
 	
-	public double getScoreMultiplier() { return scoreMultiplier; }
+	public int getScoreMultiplier() { return scoreMultiplier; }
 	
 	/** Get a custom BitmapFont based on its size. If there is no font with that size it returns default font.
 	 * @param size - The size of the wanted font
@@ -485,6 +501,7 @@ public class GameState extends State {
 		EnemyVirus.virusAmount = 0;
 		
 		cs.resetCombo();
+		scoreMultiplier = 1;
 	}
 
 	@Override

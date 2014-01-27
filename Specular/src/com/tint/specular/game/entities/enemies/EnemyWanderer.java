@@ -19,11 +19,12 @@ public class EnemyWanderer extends Enemy {
 	private float rotation;
 	private float dirChangeRateMs = 2000f;
 	private float timeSinceLastDirChange;
-	private double angle;
+	private double angle, turnRate;
 	
 	public EnemyWanderer(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
 		angle = Math.random() * 360;
+		turnRate = 20;//Math.random() * 40 - 20;
 	}
 	
 	public static void init() {
@@ -33,7 +34,8 @@ public class EnemyWanderer extends Enemy {
 	
 	@Override
 	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, texture, x, y, rotation);
+		rotation -= Gdx.graphics.getDeltaTime();
+		Util.drawCentered(batch, texture, x, y, rotation * 90 % 360);
 	}
 	
 	@Override
@@ -41,26 +43,40 @@ public class EnemyWanderer extends Enemy {
 		//10 ms is the update rate
 		timeSinceLastDirChange += 10;
 		if(timeSinceLastDirChange > dirChangeRateMs) {
-			angle = Math.random() * 360;
+			turnRate = Math.random() * 40 - 20;
 			timeSinceLastDirChange = 0;
 		}
+		angle += turnRate / 180 * Math.PI;
 		
-		dx = (float) (Math.cos(angle) * 2);
-		dy = (float) (Math.sin(angle) * 2);
+		dx = (float) (Math.cos(angle / 180 * Math.PI) * 2);
+		dy = (float) (Math.sin(angle / 180 * Math.PI) * 2);
 		x += dx * (1 - slowdown);
 		y += dy * (1 - slowdown);
 		
 		//Checking so that the enemy will not get outside the map
+		// Left edge
 		if(x - 20 < 0) {
 			x = 20;
-		} else if(x + 20 > gs.getCurrentMap().getWidth()){
-			x = gs.getCurrentMap().getWidth() - 20;
+			
+			angle = Math.random() * 90 - 45;
 		}
-		
+		// Right edge
+		else if(x + 20 > gs.getCurrentMap().getWidth()){
+			x = gs.getCurrentMap().getWidth() - 20;
+			
+			angle = Math.random() * 90 + 135;
+		}
+		// Upper edge
 		if(y - 20 < 0) {
 			y = 20;
-		} else if(y + 20 > gs.getCurrentMap().getHeight()){
+			
+			angle = Math.random() * 90 + 45;
+		}
+		// Lower edge
+		else if(y + 20 > gs.getCurrentMap().getHeight()){
 			y = gs.getCurrentMap().getHeight() - 20;
+			
+			angle = Math.random() * 90 + 225;
 		}
 		
 		return super.update();

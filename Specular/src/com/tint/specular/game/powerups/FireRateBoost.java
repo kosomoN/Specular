@@ -26,7 +26,7 @@ private static Texture texture;
 	
 	@Override
 	protected void affect(Player player) {
-		player.setFireRate(player.getFireRate() / 2);
+		player.setFireRate(player.getFireRate() * 3 / 4f); // 50% boost
 	}
 
 	@Override
