@@ -21,7 +21,7 @@ public class ComboSystem {
 	
 	public void activate(int enemiesAlive) {
 		activated = true;
-		timer = 300 - enemiesAlive * 2f;
+		timer = 250;
 		combo++;
 	}
 	

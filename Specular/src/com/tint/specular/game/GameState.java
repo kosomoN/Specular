@@ -78,7 +78,7 @@ public class GameState extends State {
 	private long lastTickTime = System.nanoTime();
 	private boolean paused = false;
 	private int powerUpSpawnTime = 600;		// 10 sec in updates / ticks
-	private float scoreMultiplierTimer = 360; // 6 sec in updates / ticks
+	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
 	
 	// Fields that affect score or gameplay
 	private int scoreMultiplier = 1;
@@ -205,7 +205,6 @@ public class GameState extends State {
 					float enemySizeDecrease = (float) scoreMultiplier / 2;
 					
 					scoreMultiplierTimer += enemySizeDecrease;
-					System.out.println(enemySizeDecrease);
 				} else {
 					scoreMultiplierTimer = 0;
 					scoreMultiplier--;
@@ -221,7 +220,7 @@ public class GameState extends State {
 			if(!gameMode.isGameOver()) {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
-//				player.updateHitDetection();
+				player.updateHitDetection();
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isHit())
 					ess.update(ticks);
@@ -392,8 +391,6 @@ public class GameState extends State {
 			// Drawing MULTIPLIER on screen
 			Util.writeCentered(game.batch, multiplierFont, Math.round(scoreMultiplier) + "x", 0,
 					Specular.camera.viewportHeight / 2 - 98);
-			Util.writeCentered(game.batch, multiplierFont, scoreMultiplierTimer + "", 0,
-					Specular.camera.viewportHeight / 2 - 180);
 			gameMode.render(game.batch);
 		} else {
 				game.batch.setColor(Color.WHITE);
@@ -422,6 +419,7 @@ public class GameState extends State {
 	
 	public void setScoreMultiplier(int multiplier) {
 		scoreMultiplier = multiplier;
+		scoreMultiplierTimer = 0;
 	}
 	
 	public Specular getGame() {	return game; }

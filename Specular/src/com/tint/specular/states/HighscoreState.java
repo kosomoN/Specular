@@ -64,6 +64,8 @@ public class HighscoreState extends State {
 		Specular.camera.position.set(Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight / 2, 0);
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
+		
+		((MainmenuState) game.getState(Specular.States.MAINMENUSTATE)).startMusic();
 	}
 	
 	private void createUi() {

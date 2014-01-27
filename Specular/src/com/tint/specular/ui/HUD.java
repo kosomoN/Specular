@@ -22,10 +22,13 @@ public class HUD {
 
 	public void render(SpriteBatch batch, float multiplierTimer) {
 		float multiplierPercent = 1 - multiplierTimer / 360;
-		float x = -multiplierBar.getWidth() / 2 * ( multiplierPercent);
 		
-		int width = (int) (multiplierBar.getWidth() * multiplierPercent);
-		batch.draw(multiplierBar, 0, 200, 0, 0, width, multiplierBar.getHeight());
+		
+		int textureWidth = (int) (multiplierBar.getWidth() * multiplierPercent);
+		int x = -textureWidth / 2;
+		int textureX = (int) (multiplierBar.getWidth() * (1 - multiplierPercent) / 2);
+		
+		batch.draw(multiplierBar, x, Specular.camera.viewportHeight / 2 - 155, textureX, 0, textureWidth, multiplierBar.getHeight());
 		
 		batch.draw(hudBottom, -hudBottom.getWidth() / 2, -Specular.camera.viewportHeight / 2);
 		batch.draw(hudTop, -hudTop.getWidth() / 2, Specular.camera.viewportHeight / 2 - hudTop.getHeight());

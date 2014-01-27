@@ -21,7 +21,6 @@ public class MainmenuState extends State {
 	private Music music;
 	private MenuInputProcessor menuInputProcessor;
 	
-	
 	public MainmenuState(Specular game) {
 		super(game);
 		
@@ -33,6 +32,8 @@ public class MainmenuState extends State {
 	}
 
 	
+
+
 	@Override
 	public void render(float delta) {
 		
@@ -67,7 +68,8 @@ public class MainmenuState extends State {
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		menuInputProcessor = new MenuInputProcessor(game,this);
-		music.play();
+		if(!music.isPlaying())
+			music.play();
 		Gdx.input.setInputProcessor(menuInputProcessor);
 	}
 
@@ -84,5 +86,9 @@ public class MainmenuState extends State {
 
 	public void stopMusic() {
 		music.stop();
+	}
+	
+	public void startMusic() {
+		music.play();
 	}
 }
