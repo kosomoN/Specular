@@ -500,6 +500,7 @@ public class GameState extends State {
 		
 		cs.resetCombo();
 		scoreMultiplier = 1;
+		scoreMultiplierTimer = 0;
 	}
 
 	@Override

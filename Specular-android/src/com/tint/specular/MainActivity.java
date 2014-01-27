@@ -3,6 +3,7 @@ package com.tint.specular;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +20,7 @@ import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.Session.NewPermissionsRequest;
+import com.facebook.Session.StatusCallback;
 import com.facebook.SessionState;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
@@ -109,18 +111,35 @@ public class MainActivity extends AndroidApplication {
 				
 				//Checking for publish permissions
 				if(!session.getPermissions().contains("publish_actions")) {
-					session.requestNewPublishPermissions(new NewPermissionsRequest(activity, "publish_actions"));
+					final NewPermissionsRequest permissionRequest = new NewPermissionsRequest(activity, "publish_actions");
+					permissionRequest.setCallback(new StatusCallback() {
+						@Override
+						public void call(Session session, SessionState state, Exception exception) {
+							if(!session.getPermissions().contains("publish_actions")) {
+								Toast.makeText(getApplicationContext(), "Highscore posting failed: No publish permission", Toast.LENGTH_LONG).show();
+							} else {
+								checkAndSendHighscore(session, score);
+							}
+						}
+					});
 					
-					//If not granted return
-					if(!session.getPermissions().contains("publish_actions")) {
-						Toast.makeText(getApplicationContext(), "Highscore posting failed: No publish permission", Toast.LENGTH_LONG).show();
-						return false;
-					}
+					//The request has to be run on the UI thread or bad things happen
+					MainActivity.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							session.requestNewPublishPermissions(permissionRequest);
+						}
+					});
+				} else {
+					checkAndSendHighscore(session, score);
 				}
 				
+				return true;
+			}
+			
+			private void checkAndSendHighscore(final Session session, final int score) {
 				if(fbuser == null) {
-					System.err.println("User is null");
-					return false;
+					Toast.makeText(getApplicationContext(), "Highscore posting failed: User is null", Toast.LENGTH_LONG).show();
 				} else {
 					//Request own score
 					Bundle b = new Bundle();
@@ -130,8 +149,13 @@ public class MainActivity extends AndroidApplication {
 						public void onCompleted(Response response) {
 							try {
 								//Read score from JSON
-								JSONObject array = (JSONObject) response.getGraphObject().getInnerJSONObject().getJSONArray("data").get(0);
-								long oldScore = (Integer) array.get("score");
+								
+								JSONArray jsonArray = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+								long oldScore = 0;
+								
+								//Check if the user has a previous score
+								if(jsonArray.length() > 0)
+									oldScore = (Integer) ((JSONObject) jsonArray.get(0)).get("score");
 								
 								//Send if new highscore
 								if(oldScore < score) {
@@ -144,16 +168,8 @@ public class MainActivity extends AndroidApplication {
 						}
 					});
 					
-					//The request has to be run on the UI thread or bad things happen
-					MainActivity.this.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							r.executeAsync();
-						}
-					});
+					r.executeAsync();
 				}
-				
-				return true;
 			}
 			
 
