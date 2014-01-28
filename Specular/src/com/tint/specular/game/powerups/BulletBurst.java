@@ -33,12 +33,13 @@ public class BulletBurst extends PowerUp {
 		this.player = player;
 
 		// Level increases or decreases
-		if(levelDown)
+		if(levelDown) {
 			if(level > 0)
 				level--;
-		else
+		} else {
 			if(level < 3)
 				level++;
+		}
 		
 		// Affects player according to level
 		if(level == 0) {
