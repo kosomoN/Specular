@@ -4,7 +4,7 @@ import java.util.Random;
 
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.powerups.AddLife;
-import com.tint.specular.game.powerups.BulletBurst_5;
+import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.PowerUp;
 import com.tint.specular.game.powerups.ScoreMultiplier;
@@ -38,7 +38,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		else if(powerUpID == 1)
 			gs.addEntity(new FireRateBoost(x, y, gs));
 		else if(powerUpID == 2)
-			gs.addEntity(new BulletBurst_5(x, y, gs));
+			gs.addEntity(new BulletBurst(x, y, gs));
 		else if(powerUpID == 3)
 			gs.addEntity(new ScoreMultiplier(x, y, gs));
 		else if(powerUpID == 4)

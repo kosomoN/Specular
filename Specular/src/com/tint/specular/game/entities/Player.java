@@ -42,12 +42,37 @@ public class Player implements Entity {
 	private int score = 0;
 	
 	private boolean isHit, spawning, dead;
+	private boolean shot90, shot180;
 	
 	public Player(GameState gs, float x, float y, int lives) {
 		this.gs = gs;
 		centerx = x;
 		centery = y;
 		setLife(lives);
+	}
+	
+	private void shoot(float direction, int offset, int spaces) {
+		//If the amount of bullet "lines" are even
+		if(bulletBurst % 2 == 0) {
+			for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
+				if(j == 0) {
+					gs.addEntity(new Bullet(centerx, centery, direction + offset / 2, dx, dy, gs, this));
+					gs.addEntity(new Bullet(centerx, centery, direction - offset / 2, dx, dy, gs, this));
+				} else {
+					gs.addEntity(new Bullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy, gs, this));
+					gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs, this));
+				}
+			}
+			
+		//If the number of bullet "lines" are odd
+		} else {
+			gs.addEntity(new Bullet(centerx, centery, direction, dx, dy, gs, this));
+
+			for(int i = 0; i < spaces / 2; i++) {
+				gs.addEntity(new Bullet(centerx, centery, direction + (i + 1) * offset, dx, dy, gs, this));
+				gs.addEntity(new Bullet(centerx, centery, direction - (i + 1) * offset, dx, dy, gs, this));
+			}
+		}
 	}
 	
 	@Override
@@ -158,29 +183,29 @@ public class Player implements Entity {
 
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
 				int spaces = bulletBurst - 1;
-				
 				int offset = 8;
 				
-				//If the amount of bullet "lines" are even
-				if(bulletBurst % 2 == 0) {
-					for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
-						if(j == 0) {
-							gs.addEntity(new Bullet(centerx, centery, direction + offset / 2, dx, dy, gs, this));
-							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2, dx, dy, gs, this));
-						} else {
-							gs.addEntity(new Bullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy, gs, this));
-							gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs, this));
-						}
-					}
+				// Straight
+				shoot(direction, offset, spaces);
+				
+				if(shot180) {
+					// Backwards
+					direction += 180;
+					direction = direction % 360;
 					
-				//If the number of bullet "lines" are odd
-				} else {
-					gs.addEntity(new Bullet(centerx, centery, direction, dx, dy, gs, this));
-
-					for(int i = 0; i < spaces / 2; i++) {
-						gs.addEntity(new Bullet(centerx, centery, direction + (i + 1) * offset, dx, dy, gs, this));
-						gs.addEntity(new Bullet(centerx, centery, direction - (i + 1) * offset, dx, dy, gs, this));
-					}
+					shoot(direction, offset, 2);
+				}
+				
+				if(shot90) {
+					// Right
+					direction += 90;
+					direction = direction % 360;
+					shoot(direction, offset, 2);
+					
+					// Left
+					direction -= 180;
+					direction = direction  % 360;
+					shoot(direction, offset, 2);
 				}
 				
 				timeSinceLastFire = 0;
@@ -233,7 +258,6 @@ public class Player implements Entity {
         }
 	}
 
-	//POWER-UPS
 	public void addShield() {
 		if(shields < 3)
 			shields++;
@@ -277,6 +301,15 @@ public class Player implements Entity {
 	public void setBulletBurst(int burst) {
 		bulletBurst = burst;
 	}
+	
+	public void setShot90(boolean shot90) {
+		this.shot90 = shot90;
+	}
+	
+	public void setShot180(boolean shot180) {
+		this.shot180 = shot180;
+	}
+	
 	public void setLife(int life) { this.life = life; }
 	public void setHit(boolean hit) { isHit = hit; }
 	public void kill() { life = 0; }

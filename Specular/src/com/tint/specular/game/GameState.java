@@ -28,7 +28,7 @@ import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.gamemodes.GameMode;
 import com.tint.specular.game.gamemodes.Ranked;
 import com.tint.specular.game.powerups.AddLife;
-import com.tint.specular.game.powerups.BulletBurst_5;
+import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
@@ -156,7 +156,7 @@ public class GameState extends State {
 		
 		// Initializing power-ups
 		AddLife.init();
-		BulletBurst_5.init();
+		BulletBurst.init();
 		FireRateBoost.init();
 		ScoreMultiplier.init();
 		ShieldUpgrade.init();
@@ -320,10 +320,6 @@ public class GameState extends State {
 			}
 			
 			CameraShake.update();
-		}
-		
-		if(input.isKeyPressed(Keys.F)) {
-			puss.spawn(new ScoreMultiplier(0, 0, this));
 		}
 	}
 	

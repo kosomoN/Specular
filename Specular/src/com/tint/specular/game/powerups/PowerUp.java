@@ -54,6 +54,7 @@ public abstract class PowerUp implements Entity {
 	
 	public float getCenterX() { return x; }
 	public float getCenterY() {	return y; }
+	public boolean isActivated() { return activated; }
 	public abstract float getRadius();
 	public abstract Texture getTexture();
 }

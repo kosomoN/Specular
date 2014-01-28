@@ -34,7 +34,7 @@ private static Texture texture;
 
 	@Override
 	public void render(SpriteBatch batch) {
-		if(despawnTime > 0)
+		if(!isActivated() && despawnTime > 0)
 			Util.drawCentered(batch, texture, x, y, 0);
 	}
 	
@@ -44,7 +44,7 @@ private static Texture texture;
 			for(Enemy e : gs.getEnemies())
 				e.setSlowdown(0f);
 		else
-			return false;
+			return despawnTime <= 0;
 		
 		return true;
 	}

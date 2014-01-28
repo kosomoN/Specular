@@ -32,8 +32,13 @@ public class ScoreMultiplier extends PowerUp {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		if(despawnTime > 0)
+		if(!isActivated() && despawnTime > 0)
 			Util.drawCentered(batch, texture, x, y, 0);
+	}
+	
+	@Override
+	public boolean update() {
+		return super.update() == true ? true : despawnTime <= 0;
 	}
 
 	@Override

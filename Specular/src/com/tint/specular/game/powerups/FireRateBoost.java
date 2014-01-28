@@ -34,7 +34,7 @@ public class FireRateBoost extends PowerUp {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		if(despawnTime > 0)
+		if(!isActivated() && despawnTime > 0)
 			Util.drawCentered(batch, texture, x, y, 0);
 	}
 
@@ -43,7 +43,7 @@ public class FireRateBoost extends PowerUp {
 		if(super.update())
 			player.setFireRate(10f);
 		else
-			return false;
+			return despawnTime <= 0;
 		
 		return true;
 	}
