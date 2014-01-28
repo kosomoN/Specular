@@ -40,11 +40,8 @@ public class Specular extends Game {
 	
 	public Specular(Facebook facebook) {
 		Specular.facebook = facebook;
-		
-	
 	}
 	
-		
 	@Override
 	public void create() {
 		float displayAspectRatio = (float) Gdx.graphics.getWidth() / Gdx.graphics.getHeight();
@@ -65,16 +62,16 @@ public class Specular extends Game {
 		
 		
 		states.put(States.LOADINGSTATE, new LoadingState(this));
+		
+		//Enter loading screen state before main menu state
+		enterState(States.LOADINGSTATE);
+	}
+	
+	public void load() {
 		states.put(States.MAINMENUSTATE, new MainmenuState(this));
 //		states.put(States.SETTINGSMENUSTATE, new SettingsMenuState(this));
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
 		states.put(States.PROFILE_STATE, new HighscoreState(this));
-
-		
-		//Enter loading screen state before main menu state
-		enterState(States.LOADINGSTATE);
-		
-
 	}
 	
 	public void enterState(States state) {

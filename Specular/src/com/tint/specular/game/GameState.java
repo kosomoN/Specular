@@ -21,6 +21,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyFast;
 import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
@@ -151,6 +152,7 @@ public class GameState extends State {
 		EnemyBooster.init();
 		EnemyWorm.init();
 		EnemyVirus.init();
+		EnemyShielder.init();
 		AnalogStick.init();
 		
 		// Initializing power-ups

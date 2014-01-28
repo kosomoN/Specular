@@ -102,9 +102,6 @@ public class Player implements Entity {
 			for(int i = 0; i < shields; i++) {
 				Util.drawCentered(batch, shieldTexture, getCenterX(), getCenterY(), -animFrameTime * 360 + 360f * i / shields);
 			}
-			if(shields > 0) {
-				
-			}
 		}
 	}
 	

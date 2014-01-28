@@ -17,7 +17,7 @@ public class SingleplayerGameState extends GameState {
 	@Override
 	public void render(float delta) {
 		if(ready) {
-			super.render(10);
+			super.render(delta);
 		}
 	}
 	

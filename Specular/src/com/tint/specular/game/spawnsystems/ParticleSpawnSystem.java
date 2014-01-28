@@ -42,7 +42,7 @@ public class ParticleSpawnSystem extends SpawnSystem {
 		int offset;
 		
 		Particle p;
-		Type type = null;
+		Type type = Type.ENEMY_STUPID;
 		for(int i = 0; i < amount; i++) {
 			offset = rand.nextInt(50) - 25;
 			
