@@ -27,12 +27,8 @@ public class MainmenuState extends State {
 		GLTexture.setEnforcePotImages(false);
 		background = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Title Background.png"));
 
-			music = Gdx.audio.newMusic(Gdx.files.internal("audio/MainMenuMusic.mp3"));
-
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/MainMenuMusic.mp3"));
 	}
-
-	
-
 
 	@Override
 	public void render(float delta) {

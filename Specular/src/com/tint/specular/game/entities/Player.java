@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
-import com.tint.specular.game.Shield;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
@@ -28,7 +27,7 @@ public class Player implements Entity {
 	private static final float FRICTION = 0.95f;
 	
 	private static Animation anim, spawnAnim, deathAnim;
-	private static Texture playerTex, playerSpawnTex, playerDeathTex;
+	private static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture;
 	private static int radius;
 	
 	private GameState gs;
@@ -53,7 +52,6 @@ public class Player implements Entity {
 		setLife(lives);
 	}
 	
-	
 	@Override
 	public void render(SpriteBatch batch) {
 		animFrameTime += Gdx.graphics.getDeltaTime();
@@ -76,9 +74,14 @@ public class Player implements Entity {
 			}
 		} else {
 			TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
-			if(shields > 0)
-				Shield.render(batch);
+			
 			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
+			for(int i = 0; i < shields; i++) {
+				Util.drawCentered(batch, shieldTexture, getCenterX(), getCenterY(), -animFrameTime * 360 + 360f * i / shields);
+			}
+			if(shields > 0) {
+				
+			}
 		}
 	}
 	
@@ -327,6 +330,8 @@ public class Player implements Entity {
 		deathAnim = Util.getAnimation(playerDeathTex, 128, 128, 1 / 16f, 0, 0, 3, 3);
 		
 		radius = (anim.getKeyFrame(0).getRegionWidth() - 10) / 2;
+		
+		shieldTexture = new Texture(Gdx.files.internal("graphics/game/Shield.png"));
 	}
 	
 	@Override

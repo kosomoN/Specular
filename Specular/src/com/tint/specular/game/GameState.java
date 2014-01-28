@@ -77,7 +77,7 @@ public class GameState extends State {
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
 	private boolean paused = false;
-	private int powerUpSpawnTime = 600;		// 10 sec in updates / ticks
+	private int powerUpSpawnTime = 400;		// 10 sec in updates / ticks
 	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
 	
 	// Fields that affect score or gameplay
@@ -231,7 +231,7 @@ public class GameState extends State {
 			if(powerUpSpawnTime < 0) {
 				if(enablePowerUps) {
 					puss.spawn();
-					powerUpSpawnTime = 600;
+					powerUpSpawnTime = 400;
 				}
 			}
 					
@@ -358,8 +358,6 @@ public class GameState extends State {
 		for(Entity ent : entities) {
 			ent.render(game.batch);
 		}
-		if(player.hasShield())
-			Shield.render(game.batch);
 		
 		// Re-positioning camera for HUD
 		Specular.camera.position.set(0, 0, 0);
@@ -482,7 +480,6 @@ public class GameState extends State {
 		gameInputProcessor.reset();
 		input.setInputProcessor(gameInputProcessor);
 		
-		Shield.init(player);
 		resetGameTime();
 		
 		// Disable or enable virus spawn in start, > 0 = enable & < 0 = disable
