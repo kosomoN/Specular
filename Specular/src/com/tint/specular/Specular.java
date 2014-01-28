@@ -10,8 +10,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.SingleplayerGameState;
 import com.tint.specular.states.Facebook;
 import com.tint.specular.states.HighscoreState;
-import com.tint.specular.states.MainmenuState;
+import com.tint.specular.states.LoadingState;
 import com.tint.specular.states.State;
+import com.tint.specular.states.MainmenuState;
+
+
 
 /**
  * 
@@ -21,7 +24,7 @@ import com.tint.specular.states.State;
 
 public class Specular extends Game {
 	public enum States {
-		MAINMENUSTATE, SETTINGSMENUSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE, PROFILE_STATE;
+		LOADINGSTATE, MAINMENUSTATE, SETTINGSMENUSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE, PROFILE_STATE;
 	}
 	
 	private static final int WIDTH = 1920, HEIGHT = 1080;
@@ -30,13 +33,18 @@ public class Specular extends Game {
 	
 	private Map<States, State> states = new EnumMap<Specular.States, State>(States.class);
 	
+	
+	
 	public static OrthographicCamera camera;
 	public SpriteBatch batch;
 	
 	public Specular(Facebook facebook) {
 		Specular.facebook = facebook;
+		
+	
 	}
 	
+		
 	@Override
 	public void create() {
 		float displayAspectRatio = (float) Gdx.graphics.getWidth() / Gdx.graphics.getHeight();
@@ -55,13 +63,18 @@ public class Specular extends Game {
 		
 		Gdx.input.setCatchBackKey(true);
 		
+		
+		states.put(States.LOADINGSTATE, new LoadingState(this));
 		states.put(States.MAINMENUSTATE, new MainmenuState(this));
 //		states.put(States.SETTINGSMENUSTATE, new SettingsMenuState(this));
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
 		states.put(States.PROFILE_STATE, new HighscoreState(this));
+
 		
+		//Enter loading screen state before main menu state
+		enterState(States.LOADINGSTATE);
 		
-		enterState(States.MAINMENUSTATE);
+
 	}
 	
 	public void enterState(States state) {
@@ -80,5 +93,21 @@ public class Specular extends Game {
 	@Override
 	public void dispose() {
 		batch.dispose();
+		
+
 	}
+	
+@Override 
+public void resize (int width, int height) {
+	super.resize(width, height);
+}
+
+@Override
+public void render() {
+	super.render();
+	
+	
+}
+
+
 }
