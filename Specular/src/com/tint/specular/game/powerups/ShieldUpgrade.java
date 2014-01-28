@@ -18,6 +18,7 @@ public class ShieldUpgrade extends PowerUp {
 	
 	public ShieldUpgrade(float x, float y, GameState gs) {
 		super(x, y, gs);
+		activeTime = -1;
 	}
 	
 	public static void init() {
@@ -31,7 +32,8 @@ public class ShieldUpgrade extends PowerUp {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, texture, x, y, 0);
+		if(despawnTime > 0)	
+			Util.drawCentered(batch, texture, x, y, 0);
 	}
 
 	@Override

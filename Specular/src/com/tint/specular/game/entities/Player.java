@@ -35,8 +35,6 @@ public class Player implements Entity {
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
-	private float fireRateTimer;	// In ticks
-	private float burstTimer;
 	
 	private int life = 3;
 	private int shields;
@@ -87,24 +85,9 @@ public class Player implements Entity {
 	
 	@Override
 	public boolean update() {
-		// Updating fire rate
-		if(fireRateTimer > 0) {
-			fireRateTimer--;
-		} else {
-			fireRate = 10f;
-		}
-		
-		// Updating burst
-		if(burstTimer > 0) {
-			burstTimer--;
-		} else {
-			bulletBurst = 3;
-		}
-		
 		// Taking control away when player is hit and respawning
 		if(!isHit && !spawning) {
 			updateMovement();
-			
 			updateShooting();
 		}
 		
@@ -226,6 +209,15 @@ public class Player implements Entity {
     					animFrameTime = 0;
     					clearEnemies = true;
     					
+    					// Particles
+    					/*
+    					if(life <= 0) {
+    						gs.getParticleSpawnSystem().spawn(this, 200, false);
+    						gs.getParticleSpawnSystem().spawn(this, 80, true);
+    					} else {
+    						gs.getParticleSpawnSystem().spawn(this, 100, false);
+    					}*/
+    					
     					break;
         			}
 	        	}
@@ -280,12 +272,10 @@ public class Player implements Entity {
 	 */
 	public void setFireRate(float fireRate) {
 		this.fireRate = fireRate;
-		fireRateTimer = 600; // 10s
 	}
 	
 	public void setBulletBurst(int burst) {
 		bulletBurst = burst;
-		burstTimer = 600;
 	}
 	public void setLife(int life) { this.life = life; }
 	public void setHit(boolean hit) { isHit = hit; }

@@ -19,6 +19,7 @@ private static Texture texture;
 	
 	public SlowdownEnemies(float x, float y, GameState gs) {
 		super(x, y, gs);
+		activeTime = 300;
 	}
 	
 	public static void init() {
@@ -33,7 +34,19 @@ private static Texture texture;
 
 	@Override
 	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, texture, x, y, 0);
+		if(despawnTime > 0)
+			Util.drawCentered(batch, texture, x, y, 0);
+	}
+	
+	@Override
+	public boolean update() {
+		if(super.update())
+			for(Enemy e : gs.getEnemies())
+				e.setSlowdown(0f);
+		else
+			return false;
+		
+		return true;
 	}
 
 	@Override

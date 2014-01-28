@@ -13,9 +13,11 @@ import com.tint.specular.game.entities.Player;
 
 public abstract class PowerUp implements Entity {
 	
-	protected float x, y;
 	protected GameState gs;
+	protected float x, y;
 	protected float despawnTime = 900; // 15s
+	protected float activeTime;
+	private boolean activated;
 	
 	public PowerUp(float x, float y, GameState gs) {
 		this.x = x;
@@ -25,13 +27,22 @@ public abstract class PowerUp implements Entity {
 	
 	@Override
 	public boolean update() {
-		despawnTime--;
-		if((getCenterX() - gs.getPlayer().getCenterX()) * (getCenterX() - gs.getPlayer().getCenterX()) + (getCenterY() - gs.getPlayer().getCenterY()) * (getCenterY() - gs.getPlayer().getCenterY())
-				< (Player.getRadius() + getRadius()) * (Player.getRadius() + getRadius())) {
-			affect(gs.getPlayer());
-			return true;
+		if(!activated) {
+			despawnTime--;
+			if((getCenterX() - gs.getPlayer().getCenterX()) * (getCenterX() - gs.getPlayer().getCenterX()) + (getCenterY() - gs.getPlayer().getCenterY()) * (getCenterY() - gs.getPlayer().getCenterY())
+					< (Player.getRadius() + getRadius()) * (Player.getRadius() + getRadius())) {
+				affect(gs.getPlayer());
+				activated = true;
+			}
+			return false;
+		} else {
+			if(activeTime > 0)
+				activeTime--;
+			else if(activeTime <= 0)
+				return true;
+			
+			return false;
 		}
-		return despawnTime <= 0;
 	}
 	
 	protected abstract void affect(Player p);

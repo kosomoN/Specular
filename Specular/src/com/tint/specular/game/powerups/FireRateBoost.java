@@ -14,10 +14,12 @@ import com.tint.specular.utils.Util;
  */
 
 public class FireRateBoost extends PowerUp {
-private static Texture texture;
+	private static Texture texture;
+	private Player player;
 	
 	public FireRateBoost(float x, float y, GameState gs) {
 		super(x, y, gs);
+		activeTime = 600;
 	}
 	
 	public static void init() {
@@ -26,12 +28,24 @@ private static Texture texture;
 	
 	@Override
 	protected void affect(Player player) {
+		this.player = player;
 		player.setFireRate(player.getFireRate() * 3 / 4f); // 50% boost
 	}
 
 	@Override
 	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, texture, x, y, 0);
+		if(despawnTime > 0)
+			Util.drawCentered(batch, texture, x, y, 0);
+	}
+
+	@Override
+	public boolean update() {
+		if(super.update())
+			player.setFireRate(10f);
+		else
+			return false;
+		
+		return true;
 	}
 
 	@Override

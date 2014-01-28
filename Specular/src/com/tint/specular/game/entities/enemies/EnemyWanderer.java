@@ -18,6 +18,7 @@ import com.tint.specular.utils.Util;
 public class EnemyWanderer extends Enemy {
 
 	private static Texture texture;
+	private static Random random = new Random();
 	private float rotation;
 	private float dirChangeRateMs = 2000f;
 	private float timeSinceLastDirChange;
@@ -25,8 +26,8 @@ public class EnemyWanderer extends Enemy {
 	
 	public EnemyWanderer(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
-		angle = Math.random() * 360;
-		turnRate = 20;//Math.random() * 40 - 20;
+		angle = random.nextInt(360);
+		turnRate = random.nextInt(40) - 20;
 	}
 	
 	public static void init() {
@@ -42,12 +43,10 @@ public class EnemyWanderer extends Enemy {
 	
 	@Override
 	public boolean update() {
-		Random r = new Random();
-		
 		//10 ms is the update rate
 		timeSinceLastDirChange += 10;
 		if(timeSinceLastDirChange > dirChangeRateMs) {
-			turnRate = r.nextInt(40) - 20;
+			turnRate = random.nextInt(40) - 20;
 			timeSinceLastDirChange = 0;
 		}
 		angle += turnRate / 180 * Math.PI;
@@ -62,25 +61,25 @@ public class EnemyWanderer extends Enemy {
 		if(x - 20 < 0) {
 			x = 20;
 			
-			angle = r.nextInt(90) - 45;
+			angle = random.nextInt(90) - 45;
 		}
 		// Right edge
 		else if(x + 20 > gs.getCurrentMap().getWidth()){
 			x = gs.getCurrentMap().getWidth() - 20;
 			
-			angle = r.nextInt(90) + 135;
+			angle = random.nextInt(90) + 135;
 		}
 		// Upper edge
 		if(y - 20 < 0) {
 			y = 20;
 			
-			angle = r.nextInt(90) + 45;
+			angle = random.nextInt(90) + 45;
 		}
 		// Lower edge
 		else if(y + 20 > gs.getCurrentMap().getHeight()){
 			y = gs.getCurrentMap().getHeight() - 20;
 			
-			angle = r.nextInt(90) + 225;
+			angle = random.nextInt(90) + 225;
 		}
 		
 		return super.update();
