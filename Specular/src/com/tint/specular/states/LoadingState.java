@@ -1,7 +1,6 @@
 package com.tint.specular.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,7 +17,8 @@ import com.tint.specular.Specular.States;
 public class LoadingState extends State {
 	
 	private Texture background;
-	private long timeShowed; 
+//	private long timeShowed;
+	private boolean hasRendered = false; 
 
 	public LoadingState(Specular game) {
 		super(game);
@@ -42,11 +42,15 @@ public class LoadingState extends State {
 		game.batch.draw(background, 0, 0);
 		game.batch.end();
 		
-		game.load();
+		if(hasRendered) {
+			game.load();
+			
+//			if(System.currentTimeMillis() - timeShowed > 2000) {
+				game.enterState(States.MAINMENUSTATE);
+//			} 
+		}
 		
-		if(System.currentTimeMillis() - timeShowed > 1000) {
-			game.enterState(States.MAINMENUSTATE);
-		} 
+		hasRendered = true;
 	}
 
 	@Override
@@ -56,7 +60,7 @@ public class LoadingState extends State {
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
-		timeShowed = System.currentTimeMillis();
+//		timeShowed = System.currentTimeMillis();
 	}
 
 	@Override
