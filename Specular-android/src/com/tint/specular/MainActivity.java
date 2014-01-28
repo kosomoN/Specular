@@ -131,7 +131,12 @@ public class MainActivity extends AndroidApplication {
 						}
 					});
 				} else {
-					checkAndSendHighscore(session, score);
+					MainActivity.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							checkAndSendHighscore(session, score);
+						}
+					});
 				}
 				
 				return true;
@@ -144,12 +149,12 @@ public class MainActivity extends AndroidApplication {
 					//Request own score
 					Bundle b = new Bundle();
 					b.putString("access_token", session.getAccessToken());
-					final Request r = new Request(session, fbuser.getId() + "/scores", b, HttpMethod.GET, new Request.Callback() {
+					new Request(session, fbuser.getId() + "/scores", b, HttpMethod.GET, new Request.Callback() {
 						@Override
 						public void onCompleted(Response response) {
 							try {
-								//Read score from JSON
 								
+								//Read score from JSON
 								JSONArray jsonArray = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
 								long oldScore = 0;
 								
@@ -166,9 +171,7 @@ public class MainActivity extends AndroidApplication {
 								e.printStackTrace();
 							}
 						}
-					});
-					
-					r.executeAsync();
+					}).executeAsync();
 				}
 			}
 			
