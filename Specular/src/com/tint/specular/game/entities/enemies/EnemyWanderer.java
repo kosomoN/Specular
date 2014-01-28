@@ -1,5 +1,7 @@
 package com.tint.specular.game.entities.enemies;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -40,10 +42,12 @@ public class EnemyWanderer extends Enemy {
 	
 	@Override
 	public boolean update() {
+		Random r = new Random();
+		
 		//10 ms is the update rate
 		timeSinceLastDirChange += 10;
 		if(timeSinceLastDirChange > dirChangeRateMs) {
-			turnRate = Math.random() * 40 - 20;
+			turnRate = r.nextInt(40) - 20;
 			timeSinceLastDirChange = 0;
 		}
 		angle += turnRate / 180 * Math.PI;
@@ -58,25 +62,25 @@ public class EnemyWanderer extends Enemy {
 		if(x - 20 < 0) {
 			x = 20;
 			
-			angle = Math.random() * 90 - 45;
+			angle = r.nextInt(90) - 45;
 		}
 		// Right edge
 		else if(x + 20 > gs.getCurrentMap().getWidth()){
 			x = gs.getCurrentMap().getWidth() - 20;
 			
-			angle = Math.random() * 90 + 135;
+			angle = r.nextInt(90) + 135;
 		}
 		// Upper edge
 		if(y - 20 < 0) {
 			y = 20;
 			
-			angle = Math.random() * 90 + 45;
+			angle = r.nextInt(90) + 45;
 		}
 		// Lower edge
 		else if(y + 20 > gs.getCurrentMap().getHeight()){
 			y = gs.getCurrentMap().getHeight() - 20;
 			
-			angle = Math.random() * 90 + 225;
+			angle = r.nextInt(90) + 225;
 		}
 		
 		return super.update();

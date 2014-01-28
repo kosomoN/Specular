@@ -305,7 +305,6 @@ public class Player implements Entity {
 	public boolean isHit() { return isHit; }
 	public boolean isSpawning() { return spawning; }
 	public boolean isDead() { return dead; }
-	public boolean isGameOver() { return life <= 0; }
 	public GameState getGameState() { return gs; }
 	
 	public void respawn() {

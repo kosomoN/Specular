@@ -235,7 +235,7 @@ public class GameState extends State {
 				}
 			}
 					
-			if(player != null && !player.isGameOver()) {
+			if(player != null && !gameMode.isGameOver()) {
 				// Checking if any bullet hit an enemy
 				for(Bullet b : bullets) {
 					for(Enemy e : enemies) {
@@ -265,8 +265,7 @@ public class GameState extends State {
 					}
 				}
 				
-				if(!player.isHit() && player.isDead()) {
-					System.out.println("J");
+				if(!player.isHit() && player.isDead() && gameMode.isGameOver()) {
 					player.respawn();
 		        	pss.spawn(player.getLife(), true);
 		        }
