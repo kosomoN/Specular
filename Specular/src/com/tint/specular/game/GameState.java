@@ -122,7 +122,7 @@ public class GameState extends State {
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
 		
 		// Creating Array containing music file paths
-		String[] musicFileNames = new String[]{"01.mp3","02.mp3","03.mp3","04.mp3","05.mp3","06.mp3"};
+		String[] musicFileNames = new String[]{"01.mp3","02.mp3","03.mp3","05.mp3","06.mp3"};
 		
 		//Loading HUD
 		hud = new HUD(this);
