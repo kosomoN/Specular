@@ -3,6 +3,7 @@ package com.tint.specular.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,6 +15,9 @@ import com.tint.specular.input.MenuInputProcessor;
  * @author Daniel Riissanen
  *
  */
+
+
+
 
 public class MainmenuState extends State {
 	
@@ -36,8 +40,7 @@ public class MainmenuState extends State {
 		update(delta);
 		
 		renderMenu();
-	}
-	
+	}	
 	public void renderMenu() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
@@ -50,8 +53,11 @@ public class MainmenuState extends State {
 		game.batch.end();
 		
 		if(Gdx.input.isKeyPressed(Keys.BACK))
+	
 			Gdx.app.exit();
+
 	}
+	
 	
 	public void update(float delta) {
 		

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
@@ -52,7 +53,6 @@ import com.tint.specular.utils.Util;
  * @author Daniel Riissanen, Onni Kosomaa
  *
  */
-
 public class GameState extends State {
 	
 	// Different spawnsystems and a system for keeping track of combos
@@ -176,6 +176,8 @@ public class GameState extends State {
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + musicFileNames[(int)(Math.random()*musicFileNames.length)]));
 			
+			
+	
 }
 		
 	@Override
@@ -190,7 +192,7 @@ public class GameState extends State {
         renderGame();
 	}
 	
-	
+
 	
 	protected void update() {
 		if(!paused) {
@@ -212,6 +214,10 @@ public class GameState extends State {
 				}
 			}
 
+	}
+			
+
+			
 			
 			if(cs.getCombo() > 7) {
 				setScoreMultiplier(scoreMultiplier + 1);
@@ -225,7 +231,8 @@ public class GameState extends State {
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isHit())
 					ess.update(ticks);
-			}
+
+			
 			
 			// Update power-ups
 			powerUpSpawnTime--;
@@ -292,6 +299,8 @@ public class GameState extends State {
 					it.remove();
 				}
 			}
+			
+			
 			
 			if(playerKilled) {
 				// Time attack

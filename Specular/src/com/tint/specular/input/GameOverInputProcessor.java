@@ -2,6 +2,7 @@ package com.tint.specular.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
@@ -55,6 +56,8 @@ public class GameOverInputProcessor extends InputAdapter {
 		else if(highscores.isOver(touchpointx, touchpointy, false))
 			highscores.touchOver(touchpointx, touchpointy);
 			
+
+		
 		touch = true;
 		return false;
 	}
@@ -92,6 +95,8 @@ public class GameOverInputProcessor extends InputAdapter {
 			}
 		}
 		
+
+		
 		return false;
 	}
 
@@ -117,6 +122,7 @@ public class GameOverInputProcessor extends InputAdapter {
 		} else {
 			highscores.touchUp();
 		}
+
 		return false;
 	}
 	

@@ -3,6 +3,7 @@ package com.tint.specular.game.entities;
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -43,15 +44,28 @@ public class Player implements Entity {
 	
 	private boolean isHit, spawning, dead;
 	private boolean shot90, shot180;
+//-----------------SOUND FX-----------------------	
 	
+	//Shoot sound
+	Sound soundShoot = Gdx.audio.newSound(Gdx.files.internal("audio/Shoot.wav"));
+	
+	//Hit sound
+	Sound soundHit1 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit1.wav"));			
+	Sound soundHit2 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit2.wav"));	
+	Sound soundHit3 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit3.wav"));	
+			
+//---------------SOUND FX END---------------------		
+		
+
 	public Player(GameState gs, float x, float y, int lives) {
 		this.gs = gs;
 		centerx = x;
 		centery = y;
 		setLife(lives);
 	}
-	
+
 	private void shoot(float direction, int offset, int spaces) {
+		soundShoot.play(1.0f);
 		//If the amount of bullet "lines" are even
 		if(bulletBurst % 2 == 0) {
 			for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
@@ -75,8 +89,11 @@ public class Player implements Entity {
 		}
 	}
 	
+
+	
 	@Override
 	public void render(SpriteBatch batch) {
+
 		animFrameTime += Gdx.graphics.getDeltaTime();
 		if(spawning) {
 			// Spawn animation
@@ -85,8 +102,8 @@ public class Player implements Entity {
 			if(spawnAnim.isAnimationFinished(animFrameTime)) {
 				spawning = false;
 				animFrameTime = 0;
-			}
-		} else if(isHit) {
+			}	
+			} else if(isHit) {
 			// Death animation
 			TextureRegion frame = deathAnim.getKeyFrame(animFrameTime, false);
 			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
@@ -94,16 +111,23 @@ public class Player implements Entity {
 				isHit  =  false;
 				dead = true;
 				animFrameTime = 0;
+				
 			}
+			
+			
 		} else {
 			TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
 			
 			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
 			for(int i = 0; i < shields; i++) {
 				Util.drawCentered(batch, shieldTexture, getCenterX(), getCenterY(), -animFrameTime * 360 + 360f * i / shields);
-			}
-		}
+			}					
 	}
+	
+
+	
+}
+
 	
 	@Override
 	public boolean update() {
@@ -211,6 +235,8 @@ public class Player implements Entity {
 	}
 	
 	public void updateHitDetection() {
+	
+	
         boolean clearEnemies = false;
 		for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
@@ -225,9 +251,13 @@ public class Player implements Entity {
 	        			gs.getEntities().removeValue(e, true);
         				it.remove();
 	        			shields--;
+
         			} else {
     					addLives(-1);
     					isHit = true;
+    					
+    					//Hit sound (randomize)
+    					if (Math.random() < 0.6) { soundHit1.play(1.0f); } else if (Math.random() < 0.3) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
     					animFrameTime = 0;
     					clearEnemies = true;
     					
@@ -241,10 +271,18 @@ public class Player implements Entity {
     					}*/
     					
     					break;
-        			}
-	        	}
+   
+        			
+        			}	
+        			
+
+        		
+        		}	
     		}
-        }
+        }	
+		
+
+		
         if(clearEnemies) {
         	// Removing all enemies from lists
         	for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
