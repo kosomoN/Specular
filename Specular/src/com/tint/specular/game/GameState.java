@@ -266,7 +266,7 @@ public class GameState extends State {
 					}
 				}
 				
-				if(!player.isHit() && player.isDead() && gameMode.isGameOver()) {
+				if(!player.isHit() && player.isDead() && player.getLife() > 0) {
 					player.respawn();
 		        	pss.spawn(player.getLife(), true);
 		        }

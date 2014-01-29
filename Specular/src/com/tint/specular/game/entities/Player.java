@@ -130,7 +130,7 @@ public class Player implements Entity {
         centerx += dx;
         centery += dy;
         
-        return life <= 0;
+        return dead && life <= 0;
 	}
 	
 	public void updateMovement() {
