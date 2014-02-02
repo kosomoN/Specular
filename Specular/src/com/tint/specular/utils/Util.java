@@ -99,7 +99,9 @@ public class Util {
 	 * @param rotation - The angle of the rotation around the centerpoint
 	 */
 	public static void drawCentered(SpriteBatch batch, Texture tex, float centerx, float centery, float rotation) {
-		batch.draw(tex, centerx - tex.getWidth() / 2, centery - tex.getHeight() / 2, tex.getWidth() / 2, tex.getHeight() / 2, tex.getWidth(), tex.getHeight(), 1, 1, rotation, 0, 0, tex.getWidth(), tex.getHeight(), false, false);
+		int texWidth = tex.getWidth();
+		int texHeight = tex.getHeight();
+		batch.draw(tex, centerx - texWidth / 2, centery - texHeight / 2, texWidth / 2, texHeight / 2, texWidth, texHeight, 1, 1, rotation, 0, 0, texWidth, texHeight, false, false);
 	}
 	
 	/**

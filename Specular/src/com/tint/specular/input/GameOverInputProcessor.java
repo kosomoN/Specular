@@ -2,7 +2,6 @@ package com.tint.specular.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;

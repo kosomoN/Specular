@@ -5,7 +5,6 @@ import java.util.Iterator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
@@ -69,10 +68,10 @@ public class GameState extends State {
 	protected GameMode gameMode;
 	protected Player player;
 	private Stage stage;
-	private float camOffsetX, camOffsetY;
 	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
+	public static float TICK_LENGTH_MILLIS = 1000 / 60f;
 	private float unprocessed;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
@@ -109,7 +108,6 @@ public class GameState extends State {
 	private HUD hud;
 	private Texture gameOverTex;
 	private Music music;
-
 	
 	public GameState(Specular game) {
 		super(game);
@@ -171,14 +169,10 @@ public class GameState extends State {
 		
 		input = Gdx.input;
 		
-		
 		//randomize music, sorry merg, remade by Mental
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + musicFileNames[(int)(Math.random()*musicFileNames.length)]));
-			
-			
-	
-}
+	}
 		
 	@Override
 	public void render(float delta) {
@@ -192,8 +186,6 @@ public class GameState extends State {
         renderGame();
 	}
 	
-
-	
 	protected void update() {
 		if(!paused) {
 			// Adding played time
@@ -202,6 +194,8 @@ public class GameState extends State {
 			
 			// Updating combos
 			cs.update();
+			
+			BoardShock.update();
 			
 			if(scoreMultiplier > 1) {
 				if(scoreMultiplierTimer < 360) {
@@ -213,11 +207,6 @@ public class GameState extends State {
 					scoreMultiplier--;
 				}
 			}
-
-	}
-			
-
-			
 			
 			if(cs.getCombo() > 7) {
 				setScoreMultiplier(scoreMultiplier + 1);
@@ -227,12 +216,13 @@ public class GameState extends State {
 			if(!gameMode.isGameOver()) {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
+				
 				player.updateHitDetection();
+				
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isHit())
 					ess.update(ticks);
-
-			
+			}
 			
 			// Update power-ups
 			powerUpSpawnTime--;
@@ -300,8 +290,6 @@ public class GameState extends State {
 				}
 			}
 			
-			
-			
 			if(playerKilled) {
 				// Time attack
 				if(!gameMode.isGameOver()) {
@@ -343,24 +331,27 @@ public class GameState extends State {
 			game.batch.setColor(0.6f, 0.6f, 0.6f, 1);
 		}
    
-		//Positioning camera to the player
-		Specular.camera.position.set(player.getCenterX() / 2 + camOffsetX, player.getCenterY() / 2 + camOffsetY, 0);
-		Specular.camera.zoom = 1;
-		Specular.camera.update();
-		
-		game.batch.setProjectionMatrix(Specular.camera.combined);
-		CameraShake.moveCamera();
-		game.batch.begin();
-		game.batch.draw(currentMap.getParallax(), -2048, -2048, 4096, 4096);
+		//Positioning camera to the player		
 		
 		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
+		Specular.camera.zoom = 1;
 		CameraShake.moveCamera();
 		Specular.camera.update();
 		
 		// Rendering map and entities
 		game.batch.setProjectionMatrix(Specular.camera.combined);
+		game.batch.begin();
 		CameraShake.moveCamera();
+		
+		game.batch.draw(currentMap.getParallax(), -1024 + player.getCenterX() / 2, -1024 +  player.getCenterY() / 2, 4096, 4096);
+		
+		BoardShock.setZoom();
+		
+		Specular.camera.update();
+		game.batch.setProjectionMatrix(Specular.camera.combined);
+		
 		currentMap.render(game.batch);
+		
 		for(Entity ent : entities) {
 			ent.render(game.batch);
 		}
@@ -502,7 +493,7 @@ public class GameState extends State {
 		music.play();
 		music.setLooping(true);
 		music.setVolume(0.5f);
-		gameInputProcessor = new GameInputProcessor(game);
+		gameInputProcessor = new GameInputProcessor(game, this);
 		ggInputProcessor = new GameOverInputProcessor(game, this);
 		
 		reset();

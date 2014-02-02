@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.Specular;
+import com.tint.specular.game.BoardShock;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.input.AnalogStick;
@@ -244,14 +245,21 @@ public class Player implements Entity {
     			float distX = centerx - e.getX();
     			float distY = centery - e.getY();
         		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
-        			if(shields > 0) {
+        			
+        			//Make the player invincible when the boardshock is activated to avoid wasting and annoying moments
+        			if(BoardShock.isActivated()) {
+                    	e.hit(e.getLife());
+        				gs.getEntities().removeValue(e, true);
+        				it.remove();
+        				
+        				break;
+        			} else if(shields > 0) {
 	        			//Repel effect after collision with shield
 //	        			setSpeed(dx + e.getDx(), dy + e.getDy());
 	        			
 	        			gs.getEntities().removeValue(e, true);
         				it.remove();
 	        			shields--;
-
         			} else {
     					addLives(-1);
     					isHit = true;
@@ -271,22 +279,16 @@ public class Player implements Entity {
     					}*/
     					
     					break;
-   
-        			
         			}	
-        			
-
-        		
         		}	
     		}
         }	
-		
-
 		
         if(clearEnemies) {
         	// Removing all enemies from lists
         	for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
             	Enemy e = it.next();
+            	e.hit(e.getLife());
             	gs.getEntities().removeValue(e, true);
             	it.remove();
         	}

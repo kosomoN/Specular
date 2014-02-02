@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.tint.specular.Specular;
+import com.tint.specular.game.BoardShock;
+import com.tint.specular.game.GameState;
 
 /**
  * 
@@ -18,7 +20,10 @@ public class GameInputProcessor implements InputProcessor {
 	
 	private AnalogStick shoot, move;
 	
-	public GameInputProcessor(Specular game) {
+	private GameState gs;
+	
+	public GameInputProcessor(Specular game, GameState gs) {
+		this.gs = gs;
 		shoot = new AnalogStick();
 		move = new AnalogStick();
 	}
@@ -65,7 +70,11 @@ public class GameInputProcessor implements InputProcessor {
 			float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 			float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 			
-			if(viewportx <= Specular.camera.viewportWidth / 2) {
+			//Checking if touching boardshock button
+			if(viewporty > Specular.camera.viewportHeight - 90 &&
+					viewportx - Specular.camera.viewportWidth / 2 > -350 && viewportx - Specular.camera.viewportWidth / 2 < 350) {
+				BoardShock.activate(gs);
+			} else if(viewportx <= Specular.camera.viewportWidth / 2) {
 				move.setBasePos(viewportx - Specular.camera.viewportWidth / 2,
 						- (viewporty - Specular.camera.viewportHeight / 2));
 				move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,

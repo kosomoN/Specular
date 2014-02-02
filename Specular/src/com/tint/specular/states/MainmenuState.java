@@ -3,7 +3,6 @@ package com.tint.specular.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.Texture;
