@@ -7,23 +7,22 @@ import com.tint.specular.game.entities.enemies.Enemy;
 
 public class BoardShock {
 	
+	private static Sound soundBs1 = Gdx.audio.newSound(Gdx.files.internal("audio/BoardSHOCK2.wav"));	
 	private static float timeActivated;
 	private static boolean activated;
 	private static GameState gs;
 	private static float zoom = 1;
 	
-	
-
-	
 	public static void activate(GameState gs) {
 		activated = true;
 		timeActivated = 0;
 		BoardShock.gs = gs;
+		
+		soundBs1.play();
 	}
-	static Sound soundBs1 = Gdx.audio.newSound(Gdx.files.internal("audio/BoardSHOCK2.wav"));	
+	
 	public static void update() {	
 		if(activated) {
-			soundBs1.play(1.0f);
 			timeActivated += GameState.TICK_LENGTH_MILLIS;
 			zoom = 1;
 			if(timeActivated > 225) {
