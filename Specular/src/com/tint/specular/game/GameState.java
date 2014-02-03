@@ -1,10 +1,12 @@
 package com.tint.specular.game;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Music.OnCompletionListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
@@ -108,6 +110,8 @@ public class GameState extends State {
 	private HUD hud;
 	private Texture gameOverTex;
 	private Music music;
+	private final String[] musicFileNames = new String[]{"01.mp3","02.mp3","05.mp3","06.mp3"};
+	private int currentMusic;
 	
 	public GameState(Specular game) {
 		super(game);
@@ -118,9 +122,6 @@ public class GameState extends State {
 		
 		// Loading gameover texture
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
-		
-		// Creating Array containing music file paths
-		String[] musicFileNames = new String[]{"01.mp3","02.mp3","05.mp3","06.mp3"};
 		
 		//Loading HUD
 		hud = new HUD(this);
@@ -169,9 +170,7 @@ public class GameState extends State {
 		
 		input = Gdx.input;
 		
-		//randomize music, sorry merg, remade by Mental
-		
-		music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + musicFileNames[(int)(Math.random()*musicFileNames.length)]));
+		randomizeMusic();
 	}
 		
 	@Override
@@ -490,13 +489,39 @@ public class GameState extends State {
 	@Override
 	public void show() {
 		super.show();
+		
 		music.play();
-		music.setLooping(true);
-		music.setVolume(0.5f);
+		
+		// Creating Array containing music file paths
+		
+		music.setOnCompletionListener(new OnCompletionListener() {
+			@Override
+			public void onCompletion(Music music) {
+				randomizeMusic();
+			}
+		});
 		gameInputProcessor = new GameInputProcessor(game, this);
 		ggInputProcessor = new GameOverInputProcessor(game, this);
 		
 		reset();
+	}
+	private Random rand = new Random();
+
+	private void randomizeMusic() {
+		
+		int random = rand.nextInt(musicFileNames.length - 1);
+		
+		//To make sure the same music dosen't play twice
+		if(currentMusic == random) {
+			random++;
+		}
+		
+		if(music != null)
+			music.dispose();
+		
+		currentMusic = random;
+		music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + musicFileNames[random]));
+		music.play();
 	}
 	
 	@Override
