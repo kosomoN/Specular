@@ -64,10 +64,12 @@ public abstract class Enemy implements Entity {
 				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
 				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
 				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
-			if(life == 0)
-				gs.getParticleSpawnSystem().spawn(this, 15, true);
-			else
-				gs.getParticleSpawnSystem().spawn(this, 6, false);
+			if(gs.particlesEnabled()) {
+				if(life == 0)
+					gs.getParticleSpawnSystem().spawn(this, 15, true);
+				else
+					gs.getParticleSpawnSystem().spawn(this, 6, false);
+			}
 		}
 	}
 	

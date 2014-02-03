@@ -15,9 +15,6 @@ import com.tint.specular.input.MenuInputProcessor;
  *
  */
 
-
-
-
 public class MainmenuState extends State {
 	
 	private Texture background;
@@ -26,6 +23,7 @@ public class MainmenuState extends State {
 	
 	public MainmenuState(Specular game) {
 		super(game);
+		System.out.println();
 		
 		GLTexture.setEnforcePotImages(false);
 		background = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Title Background.png"));
@@ -71,6 +69,8 @@ public class MainmenuState extends State {
 		menuInputProcessor = new MenuInputProcessor(game,this);
 		if(!music.isPlaying())
 			music.play();
+		music.setVolume(Specular.prefs.getBoolean("MusicMuted") ? 0 : 1f);
+		
 		Gdx.input.setInputProcessor(menuInputProcessor);
 	}
 
@@ -91,5 +91,6 @@ public class MainmenuState extends State {
 	
 	public void startMusic() {
 		music.play();
+		music.setVolume(Specular.prefs.getBoolean("MusicMuted") ? 0 : 1f);
 	}
 }

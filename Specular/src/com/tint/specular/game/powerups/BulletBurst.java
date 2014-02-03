@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
-import com.tint.specular.utils.Util;
 
 /**
  * 
@@ -44,6 +43,7 @@ public class BulletBurst extends PowerUp {
 		// Affects player according to level
 		if(level == 0) {
 			player.setBulletBurst(3);
+			player.setShot90(false);
 		} else if(level == 1) {
 			player.setBulletBurst(5);
 			player.setShot180(false);
@@ -61,12 +61,12 @@ public class BulletBurst extends PowerUp {
 	@Override
 	public void render(SpriteBatch batch) {
 		if(!isActivated() && despawnTime > 0)
-			Util.drawCentered(batch, texture, x, y, 0);
+			batch.draw(texture, x, y);
 	}
 	
 	@Override
 	public boolean update() {
-		// If super.update() returns true it means that one of the affecting power-ups active time has run out
+		// If super.update() returns true it means that one of the affecting power-ups' active time has run out
 		if(super.update()) {
 			levelDown = true;
 			affect(player);

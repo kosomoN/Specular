@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
-import com.tint.specular.utils.Util;
 
 /**
  * 
@@ -33,7 +32,7 @@ public class AddLife extends PowerUp {
 	@Override
 	public void render(SpriteBatch batch) {
 		if(!isActivated() && despawnTime > 0)
-			Util.drawCentered(batch, texture, x, y, 0);
+			batch.draw(texture, x, y);
 	}
 	
 	@Override

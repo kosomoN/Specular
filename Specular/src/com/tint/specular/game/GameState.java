@@ -85,6 +85,8 @@ public class GameState extends State {
 	private int scoreMultiplier = 1;
 	private int enemiesKilled;
 	private boolean enablePowerUps = true;
+	private boolean particlesEnabled;
+	private boolean soundsEnabled;
 //	private int comboToNextScoreMult = 2;
 	
 	// Lists for keeping track of entities in the world
@@ -215,7 +217,6 @@ public class GameState extends State {
 			if(!gameMode.isGameOver()) {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
-				
 				player.updateHitDetection();
 				
 				// So that they don't spawn while death animation is playing
@@ -418,6 +419,14 @@ public class GameState extends State {
 	public ParticleSpawnSystem getParticleSpawnSystem() { return pass; }
 	public Map getCurrentMap() { return currentMap;	}
 	
+	public boolean particlesEnabled() {
+		return particlesEnabled;
+	}
+	
+	public boolean soundsEnabled() {
+		return soundsEnabled;
+	}
+	
 	public int getScoreMultiplier() { return scoreMultiplier; }
 	
 	/** Get a custom BitmapFont based on its size. If there is no font with that size it returns default font.
@@ -468,13 +477,18 @@ public class GameState extends State {
 	public void reset() {
 		clearLists();
 		
+		soundsEnabled = Specular.prefs.getBoolean("SoundsMuted");
+		particlesEnabled = Specular.prefs.getBoolean("Particles");
+		
 		gameMode = new Ranked(this);
 		enemiesKilled = 0;
 		// Adding player and setting up input processor
 		pss.spawn(3, false);
 		
+		gameInputProcessor = new GameInputProcessor(this);
 		gameInputProcessor.reset();
 		input.setInputProcessor(gameInputProcessor);
+		ggInputProcessor = new GameOverInputProcessor(game, this);
 		
 		resetGameTime();
 		
@@ -491,17 +505,16 @@ public class GameState extends State {
 		super.show();
 		
 		music.play();
-		
+		if(Specular.prefs.getBoolean("MusicMuted"))
+			music.setVolume(0);
+				
 		// Creating Array containing music file paths
-		
 		music.setOnCompletionListener(new OnCompletionListener() {
 			@Override
 			public void onCompletion(Music music) {
 				randomizeMusic();
 			}
 		});
-		gameInputProcessor = new GameInputProcessor(game, this);
-		ggInputProcessor = new GameOverInputProcessor(game, this);
 		
 		reset();
 	}

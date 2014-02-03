@@ -5,14 +5,16 @@ import java.util.Map;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.SingleplayerGameState;
 import com.tint.specular.states.Facebook;
 import com.tint.specular.states.HighscoreState;
 import com.tint.specular.states.LoadingState;
-import com.tint.specular.states.State;
 import com.tint.specular.states.MainmenuState;
+import com.tint.specular.states.SettingsMenuState;
+import com.tint.specular.states.State;
 
 
 
@@ -33,10 +35,10 @@ public class Specular extends Game {
 	
 	private Map<States, State> states = new EnumMap<Specular.States, State>(States.class);
 	
-	
-	
 	public static OrthographicCamera camera;
+	public static Preferences prefs;
 	public SpriteBatch batch;
+	
 	
 	public Specular(Facebook facebook) {
 		Specular.facebook = facebook;
@@ -58,6 +60,16 @@ public class Specular extends Game {
 		camera = new OrthographicCamera(w, h);
 		batch = new SpriteBatch();
 		
+		prefs = Gdx.app.getPreferences("Preferences");
+		// Checks if the preferences are missing or it is the first time the app is run
+		if(!prefs.contains("Controls")) {
+			prefs.putInteger("Controls", 3);
+			prefs.putFloat("Sensitivity", 0.5f);
+			prefs.putBoolean("Particles", true);
+			prefs.putBoolean("MusicMuted", false);
+			prefs.putBoolean("SoundsMuted", false);
+		}
+		
 		Gdx.input.setCatchBackKey(true);
 		
 		
@@ -69,7 +81,7 @@ public class Specular extends Game {
 	
 	public void load() {
 		states.put(States.MAINMENUSTATE, new MainmenuState(this));
-//		states.put(States.SETTINGSMENUSTATE, new SettingsMenuState(this));
+		states.put(States.SETTINGSMENUSTATE, new SettingsMenuState(this));
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
 		states.put(States.PROFILE_STATE, new HighscoreState(this));
 	}
@@ -90,8 +102,7 @@ public class Specular extends Game {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		
-
+		prefs.flush();
 	}
 	
 @Override 

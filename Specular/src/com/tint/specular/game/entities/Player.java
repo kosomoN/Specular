@@ -1,7 +1,6 @@
 package com.tint.specular.game.entities;
 
 import java.util.Iterator;
-import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -38,15 +37,18 @@ public class Player implements Entity {
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
+	private float sensitivity = 1f;
 	private float direction;
 	
 	private int life = 3;
 	private int shields;
 	private int bulletBurst = 3;
 	private int score = 0;
+	private int controls;
 	
 	private boolean isHit, spawning, dead;
 	private boolean shot90, shot180;
+	private boolean soundEffects;
 //-----------------SOUND FX-----------------------	
 	
 	//Shoot sound
@@ -55,7 +57,7 @@ public class Player implements Entity {
 	//Hit sound
 	Sound soundHit1 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit1.wav"));			
 	Sound soundHit2 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit2.wav"));	
-	Sound soundHit3 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit3.wav"));	
+	Sound soundHit3 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit3.wav"));
 			
 //---------------SOUND FX END---------------------		
 		
@@ -68,6 +70,9 @@ public class Player implements Entity {
 	}
 
 	private void shoot(float direction, int offset, int spaces) {
+		if(soundEffects)
+			soundShoot1.play(1.0f);
+		
 		//If the amount of bullet "lines" are even
 		if(bulletBurst % 2 == 0) {
 			for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
@@ -95,7 +100,6 @@ public class Player implements Entity {
 	
 	@Override
 	public void render(SpriteBatch batch) {
-
 		animFrameTime += Gdx.graphics.getDeltaTime();
 		if(spawning) {
 			// Spawn animation
@@ -105,7 +109,7 @@ public class Player implements Entity {
 				spawning = false;
 				animFrameTime = 0;
 			}	
-			} else if(isHit) {
+		} else if(isHit) {
 			// Death animation
 			TextureRegion frame = deathAnim.getKeyFrame(animFrameTime, false);
 			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
@@ -121,10 +125,8 @@ public class Player implements Entity {
 			for(int i = 0; i < shields; i++) {
 				Util.drawCentered(batch, shieldTexture, getCenterX(), getCenterY(), -animFrameTime * 360 + 360f * i / shields);
 			}
-
+		}
 	}
-}
-
 	
 	@Override
 	public boolean update() {
@@ -163,29 +165,33 @@ public class Player implements Entity {
 			changeSpeed(0, -0.6f);
 		if(gs.getGameProcessor().isDDown())
 			changeSpeed(0.6f, 0);
-		/*
-		changeSpeed(Gdx.input.getAccelerometerX() * 0.1f * 0.6f,
-				Gdx.input.getAccelerometerY() * 0.1f * 0.6f);*/
 		
-		float aFourthOfWidthSqrd = Specular.camera.viewportWidth / 8 * Specular.camera.viewportWidth / 8;
-		
-		AnalogStick moveStick = gs.getGameProcessor().getMoveStick();;
-		float moveDx = moveStick.getXHead() - moveStick.getXBase();
-		float moveDy = moveStick.getYHead() - moveStick.getYBase();
-		float distBaseToHead = moveDx * moveDx + moveDy * moveDy;
-				
-		
-		if(moveStick.isActive() && distBaseToHead != 0) {
-			//calculating the angle with delta x and delta y
-			double angle = Math.atan2(moveDy, moveDx);
+		if(controls == 0) {
+			changeSpeed(Gdx.input.getAccelerometerX() * 0.1f * 0.6f, Gdx.input.getAccelerometerY() * 0.1f * 0.6f);
+		} else if(controls == 2 || controls == 3){
+			float aFourthOfWidthSqrd = Specular.camera.viewportWidth / 8 * Specular.camera.viewportWidth / 8;
 			
-			changeSpeed(
-					(float) Math.cos(angle) * MAX_DELTA_SPEED *
-					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) * SPEED, //Change the last number to alter the sensitivity
+			AnalogStick moveStick = gs.getGameProcessor().getMoveStick();
+			float moveDx = moveStick.getXHead() - moveStick.getXBase();
+			float moveDy = moveStick.getYHead() - moveStick.getYBase();
+			float distBaseToHead = moveDx * moveDx + moveDy * moveDy;
 					
-					(float) Math.sin(angle) * MAX_DELTA_SPEED *
-					(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) * SPEED
-					);
+			// Applying sensitivity
+			moveDx *= sensitivity;
+			moveDy *= sensitivity;
+			
+			if(moveStick.isActive() && distBaseToHead != 0) {
+				//calculating the angle with delta x and delta y
+				double angle = Math.atan2(moveDy, moveDx);
+				
+				changeSpeed(
+						(float) Math.cos(angle) * MAX_DELTA_SPEED *
+						(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) * SPEED, //Change the last number to alter the sensitivity
+						
+						(float) Math.sin(angle) * MAX_DELTA_SPEED *
+						(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) * SPEED
+						);
+			}
 		}
 	}
 	
@@ -237,8 +243,6 @@ public class Player implements Entity {
 	}
 	
 	public void updateHitDetection() {
-	
-	
         boolean clearEnemies = false;
 		for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
@@ -350,7 +354,6 @@ public class Player implements Entity {
 	}
 	
 	public void setLife(int life) { this.life = life; }
-	public void setHit(boolean hit) { isHit = hit; }
 	public void kill() { life = 0; }
 	
 	public float getCenterX() { return centerx; }
@@ -361,6 +364,7 @@ public class Player implements Entity {
 	public static float getRadius() { return radius; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
+	public int getControls() { return controls; }
 	public int getScore() { return score; }
 	public int getShields() {
 		return shields;
@@ -376,6 +380,9 @@ public class Player implements Entity {
 		animFrameTime = 0;
 		spawning = true;
 		dead = false;
+		
+		sensitivity = Specular.prefs.getFloat("Sensitivity");
+		controls = Specular.prefs.getInteger("Controls");
 	}
 	
 	public static void init() {
@@ -385,7 +392,7 @@ public class Player implements Entity {
 		
 		playerSpawnTex  = new Texture(Gdx.files.internal("graphics/game/Player Spawn Anim.png"));
 		playerSpawnTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		spawnAnim = Util.getAnimation(playerSpawnTex, 128, 128, 1 / 16f, 0, 0, 3, 3);
+		spawnAnim = Util.getAnimation(playerSpawnTex, 128, 128, 1 / 16f, 0, 0, 4, 3);
 		
 		playerDeathTex  = new Texture(Gdx.files.internal("graphics/game/Player Death Anim.png"));
 		playerDeathTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
