@@ -2,6 +2,7 @@ package com.tint.specular.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.Specular;
 import com.tint.specular.game.entities.enemies.Enemy;
 
@@ -12,6 +13,8 @@ public class BoardShock {
 	private static boolean activated;
 	private static GameState gs;
 	private static float zoom = 1;
+	private static SpriteBatch batch;
+	
 	
 	public static void activate(GameState gs) {
 		activated = true;
@@ -20,8 +23,9 @@ public class BoardShock {
 		
 		soundBs1.play();
 	}
-	
-	public static void update() {	
+
+	public static void update() {
+		
 		if(activated) {
 			timeActivated += GameState.TICK_LENGTH_MILLIS;
 			zoom = 1;
@@ -43,6 +47,14 @@ public class BoardShock {
 			}
 		}
 	}
+	
+	public static void render(SpriteBatch batch) {
+		if(activated)
+			batch.setColor(0, 0, 0, 1);
+		else
+			batch.setColor(1, 1, 1, 1);
+	}
+	
 	
 	public static void setZoom() {
 		Specular.camera.zoom = zoom;

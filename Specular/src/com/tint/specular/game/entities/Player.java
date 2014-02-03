@@ -1,6 +1,7 @@
 package com.tint.specular.game.entities;
 
 import java.util.Iterator;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -29,7 +30,7 @@ public class Player implements Entity {
 	private static final float FRICTION = 0.95f;
 	
 	private static Animation anim, spawnAnim, deathAnim;
-	private static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture;
+	private static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture, barrelTexture;
 	private static int radius;
 	
 	private GameState gs;
@@ -37,6 +38,7 @@ public class Player implements Entity {
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
+	private float direction;
 	
 	private int life = 3;
 	private int shields;
@@ -48,7 +50,7 @@ public class Player implements Entity {
 //-----------------SOUND FX-----------------------	
 	
 	//Shoot sound
-	Sound soundShoot = Gdx.audio.newSound(Gdx.files.internal("audio/Shoot.wav"));
+	Sound soundShoot1 = Gdx.audio.newSound(Gdx.files.internal("audio/Shoot.wav"));
 	
 	//Hit sound
 	Sound soundHit1 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit1.wav"));			
@@ -66,7 +68,6 @@ public class Player implements Entity {
 	}
 
 	private void shoot(float direction, int offset, int spaces) {
-		soundShoot.play(1.0f);
 		//If the amount of bullet "lines" are even
 		if(bulletBurst % 2 == 0) {
 			for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
@@ -112,21 +113,16 @@ public class Player implements Entity {
 				isHit  =  false;
 				dead = true;
 				animFrameTime = 0;
-				
 			}
-			
-			
 		} else {
-			TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
-			
-			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
+			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
+			Util.drawCentered(batch, barrelTexture, getCenterX(), getCenterY(), direction);
+			batch.draw(baseAnimFrame, centerx - baseAnimFrame.getRegionWidth() / 2, centery - baseAnimFrame.getRegionHeight() / 2);
 			for(int i = 0; i < shields; i++) {
 				Util.drawCentered(batch, shieldTexture, getCenterX(), getCenterY(), -animFrameTime * 360 + 360f * i / shields);
-			}					
-	}
-	
+			}
 
-	
+	}
 }
 
 	
@@ -195,7 +191,9 @@ public class Player implements Entity {
 	
 	public void updateShooting() {
 		timeSinceLastFire += 1;
-		
+		direction = (float) (Math.toDegrees(Math.atan2(gs.getGameProcessor().getShootStick().getYHead()
+				- gs.getGameProcessor().getShootStick().getYBase(), gs.getGameProcessor().getShootStick().getXHead()
+				- gs.getGameProcessor().getShootStick().getXBase())));
 		if(gs.getGameProcessor().getShootStick().isActive()) {
 			if(timeSinceLastFire >= fireRate) {
 				
@@ -231,6 +229,9 @@ public class Player implements Entity {
 				}
 				
 				timeSinceLastFire = 0;
+				
+				//Hit sound (randomize)
+				soundShoot1.play(1.0f);
 			}
 		}
 	}
@@ -265,7 +266,8 @@ public class Player implements Entity {
     					isHit = true;
     					
     					//Hit sound (randomize)
-    					if (Math.random() < 0.6) { soundHit1.play(1.0f); } else if (Math.random() < 0.3) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
+//    					int randomNum = rand.nextInt(3);
+//    					if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
     					animFrameTime = 0;
     					clearEnemies = true;
     					
@@ -392,6 +394,8 @@ public class Player implements Entity {
 		radius = (anim.getKeyFrame(0).getRegionWidth() - 10) / 2;
 		
 		shieldTexture = new Texture(Gdx.files.internal("graphics/game/Shield.png"));
+		
+		barrelTexture = new Texture(Gdx.files.internal("graphics/game/Barrels.png"));
 	}
 	
 	@Override
