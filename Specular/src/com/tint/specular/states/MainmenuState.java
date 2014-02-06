@@ -23,8 +23,6 @@ public class MainmenuState extends State {
 	
 	public MainmenuState(Specular game) {
 		super(game);
-		System.out.println();
-		
 		GLTexture.setEnforcePotImages(false);
 		background = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Title Background.png"));
 

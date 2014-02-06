@@ -5,6 +5,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Music.OnCompletionListener;
 import com.badlogic.gdx.graphics.Color;
@@ -296,6 +297,8 @@ public class GameState extends State {
 					it.remove();
 				}
 			}
+			// Resets a few things
+			BulletBurst.updateBulletBursts();
 			
 			if(playerKilled) {
 				// Time attack
@@ -325,6 +328,10 @@ public class GameState extends State {
 			}
 			
 			CameraShake.update();
+		}
+		
+		if(input.isKeyPressed(Keys.F)) {
+			puss.spawn(new BulletBurst(0, 0, this));
 		}
 	}
 	
@@ -509,6 +516,8 @@ public class GameState extends State {
 		cs.resetCombo();
 		scoreMultiplier = 1;
 		scoreMultiplierTimer = 0;
+		
+		boardshockCharge = 0;
 	}
 
 	@Override

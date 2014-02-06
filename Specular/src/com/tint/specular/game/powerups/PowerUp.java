@@ -27,6 +27,7 @@ public abstract class PowerUp implements Entity {
 	
 	@Override
 	public boolean update() {
+		
 		if(!activated) {
 			despawnTime--;
 			if((getCenterX() - gs.getPlayer().getCenterX()) * (getCenterX() - gs.getPlayer().getCenterX()) + (getCenterY() - gs.getPlayer().getCenterY()) * (getCenterY() - gs.getPlayer().getCenterY())
@@ -38,7 +39,7 @@ public abstract class PowerUp implements Entity {
 		} else {
 			if(activeTime > 0)
 				activeTime--;
-			else if(activeTime <= 0)
+			else
 				return true;
 			
 			return false;

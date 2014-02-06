@@ -43,11 +43,11 @@ public class Player implements Entity {
 	private int life = 3;
 	private int shields;
 	private int bulletBurst = 3;
+	private int bulletBurstLevel;
 	private int score = 0;
 	private int controls;
 	
-	private boolean isHit, spawning, dead;
-	private boolean shot90, shot180;
+	private boolean dying, spawning, dead;
 	private boolean soundEffects;
 //-----------------SOUND FX-----------------------	
 	
@@ -66,10 +66,11 @@ public class Player implements Entity {
 		this.gs = gs;
 		centerx = x;
 		centery = y;
+		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
 		setLife(lives);
 	}
 
-	private void shoot(float direction, int offset, int spaces) {
+	public void shoot(float direction, int offset, int spaces) {
 		if(soundEffects)
 			soundShoot1.play(1.0f);
 		
@@ -109,12 +110,12 @@ public class Player implements Entity {
 				spawning = false;
 				animFrameTime = 0;
 			}	
-		} else if(isHit) {
+		} else if(dying) {
 			// Death animation
 			TextureRegion frame = deathAnim.getKeyFrame(animFrameTime, false);
 			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
 			if(deathAnim.isAnimationFinished(animFrameTime)) {
-				isHit  =  false;
+				dying  =  false;
 				dead = true;
 				animFrameTime = 0;
 			}
@@ -131,7 +132,7 @@ public class Player implements Entity {
 	@Override
 	public boolean update() {
 		// Taking control away when player is hit and respawning
-		if(!isHit && !spawning) {
+		if(!dying && !spawning) {
 			updateMovement();
 			updateShooting();
 		}
@@ -153,7 +154,7 @@ public class Player implements Entity {
         centerx += dx;
         centery += dy;
         
-        return dead && life <= 0;
+        return life <= 0;
 	}
 	
 	public void updateMovement() {
@@ -211,33 +212,9 @@ public class Player implements Entity {
 				int spaces = bulletBurst - 1;
 				int offset = 8;
 				
-				// Straight
 				shoot(direction, offset, spaces);
 				
-				if(shot180) {
-					// Backwards
-					direction += 180;
-					direction = direction % 360;
-					
-					shoot(direction, offset, 2);
-				}
-				
-				if(shot90) {
-					// Right
-					direction += 90;
-					direction = direction % 360;
-					shoot(direction, offset, 2);
-					
-					// Left
-					direction -= 180;
-					direction = direction  % 360;
-					shoot(direction, offset, 2);
-				}
-				
 				timeSinceLastFire = 0;
-				
-				//Hit sound (randomize)
-				soundShoot1.play(1.0f);
 			}
 		}
 	}
@@ -267,22 +244,13 @@ public class Player implements Entity {
 	        			shields--;
         			} else {
     					addLives(-1);
-    					isHit = true;
+    					dying = true;
     					
     					//Hit sound (randomize)
 //    					int randomNum = rand.nextInt(3);
 //    					if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
     					animFrameTime = 0;
     					clearEnemies = true;
-    					
-    					// Particles
-    					/*
-    					if(life <= 0) {
-    						gs.getParticleSpawnSystem().spawn(this, 200, false);
-    						gs.getParticleSpawnSystem().spawn(this, 80, true);
-    					} else {
-    						gs.getParticleSpawnSystem().spawn(this, 100, false);
-    					}*/
     					
     					break;
         			}	
@@ -337,21 +305,10 @@ public class Player implements Entity {
 	 * Takes the amount of updates as rate of fire, not any specific "time"
 	 * @param fireRate
 	 */
-	public void setFireRate(float fireRate) {
-		this.fireRate = fireRate;
-	}
-	
-	public void setBulletBurst(int burst) {
-		bulletBurst = burst;
-	}
-	
-	public void setShot90(boolean shot90) {
-		this.shot90 = shot90;
-	}
-	
-	public void setShot180(boolean shot180) {
-		this.shot180 = shot180;
-	}
+	public void setFireRate(float fireRate) { this.fireRate = fireRate; }
+	public void setBulletBurst(int burst) { bulletBurst = burst; }
+	public void setBulletBurstLevel(int level) { bulletBurstLevel = level; }
+	public void addBulletBurstLevel(int level) { bulletBurstLevel += level; }
 	
 	public void setLife(int life) { this.life = life; }
 	public void kill() { life = 0; }
@@ -360,18 +317,19 @@ public class Player implements Entity {
 	public float getCenterY() { return centery;	}
 	public float getDeltaX() { return dx; }
 	public float getDeltaY() { return dy; }
+	public float getDirection() { return direction; }
 	public float getFireRate() { return fireRate; }
+	public float getTimeSinceLastFire() { return timeSinceLastFire; }
 	public static float getRadius() { return radius; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
+	public int getBulletBurstLevel() { return bulletBurstLevel; }
 	public int getControls() { return controls; }
 	public int getScore() { return score; }
-	public int getShields() {
-		return shields;
-	}
+	public int getShields() { return shields; }
 
 	public boolean hasShield() { return shields > 0; }
-	public boolean isHit() { return isHit; }
+	public boolean isHit() { return dying; }
 	public boolean isSpawning() { return spawning; }
 	public boolean isDead() { return dead; }
 	public GameState getGameState() { return gs; }

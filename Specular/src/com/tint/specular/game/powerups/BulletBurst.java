@@ -1,5 +1,8 @@
 package com.tint.specular.game.powerups;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,9 +17,10 @@ import com.tint.specular.game.entities.Player;
 
 public class BulletBurst extends PowerUp {
 	private static Texture texture;
-	private static int level;
-	private boolean levelDown;	// Field for checking if the level should go up or down
+	private static List<Player> playersFired = new ArrayList<Player>();
+	private static int timesFiredSamePlayer;
 	private Player player;
+	private float timeSinceLastFire, fireRate;
 	
 	public BulletBurst(float x, float y, GameState gs) {
 		super(x, y, gs);
@@ -30,32 +34,9 @@ public class BulletBurst extends PowerUp {
 	@Override
 	protected void affect(Player player) {
 		this.player = player;
-
-		// Level increases or decreases
-		if(levelDown) {
-			if(level > 0)
-				level--;
-		} else {
-			if(level < 3)
-				level++;
-		}
-		
-		// Affects player according to level
-		if(level == 0) {
-			player.setBulletBurst(3);
-			player.setShot90(false);
-		} else if(level == 1) {
-			player.setBulletBurst(5);
-			player.setShot180(false);
-		} else if(level == 2) {
-			player.setShot180(true);
-			player.setShot90(false);
-		} else if(level >= 3) {
-			player.setShot180(true);
-			player.setShot90(true);
-		}
-		
-		levelDown = false;
+		player.addBulletBurstLevel(1);
+		timeSinceLastFire = player.getTimeSinceLastFire();
+		fireRate = player.getFireRate();
 	}
 
 	@Override
@@ -66,14 +47,61 @@ public class BulletBurst extends PowerUp {
 	
 	@Override
 	public boolean update() {
-		// If super.update() returns true it means that one of the affecting power-ups' active time has run out
+		timeSinceLastFire++;
+		
 		if(super.update()) {
-			levelDown = true;
-			affect(player);
+			player.addBulletBurstLevel(-1);
+			if(player.getBulletBurstLevel() == 0) {
+				player.setBulletBurst(3);
+			}
 			return true;
-		} else {
-			return false;
 		}
+		
+		if(isActivated() && gs.getGameProcessor().getShootStick().isActive()) {
+			if(playersFired.contains(player))
+				timesFiredSamePlayer++;
+
+			if(timesFiredSamePlayer < player.getBulletBurstLevel()) {
+				if(timeSinceLastFire >= fireRate) {
+					fireRate = player.getFireRate();
+					playersFired.add(player);
+					
+					float direction = player.getDirection();
+					int offset = 8;
+					int spaces;
+					int level = player.getBulletBurstLevel();
+					
+					if(level > 0)
+						player.setBulletBurst(5);
+					
+					spaces = player.getBulletBurst() - 1;
+					if(level > 1) {
+						direction += 90;
+						direction = direction % 360;
+						player.shoot(direction, offset, spaces - 2);
+						
+						direction -= 180;
+						direction = direction % 360;
+						player.shoot(direction, offset, spaces - 2);
+					}
+					
+					if(level > 2) {
+						direction -= 90;
+						direction = direction % 360;
+						player.shoot(direction, offset, spaces - 2);
+					}
+					
+					timeSinceLastFire = 0;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public static void updateBulletBursts() {
+		playersFired.clear();
+		timesFiredSamePlayer = 0;
 	}
 
 	@Override

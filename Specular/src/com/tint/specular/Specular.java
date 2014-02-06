@@ -102,7 +102,6 @@ public class Specular extends Game {
 	@Override
 	public void dispose() {
 		batch.dispose();
-		prefs.flush();
 	}
 	
 @Override 

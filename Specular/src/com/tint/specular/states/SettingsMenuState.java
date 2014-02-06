@@ -16,12 +16,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
+import com.tint.specular.input.GameInputProcessor;
 
 public class SettingsMenuState extends State {
 
 	private Stage stage;
 //	private Texture background;
-	private int controls; // // 0 = tilt with static joystick, 1 = tilt, 2 = static joysticks, 3 = dynamic joysticks
+	private int controls;
 	private float sensitivity;
 	private boolean soundsMuted, musicMuted, particlesEnabled;
 	private boolean rendered;
@@ -184,19 +185,21 @@ public class SettingsMenuState extends State {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				if(staticTiltControl.isChecked())
-					controls = 0;
+					controls = GameInputProcessor.STATIC_TILT;
 				else if(tiltControl.isChecked())
-					controls = 1;
+					controls = GameInputProcessor.TILT;
 				else if(staticStickControl.isChecked())
-					controls = 2;
+					controls = GameInputProcessor.STATIC_STICKS;
 				else
-					controls = 3;
+					controls = GameInputProcessor.DYNAMIC_STICKS;
 				
 				Specular.prefs.putInteger("Controls", controls);
 				Specular.prefs.putFloat("Sensitivity", sensitivity);
 				Specular.prefs.putBoolean("SoundsMuted", soundsMuted);
 				Specular.prefs.putBoolean("MusicMuted", musicMuted);
 				Specular.prefs.putBoolean("Particles", particlesEnabled);
+				Specular.prefs.flush();
+				
 				game.enterState(States.MAINMENUSTATE);
 			}
 		});

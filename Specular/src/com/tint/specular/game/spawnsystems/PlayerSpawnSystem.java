@@ -21,7 +21,6 @@ public class PlayerSpawnSystem extends SpawnSystem {
 	public void spawn(int lives, boolean respawn) {
 		int x, y;
 		boolean playersSpawned = false;
-		
 		outer :
 		do { //23 to compensate for the walls
 			x = (int) (rand.nextInt(gs.getCurrentMap().getWidth() - 23 * 2 - (int) (Player.getRadius() * 2)) + Player.getRadius() + 23);

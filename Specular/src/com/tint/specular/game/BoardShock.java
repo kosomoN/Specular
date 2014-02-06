@@ -13,8 +13,6 @@ public class BoardShock {
 	private static boolean activated;
 	private static GameState gs;
 	private static float zoom = 1;
-	private static SpriteBatch batch;
-	
 	
 	public static void activate(GameState gs) {
 		activated = true;
@@ -25,7 +23,6 @@ public class BoardShock {
 	}
 
 	public static void update() {
-		
 		if(activated) {
 			timeActivated += GameState.TICK_LENGTH_MILLIS;
 			zoom = 1;
