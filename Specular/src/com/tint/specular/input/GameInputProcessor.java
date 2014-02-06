@@ -70,12 +70,19 @@ public class GameInputProcessor implements InputProcessor {
 		//Checking if touching boardshock button
 		if(viewporty > Specular.camera.viewportHeight - 90 &&
 				viewportx - Specular.camera.viewportWidth / 2 > -350 && viewportx - Specular.camera.viewportWidth / 2 < 350) {
-			BoardShock.activate(gs);
+			gs.boardshock();
+			return false;
 		}
 		
 		// Sticks
+		
+		//If NOT tilt controls
 		if(controls != TILT && controls != STATIC_TILT) {
+			
+			//If touching left half
 			if(viewportx <= Specular.camera.viewportWidth / 2) {
+				
+				//If sticks are static set it to the right position
 				if(controls == STATIC_STICK)
 					move.setBasePos(-1 / 4f * Specular.camera.viewportWidth, 0);
 				else
@@ -83,15 +90,30 @@ public class GameInputProcessor implements InputProcessor {
 	
 				move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
 				move.setPointer(pointer);
+				
+			} else {//Touching right half
+				
+				//If sticks are static set it to the right position
+				if(controls == STATIC_STICK)
+					shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
+				else
+					shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+				
+				
+				shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+				shoot.setPointer(pointer);
 			}
-		}
-		if(controls == STATIC_STICK || controls == STATIC_TILT)
-			shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
-		else
-			shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+		} else {//Tilt controls
+			
+			//If sticks are static set it to the right position
+			if(controls == STATIC_TILT)
+				shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
+			else
+				shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
 		
-		shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-		shoot.setPointer(pointer);
+			shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+			shoot.setPointer(pointer);
+		}
 		
 		touch = true;
 

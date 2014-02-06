@@ -80,6 +80,7 @@ public class GameState extends State {
 	private boolean paused = false;
 	private int powerUpSpawnTime = 400;		// 10 sec in updates / ticks
 	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
+	private float boardshockCharge = 0; //Value between 0 and 1
 	
 	// Fields that affect score or gameplay
 	private int scoreMultiplier = 1;
@@ -113,7 +114,7 @@ public class GameState extends State {
 	private Texture gameOverTex;
 	private Music music;
 	private final String[] musicFileNames = new String[]{"01.mp3","02.mp3","05.mp3","06.mp3"};
-	private int currentMusic;
+	private int currentMusic = -1;
 	
 	public GameState(Specular game) {
 		super(game);
@@ -171,8 +172,6 @@ public class GameState extends State {
 		cs = new ComboSystem();
 		
 		input = Gdx.input;
-		
-		randomizeMusic();
 	}
 		
 	@Override
@@ -197,6 +196,14 @@ public class GameState extends State {
 			cs.update();
 			
 			BoardShock.update();
+			
+			//Just a temporary way, charge it constantly
+			if(boardshockCharge < 1)
+				boardshockCharge += 0.0005f;
+			else
+				boardshockCharge = 1;
+			
+					
 			
 			if(scoreMultiplier > 1) {
 				if(scoreMultiplierTimer < 360) {
@@ -419,6 +426,10 @@ public class GameState extends State {
 	public ParticleSpawnSystem getParticleSpawnSystem() { return pass; }
 	public Map getCurrentMap() { return currentMap;	}
 	
+	public float getBoardshockCharge() {
+		return boardshockCharge;
+	}
+
 	public boolean particlesEnabled() {
 		return particlesEnabled;
 	}
@@ -504,29 +515,33 @@ public class GameState extends State {
 	public void show() {
 		super.show();
 		
-		music.play();
-		if(Specular.prefs.getBoolean("MusicMuted"))
-			music.setVolume(0);
-				
-		// Creating Array containing music file paths
-		music.setOnCompletionListener(new OnCompletionListener() {
-			@Override
-			public void onCompletion(Music music) {
-				randomizeMusic();
-			}
-		});
-		
+		if(!Specular.prefs.getBoolean("MusicMuted")) {
+			randomizeMusic();
+					
+			// Creating Array containing music file paths
+			music.setOnCompletionListener(new OnCompletionListener() {
+				@Override
+				public void onCompletion(Music music) {
+					randomizeMusic();
+				}
+			});
+		}
 		reset();
 	}
 	private Random rand = new Random();
 
 	private void randomizeMusic() {
-		
-		int random = rand.nextInt(musicFileNames.length - 1);
-		
-		//To make sure the same music dosen't play twice
-		if(currentMusic == random) {
-			random++;
+		int random;
+		//If its not the first time randomizing
+		if(currentMusic != -1) {
+			 random = rand.nextInt(musicFileNames.length - 1);
+			
+			//To make sure the same music dosen't play twice
+			if(currentMusic <= random) {
+				random++;
+			}
+		} else {
+			random = rand.nextInt(musicFileNames.length);
 		}
 		
 		if(music != null)
@@ -560,5 +575,12 @@ public class GameState extends State {
 		
 		enemies.clear();
 		bullets.clear();
+	}
+
+	public void boardshock() {
+		if(boardshockCharge >= 1 && !player.isHit() && !player.isSpawning()) {
+			BoardShock.activate(this);
+			boardshockCharge = 0;
+		}
 	}
 }

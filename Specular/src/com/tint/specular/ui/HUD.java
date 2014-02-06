@@ -8,6 +8,7 @@ import com.tint.specular.game.GameState;
 
 public class HUD {
 	private Texture hudTop, hudBottom, bar, multiplierBar;
+	private Texture boardshockChargeTex[] = new Texture[4];
 	private GameState gs;
 	
 	public HUD(GameState gs) {
@@ -18,6 +19,9 @@ public class HUD {
 		bar = new Texture(Gdx.files.internal("graphics/game/Bar.png"));
 		
 		multiplierBar = new Texture(Gdx.files.internal("graphics/game/MP Bar.png"));
+		for(int i = 0; i < 4; i++) {
+			boardshockChargeTex[i] = new Texture(Gdx.files.internal("graphics/game/HUD Boardshock " + i + ".png"));
+		}
 	}
 
 	public void render(SpriteBatch batch, float multiplierTimer) {
@@ -44,5 +48,9 @@ public class HUD {
 		//Drawing COMBO
 		for(int i = 0; i < gs.getComboSystem().getCombo(); i++)//It's long cause it uses flipX
 			batch.draw(bar, 239 + i * 49, Specular.camera.viewportHeight / 2 - 81, bar.getWidth(), bar.getHeight(), 0, 0, bar.getWidth(), bar.getHeight(), true, false);
+		
+		int chargeLevel = (int) (gs.getBoardshockCharge() / 0.25f);
+		if(chargeLevel > 0)
+			batch.draw(boardshockChargeTex[chargeLevel - 1], -boardshockChargeTex[chargeLevel - 1].getWidth() / 2, -Specular.camera.viewportHeight / 2);
 	}
 }
