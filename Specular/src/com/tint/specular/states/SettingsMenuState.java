@@ -9,8 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -23,7 +21,6 @@ public class SettingsMenuState extends State {
 	private Stage stage;
 //	private Texture background;
 	private int controls;
-	private float sensitivity;
 	private boolean soundsMuted, musicMuted, particlesEnabled;
 	private boolean rendered;
 	
@@ -68,16 +65,6 @@ public class SettingsMenuState extends State {
 		checkboxStyle.up = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Up.png"))));
 		checkboxStyle.checked = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Checked.png"))));
 		
-		SliderStyle sliderStyle = new SliderStyle(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Slider Background.png"))))
-			, new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Slider Knob.png")))));
-		
-		
-		// Slider(s)
-		final Slider sensitivitySlider = new Slider(0.5f, 1.5f, 0.1f, false, sliderStyle);
-		sensitivitySlider.setSize(1000, 50);
-		sensitivitySlider.setPosition((Specular.camera.viewportWidth - sensitivitySlider.getWidth()) / 2, 300);
-		sensitivitySlider.setValue(Specular.prefs.getFloat("Sensitivity"));
-		
 		// Creating buttons and positioning them
 		final Button staticTiltControl = new Button(controlStyle);
 		staticTiltControl.setPosition(Specular.camera.viewportWidth / 5f, 700);
@@ -111,15 +98,11 @@ public class SettingsMenuState extends State {
 		confirm.setSize(64, 64);
 		confirm.setPosition(Specular.camera.viewportWidth - confirm.getWidth(), 0);
 		
+		Button sensitivityButton = new Button(controlStyle);
+		sensitivityButton.setSize(64, 64);
+		sensitivityButton.setPosition(Specular.camera.viewportWidth / 2, 200);
 		
 		// Event listeners
-		sensitivitySlider.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				sensitivity = sensitivitySlider.getValue();
-			}
-		});
-		
 		staticTiltControl.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -127,6 +110,8 @@ public class SettingsMenuState extends State {
 				tiltControl.setChecked(false);
 				staticStickControl.setChecked(false);
 				dynamicControl.setChecked(false);
+				
+				Specular.prefs.putInteger("Controls", GameInputProcessor.STATIC_TILT);
 			}
 		});
 		
@@ -137,6 +122,8 @@ public class SettingsMenuState extends State {
 				staticTiltControl.setChecked(false);
 				staticStickControl.setChecked(false);
 				dynamicControl.setChecked(false);
+				
+				Specular.prefs.putInteger("Controls", GameInputProcessor.TILT);
 			}
 		});
 		
@@ -147,6 +134,8 @@ public class SettingsMenuState extends State {
 				staticTiltControl.setChecked(false);
 				dynamicControl.setChecked(false);
 				tiltControl.setChecked(false);
+				
+				Specular.prefs.putInteger("Controls", GameInputProcessor.STATIC_STICKS);
 			}
 		});
 		
@@ -157,6 +146,8 @@ public class SettingsMenuState extends State {
 				staticTiltControl.setChecked(false);
 				staticStickControl.setChecked(false);
 				tiltControl.setChecked(false);
+				
+				Specular.prefs.putInteger("Controls", GameInputProcessor.DYNAMIC_STICKS);
 			}
 		});
 		
@@ -194,7 +185,6 @@ public class SettingsMenuState extends State {
 					controls = GameInputProcessor.DYNAMIC_STICKS;
 				
 				Specular.prefs.putInteger("Controls", controls);
-				Specular.prefs.putFloat("Sensitivity", sensitivity);
 				Specular.prefs.putBoolean("SoundsMuted", soundsMuted);
 				Specular.prefs.putBoolean("MusicMuted", musicMuted);
 				Specular.prefs.putBoolean("Particles", particlesEnabled);
@@ -204,10 +194,15 @@ public class SettingsMenuState extends State {
 			}
 		});
 		
+		sensitivityButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				Specular.prefs.flush();
+				game.enterState(States.CONTROLSETUPSTATE);
+			}
+		});
 		
 		// Adding actors to scene
-		stage.addActor(sensitivitySlider);
-		
 		stage.addActor(staticStickControl);
 		stage.addActor(dynamicControl);
 		stage.addActor(staticTiltControl);
@@ -218,6 +213,7 @@ public class SettingsMenuState extends State {
 		stage.addActor(particles);
 		
 		stage.addActor(confirm);
+		stage.addActor(sensitivityButton);
 	}
 
 	@Override
@@ -226,13 +222,11 @@ public class SettingsMenuState extends State {
 		createUI();
 		
 		controls = Specular.prefs.getInteger("Controls");
-		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		soundsMuted = Specular.prefs.getBoolean("SoundsMuted");
 		musicMuted = Specular.prefs.getBoolean("MusicMuted");
 		particlesEnabled = Specular.prefs.getBoolean("Particles");
 		
 //		background = new Texture(Gdx.files.internal(""));
-		((MainmenuState) game.getState(Specular.States.MAINMENUSTATE)).startMusic();
 		Gdx.input.setInputProcessor(stage);
 	}
 }

@@ -46,7 +46,7 @@ public class LoadingState extends State {
 			game.load();
 			
 //			if(System.currentTimeMillis() - timeShowed > 2000) {
-				game.enterState(States.SETTINGSMENUSTATE);
+				game.enterState(States.MAINMENUSTATE);
 //			} 
 		}
 		

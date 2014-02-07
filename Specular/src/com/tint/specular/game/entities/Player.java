@@ -24,13 +24,12 @@ import com.tint.specular.utils.Util;
 
 public class Player implements Entity {
 	
-	private static final int MAX_DELTA_SPEED = 8;
-	private static final float SPEED = 0.125f;
-	private static final float FRICTION = 0.95f;
+	public static final int MAX_DELTA_SPEED = 1;
+	public static final float FRICTION = 0.95f;
 	
-	private static Animation anim, spawnAnim, deathAnim;
-	private static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture, barrelTexture;
-	private static int radius;
+	public static Animation anim, spawnAnim, deathAnim;
+	public static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture, barrelTexture;
+	public static int radius;
 	
 	private GameState gs;
 	
@@ -39,6 +38,7 @@ public class Player implements Entity {
 	private float timeSinceLastFire, fireRate = 10f;
 	private float sensitivity = 1f;
 	private float direction;
+	private float maxSpeedAreaSquared;
 	
 	private int life = 3;
 	private int shields;
@@ -58,6 +58,7 @@ public class Player implements Entity {
 	Sound soundHit1 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit1.wav"));			
 	Sound soundHit2 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit2.wav"));	
 	Sound soundHit3 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit3.wav"));
+
 			
 //---------------SOUND FX END---------------------		
 		
@@ -68,6 +69,9 @@ public class Player implements Entity {
 		centery = y;
 		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
 		setLife(lives);
+		
+		sensitivity = Specular.prefs.getFloat("Sensitivity");
+		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
 	}
 
 	public void shoot(float direction, int offset, int spaces) {
@@ -170,27 +174,22 @@ public class Player implements Entity {
 		if(controls == 0) {
 			changeSpeed(Gdx.input.getAccelerometerX() * 0.1f * 0.6f, Gdx.input.getAccelerometerY() * 0.1f * 0.6f);
 		} else if(controls == 2 || controls == 3){
-			float aFourthOfWidthSqrd = Specular.camera.viewportWidth / 8 * Specular.camera.viewportWidth / 8;
 			
 			AnalogStick moveStick = gs.getGameProcessor().getMoveStick();
 			float moveDx = moveStick.getXHead() - moveStick.getXBase();
 			float moveDy = moveStick.getYHead() - moveStick.getYBase();
 			float distBaseToHead = moveDx * moveDx + moveDy * moveDy;
-					
-			// Applying sensitivity
-			moveDx *= sensitivity;
-			moveDy *= sensitivity;
 			
 			if(moveStick.isActive() && distBaseToHead != 0) {
 				//calculating the angle with delta x and delta y
 				double angle = Math.atan2(moveDy, moveDx);
-				
+				System.out.println(distBaseToHead >= maxSpeedAreaSquared);
 				changeSpeed(
 						(float) Math.cos(angle) * MAX_DELTA_SPEED *
-						(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) * SPEED, //Change the last number to alter the sensitivity
+						(distBaseToHead >= maxSpeedAreaSquared ? 1 : distBaseToHead / maxSpeedAreaSquared),
 						
 						(float) Math.sin(angle) * MAX_DELTA_SPEED *
-						(distBaseToHead >= aFourthOfWidthSqrd ? 1 : distBaseToHead / aFourthOfWidthSqrd) * SPEED
+						(distBaseToHead >= maxSpeedAreaSquared ? 1 : distBaseToHead / maxSpeedAreaSquared)
 						);
 			}
 		}
@@ -338,8 +337,6 @@ public class Player implements Entity {
 		animFrameTime = 0;
 		spawning = true;
 		dead = false;
-		
-		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		controls = Specular.prefs.getInteger("Controls");
 	}
 	

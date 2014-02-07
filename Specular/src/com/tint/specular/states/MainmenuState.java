@@ -44,7 +44,7 @@ public class MainmenuState extends State {
 		game.batch.draw(background,0,0);
 		menuInputProcessor.getPlayBtn().render();
 		menuInputProcessor.getProfileBtn().render();
-//		menuInputProcessor.getOptionsBtn().render();
+		menuInputProcessor.getOptionsBtn().render();
 		game.batch.end();
 		
 		if(Gdx.input.isKeyPressed(Keys.BACK))
@@ -63,8 +63,7 @@ public class MainmenuState extends State {
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		menuInputProcessor = new MenuInputProcessor(game,this);
-		if(!music.isPlaying() && !Specular.prefs.getBoolean("MusicMuted"))
-			music.play();
+		startMusic();
 		
 		Gdx.input.setInputProcessor(menuInputProcessor);
 	}
@@ -81,11 +80,11 @@ public class MainmenuState extends State {
 	}
 
 	public void stopMusic() {
-		music.stop();
+		music.pause();
 	}
 	
 	public void startMusic() {
-		if(!Specular.prefs.getBoolean("MusicMuted"))
+		if(!music.isPlaying() && !Specular.prefs.getBoolean("MusicMuted"))
 			music.play();
 	}
 }

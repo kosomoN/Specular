@@ -9,6 +9,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.SingleplayerGameState;
+import com.tint.specular.states.ControlSetupState;
 import com.tint.specular.states.Facebook;
 import com.tint.specular.states.HighscoreState;
 import com.tint.specular.states.LoadingState;
@@ -26,7 +27,7 @@ import com.tint.specular.states.State;
 
 public class Specular extends Game {
 	public enum States {
-		LOADINGSTATE, MAINMENUSTATE, SETTINGSMENUSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE, PROFILE_STATE;
+		LOADINGSTATE, MAINMENUSTATE, SETTINGSMENUSTATE, CONTROLSETUPSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE, PROFILE_STATE;
 	}
 	
 	private static final int WIDTH = 1920, HEIGHT = 1080;
@@ -68,8 +69,10 @@ public class Specular extends Game {
 			prefs.putBoolean("Particles", true);
 			prefs.putBoolean("MusicMuted", false);
 			prefs.putBoolean("SoundsMuted", false);
+			
+			//Needed for android to save the settings
+			prefs.flush();
 		}
-		
 		Gdx.input.setCatchBackKey(true);
 		
 		
@@ -84,6 +87,7 @@ public class Specular extends Game {
 		states.put(States.SETTINGSMENUSTATE, new SettingsMenuState(this));
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
 		states.put(States.PROFILE_STATE, new HighscoreState(this));
+		states.put(States.CONTROLSETUPSTATE, new ControlSetupState(this));
 	}
 	
 	public void enterState(States state) {

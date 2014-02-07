@@ -2,7 +2,6 @@ package com.tint.specular.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
@@ -11,7 +10,7 @@ import com.tint.specular.ui.Button;
 
 public class MenuInputProcessor extends InputAdapter {
 	
-	private Button playBtn, profileBtn;//, optionsBtn;
+	private Button playBtn, profileBtn, optionsBtn;
 	private Specular game;
 	
 	private MainmenuState menuState;
@@ -31,9 +30,9 @@ public class MenuInputProcessor extends InputAdapter {
 		Texture profileTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles Pressed.png"));
 		profileBtn = new Button(880, 164, 768, 256, game.batch, profileTex, profileTexPr);
 		
-//		optionsTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options Pressed.png"));
-//		optionsTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options 1400 910.png"));
-//		optionsBtn = new Button(1400, 32, 512, 128, game.batch, optionsTex, optionsTexPr);
+		Texture optionsTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options Pressed.png"));
+		Texture optionsTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options 1400 910.png"));
+		optionsBtn = new Button(1400, 32, 512, 128, game.batch, optionsTex, optionsTexPr);
 	}
 
 
@@ -50,7 +49,9 @@ public class MenuInputProcessor extends InputAdapter {
 			playBtn.touchOver(touchpointx, touchpointy);
 		} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
 			profileBtn.touchOver(touchpointx, touchpointy);
-		}
+		} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
+			optionsBtn.touchOver(touchpointx, touchpointy);
+		} 
 //		//Play button sound
 //		Sound soundButton1 = Gdx.audio.newSound(Gdx.files.internal("audio/Button.wav"));	
 //		if (playBtn.isOver(touchpointx, touchpointy, true)) {
@@ -77,12 +78,11 @@ public class MenuInputProcessor extends InputAdapter {
 		} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
 			profileBtn.touchUp();
 			game.enterState(States.PROFILE_STATE);
-			//Play button sound
-			Sound soundButton1 = Gdx.audio.newSound(Gdx.files.internal("audio/Button.wav"));	
-			if (playBtn.isOver(touchpointx, touchpointy, true)) {
-			soundButton1.play(1.0f);
-			}	
+		} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
+			optionsBtn.touchUp();
+			game.enterState(States.SETTINGSMENUSTATE);
 		}
+		
 		return false;
 	}
 
@@ -104,6 +104,13 @@ public class MenuInputProcessor extends InputAdapter {
 		} else {
 			profileBtn.touchUp();
 		}
+		
+		if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
+			optionsBtn.touchOver(touchpointx, touchpointy);
+		} else {
+			optionsBtn.touchUp();
+		}
+		
 //		//Play button sound
 //		Sound soundButton1 = Gdx.audio.newSound(Gdx.files.internal("audio/Button.wav"));	
 //		if (profileBtn.isOver(touchpointx, touchpointy, true)) {
@@ -116,4 +123,6 @@ public class MenuInputProcessor extends InputAdapter {
 		return playBtn; }
 	public Button getProfileBtn() {
 		return profileBtn; }
+	public Button getOptionsBtn() {
+		return optionsBtn; }
 }
