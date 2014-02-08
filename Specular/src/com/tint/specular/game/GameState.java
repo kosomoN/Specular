@@ -31,6 +31,7 @@ import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.gamemodes.GameMode;
 import com.tint.specular.game.gamemodes.Ranked;
 import com.tint.specular.game.powerups.AddLife;
+import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.ScoreMultiplier;
@@ -165,6 +166,7 @@ public class GameState extends State {
 		ScoreMultiplier.init();
 		ShieldUpgrade.init();
 		SlowdownEnemies.init();
+		BoardshockPowerUp.init();
 		
 		ess = new EnemySpawnSystem(this, enemies);
 		pss = new PlayerSpawnSystem(this);
@@ -197,14 +199,6 @@ public class GameState extends State {
 			cs.update();
 			
 			BoardShock.update();
-			
-			//Just a temporary way, charge it constantly
-			if(boardshockCharge < 1)
-				boardshockCharge += 0.0005f;
-			else
-				boardshockCharge = 1;
-			
-					
 			
 			if(scoreMultiplier > 1) {
 				if(scoreMultiplierTimer < 360) {
@@ -439,6 +433,10 @@ public class GameState extends State {
 	
 	public float getBoardshockCharge() {
 		return boardshockCharge;
+	}
+	
+	public void addBoardshockCharge(float x) {
+		boardshockCharge += x;
 	}
 
 	public boolean particlesEnabled() {

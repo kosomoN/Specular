@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.powerups.AddLife;
+import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.PowerUp;
@@ -29,7 +30,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 	 */
 	public void spawn() {
 		Random rand = new Random();
-		int powerUpID = rand.nextInt(6);
+		int powerUpID = rand.nextInt(7);
 		
 		float x = rand.nextInt(gs.getCurrentMap().getWidth() - 64) + 32, y = rand.nextInt(gs.getCurrentMap().getHeight() - 64) + 32;
 		
@@ -43,9 +44,10 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 			gs.addEntity(new ScoreMultiplier(x, y, gs));
 		else if(powerUpID == 4)
 			gs.addEntity(new SlowdownEnemies(x, y, gs));
-		else if(powerUpID == 5) {
+		else if(powerUpID == 5)
 			gs.addEntity(new ShieldUpgrade(x, y, gs));
-		}
+		else if(powerUpID == 6)
+			gs.addEntity(new BoardshockPowerUp(x, y, gs));
 	}
 	
 	/**

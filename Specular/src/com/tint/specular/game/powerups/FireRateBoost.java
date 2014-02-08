@@ -2,7 +2,6 @@ package com.tint.specular.game.powerups;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 
@@ -17,8 +16,7 @@ public class FireRateBoost extends PowerUp {
 	private Player player;
 	
 	public FireRateBoost(float x, float y, GameState gs) {
-		super(x, y, gs);
-		activeTime = 600;
+		super(x, y, gs, 600);
 	}
 	
 	public static void init() {
@@ -32,12 +30,6 @@ public class FireRateBoost extends PowerUp {
 	}
 
 	@Override
-	public void render(SpriteBatch batch) {
-		if(!isActivated() && despawnTime > 0)
-			batch.draw(texture, x, y);
-	}
-
-	@Override
 	public boolean update() {
 		if(super.update())
 			player.setFireRate(10f);
@@ -46,19 +38,9 @@ public class FireRateBoost extends PowerUp {
 		
 		return true;
 	}
-
-	@Override
-	public float getRadius() {
-		return texture.getWidth() / 2;
-	}
-
+	
 	@Override
 	public Texture getTexture() {
 		return texture;
-	}
-	
-	@Override
-	public void dispose() {
-		texture.dispose();
 	}
 }

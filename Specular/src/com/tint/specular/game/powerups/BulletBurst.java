@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 
@@ -23,8 +22,7 @@ public class BulletBurst extends PowerUp {
 	private float timeSinceLastFire, fireRate;
 	
 	public BulletBurst(float x, float y, GameState gs) {
-		super(x, y, gs);
-		activeTime = 600;
+		super(x, y, gs, 600);
 	}
 	
 	public static void init() {
@@ -39,12 +37,6 @@ public class BulletBurst extends PowerUp {
 		fireRate = player.getFireRate();
 	}
 
-	@Override
-	public void render(SpriteBatch batch) {
-		if(!isActivated() && despawnTime > 0)
-			batch.draw(texture, x, y);
-	}
-	
 	@Override
 	public boolean update() {
 		timeSinceLastFire++;
@@ -112,10 +104,5 @@ public class BulletBurst extends PowerUp {
 	@Override
 	public Texture getTexture() {
 		return texture;
-	}
-	
-	@Override
-	public void dispose() {
-		texture.dispose();
 	}
 }
