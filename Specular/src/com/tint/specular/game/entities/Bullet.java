@@ -27,11 +27,10 @@ public class Bullet implements Entity {
 	private boolean isHit;
 	private Circle hitbox;
 	private GameState gs;
-	private Player shooter;
 
 	private float direction;
 	
-	public Bullet(float x, float y, float direction, float initialDx, float initialDy, GameState gs, Player shooter) {
+	public Bullet(float x, float y, float direction, float initialDx, float initialDy, GameState gs) {
 		this.x = x;
 		this.y = y;
 		direction += Math.random() * 6 - 3;
@@ -45,7 +44,6 @@ public class Bullet implements Entity {
 		this.y += sin * 28;
 		
 		this.gs = gs;
-		this.shooter = shooter;
 		
 		this.direction = direction - 90;
 	}
@@ -74,7 +72,6 @@ public class Bullet implements Entity {
 		isHit = true;
 	}
 	
-	public Player getShooter() { return shooter; }
 	public Circle getHitbox() { return hitbox; }
 	public float getX() { return x; }
 	public float getY() { return y; }

@@ -82,21 +82,21 @@ public class Player implements Entity {
 		if(bulletBurst % 2 == 0) {
 			for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
 				if(j == 0) {
-					gs.addEntity(new Bullet(centerx, centery, direction + offset / 2, dx, dy, gs, this));
-					gs.addEntity(new Bullet(centerx, centery, direction - offset / 2, dx, dy, gs, this));
+					gs.addEntity(new Bullet(centerx, centery, direction + offset / 2, dx, dy, gs));
+					gs.addEntity(new Bullet(centerx, centery, direction - offset / 2, dx, dy, gs));
 				} else {
-					gs.addEntity(new Bullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy, gs, this));
-					gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs, this));
+					gs.addEntity(new Bullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy, gs));
+					gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs));
 				}
 			}
 			
 		//If the number of bullet "lines" are odd
 		} else {
-			gs.addEntity(new Bullet(centerx, centery, direction, dx, dy, gs, this));
+			gs.addEntity(new Bullet(centerx, centery, direction, dx, dy, gs));
 
 			for(int i = 0; i < spaces / 2; i++) {
-				gs.addEntity(new Bullet(centerx, centery, direction + (i + 1) * offset, dx, dy, gs, this));
-				gs.addEntity(new Bullet(centerx, centery, direction - (i + 1) * offset, dx, dy, gs, this));
+				gs.addEntity(new Bullet(centerx, centery, direction + (i + 1) * offset, dx, dy, gs));
+				gs.addEntity(new Bullet(centerx, centery, direction - (i + 1) * offset, dx, dy, gs));
 			}
 		}
 	}
@@ -125,11 +125,12 @@ public class Player implements Entity {
 			}
 		} else {
 			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
-			Util.drawCentered(batch, barrelTexture, getCenterX(), getCenterY(), direction);
 			batch.draw(baseAnimFrame, centerx - baseAnimFrame.getRegionWidth() / 2, centery - baseAnimFrame.getRegionHeight() / 2);
+			Util.drawCentered(batch, barrelTexture, getCenterX(), getCenterY(), direction);
 			for(int i = 0; i < shields; i++) {
 				Util.drawCentered(batch, shieldTexture, getCenterX(), getCenterY(), -animFrameTime * 360 + 360f * i / shields);
 			}
+			
 		}
 	}
 	
@@ -197,16 +198,10 @@ public class Player implements Entity {
 	
 	public void updateShooting() {
 		timeSinceLastFire += 1;
-		direction = (float) (Math.toDegrees(Math.atan2(gs.getGameProcessor().getShootStick().getYHead()
-				- gs.getGameProcessor().getShootStick().getYBase(), gs.getGameProcessor().getShootStick().getXHead()
-				- gs.getGameProcessor().getShootStick().getXBase())));
-		if(gs.getGameProcessor().getShootStick().isActive()) {
+		AnalogStick shootStick = gs.getGameProcessor().getShootStick();
+		direction = (float) (Math.toDegrees(Math.atan2(shootStick.getYHead() - shootStick.getYBase(), shootStick.getXHead() - shootStick.getXBase())));
+		if(shootStick.isActive()) {
 			if(timeSinceLastFire >= fireRate) {
-				
-				float direction = (float) (Math.toDegrees(Math.atan2(gs.getGameProcessor().getShootStick().getYHead()
-					- gs.getGameProcessor().getShootStick().getYBase(), gs.getGameProcessor().getShootStick().getXHead()
-					- gs.getGameProcessor().getShootStick().getXBase())));
-
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
 				int spaces = bulletBurst - 1;
 				int offset = 8;

@@ -4,6 +4,8 @@ import static com.tint.specular.input.GameInputProcessor.STATIC_STICKS;
 import static com.tint.specular.input.GameInputProcessor.STATIC_TILT;
 import static com.tint.specular.input.GameInputProcessor.TILT;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
@@ -20,10 +22,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Bullet;
+import com.tint.specular.game.entities.Entity;
+import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
+import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.map.Map;
 import com.tint.specular.utils.Util;
@@ -32,6 +39,7 @@ public class ControlSetupState extends State {
 
 	private Texture circleTex;
 	private DummyPlayer player = new DummyPlayer();
+	private Array<Bullet> bullets = new Array<Bullet>();
 	private GameState gs;
 	private Map map;
 	private double unprocessed;
@@ -82,8 +90,8 @@ public class ControlSetupState extends State {
 		
 		// Slider
 		final Slider sensitivitySlider = new Slider(0.2f, 2f, 0.01f, false, sliderStyle);
-		sensitivitySlider.setSize(1000, 50);
-		sensitivitySlider.setPosition(-sensitivitySlider.getWidth() / 2, -Specular.camera.viewportHeight / 2 + 20);
+		sensitivitySlider.setSize(1280, 50);
+		sensitivitySlider.setPosition(-sensitivitySlider.getWidth() / 2 + 250, -Specular.camera.viewportHeight / 2 + 83);
 		sensitivitySlider.setValue(Specular.prefs.getFloat("Sensitivity"));
 		sensitivitySlider.addListener(new ChangeListener() {
 			@Override
@@ -127,6 +135,9 @@ public class ControlSetupState extends State {
 		
 		player.render(game.batch);
 		
+		for(Bullet b : bullets)
+			b.render(game.batch);
+		
 		Specular.camera.position.set(0, 0, 0);
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
@@ -148,6 +159,11 @@ public class ControlSetupState extends State {
 
 	private void update() {
 		player.update();
+		
+		for(Iterator<Bullet> it = bullets.iterator(); it.hasNext();) {
+			if(it.next().update())
+				it.remove();
+		}
 	}
 
 
@@ -157,6 +173,8 @@ public class ControlSetupState extends State {
 		private float animFrameTime;
 		private float direction;
 		private Texture barrelTexture;
+		private int timeSinceLastFire;
+		private int fireRate = 10;
 		
 		private void render(SpriteBatch batch) {
 			animFrameTime += Gdx.graphics.getDeltaTime();
@@ -187,6 +205,19 @@ public class ControlSetupState extends State {
 							(float) Math.sin(angle) * Player.MAX_DELTA_SPEED *
 							(distBaseToHead >= maxSpeedAreaSquared ? 1 : distBaseToHead / maxSpeedAreaSquared)
 							);
+				}
+			}
+			
+			timeSinceLastFire += 1;
+			AnalogStick shootStick = inputProcessor.shoot;
+			direction = (float) (Math.toDegrees(Math.atan2(shootStick.getYHead() - shootStick.getYBase(), shootStick.getXHead() - shootStick.getXBase())));
+			if(shootStick.isActive()) {
+				if(timeSinceLastFire >= fireRate) {
+					bullets.add(new Bullet(x, y, direction + 8, dx, dy, gs));
+					bullets.add(new Bullet(x, y, direction, dx, dy, gs));
+					bullets.add(new Bullet(x, y, direction - 8, dx, dy, gs));
+					
+					timeSinceLastFire = 0;
 				}
 			}
 			
