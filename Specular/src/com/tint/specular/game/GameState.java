@@ -470,10 +470,6 @@ public class GameState extends State {
 		return cs;
 	}
 
-	public void stopGameMusic() {
-		music.stop();
-	}
-
 	// Reset stuff
 	/**
 	 * Reset all entities
@@ -595,5 +591,13 @@ public class GameState extends State {
 			BoardShock.activate(this);
 			boardshockCharge = 0;
 		}
+	}
+
+	@Override
+	public void hide() {
+		super.hide();
+		if(music != null)
+			music.dispose();
+		music = null;
 	}
 }

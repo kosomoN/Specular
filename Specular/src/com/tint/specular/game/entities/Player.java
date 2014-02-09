@@ -75,7 +75,7 @@ public class Player implements Entity {
 
 	public void shoot(float direction, int offset, int spaces) {
 		if(soundEffects)
-			soundShoot1.play(1.0f);
+			soundShoot1.play(0.8f, (float) (1 + Math.random() / 3 - 0.16), 0);
 		
 		//If the amount of bullet "lines" are even
 		if(bulletBurst % 2 == 0) {
@@ -183,7 +183,6 @@ public class Player implements Entity {
 			if(moveStick.isActive() && distBaseToHead != 0) {
 				//calculating the angle with delta x and delta y
 				double angle = Math.atan2(moveDy, moveDx);
-				System.out.println(distBaseToHead >= maxSpeedAreaSquared);
 				changeSpeed(
 						(float) Math.cos(angle) * MAX_DELTA_SPEED *
 						(distBaseToHead >= maxSpeedAreaSquared ? 1 : distBaseToHead / maxSpeedAreaSquared),

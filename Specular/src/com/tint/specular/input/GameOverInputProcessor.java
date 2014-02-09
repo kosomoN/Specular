@@ -79,7 +79,6 @@ public class GameOverInputProcessor extends InputAdapter {
 			
 				// Return to menu
 				game.enterState(States.MAINMENUSTATE);
-				gs.stopGameMusic();
 			} else {
 				menu.touchUp();
 			}
@@ -88,7 +87,6 @@ public class GameOverInputProcessor extends InputAdapter {
 				
 				// Go to highscores
 				game.enterState(States.PROFILE_STATE);
-				gs.stopGameMusic();
 			} else {
 				highscores.touchUp();
 			}

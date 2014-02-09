@@ -42,9 +42,9 @@ public class SettingsMenuState extends State {
 		
 		if(processor.particlesEnabled())
 			game.batch.draw(selected, 170, 604);
-		if(processor.musicMuted())
+		if(!processor.musicMuted())
 			game.batch.draw(selected, 170, 443);
-		if(processor.soundsMuted())
+		if(!processor.soundsMuted())
 			game.batch.draw(selected, 170, 285);
 		
 		// Back button

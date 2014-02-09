@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter; 
 import com.tint.specular.Specular; 
 import com.tint.specular.Specular.States; 
+import com.tint.specular.states.MainmenuState;
 import com.tint.specular.utils.Util; 
   
 public class SettingsInputProcessor extends InputAdapter { 
@@ -13,9 +14,9 @@ public class SettingsInputProcessor extends InputAdapter {
       
     public SettingsInputProcessor(Specular game) { 
         this.game = game; 
-        soundsMuted = Specular.prefs.getBoolean("SoundsMuted"); 
-        musicMuted = Specular.prefs.getBoolean("MusicMuted"); 
-        particlesEnabled = Specular.prefs.getBoolean("Particles"); 
+        soundsMuted = Specular.prefs.getBoolean("SoundsMuted");
+        musicMuted = Specular.prefs.getBoolean("MusicMuted");
+        particlesEnabled = Specular.prefs.getBoolean("Particles");
     } 
       
     @Override
@@ -41,7 +42,11 @@ public class SettingsInputProcessor extends InputAdapter {
         } 
         // Music 
         else if(Util.isTouching(touchpointx, touchpointy, 190, 525, 550, 128, false)) { 
-            musicMuted = !musicMuted; 
+            musicMuted = !musicMuted;
+            if(musicMuted)
+            	((MainmenuState) game.getState(States.MAINMENUSTATE)).stopMusic();
+            else
+            	((MainmenuState) game.getState(States.MAINMENUSTATE)).startMusic();
         } 
         // Sound 
         else if(Util.isTouching(touchpointx, touchpointy, 190, 685, 410, 128, false)) { 
