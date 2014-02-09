@@ -424,9 +424,7 @@ public class GameState extends State {
 	public Array<Bullet> getBullets() {	return bullets;	}
 	public Array<Enemy> getEnemies() { return enemies; }
 	public Array<Entity> getEntities() { return entities; }
-	public MapHandler getMapHandler() {
-		return mapHandler;
-	}
+	public MapHandler getMapHandler() { return mapHandler; }
 
 	public Player getPlayer() {	return player; }
 	

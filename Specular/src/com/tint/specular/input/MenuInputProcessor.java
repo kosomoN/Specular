@@ -126,10 +126,7 @@ public class MenuInputProcessor extends InputAdapter {
 		return false;
 	}
 	
-	public Button getPlayBtn() {
-		return playBtn; }
-	public Button getProfileBtn() {
-		return profileBtn; }
-	public Button getOptionsBtn() {
-		return optionsBtn; }
+	public Button getPlayBtn() { return playBtn; }
+	public Button getProfileBtn() { return profileBtn; }
+	public Button getOptionsBtn() {	return optionsBtn; }
 }

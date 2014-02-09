@@ -58,7 +58,6 @@ public class Player implements Entity {
 	Sound soundHit1 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit1.wav"));			
 	Sound soundHit2 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit2.wav"));	
 	Sound soundHit3 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit3.wav"));
-
 			
 //---------------SOUND FX END---------------------		
 		
