@@ -9,11 +9,10 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -31,7 +30,7 @@ import com.tint.specular.utils.Util;
 
 public class ControlSetupState extends State {
 
-	private ShapeRenderer shapeRenderer = new ShapeRenderer();
+	private Texture circleTex;
 	private DummyPlayer player = new DummyPlayer();
 	private GameState gs;
 	private Map map;
@@ -44,6 +43,9 @@ public class ControlSetupState extends State {
 	
 	public ControlSetupState(Specular game) {
 		super(game);
+		
+		circleTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Circle.png"));
+		circleTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 
 	@Override
@@ -72,18 +74,17 @@ public class ControlSetupState extends State {
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		
 		controls = Specular.prefs.getInteger("Controls");
-
+		TextureRegionDrawable knobTex = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Selected.png"))));
+		knobTex.setMinWidth(256);;
 		//Slider ui
-		SliderStyle sliderStyle = new SliderStyle(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Slider Background.png"))))
-			, new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Slider Knob.png")))));
-		
+		SliderStyle sliderStyle = new SliderStyle(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Slider.png"))))
+			, knobTex);
 		
 		// Slider
-		final Slider sensitivitySlider = new Slider(0.2f, 2f, 0.1f, false, sliderStyle);
+		final Slider sensitivitySlider = new Slider(0.2f, 2f, 0.01f, false, sliderStyle);
 		sensitivitySlider.setSize(1000, 50);
 		sensitivitySlider.setPosition(-sensitivitySlider.getWidth() / 2, -Specular.camera.viewportHeight / 2 + 20);
 		sensitivitySlider.setValue(Specular.prefs.getFloat("Sensitivity"));
-		
 		sensitivitySlider.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -130,16 +131,16 @@ public class ControlSetupState extends State {
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
+		float width = Specular.camera.viewportWidth / 4 * sensitivity;
+		float height = Specular.camera.viewportWidth / 4 * sensitivity;
+		game.batch.draw(circleTex, inputProcessor.move.getXBase() - width / 2, inputProcessor.move.getYBase() - height / 2,
+									width, height);
+		
 		// Drawing analogsticks
 		inputProcessor.shoot.render(game.batch);
 		inputProcessor.move.render(game.batch);
 			
 		game.batch.end();
-		
-		shapeRenderer.setProjectionMatrix(Specular.camera.combined);
-		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.circle(inputProcessor.move.getXBase(), inputProcessor.move.getYBase(), Specular.camera.viewportWidth / 8 * sensitivity);
-		shapeRenderer.end();
 		
 		stage.act();
 		stage.draw();

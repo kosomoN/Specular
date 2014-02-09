@@ -46,16 +46,16 @@ public class EnemyNormal extends Enemy {
 		x += dx * (1 - slowdown);
 		y += dy * (1 - slowdown);
 		
-		//Checking map boundaries
-		if(x - 20 < 0) {
+		//Checking map boundaries. 20 for width and 18 for map border
+		if(x - 20 - 18 < 0) {
 			offset = -offset;
-		} else if(x + 20 > gs.getCurrentMap().getHeight()){
+		} else if(x + 20 + 18 > gs.getCurrentMap().getHeight()){
 			offset = -offset;
 		}
 		
-		if(y - 20 < 0) {
+		if(y - 20 - 18 < 0) {
 			offset = -offset;
-		} else if(y + 20 > gs.getCurrentMap().getHeight()){
+		} else if(y + 20 + 18 > gs.getCurrentMap().getHeight()){
 			offset = -offset;
 		}
 		

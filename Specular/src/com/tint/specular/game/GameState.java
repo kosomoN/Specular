@@ -351,7 +351,9 @@ public class GameState extends State {
 		game.batch.begin();
 		CameraShake.moveCamera();
 		
+		game.batch.setColor(1, 0, 0, 1);
 		game.batch.draw(currentMap.getParallax(), -1024 + player.getCenterX() / 2, -1024 +  player.getCenterY() / 2, 4096, 4096);
+		game.batch.setColor(1, 1, 1, 1);
 		
 		BoardShock.setZoom();
 		
@@ -437,6 +439,8 @@ public class GameState extends State {
 	
 	public void addBoardshockCharge(float x) {
 		boardshockCharge += x;
+		if(boardshockCharge > 1)
+			boardshockCharge = 1;
 	}
 
 	public boolean particlesEnabled() {
@@ -505,7 +509,7 @@ public class GameState extends State {
 		// Adding player and setting up input processor
 		pss.spawn(3, false);
 		
-		gameInputProcessor = new GameInputProcessor(this);
+		gameInputProcessor = new GameInputProcessor(this, game);
 		gameInputProcessor.reset();
 		input.setInputProcessor(gameInputProcessor);
 		ggInputProcessor = new GameOverInputProcessor(game, this);

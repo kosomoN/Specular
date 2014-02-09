@@ -57,27 +57,27 @@ public class EnemyWanderer extends Enemy {
 		y += dy * (1 - slowdown);
 		
 		//Checking so that the enemy will not get outside the map
-		// Left edge
-		if(x - 20 < 0) {
+		// Left edge. 20 for width and 18 for map border
+		if(x - 20 - 18 < 0) {
 			x = 20;
 			
 			angle = random.nextInt(90) - 45;
 		}
 		// Right edge
-		else if(x + 20 > gs.getCurrentMap().getWidth()){
-			x = gs.getCurrentMap().getWidth() - 20;
+		else if(x + 20 + 18 > gs.getCurrentMap().getWidth()){
+			x = gs.getCurrentMap().getWidth() - 20 - 16;
 			
 			angle = random.nextInt(90) + 135;
 		}
 		// Upper edge
-		if(y - 20 < 0) {
-			y = 20;
+		if(y - 20 - 18 < 0) {
+			y = 20 - 16;
 			
 			angle = random.nextInt(90) + 45;
 		}
 		// Lower edge
-		else if(y + 20 > gs.getCurrentMap().getHeight()){
-			y = gs.getCurrentMap().getHeight() - 20;
+		else if(y + 20 + 18 > gs.getCurrentMap().getHeight()){
+			y = gs.getCurrentMap().getHeight() - 20 - 16;
 			
 			angle = random.nextInt(90) + 225;
 		}

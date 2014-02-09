@@ -1,7 +1,6 @@
 package com.tint.specular.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GLTexture;
@@ -46,9 +45,6 @@ public class MainmenuState extends State {
 		menuInputProcessor.getProfileBtn().render();
 		menuInputProcessor.getOptionsBtn().render();
 		game.batch.end();
-		
-		if(Gdx.input.isKeyPressed(Keys.BACK))
-			Gdx.app.exit();
 	}
 	
 	

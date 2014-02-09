@@ -2,6 +2,7 @@ package com.tint.specular.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
@@ -34,7 +35,13 @@ public class MenuInputProcessor extends InputAdapter {
 		Texture optionsTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options 1400 910.png"));
 		optionsBtn = new Button(1400, 32, 512, 128, game.batch, optionsTex, optionsTexPr);
 	}
-
+    
+	@Override
+	public boolean keyUp(int keycode) {
+		if(keycode == Keys.BACK)
+			Gdx.app.exit();
+		return super.keyUp(keycode);
+	}
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {

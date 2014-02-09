@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.tint.specular.Specular;
+import com.tint.specular.Specular.States;
 import com.tint.specular.game.GameState;
 
 /**
@@ -20,12 +21,14 @@ public class GameInputProcessor implements InputProcessor {
 	private int controls;
 	private AnalogStick shoot, move;
 	private GameState gs;
+	private Specular game;
 	
-	public GameInputProcessor(GameState gs) {
+	public GameInputProcessor(GameState gs, Specular game) {
 		this.gs = gs;
 		controls = gs.getPlayer().getControls();
 		shoot = new AnalogStick();
 		move = new AnalogStick();
+		this.game = game;
 	}
 	
 	@Override
@@ -52,6 +55,9 @@ public class GameInputProcessor implements InputProcessor {
 			s = false;
 		else if(keycode == Keys.D)
 			d = false;
+		
+		if(keycode == Keys.BACK)
+			game.enterState(States.MAINMENUSTATE);
 		
 		return false;
 	}

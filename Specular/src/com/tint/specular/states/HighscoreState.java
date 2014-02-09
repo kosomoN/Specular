@@ -1,7 +1,9 @@
 package com.tint.specular.states;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
@@ -50,9 +52,6 @@ public class HighscoreState extends State {
 		}
 		stage.act();
 		stage.draw();
-		
-		if(Gdx.input.isKeyPressed(Keys.BACK))
-			game.enterState(Specular.States.MAINMENUSTATE);
 	}
 
 	@Override
@@ -141,7 +140,14 @@ public class HighscoreState extends State {
 		});
 		stage.addActor(backBtn);
 		
-		Gdx.input.setInputProcessor(stage);
+		Gdx.input.setInputProcessor(new InputMultiplexer(stage, new InputAdapter() {
+			@Override
+			public boolean keyUp(int keycode) {
+				if(keycode == Keys.BACK)
+					game.enterState(Specular.States.MAINMENUSTATE);
+				return super.keyUp(keycode);
+			}
+		}));
 	}
 	
 	

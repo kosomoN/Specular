@@ -145,14 +145,14 @@ public class Player implements Entity {
         dx *= FRICTION;
         dy *= FRICTION;
         
-        if(centerx - getRadius() + dx < 23)
+        if(centerx - getRadius() + dx < 8)
         	dx = -dx * 0.6f;
-        else if(centerx + getRadius() + dx > gs.getCurrentMap().getWidth() - 23)
+        else if(centerx + getRadius() + dx > gs.getCurrentMap().getWidth() - 8)
         	dx = -dx * 0.6f;
         
-        if(centery - getRadius() + dy < 23)
+        if(centery - getRadius() + dy < 8)
         	dy = -dy * 0.6f;
-        else if(centery + getRadius() + dy > gs.getCurrentMap().getHeight() - 23)
+        else if(centery + getRadius() + dy > gs.getCurrentMap().getHeight() - 8)
         	dy = -dy * 0.6f;
         
         centerx += dx;
