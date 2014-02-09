@@ -5,6 +5,7 @@ import java.util.Iterator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -67,16 +68,15 @@ public class ControlSetupState extends State {
 		stage = new Stage(Specular.camera.viewportWidth, Specular.camera.viewportHeight, false, game.batch);
 		stage.setCamera(Specular.camera);
 		
-		inputProcessor = new ControlInputProcessor();
-		Gdx.input.setInputProcessor(new InputMultiplexer(stage, inputProcessor));
-		
 		lastTickTime = System.nanoTime();
-		
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		
 		tilt = Specular.prefs.getBoolean("Tilt");
 		staticSticks = Specular.prefs.getBoolean("Static");
+		
+		inputProcessor = new ControlInputProcessor();
+		Gdx.input.setInputProcessor(new InputMultiplexer(stage, inputProcessor));
 		
 		selectedTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Selected.png"));
 		TextureRegionDrawable knobTex = new TextureRegionDrawable(new TextureRegion(selectedTex));
@@ -130,6 +130,11 @@ public class ControlSetupState extends State {
 			public void changed(ChangeEvent event, Actor actor) {
 				Specular.prefs.putBoolean("Static", staticBtn.isChecked());
 				staticSticks = staticBtn.isChecked();
+				
+				if(staticBtn.isChecked()) {
+					inputProcessor.move.setBasePos(Specular.prefs.getFloat("Move Stick Pos X"), Specular.prefs.getFloat("Move Stick Pos Y"));
+					inputProcessor.shoot.setBasePos(Specular.prefs.getFloat("Shoot Stick Pos X"), Specular.prefs.getFloat("Shoot Stick Pos Y"));
+				}
 			}
 		});
 		
@@ -273,12 +278,20 @@ public class ControlSetupState extends State {
 		
 		public ControlInputProcessor() {
 			if(staticSticks) {
-				move.setBasePos(-1 / 4f * Specular.camera.viewportWidth, 0);
+				move.setBasePos(Specular.prefs.getFloat("Move Stick Pos X"), Specular.prefs.getFloat("Move Stick Pos Y"));
+				shoot.setBasePos(Specular.prefs.getFloat("Shoot Stick Pos X"), Specular.prefs.getFloat("Shoot Stick Pos Y"));
 			} else {
 				//Just a hack to stop it from rendering before the user touches the screen
 				move.setBasePos(-3000, -3000);
 			}
 				
+		}
+		
+		@Override
+		public boolean keyUp(int keycode) {
+			if(keycode == Keys.BACK)
+				game.enterState(States.SETTINGSMENUSTATE);
+			return super.keyUp(keycode);
 		}
 
 		@Override
@@ -302,9 +315,7 @@ public class ControlSetupState extends State {
 				if(viewportx <= Specular.camera.viewportWidth / 2) {
 					
 					//If sticks are static set it to the right position
-					if(staticSticks)
-						move.setBasePos(-1 / 4f * Specular.camera.viewportWidth, 0);
-					else
+					if(!staticSticks)
 						move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
 		
 					move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
@@ -313,9 +324,7 @@ public class ControlSetupState extends State {
 				} else {//Touching right half
 					
 					//If sticks are static set it to the right position
-					if(staticSticks)
-						shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
-					else
+					if(!staticSticks)
 						shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
 					
 					
@@ -324,9 +333,7 @@ public class ControlSetupState extends State {
 				}
 			}
 			if(viewportx > Specular.camera.viewportWidth / 2) {
-				if(staticSticks)
-					shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
-				else
+				if(!staticSticks)
 					shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
 				
 				shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));

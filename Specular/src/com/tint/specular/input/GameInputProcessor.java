@@ -31,6 +31,9 @@ public class GameInputProcessor implements InputProcessor {
 		shoot = new AnalogStick();
 		move = new AnalogStick();
 		this.game = game;
+		
+		move.setBasePos(Specular.prefs.getFloat("Move Stick Pos X"), Specular.prefs.getFloat("Move Stick Pos Y"));
+		shoot.setBasePos(Specular.prefs.getFloat("Shoot Stick Pos X"), Specular.prefs.getFloat("Shoot Stick Pos Y"));
 	}
 	
 	@Override
@@ -90,9 +93,7 @@ public class GameInputProcessor implements InputProcessor {
 			if(viewportx <= Specular.camera.viewportWidth / 2) {
 				
 				//If sticks are static set it to the right position
-				if(staticSticks)
-					move.setBasePos(-1 / 4f * Specular.camera.viewportWidth, 0);
-				else
+				if(!staticSticks)
 					move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
 	
 				move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
@@ -101,9 +102,7 @@ public class GameInputProcessor implements InputProcessor {
 			} else {//Touching right half
 				
 				//If sticks are static set it to the right position
-				if(staticSticks)
-					shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
-				else
+				if(!staticSticks)
 					shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
 				
 				
@@ -112,9 +111,7 @@ public class GameInputProcessor implements InputProcessor {
 			}
 		}
 		if(viewportx > Specular.camera.viewportWidth / 2) {
-			if(staticSticks)
-				shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
-			else
+			if(!staticSticks)
 				shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
 			
 			shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));

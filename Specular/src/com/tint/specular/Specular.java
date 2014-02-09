@@ -63,17 +63,22 @@ public class Specular extends Game {
 		
 		prefs = Gdx.app.getPreferences("Preferences");
 		// Checks if the preferences are missing or it is the first time the app is run
-		if(!prefs.contains("Tilt")) {
+//		if(!prefs.contains("Move Stick Pos X")) {
 			prefs.putBoolean("Tilt", false);
 			prefs.putBoolean("Static", false);
 			prefs.putFloat("Sensitivity", 0.5f);
 			prefs.putBoolean("Particles", true);
 			prefs.putBoolean("MusicMuted", false);
 			prefs.putBoolean("SoundsMuted", false);
+			prefs.putFloat("Move Stick Pos X", -camera.viewportWidth / 6 * 2);
+			prefs.putFloat("Move Stick Pos Y", -camera.viewportHeight / 6);
+			
+			prefs.putFloat("Shoot Stick Pos X", camera.viewportWidth / 6 * 2);
+			prefs.putFloat("Shoot Stick Pos Y", -camera.viewportHeight / 6);
 			
 			//Needed for android to save the settings
 			prefs.flush();
-		}
+//		}
 		Gdx.input.setCatchBackKey(true);
 		
 		
