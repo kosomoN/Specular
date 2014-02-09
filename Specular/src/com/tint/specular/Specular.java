@@ -50,7 +50,6 @@ public class Specular extends Game {
 		float displayAspectRatio = (float) Gdx.graphics.getWidth() / Gdx.graphics.getHeight();
 		float cameraAspectRatio = (float) WIDTH / HEIGHT;
 		float w, h;
-		System.out.println(displayAspectRatio + " " + cameraAspectRatio);
 		if(displayAspectRatio > cameraAspectRatio) {
 			h = HEIGHT;
 			w = HEIGHT * displayAspectRatio;
@@ -61,15 +60,16 @@ public class Specular extends Game {
 		camera = new OrthographicCamera(w, h);
 		batch = new SpriteBatch();
 		
-		prefs = Gdx.app.getPreferences("Preferences");
+		prefs = Gdx.app.getPreferences("Specular Preferences");
 		// Checks if the preferences are missing or it is the first time the app is run
-//		if(!prefs.contains("Move Stick Pos X")) {
+		if(!prefs.contains("Tilt")) {
 			prefs.putBoolean("Tilt", false);
 			prefs.putBoolean("Static", false);
 			prefs.putFloat("Sensitivity", 0.5f);
 			prefs.putBoolean("Particles", true);
 			prefs.putBoolean("MusicMuted", false);
 			prefs.putBoolean("SoundsMuted", false);
+			prefs.putBoolean("FirstTime", true);
 			prefs.putFloat("Move Stick Pos X", -camera.viewportWidth / 6 * 2);
 			prefs.putFloat("Move Stick Pos Y", -camera.viewportHeight / 6);
 			
@@ -78,7 +78,7 @@ public class Specular extends Game {
 			
 			//Needed for android to save the settings
 			prefs.flush();
-//		}
+		}
 		Gdx.input.setCatchBackKey(true);
 		
 		

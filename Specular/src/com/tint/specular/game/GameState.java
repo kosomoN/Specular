@@ -5,7 +5,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Music.OnCompletionListener;
 import com.badlogic.gdx.graphics.Color;
@@ -291,8 +290,11 @@ public class GameState extends State {
 					it.remove();
 				}
 			}
-			// Resets a few things
+			// Resets a few things in bullet burst
 			BulletBurst.updateBulletBursts();
+			
+			// Enemy Slowdown
+			SlowdownEnemies.setUpdatedSlowdown(false);
 			
 			if(playerKilled) {
 				// Time attack
@@ -322,10 +324,6 @@ public class GameState extends State {
 			}
 			
 			CameraShake.update();
-		}
-		
-		if(input.isKeyPressed(Keys.F)) {
-			puss.spawn(new BulletBurst(0, 0, this));
 		}
 	}
 	
@@ -523,6 +521,11 @@ public class GameState extends State {
 	@Override
 	public void show() {
 		super.show();
+		// Sets "first" time play to false
+		if(Specular.prefs.getBoolean("FirstTime")) {
+			Specular.prefs.putBoolean("FirstTime", false);
+			Specular.prefs.flush();
+		}
 		
 		if(!Specular.prefs.getBoolean("MusicMuted")) {
 			randomizeMusic();

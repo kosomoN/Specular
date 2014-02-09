@@ -18,7 +18,6 @@ public class BulletBurst extends PowerUp {
 	private static Texture texture;
 	private static List<Player> playersFired = new ArrayList<Player>();
 	private static int timesFiredSamePlayer;
-	private Player player;
 	private float timeSinceLastFire, fireRate;
 	
 	public BulletBurst(float x, float y, GameState gs) {
@@ -31,7 +30,6 @@ public class BulletBurst extends PowerUp {
 	
 	@Override
 	protected void affect(Player player) {
-		this.player = player;
 		player.addBulletBurstLevel(1);
 		timeSinceLastFire = player.getTimeSinceLastFire();
 		fireRate = player.getFireRate();
@@ -41,10 +39,12 @@ public class BulletBurst extends PowerUp {
 	public boolean update() {
 		timeSinceLastFire++;
 		
+		Player player = gs.getPlayer();
 		if(super.update()) {
 			player.addBulletBurstLevel(-1);
-			if(player.getBulletBurstLevel() == 0) {
+			if(player.getBulletBurstLevel() <= 0) {
 				player.setBulletBurst(3);
+				player.setBulletBurstLevel(0);
 			}
 			return true;
 		}

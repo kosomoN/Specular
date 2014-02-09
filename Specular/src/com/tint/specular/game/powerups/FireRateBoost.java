@@ -31,12 +31,13 @@ public class FireRateBoost extends PowerUp {
 
 	@Override
 	public boolean update() {
-		if(super.update())
-			player.setFireRate(10f);
-		else
-			return despawnTime <= 0;
+		if(super.update()) {
+			if(isActivated())
+				player.setFireRate(10f);
+			return true;
+		}
 		
-		return true;
+		return false;
 	}
 	
 	@Override

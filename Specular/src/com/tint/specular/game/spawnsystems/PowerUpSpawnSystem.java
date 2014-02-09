@@ -32,7 +32,8 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		Random rand = new Random();
 		int powerUpID = rand.nextInt(7);
 		
-		float x = rand.nextInt(gs.getCurrentMap().getWidth() - 80) + 48, y = rand.nextInt(gs.getCurrentMap().getHeight() - 80) + 48;
+		float x = rand.nextInt(gs.getCurrentMap().getWidth() - 100) + 50;
+		float y = rand.nextInt(gs.getCurrentMap().getHeight() - 100) + 50;
 		
 		if(powerUpID == 0)
 			gs.addEntity(new AddLife(x, y, gs));
@@ -55,7 +56,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 	 * @param pu - The power-up to spawn
 	 */
 	public void spawn(PowerUp pu) {
-		float x = rand.nextInt(gs.getCurrentMap().getWidth() - 64) + 32, y = rand.nextInt(gs.getCurrentMap().getHeight() - 64) + 32;
+		float x = rand.nextInt(gs.getCurrentMap().getWidth() - 100) + 50, y = rand.nextInt(gs.getCurrentMap().getHeight() - 100) + 50;
 		pu.setPosition(x, y);
 		
 		gs.addEntity(pu);

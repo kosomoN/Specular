@@ -43,8 +43,8 @@ public class EnemyNormal extends Enemy {
 		
 		dx = (float) (Math.cos(angle) * 2);
 		dy = (float) (Math.sin(angle) * 2);
-		x += dx * (1 - slowdown);
-		y += dy * (1 - slowdown);
+		x += dx * slowdown;
+		y += dy * slowdown;
 		
 		//Checking map boundaries. 20 for width and 18 for map border
 		if(x - 20 - 18 < 0) {

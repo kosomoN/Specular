@@ -53,8 +53,8 @@ public class EnemyWanderer extends Enemy {
 		
 		dx = (float) (Math.cos(angle / 180 * Math.PI) * 2);
 		dy = (float) (Math.sin(angle / 180 * Math.PI) * 2);
-		x += dx * (1 - slowdown);
-		y += dy * (1 - slowdown);
+		x += dx * slowdown;
+		y += dy * slowdown;
 		
 		//Checking so that the enemy will not get outside the map
 		// Left edge. 20 for width and 18 for map border

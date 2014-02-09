@@ -31,8 +31,8 @@ public class EnemyShielder extends Enemy {
 		
 		dx = (float) (Math.cos(angle) * 2);
 		dy = (float) (Math.sin(angle) * 2);
-		x += dx * (1 - slowdown);
-		y += dy * (1 - slowdown);
+		x += dx * slowdown;
+		y += dy * slowdown;
 		
 		for(Enemy e : gs.getEnemies()) {
 			if(e != this) {

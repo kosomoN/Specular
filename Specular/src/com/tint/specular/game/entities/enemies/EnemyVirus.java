@@ -91,8 +91,8 @@ public class EnemyVirus extends Enemy {
 		}
 
 		
-		x += dx;
-		y += dy;
+		x += dx * slowdown;
+		y += dy * slowdown;
 		
 		
 		

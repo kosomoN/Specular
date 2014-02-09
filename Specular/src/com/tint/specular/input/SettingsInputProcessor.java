@@ -2,6 +2,7 @@ package com.tint.specular.input;
   
 import com.badlogic.gdx.Gdx; 
 import com.badlogic.gdx.InputAdapter; 
+import com.badlogic.gdx.Input.Keys;
 import com.tint.specular.Specular; 
 import com.tint.specular.Specular.States; 
 import com.tint.specular.states.MainmenuState;
@@ -10,21 +11,29 @@ import com.tint.specular.utils.Util;
 public class SettingsInputProcessor extends InputAdapter { 
   
     private Specular game; 
-    private boolean soundsMuted = true, musicMuted = true, particlesEnabled = true, backPressed, controlsPressed; 
+    private boolean soundsMuted = true, musicMuted = true, particlesEnabled = true, backBtnPressed, controlsPressed; 
       
-    public SettingsInputProcessor(Specular game) { 
+    public SettingsInputProcessor(Specular game) {
         this.game = game; 
         soundsMuted = Specular.prefs.getBoolean("SoundsMuted");
         musicMuted = Specular.prefs.getBoolean("MusicMuted");
         particlesEnabled = Specular.prefs.getBoolean("Particles");
-    } 
-      
+    }
+    
     @Override
+	public boolean keyUp(int keycode) {
+    	if(keycode == Keys.BACK)
+			game.enterState(States.MAINMENUSTATE);
+    	
+    	return false;
+	}
+
+	@Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) { 
         // Translate screen coordinates to viewport coordinates 
         float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth; 
         float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight; 
-        backPressed = Util.isTouching(touchpointx, touchpointy, 47, 888, 559, 192, false); 
+        backBtnPressed = Util.isTouching(touchpointx, touchpointy, 47, 888, 559, 192, false); 
         controlsPressed = Util.isTouching(touchpointx, touchpointy, 1160, 910, 655, 90, false);
           
         return false; 
@@ -49,29 +58,18 @@ public class SettingsInputProcessor extends InputAdapter {
             	((MainmenuState) game.getState(States.MAINMENUSTATE)).startMusic();
         } 
         // Sound 
-        else if(Util.isTouching(touchpointx, touchpointy, 190, 685, 410, 128, false)) { 
+        else if(Util.isTouching(touchpointx, touchpointy, 190, 685, 410, 128, false))
             soundsMuted = !soundsMuted; 
-        }
+
         // Controls
-        else if(Util.isTouching(touchpointx, touchpointy, 1160, 910, 655, 90, false)) {
-        	Specular.prefs.putBoolean("SoundsMuted", soundsMuted); 
-            Specular.prefs.putBoolean("MusicMuted", musicMuted); 
-            Specular.prefs.putBoolean("Particles", particlesEnabled); 
-            Specular.prefs.flush(); 
+        else if(Util.isTouching(touchpointx, touchpointy, 1160, 910, 655, 90, false))
         	game.enterState(States.CONTROLSETUPSTATE);
-        }
+
         // Back 
-        else if(Util.isTouching(touchpointx, touchpointy, 47, 888, 559, 192, false)) { 
-            Specular.prefs.putBoolean("SoundsMuted", soundsMuted); 
-            Specular.prefs.putBoolean("MusicMuted", musicMuted); 
-            Specular.prefs.putBoolean("Particles", particlesEnabled); 
-            Specular.prefs.flush(); 
-            
-            
+        else if(Util.isTouching(touchpointx, touchpointy, 47, 888, 559, 192, false))
             game.enterState(States.MAINMENUSTATE); 
-        }
         
-        backPressed = false;
+        backBtnPressed = false;
         controlsPressed = false;
         
         return false;
@@ -83,7 +81,7 @@ public class SettingsInputProcessor extends InputAdapter {
         float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth; 
         float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight; 
           
-        backPressed = Util.isTouching(touchpointx, touchpointy, 47, 888, 559, 192, false); 
+        backBtnPressed = Util.isTouching(touchpointx, touchpointy, 47, 888, 559, 192, false); 
         controlsPressed = Util.isTouching(touchpointx, touchpointy, 1160, 910, 655, 90, false);
         
         return false; 
@@ -102,7 +100,7 @@ public class SettingsInputProcessor extends InputAdapter {
     } 
       
     public boolean backPressed() { 
-        return backPressed; 
+        return backBtnPressed; 
     } 
       
     public boolean controlsPressed() { 

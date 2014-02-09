@@ -14,13 +14,11 @@ public abstract class Enemy implements Entity {
 	
 	protected float x, y, dx, dy;
 	protected float direction;
-	protected float slowdown;
+	protected static float slowdown = 1;
 	
 	protected int life;
 	protected static int MAX_LIFE;
 	protected boolean isHit;
-	
-	private int slowdownTimer; // Milliseconds
 	
 	protected GameState gs;
 	
@@ -34,28 +32,17 @@ public abstract class Enemy implements Entity {
 	
 	@Override
 	public boolean update() {
-		if(slowdownTimer > 0) {
-			slowdownTimer -= GameState.TICK_LENGTH / 1000000; // Millisecond in nano
-		} else {
-			slowdown = 0;
-			slowdownTimer = 0;
-		}
 		return life <= 0;
 	}
 
 	/**
 	 * 
 	 * @param slowdown - Max value 1, minimum value 0.
-	 * If it higher than 1 or lower than 0, it will be changed to
+	 * If it is higher than 1 or lower than 0, it will be changed to
 	 * the nearest accepted value
 	 */
-	public void setSlowdown(float slowdown) {
-		this.slowdown += (1 - this.slowdown) * slowdown;
-		slowdownTimer += 5000;
-		
-		// Checking boundaries
-		slowdown = slowdown > 1 ? 1 : slowdown;
-		slowdown = slowdown < 0 ? 0 : slowdown;
+	public static void setSlowdown(float slowdown) {
+		Enemy.slowdown = slowdown;
 	}
 	
 	public void hit(double damage) {
@@ -85,7 +72,7 @@ public abstract class Enemy implements Entity {
 	public float getY() { return y; }
 	public float getDx() { return dx; }
 	public float getDy() { return dy; }
-	public float getSlowdown() { return slowdown; }
+	public static float getSlowdown() { return slowdown; }
 
 	public int getLife() { return life; }
 	

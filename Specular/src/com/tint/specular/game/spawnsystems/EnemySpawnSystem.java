@@ -53,8 +53,8 @@ public class EnemySpawnSystem extends SpawnSystem {
 		int x;
 		int y;
 		while(true) {//I'm a bit skeptical about this loop
-			x = rand.nextInt(gs.getCurrentMap().getWidth());
-			y = rand.nextInt(gs.getCurrentMap().getHeight());
+			x = rand.nextInt(gs.getCurrentMap().getWidth() - 36) + 18;
+			y = rand.nextInt(gs.getCurrentMap().getHeight() - 36) + 18;
 			if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 > x ||
 					Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 < x ||
 					Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 > y ||

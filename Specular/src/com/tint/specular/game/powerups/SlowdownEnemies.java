@@ -13,7 +13,8 @@ import com.tint.specular.game.entities.enemies.Enemy;
  */
 
 public class SlowdownEnemies extends PowerUp {
-private static Texture texture;
+	private static Texture texture;
+	private static boolean hasUpdatedSlowdown = false;
 	
 	public SlowdownEnemies(float x, float y, GameState gs) {
 		super(x, y, gs, 300);
@@ -25,23 +26,25 @@ private static Texture texture;
 	
 	@Override
 	protected void affect(Player player) {
-		for(Enemy e : gs.getEnemies())
-			e.setSlowdown(0.5f);
+		Enemy.setSlowdown(0.25f);
 	}
 
 	@Override
 	public boolean update() {
-		if(super.update())
-			for(Enemy e : gs.getEnemies())
-				e.setSlowdown(0f);
-		else
-			return despawnTime <= 0;
+		if(isActivated() && !hasUpdatedSlowdown) {
+			hasUpdatedSlowdown = true;
+			Enemy.setSlowdown(Enemy.getSlowdown() + 0.75f / 300);
+		}
 		
-		return true;
+		return super.update();
 	}
 
 	@Override
 	public Texture getTexture() {
 		return texture;
+	}
+	
+	public static void setUpdatedSlowdown(boolean slow) {
+		hasUpdatedSlowdown = slow;
 	}
 }

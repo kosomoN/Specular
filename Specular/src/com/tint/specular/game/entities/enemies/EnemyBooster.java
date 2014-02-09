@@ -38,8 +38,8 @@ public class EnemyBooster extends Enemy {
 			
 			dx = (float) (Math.cos(direction) * speed);
 			dy = (float) (Math.sin(direction) * speed);
-			x += dx * (1 - slowdown);
-			y += dy * (1 - slowdown);
+			x += dx * slowdown;
+			y += dy * slowdown;
 			
 			boostingDelay++;
 		} else if(boostingDelay == 0) {

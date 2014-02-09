@@ -11,8 +11,9 @@ import com.tint.specular.ui.Button;
 
 public class MenuInputProcessor extends InputAdapter {
 	
-	private Button playBtn, profileBtn, optionsBtn;
+	private Button playBtn, profileBtn, optionsBtn, helpBtn;
 	private Specular game;
+	private boolean firstTime, fromHowToPlay;
 	
 	private MainmenuState menuState;
     
@@ -21,7 +22,6 @@ public class MenuInputProcessor extends InputAdapter {
 		this.game = game;
 		
 		//Defining main menu buttons locations and sizes
-		
 		Texture playTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play 720 420.png"));
 		Texture playTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Play Pressed.png"));
 		playBtn = new Button(720, 404, 768, 256, game.batch, playTex, playTexPr);
@@ -31,9 +31,15 @@ public class MenuInputProcessor extends InputAdapter {
 		Texture profileTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Profiles Pressed.png"));
 		profileBtn = new Button(880, 164, 768, 256, game.batch, profileTex, profileTexPr);
 		
-		Texture optionsTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options Pressed.png"));
 		Texture optionsTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options 1400 910.png"));
+		Texture optionsTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Options Pressed.png"));
 		optionsBtn = new Button(1400, 32, 512, 128, game.batch, optionsTex, optionsTexPr);
+		
+		Texture helpTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Help.png"));
+		Texture helpTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Help Pressed.png"));
+		helpBtn = new Button(Specular.camera.viewportWidth / 2 - 192 , 32, 128, 128, game.batch, helpTex, helpTexPr);
+		
+		firstTime = Specular.prefs.getBoolean("FirstTime");
 	}
     
 	@Override
@@ -50,15 +56,21 @@ public class MenuInputProcessor extends InputAdapter {
 		float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 		float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 		
-		// It then checks if that touchpoint collides with the buttons on screen
+		fromHowToPlay = menuState.showHowToPlay();
+		
+		// It then checks if that touchpoint collides with the buttons on screen and doesn't return from how to play screen,
 		// and acts accordingly
-		if(playBtn.isOver(touchpointx, touchpointy, true)) {
-			playBtn.touchOver(touchpointx, touchpointy);
-		} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
-			profileBtn.touchOver(touchpointx, touchpointy);
-		} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
-			optionsBtn.touchOver(touchpointx, touchpointy);
-		} 
+		if(!fromHowToPlay) {
+			if(playBtn.isOver(touchpointx, touchpointy, true)) {
+				playBtn.touchOver(touchpointx, touchpointy);
+			} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
+				profileBtn.touchOver(touchpointx, touchpointy);
+			} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
+				optionsBtn.touchOver(touchpointx, touchpointy);
+			} else if(helpBtn.isOver(touchpointx, touchpointy, true)) {
+				helpBtn.touchOver(touchpointx, touchpointy);
+			}
+		}
 //		//Play button sound
 //		Sound soundButton1 = Gdx.audio.newSound(Gdx.files.internal("audio/Button.wav"));	
 //		if (playBtn.isOver(touchpointx, touchpointy, true)) {
@@ -76,18 +88,27 @@ public class MenuInputProcessor extends InputAdapter {
 		float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 		float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 		
-		// It then checks if that touchpoint collides with the buttons on screen
+		// It then checks if that touchpoint collides with the buttons on screen and doesn't return from how to play screen,
 		// and acts accordingly
-		if(playBtn.isOver(touchpointx, touchpointy, true)) {
-			playBtn.touchUp();
-			game.enterState(States.SINGLEPLAYER_GAMESTATE);
-			menuState.stopMusic();
-		} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
-			profileBtn.touchUp();
-			game.enterState(States.PROFILE_STATE);
-		} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
-			optionsBtn.touchUp();
-			game.enterState(States.SETTINGSMENUSTATE);
+		if(!fromHowToPlay) {
+			if(playBtn.isOver(touchpointx, touchpointy, true)) {
+				playBtn.touchUp();
+				if(firstTime) {
+					menuState.setHowToPlay(true, true);
+				} else {
+					game.enterState(States.SINGLEPLAYER_GAMESTATE);
+					menuState.stopMusic();
+				}
+			} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
+				profileBtn.touchUp();
+				game.enterState(States.PROFILE_STATE);
+			} else if(optionsBtn.isOver(touchpointx, touchpointy, true)) {
+				optionsBtn.touchUp();
+				game.enterState(States.SETTINGSMENUSTATE);
+			} else if(helpBtn.isOver(touchpointx, touchpointy, true)) {
+				helpBtn.touchUp();
+				menuState.setHowToPlay(true, false);
+			}
 		}
 		
 		return false;
@@ -129,4 +150,5 @@ public class MenuInputProcessor extends InputAdapter {
 	public Button getPlayBtn() { return playBtn; }
 	public Button getProfileBtn() { return profileBtn; }
 	public Button getOptionsBtn() {	return optionsBtn; }
+	public Button getHelpButton() { return helpBtn; }
 }

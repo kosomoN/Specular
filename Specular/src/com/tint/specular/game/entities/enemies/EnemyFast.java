@@ -38,8 +38,8 @@ public class EnemyFast extends Enemy {
 		
 		dx = (float) (Math.cos(angle) * speed);
 		dy = (float) (Math.sin(angle) * speed);
-		x += dx * (1 - slowdown);
-		y += dy * (1 - slowdown);
+		x += dx * slowdown;
+		y += dy * slowdown;
 		
 		return super.update();
 	}
