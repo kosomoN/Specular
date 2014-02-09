@@ -3,7 +3,6 @@ package com.tint.specular.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.tint.specular.Specular;
 import com.tint.specular.input.SettingsInputProcessor;
 
@@ -13,7 +12,6 @@ public class SettingsMenuState extends State {
 	private boolean rendered;
 	private Texture background, selected, back, backPressed, controls, controlsPressed;
 	private SettingsInputProcessor processor;
-	private BitmapFont font = new BitmapFont();
 	
 	public SettingsMenuState(Specular game) {
 		super(game);
@@ -57,8 +55,6 @@ public class SettingsMenuState extends State {
 			game.batch.draw(controls, Specular.camera.viewportWidth - controls.getWidth() - 47, -20);
 		else
 			game.batch.draw(controlsPressed, Specular.camera.viewportWidth - controls.getWidth() - 47, -20);
-		
-		font.draw(game.batch, (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth + ", " + (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight, 10, Specular.camera.viewportHeight - 40);
 		game.batch.end();
 	}
 	

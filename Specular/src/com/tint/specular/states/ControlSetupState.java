@@ -1,9 +1,5 @@
 package com.tint.specular.states;
 
-import static com.tint.specular.input.GameInputProcessor.STATIC_STICKS;
-import static com.tint.specular.input.GameInputProcessor.STATIC_TILT;
-import static com.tint.specular.input.GameInputProcessor.TILT;
-
 import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
@@ -27,17 +23,14 @@ import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Bullet;
-import com.tint.specular.game.entities.Entity;
-import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
-import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.map.Map;
 import com.tint.specular.utils.Util;
 
 public class ControlSetupState extends State {
 
-	private Texture circleTex;
+	private Texture circleTex, selectedTex;
 	private DummyPlayer player = new DummyPlayer();
 	private Array<Bullet> bullets = new Array<Bullet>();
 	private GameState gs;
@@ -45,9 +38,10 @@ public class ControlSetupState extends State {
 	private double unprocessed;
 	private long lastTickTime;
 	private float sensitivity;
-	private int controls;
+	private boolean tilt, staticSticks;
 	public ControlInputProcessor inputProcessor;
 	private Stage stage;
+	private Button staticBtn;
 	
 	public ControlSetupState(Specular game) {
 		super(game);
@@ -81,8 +75,11 @@ public class ControlSetupState extends State {
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		
-		controls = Specular.prefs.getInteger("Controls");
-		TextureRegionDrawable knobTex = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Selected.png"))));
+		tilt = Specular.prefs.getBoolean("Tilt");
+		staticSticks = Specular.prefs.getBoolean("Static");
+		
+		selectedTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Selected.png"));
+		TextureRegionDrawable knobTex = new TextureRegionDrawable(new TextureRegion(selectedTex));
 		knobTex.setMinWidth(256);;
 		//Slider ui
 		SliderStyle sliderStyle = new SliderStyle(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Slider.png"))))
@@ -118,6 +115,25 @@ public class ControlSetupState extends State {
 		});
 		
 		stage.addActor(backBtn);
+		
+		
+		TextureRegion controlButtonsTex = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Controls Checks.png")));
+		
+		staticBtn = new Button(new TextureRegionDrawable(controlButtonsTex));
+		
+		staticBtn.setPosition(-Specular.camera.viewportWidth / 2 - 50, Specular.camera.viewportHeight / 2 - 205);
+		
+		staticBtn.setChecked(staticSticks);
+		
+		staticBtn.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				Specular.prefs.putBoolean("Static", staticBtn.isChecked());
+				staticSticks = staticBtn.isChecked();
+			}
+		});
+		
+		stage.addActor(staticBtn);
 	}
 	
 	private void renderGame() {
@@ -129,7 +145,9 @@ public class ControlSetupState extends State {
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		game.batch.begin();
 		
+		game.batch.setColor(1, 0, 0, 1);
 		game.batch.draw(map.getParallax(), -1024 + player.x / 2, -1024 +  player.y / 2, 4096, 4096);
+		game.batch.setColor(1, 1, 1, 1);
 		
 		map.render(game.batch);
 		
@@ -150,11 +168,16 @@ public class ControlSetupState extends State {
 		// Drawing analogsticks
 		inputProcessor.shoot.render(game.batch);
 		inputProcessor.move.render(game.batch);
-			
+		
 		game.batch.end();
 		
 		stage.act();
 		stage.draw();
+		if(staticBtn.isChecked()) {
+			game.batch.begin();
+			game.batch.draw(selectedTex, staticBtn.getX() + 47, staticBtn.getY() + 78);
+			game.batch.end();
+		}
 	}
 
 	private void update() {
@@ -184,9 +207,9 @@ public class ControlSetupState extends State {
 		}
 
 		private void update() {
-			if(controls == 0) {
+			if(tilt) {
 				changeSpeed(Gdx.input.getAccelerometerX() * 0.1f * 0.6f, Gdx.input.getAccelerometerY() * 0.1f * 0.6f);
-			} else if(controls == 2 || controls == 3){
+			} else {
 				float maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
 				
 				AnalogStick moveStick = inputProcessor.move;
@@ -249,7 +272,7 @@ public class ControlSetupState extends State {
 		private AnalogStick shoot = new AnalogStick(), move = new AnalogStick();
 		
 		public ControlInputProcessor() {
-			if(controls == STATIC_TILT || controls == STATIC_STICKS) {
+			if(staticSticks) {
 				move.setBasePos(-1 / 4f * Specular.camera.viewportWidth, 0);
 			} else {
 				//Just a hack to stop it from rendering before the user touches the screen
@@ -273,13 +296,13 @@ public class ControlSetupState extends State {
 			// Sticks
 			
 			//If NOT tilt controls
-			if(controls != TILT && controls != STATIC_TILT) {
+			if(!tilt) {
 				
 				//If touching left half
 				if(viewportx <= Specular.camera.viewportWidth / 2) {
 					
 					//If sticks are static set it to the right position
-					if(controls == STATIC_STICKS)
+					if(staticSticks)
 						move.setBasePos(-1 / 4f * Specular.camera.viewportWidth, 0);
 					else
 						move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
@@ -290,7 +313,7 @@ public class ControlSetupState extends State {
 				} else {//Touching right half
 					
 					//If sticks are static set it to the right position
-					if(controls == STATIC_STICKS)
+					if(staticSticks)
 						shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
 					else
 						shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
@@ -301,7 +324,7 @@ public class ControlSetupState extends State {
 				}
 			}
 			if(viewportx > Specular.camera.viewportWidth / 2) {
-				if(controls == STATIC_STICKS || controls == STATIC_TILT)
+				if(staticSticks)
 					shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
 				else
 					shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
@@ -314,12 +337,10 @@ public class ControlSetupState extends State {
 
 		@Override
 		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-			if(controls != 0) {
-				if(move.getPointer() == pointer) {
-					move.setPointer(-1);
-				} else if(shoot.getPointer() == pointer) {
-					shoot.setPointer(-1);
-				}
+			if(move.getPointer() == pointer) {
+				move.setPointer(-1);
+			} else if(shoot.getPointer() == pointer) {
+				shoot.setPointer(-1);
 			}
 			
 			return false;
@@ -327,19 +348,17 @@ public class ControlSetupState extends State {
 
 		@Override
 		public boolean touchDragged(int screenX, int screenY, int pointer) {
-			if(controls != 0) {
-				float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
-				float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
-				
-				if(pointer == shoot.getPointer())
-				shoot.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
-						- (viewporty - Specular.camera.viewportHeight / 2));
-				
-				else if(pointer == move.getPointer())
-				move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
-						- (viewporty - Specular.camera.viewportHeight / 2));
-			}
+			float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
+			float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 			
+			if(pointer == shoot.getPointer())
+			shoot.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+					- (viewporty - Specular.camera.viewportHeight / 2));
+			
+			else if(pointer == move.getPointer())
+			move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+					- (viewporty - Specular.camera.viewportHeight / 2));
+		
 			return false;
 		}
 		
@@ -356,5 +375,11 @@ public class ControlSetupState extends State {
         	update();
         }
         renderGame();
+	}
+
+	@Override
+	public void hide() {
+		super.hide();
+		Specular.prefs.flush();
 	}
 }

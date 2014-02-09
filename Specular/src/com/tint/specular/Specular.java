@@ -63,8 +63,9 @@ public class Specular extends Game {
 		
 		prefs = Gdx.app.getPreferences("Preferences");
 		// Checks if the preferences are missing or it is the first time the app is run
-		if(!prefs.contains("Controls")) {
-			prefs.putInteger("Controls", 3);
+		if(!prefs.contains("Tilt")) {
+			prefs.putBoolean("Tilt", false);
+			prefs.putBoolean("Static", false);
 			prefs.putFloat("Sensitivity", 0.5f);
 			prefs.putBoolean("Particles", true);
 			prefs.putBoolean("MusicMuted", false);

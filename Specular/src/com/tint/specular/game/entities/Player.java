@@ -45,7 +45,8 @@ public class Player implements Entity {
 	private int bulletBurst = 3;
 	private int bulletBurstLevel;
 	private int score = 0;
-	private int controls;
+	
+	private boolean tilt;
 	
 	private boolean dying, spawning, dead;
 	private boolean soundEffects;
@@ -171,9 +172,9 @@ public class Player implements Entity {
 		if(gs.getGameProcessor().isDDown())
 			changeSpeed(0.6f, 0);
 		
-		if(controls == 0) {
+		if(tilt) {
 			changeSpeed(Gdx.input.getAccelerometerX() * 0.1f * 0.6f, Gdx.input.getAccelerometerY() * 0.1f * 0.6f);
-		} else if(controls == 2 || controls == 3){
+		} else {
 			
 			AnalogStick moveStick = gs.getGameProcessor().getMoveStick();
 			float moveDx = moveStick.getXHead() - moveStick.getXBase();
@@ -316,7 +317,6 @@ public class Player implements Entity {
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
 	public int getBulletBurstLevel() { return bulletBurstLevel; }
-	public int getControls() { return controls; }
 	public int getScore() { return score; }
 	public int getShields() { return shields; }
 
@@ -330,7 +330,7 @@ public class Player implements Entity {
 		animFrameTime = 0;
 		spawning = true;
 		dead = false;
-		controls = Specular.prefs.getInteger("Controls");
+		tilt = Specular.prefs.getBoolean("Tilt");
 	}
 	
 	public static void init() {

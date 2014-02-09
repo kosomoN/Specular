@@ -15,17 +15,19 @@ import com.tint.specular.game.GameState;
 
 public class GameInputProcessor implements InputProcessor {
 
-	public static final int STATIC_TILT = 0, TILT = 1, STATIC_STICKS = 2, DYNAMIC_STICKS = 3;
 	private boolean w, a, s, d;
 	private boolean touch;
-	private int controls;
+	private boolean tilt, staticSticks;
 	private AnalogStick shoot, move;
 	private GameState gs;
 	private Specular game;
 	
 	public GameInputProcessor(GameState gs, Specular game) {
 		this.gs = gs;
-		controls = gs.getPlayer().getControls();
+		
+		tilt = Specular.prefs.getBoolean("Tilt");
+		staticSticks = Specular.prefs.getBoolean("Static");
+		
 		shoot = new AnalogStick();
 		move = new AnalogStick();
 		this.game = game;
@@ -82,13 +84,13 @@ public class GameInputProcessor implements InputProcessor {
 		// Sticks
 		
 		//If NOT tilt controls
-		if(controls != TILT && controls != STATIC_TILT) {
+		if(!tilt) {
 			
 			//If touching left half
 			if(viewportx <= Specular.camera.viewportWidth / 2) {
 				
 				//If sticks are static set it to the right position
-				if(controls == STATIC_STICKS)
+				if(staticSticks)
 					move.setBasePos(-1 / 4f * Specular.camera.viewportWidth, 0);
 				else
 					move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
@@ -99,7 +101,7 @@ public class GameInputProcessor implements InputProcessor {
 			} else {//Touching right half
 				
 				//If sticks are static set it to the right position
-				if(controls == STATIC_STICKS)
+				if(staticSticks)
 					shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
 				else
 					shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
@@ -110,7 +112,7 @@ public class GameInputProcessor implements InputProcessor {
 			}
 		}
 		if(viewportx > Specular.camera.viewportWidth / 2) {
-			if(controls == STATIC_STICKS || controls == STATIC_TILT)
+			if(staticSticks)
 				shoot.setBasePos(1 / 4f * Specular.camera.viewportWidth, 0);
 			else
 				shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
@@ -126,7 +128,7 @@ public class GameInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if(controls != 0 && touch) {
+		if(touch) {
 			if(move.getPointer() == pointer) {
 				move.setPointer(-1);
 			} else if(shoot.getPointer() == pointer) {
@@ -139,19 +141,17 @@ public class GameInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		if(controls != 0) {
-			float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
-			float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
-			
-			if(pointer == shoot.getPointer())
-			shoot.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
-					- (viewporty - Specular.camera.viewportHeight / 2));
-			
-			else if(pointer == move.getPointer())
-			move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
-					- (viewporty - Specular.camera.viewportHeight / 2));
-		}
+		float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
+		float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 		
+		if(pointer == shoot.getPointer())
+		shoot.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+				- (viewporty - Specular.camera.viewportHeight / 2));
+		
+		else if(pointer == move.getPointer())
+		move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+				- (viewporty - Specular.camera.viewportHeight / 2));
+	
 		return false;
 	}
 
