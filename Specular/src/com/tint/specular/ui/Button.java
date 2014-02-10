@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.tint.specular.Specular;
+import com.tint.specular.utils.Util;
 
 /**
  * 
@@ -30,9 +31,9 @@ public class Button {
 /*_____________________________________________________________________*/
 	public void render() {
 		if(touched)
-			batch.draw(downTexture, hitbox.x, hitbox.y);
+			Util.drawCentered(batch, downTexture, hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height / 2, 0);
 		else
-			batch.draw(upTexture, hitbox.x, hitbox.y);
+			Util.drawCentered(batch, upTexture, hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height / 2, 0);
 	}
 	
 	public void touchOver(float x, float y) {

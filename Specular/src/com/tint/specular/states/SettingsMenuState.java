@@ -19,7 +19,7 @@ public class SettingsMenuState extends State {
 		selected = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Selected.png"));
 		back = new Texture(Gdx.files.internal("graphics/menu/highscore/Back.png"));
 		backPressed = new Texture(Gdx.files.internal("graphics/menu/highscore/Back Pressed.png"));
-		controls = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Controls 1130 810.png"));
+		controls = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Controls.png"));
 		controlsPressed = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Controls Pressed.png"));
 	}
 
@@ -36,14 +36,14 @@ public class SettingsMenuState extends State {
 		}
 		
 		game.batch.begin();
-		game.batch.draw(background, 0, 0, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
+		game.batch.draw(background, 0, 0);
 		
 		if(processor.particlesEnabled())
-			game.batch.draw(selected, 170, 604);
+			game.batch.draw(selected, 142, 600);
 		if(!processor.musicMuted())
-			game.batch.draw(selected, 170, 443);
+			game.batch.draw(selected, 142, 460);
 		if(!processor.soundsMuted())
-			game.batch.draw(selected, 170, 285);
+			game.batch.draw(selected, 142, 323);
 		
 		// Back button
 		if(!processor.backPressed())
@@ -55,6 +55,7 @@ public class SettingsMenuState extends State {
 			game.batch.draw(controls, Specular.camera.viewportWidth - controls.getWidth() - 47, -20);
 		else
 			game.batch.draw(controlsPressed, Specular.camera.viewportWidth - controls.getWidth() - 47, -20);
+		
 		game.batch.end();
 	}
 	

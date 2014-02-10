@@ -37,7 +37,7 @@ public class MenuInputProcessor extends InputAdapter {
 		
 		Texture helpTex = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Help.png"));
 		Texture helpTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Help Pressed.png"));
-		helpBtn = new Button(Specular.camera.viewportWidth / 2 - 192 , 32, 128, 128, game.batch, helpTex, helpTexPr);
+		helpBtn = new Button(1620 , 470, 128, 128, game.batch, helpTex, helpTexPr);
 		
 		firstTime = Specular.prefs.getBoolean("FirstTime");
 	}
