@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
 
 public class EnemyShielder extends Enemy {
@@ -27,7 +28,7 @@ public class EnemyShielder extends Enemy {
 	@Override
 	public boolean update() {
 		
-		double angle = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x);
+		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 		
 		dx = (float) (Math.cos(angle) * 2);
 		dy = (float) (Math.sin(angle) * 2);
@@ -79,4 +80,8 @@ public class EnemyShielder extends Enemy {
 	@Override
 	public float getOuterRadius() { return 30; }
 
+	@Override
+	public Type getParticleType() {
+		return Type.ENEMY_BOOSTER;
+	}
 }

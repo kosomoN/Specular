@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
 
 /**
@@ -98,5 +99,10 @@ public class EnemyWanderer extends Enemy {
 	@Override
 	public float getOuterRadius() {
 		return texture.getWidth() / 2;
+	}
+	
+	@Override
+	public Type getParticleType() {
+		return Type.ENEMY_WANDERER;
 	}
 }

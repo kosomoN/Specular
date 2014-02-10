@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
 
 /**
@@ -34,7 +35,7 @@ public class EnemyFast extends Enemy {
 	@Override
 	public boolean update() {
 		//Calculating angle of movement based on closest player
-		double angle = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x);
+		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 		
 		dx = (float) (Math.cos(angle) * speed);
 		dy = (float) (Math.sin(angle) * speed);
@@ -64,4 +65,9 @@ public class EnemyFast extends Enemy {
 	public float getInnerRadius() { return 16; }
 	@Override
 	public float getOuterRadius() { return 30; }
+
+	@Override
+	public Type getParticleType() {
+		return Type.ENEMY_FAST;
+	}
 }

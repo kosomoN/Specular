@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Particle.Type;
 
 /**
  * 
@@ -103,7 +104,7 @@ public class EnemyWorm extends Enemy {
 					goingToY = nextPart.oldY;
 				}
 			} else {
-				angle = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x);/*
+				angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);/*
 				if(deltaAngle > Math.PI)
 					deltaAngle += deltaAngle > 0 ? -Math.PI * 2 : Math.PI * 2;
 				
@@ -139,13 +140,8 @@ public class EnemyWorm extends Enemy {
 		return 0;
 	}
 
-	/*@Override
-	public float getDeltaX() {
-		return dx;
-	}
-
 	@Override
-	public float getDeltaY() {
-		return dy;
-	}*/
+	public Type getParticleType() {
+		return Type.ENEMY_BOOSTER;
+	}
 }

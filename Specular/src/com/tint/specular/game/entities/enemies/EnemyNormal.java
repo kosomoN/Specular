@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
 
 /**
@@ -39,7 +40,7 @@ public class EnemyNormal extends Enemy {
 	@Override
 	public boolean update() {
 		if(gs.getPlayer() != null)
-			angle = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x) + offset;
+			angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x) + offset;
 		
 		dx = (float) (Math.cos(angle) * 2);
 		dy = (float) (Math.sin(angle) * 2);
@@ -81,5 +82,10 @@ public class EnemyNormal extends Enemy {
 	@Override
 	public void dispose() {
 		tex.dispose();
+	}
+
+	@Override
+	public Type getParticleType() {
+		return Type.ENEMY_NORMAL;
 	}
 }

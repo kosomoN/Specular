@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
 
 /**
@@ -58,7 +59,11 @@ public class Bullet implements Entity {
 		x += dx;
 		y += dy;
 		
-		return ((x + dx < 0 || x + dx > gs.getCurrentMap().getWidth() || y + dy < 0 || y + dy > gs.getCurrentMap().getHeight()) || isHit);
+		if((x + dx < 1 || x + dx > gs.getCurrentMap().getWidth() || y + dy < 0 || y + dy > gs.getCurrentMap().getHeight()) || isHit) {
+			gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
+			return true;
+		}
+		return false;
 	}
 	
 	public static void init() {

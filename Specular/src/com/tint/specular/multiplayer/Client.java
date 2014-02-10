@@ -24,7 +24,7 @@ public class Client {
 	}
 	
 	public boolean update() {
-		cam.position.set(player.getCenterX(), player.getCenterY(), 0);
+		cam.position.set(player.getX(), player.getY(), 0);
 		cam.update();
 		game.batch.setProjectionMatrix(cam.combined);
 		

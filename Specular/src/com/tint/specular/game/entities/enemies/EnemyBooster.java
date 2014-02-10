@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
 
 /**
@@ -44,7 +45,7 @@ public class EnemyBooster extends Enemy {
 			boostingDelay++;
 		} else if(boostingDelay == 0) {
 			if(gs.getPlayer() != null)
-				direction = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x);
+				direction = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 			
 			speed = 0;
 			boostingDelay++;
@@ -54,7 +55,7 @@ public class EnemyBooster extends Enemy {
 		
 		//Checking so that the enemy will not get outside the map
 		if(x - 20 - 18 < 0) {
-			x = 20 - 18;
+			x = 20 + 18;
 			boostingDelay = 0;
 		} else if(x + 20 + 18 > gs.getCurrentMap().getWidth()){
 			x = gs.getCurrentMap().getWidth() - 20 - 18;
@@ -90,5 +91,10 @@ public class EnemyBooster extends Enemy {
 	@Override
 	public void dispose() {
 		tex.dispose();
+	}
+
+	@Override
+	public Type getParticleType() {
+		return Type.ENEMY_BOOSTER;
 	}
 }

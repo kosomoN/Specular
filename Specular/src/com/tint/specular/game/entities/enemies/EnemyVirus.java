@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Particle.Type;
 
 /**
  * 
@@ -84,7 +85,7 @@ public class EnemyVirus extends Enemy {
 			}
 			break;
 		case FOLLOW:
-			double angle = Math.atan2(gs.getPlayer().getCenterY() - y, gs.getPlayer().getCenterX() - x);
+			double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 			dx = (float) (Math.cos(angle) * 3);
 			dy = (float) (Math.sin(angle) * 3);
 			break;
@@ -129,5 +130,11 @@ public class EnemyVirus extends Enemy {
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Virus.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	}
+	
+
+	@Override
+	public Type getParticleType() {
+		return Type.ENEMY_VIRUS;
 	}
 }

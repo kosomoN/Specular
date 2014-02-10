@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -43,6 +44,7 @@ public class ControlSetupState extends State {
 	public ControlInputProcessor inputProcessor;
 	private Stage stage;
 	private Button staticBtn;
+	private WidgetGroup hideableUI;
 	
 	public ControlSetupState(Specular game) {
 		super(game);
@@ -97,9 +99,6 @@ public class ControlSetupState extends State {
 			}
 		});
 		
-		stage.addActor(sensitivitySlider);
-		
-		
 		TextureRegion backButton = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/highscore/Back.png")));
 		TextureRegion backButtonDown = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/highscore/Back Pressed.png")));
 		Button backBtn = new Button(new TextureRegionDrawable(backButton), new TextureRegionDrawable(backButtonDown));
@@ -114,21 +113,17 @@ public class ControlSetupState extends State {
 			}
 		});
 		
-		stage.addActor(backBtn);
-		
-		
 		TextureRegion controlButtonsTex = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Controls Checks.png")));
 		
 		staticBtn = new Button(new TextureRegionDrawable(controlButtonsTex));
 		
 		staticBtn.setPosition(-Specular.camera.viewportWidth / 2 - 50, Specular.camera.viewportHeight / 2 - 205);
 		
-		staticBtn.setChecked(staticSticks);
-		
 		staticBtn.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				Specular.prefs.putBoolean("Static", staticBtn.isChecked());
+				hideableUI.setVisible(false);
 				staticSticks = staticBtn.isChecked();
 				
 				if(staticBtn.isChecked()) {
@@ -138,7 +133,14 @@ public class ControlSetupState extends State {
 			}
 		});
 		
-		stage.addActor(staticBtn);
+		hideableUI = new WidgetGroup();
+		hideableUI.addActor(sensitivitySlider);
+		hideableUI.addActor(staticBtn);
+		hideableUI.addActor(backBtn);
+		stage.addActor(hideableUI);
+		
+		Button setStickPosBtn = new Button();
+		setStickPosBtn.setPosition(-setStickPosBtn.getWidth() / 2, Specular.camera.viewportHeight / 2);
 	}
 	
 	private void renderGame() {
@@ -178,7 +180,7 @@ public class ControlSetupState extends State {
 		
 		stage.act();
 		stage.draw();
-		if(staticBtn.isChecked()) {
+		if(staticBtn.isChecked() && hideableUI.isVisible()) {
 			game.batch.begin();
 			game.batch.draw(selectedTex, staticBtn.getX() + 47, staticBtn.getY() + 78);
 			game.batch.end();

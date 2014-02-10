@@ -19,7 +19,7 @@ import com.tint.specular.utils.Util;
 public class Particle implements Entity, Poolable {
 	
 	public enum Type {
-		PLAYER, ENEMY_NORMAL, ENEMY_STUPID, ENEMY_FAST, ENEMY_BOOSTER, ENEMY_VIRUS;
+		BULLET, ENEMY_NORMAL, ENEMY_WANDERER, ENEMY_FAST, ENEMY_BOOSTER, ENEMY_VIRUS;
 	}
 	
 	//FIELDS
@@ -96,7 +96,7 @@ public class Particle implements Entity, Poolable {
 	/**
 	 * This is called to re-use the particle to avoid garbage collection
 	 */
-	public void reUse(float x, float y, float direction, float initialDx, float initialDy, float radius, boolean large, Type type) {
+	public void reUse(float x, float y, float direction, float initialDx, float initialDy, boolean large, Type type) {
 		this.x = x;
 		this.y = y;
 		

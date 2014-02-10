@@ -32,8 +32,8 @@ public class PlayerSpawnSystem extends SpawnSystem {
 						continue outer;
 					}
 				} else if(ent instanceof Player) {
-					if(Util.getDistanceSquared(x, y, ((Player) ent).getCenterX(),
-							((Player) ent).getCenterY()) < Player.getRadius() * Player.getRadius() * 4) {
+					if(Util.getDistanceSquared(x, y, ((Player) ent).getX(),
+							((Player) ent).getY()) < Player.getRadius() * Player.getRadius() * 4) {
 						continue outer;
 					}
 				}

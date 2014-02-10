@@ -339,7 +339,7 @@ public class GameState extends State {
    
 		//Positioning camera to the player		
 		
-		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
+		Specular.camera.position.set(player.getX(), player.getY(), 0);
 		Specular.camera.zoom = 1;
 		CameraShake.moveCamera();
 		Specular.camera.update();
@@ -350,7 +350,7 @@ public class GameState extends State {
 		CameraShake.moveCamera();
 		
 		game.batch.setColor(1, 0, 0, 1);
-		game.batch.draw(currentMap.getParallax(), -1024 + player.getCenterX() / 2, -1024 +  player.getCenterY() / 2, 4096, 4096);
+		game.batch.draw(currentMap.getParallax(), -1024 + player.getX() / 2, -1024 +  player.getY() / 2, 4096, 4096);
 		game.batch.setColor(1, 1, 1, 1);
 		
 		BoardShock.setZoom();
@@ -395,7 +395,7 @@ public class GameState extends State {
 		
 		game.batch.end();
 		//Required for the algorithm stopping the enemies from spawning on-screen
-		Specular.camera.position.set(player.getCenterX(), player.getCenterY(), 0);
+		Specular.camera.position.set(player.getX(), player.getY(), 0);
 	}
 	
 	public void addEntity(Entity entity) {

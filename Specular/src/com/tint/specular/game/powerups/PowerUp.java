@@ -31,7 +31,7 @@ public abstract class PowerUp implements Entity {
 	public boolean update() {
 		if(!activated) {
 			despawnTime--;
-			if((getCenterX() - gs.getPlayer().getCenterX()) * (getCenterX() - gs.getPlayer().getCenterX()) + (getCenterY() - gs.getPlayer().getCenterY()) * (getCenterY() - gs.getPlayer().getCenterY())
+			if((getX() - gs.getPlayer().getX()) * (getX() - gs.getPlayer().getX()) + (getY() - gs.getPlayer().getY()) * (getY() - gs.getPlayer().getY())
 					< (Player.getRadius() + getRadius()) * (Player.getRadius() + getRadius())) {
 				affect(gs.getPlayer());
 				activated = true;
@@ -60,8 +60,8 @@ public abstract class PowerUp implements Entity {
 		this.y = y;
 	}
 	
-	public float getCenterX() { return x; }
-	public float getCenterY() {	return y; }
+	public float getX() { return x; }
+	public float getY() { return y; }
 	public boolean isActivated() { return activated; }
 	public abstract Texture getTexture();
 

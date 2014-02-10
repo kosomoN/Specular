@@ -3,6 +3,7 @@ package com.tint.specular.game.entities.enemies;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
+import com.tint.specular.game.entities.Particle.Type;
 
 /**
  * 
@@ -53,9 +54,9 @@ public abstract class Enemy implements Entity {
 				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
 			if(gs.particlesEnabled()) {
 				if(life == 0)
-					gs.getParticleSpawnSystem().spawn(this, 15, true);
+					gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx, dy, 15, true);
 				else
-					gs.getParticleSpawnSystem().spawn(this, 6, false);
+					gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx, dy, 6, false);
 			}
 		}
 	}
@@ -67,6 +68,7 @@ public abstract class Enemy implements Entity {
 	}
 	
 	public abstract int getValue();
+	public abstract Type getParticleType();
 	
 	public float getX() { return x;	}
 	public float getY() { return y; }

@@ -12,4 +12,6 @@ public interface Entity {
 	public boolean update();
 	public void render(SpriteBatch batch);
 	public void dispose();
+	public float getX();
+	public float getY();
 }

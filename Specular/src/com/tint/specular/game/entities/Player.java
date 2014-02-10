@@ -126,9 +126,9 @@ public class Player implements Entity {
 		} else {
 			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
 			batch.draw(baseAnimFrame, centerx - baseAnimFrame.getRegionWidth() / 2, centery - baseAnimFrame.getRegionHeight() / 2);
-			Util.drawCentered(batch, barrelTexture, getCenterX(), getCenterY(), direction);
+			Util.drawCentered(batch, barrelTexture, getX(), getY(), direction);
 			for(int i = 0; i < shields; i++) {
-				Util.drawCentered(batch, shieldTexture, getCenterX(), getCenterY(), -animFrameTime * 360 + 360f * i / shields);
+				Util.drawCentered(batch, shieldTexture, getX(), getY(), -animFrameTime * 360 + 360f * i / shields);
 			}
 			
 		}
@@ -306,8 +306,9 @@ public class Player implements Entity {
 	public void setLife(int life) { this.life = life; }
 	public void kill() { life = 0; }
 	
-	public float getCenterX() { return centerx; }
-	public float getCenterY() { return centery;	}
+	
+	@Override public float getX() { return centerx; }
+	@Override public float getY() { return centery;	}
 	public float getDeltaX() { return dx; }
 	public float getDeltaY() { return dy; }
 	public float getDirection() { return direction; }
