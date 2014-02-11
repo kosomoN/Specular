@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -60,7 +61,13 @@ public class Bullet implements Entity {
 		y += dy;
 		
 		if((x + dx < 1 || x + dx > gs.getCurrentMap().getWidth() || y + dy < 0 || y + dy > gs.getCurrentMap().getHeight()) || isHit) {
-			gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
+			if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
+					Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
+					Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
+					Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
+				if(gs.particlesEnabled())
+					gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
+			}
 			return true;
 		}
 		return false;

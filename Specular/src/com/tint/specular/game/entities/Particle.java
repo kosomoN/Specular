@@ -102,8 +102,8 @@ public class Particle implements Entity, Poolable {
 		
 		float sin = (float) Math.sin(Math.toRadians(direction));
 		float cos = (float) Math.cos(Math.toRadians(direction));
-		dx = (float) (cos * (Math.random() * 4 + 2));
-		dy = (float) (sin * (Math.random() * 4 + 2));
+		dx = (float) (cos * (Math.random() * 4));
+		dy = (float) (sin * (Math.random() * 4));
 		
 		//Adding the speed the enemy had when it died
 		dx += initialDx;

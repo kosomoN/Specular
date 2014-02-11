@@ -71,6 +71,7 @@ public class GameState extends State {
 	protected GameMode gameMode;
 	protected Player player;
 	private Stage stage;
+	private float cameraX, cameraY, cameraDx, cameraDy;
 	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
@@ -95,6 +96,7 @@ public class GameState extends State {
 	private Array<Entity> entities = new Array<Entity>(false, 128);
 	private Array<Enemy> enemies = new Array<Enemy>(false, 64);
 	private Array<Bullet> bullets = new Array<Bullet>(false, 64);
+	private Array<Particle> particles = new Array<Particle>(false, 64);
 	
 	// Map control
 	private Map currentMap;
@@ -290,6 +292,10 @@ public class GameState extends State {
 					it.remove();
 				}
 			}
+			for(Iterator<Particle> it = particles.iterator(); it.hasNext();) {
+				if(it.next().update())
+					it.remove();
+			}
 			// Resets a few things in bullet burst
 			BulletBurst.updateBulletBursts();
 			
@@ -339,7 +345,16 @@ public class GameState extends State {
    
 		//Positioning camera to the player		
 		
-		Specular.camera.position.set(player.getX(), player.getY(), 0);
+		cameraDx = (player.getX() - cameraX) / 5;
+		cameraDy = (player.getY() - cameraY) / 5;
+		
+		cameraX += cameraDx;
+		cameraY += cameraDy;
+		
+		cameraX = player.getX();
+		cameraY = player.getY();
+		
+		Specular.camera.position.set(cameraX, cameraY, 0);
 		Specular.camera.zoom = 1;
 		CameraShake.moveCamera();
 		Specular.camera.update();
@@ -347,10 +362,9 @@ public class GameState extends State {
 		// Rendering map and entities
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		game.batch.begin();
-		CameraShake.moveCamera();
 		
 		game.batch.setColor(1, 0, 0, 1);
-		game.batch.draw(currentMap.getParallax(), -1024 + player.getX() / 2, -1024 +  player.getY() / 2, 4096, 4096);
+		game.batch.draw(currentMap.getParallax(), -1024 + cameraX / 2, -1024 +  cameraY / 2, 4096, 4096);
 		game.batch.setColor(1, 1, 1, 1);
 		
 		BoardShock.setZoom();
@@ -363,6 +377,13 @@ public class GameState extends State {
 		for(Entity ent : entities) {
 			ent.render(game.batch);
 		}
+		
+		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE );
+		
+		for(Particle p : particles)
+			p.render(game.batch);
+		
+		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA  );
 		
 		// Re-positioning camera for HUD
 		Specular.camera.position.set(0, 0, 0);
@@ -400,7 +421,10 @@ public class GameState extends State {
 	
 	public void addEntity(Entity entity) {
 
-		if(entity instanceof Bullet)
+		if(entity instanceof Particle) {
+			particles.add((Particle) entity);
+			return;
+		} if(entity instanceof Bullet)
 			bullets.add((Bullet) entity);
 		else if(entity instanceof Enemy)
 			enemies.add((Enemy) entity);
@@ -477,6 +501,7 @@ public class GameState extends State {
 		entities.clear();
 		enemies.clear();
 		bullets.clear();
+		particles.clear();
 	}
 	
 	/**

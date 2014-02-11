@@ -30,6 +30,7 @@ public class MainmenuState extends State {
 		howToPlay = new Texture(Gdx.files.internal("graphics/menu/mainmenu/How to Play.png"));
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/MainMenuMusic.mp3"));
+		music.setLooping(true);
 		screenHeightToCameraHeight = Specular.camera.viewportHeight / 1080f;
 	}
 

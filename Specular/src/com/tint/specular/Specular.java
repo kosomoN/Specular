@@ -65,7 +65,7 @@ public class Specular extends Game {
 		if(!prefs.contains("Tilt")) {
 			prefs.putBoolean("Tilt", false);
 			prefs.putBoolean("Static", false);
-			prefs.putFloat("Sensitivity", 0.5f);
+			prefs.putFloat("Sensitivity", 1f);
 			prefs.putBoolean("Particles", true);
 			prefs.putBoolean("MusicMuted", false);
 			prefs.putBoolean("SoundsMuted", false);

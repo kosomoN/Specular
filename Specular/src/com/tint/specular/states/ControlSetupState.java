@@ -45,12 +45,10 @@ public class ControlSetupState extends State {
 	private Stage stage;
 	private Button staticBtn;
 	private WidgetGroup hideableUI;
+	private Button stickPositionBtn;
 	
 	public ControlSetupState(Specular game) {
 		super(game);
-		
-		circleTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Circle.png"));
-		circleTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 
 	@Override
@@ -80,6 +78,9 @@ public class ControlSetupState extends State {
 		inputProcessor = new ControlInputProcessor();
 		Gdx.input.setInputProcessor(new InputMultiplexer(stage, inputProcessor));
 		
+		circleTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Circle.png"));
+		circleTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
 		selectedTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Selected.png"));
 		TextureRegionDrawable knobTex = new TextureRegionDrawable(new TextureRegion(selectedTex));
 		knobTex.setMinWidth(256);;
@@ -89,9 +90,10 @@ public class ControlSetupState extends State {
 		
 		// Slider
 		final Slider sensitivitySlider = new Slider(0.2f, 2f, 0.01f, false, sliderStyle);
-		sensitivitySlider.setSize(1280, 50);
-		sensitivitySlider.setPosition(-sensitivitySlider.getWidth() / 2 + 250, -Specular.camera.viewportHeight / 2 + 83);
+		sensitivitySlider.setSize(1280, 200);
+		sensitivitySlider.setPosition(-sensitivitySlider.getWidth() / 2 + 250, -Specular.camera.viewportHeight / 2 + 8);
 		sensitivitySlider.setValue(Specular.prefs.getFloat("Sensitivity"));
+		
 		sensitivitySlider.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -108,27 +110,64 @@ public class ControlSetupState extends State {
 		backBtn.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				Specular.prefs.putFloat("Sensitivity", sensitivity);
-				game.enterState(States.SETTINGSMENUSTATE);
+				saveAndExit();
 			}
 		});
+		
+		TextureRegion testBtnTex = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Test.png")));
+		TextureRegion testBtnTexPressed = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Test Pressed.png")));
+		final Button testBtn = new Button(new TextureRegionDrawable(testBtnTex), new TextureRegionDrawable(testBtnTexPressed));
+		
+		testBtn.setPosition(-testBtn.getWidth() / 2, Specular.camera.viewportHeight / 2 - testBtnTex.getRegionHeight());
+		
+		testBtn.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				hideableUI.setVisible(!hideableUI.isVisible());
+				stickPositionBtn.setVisible(hideableUI.isVisible());
+			}
+		});
+		
+		stage.addActor(testBtn);
+		
+		TextureRegion stickPositionTex = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Positions.png")));
+		TextureRegion stickPositionTexDown = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Positions Pressed.png")));
+		stickPositionBtn = new Button(new TextureRegionDrawable(stickPositionTex), new TextureRegionDrawable(stickPositionTexDown));
+		
+		stickPositionBtn.setPosition(-stickPositionBtn.getWidth() / 2, Specular.camera.viewportHeight / 2 - 250);
+		
+		stickPositionBtn.setVisible(Specular.prefs.getBoolean("Static"));
+		
+		stickPositionBtn.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				hideableUI.setVisible(!stickPositionBtn.isChecked());
+				testBtn.setVisible(!stickPositionBtn.isChecked());
+			}
+		});
+		
+		stage.addActor(stickPositionBtn);
 		
 		TextureRegion controlButtonsTex = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Controls Checks.png")));
 		
 		staticBtn = new Button(new TextureRegionDrawable(controlButtonsTex));
 		
 		staticBtn.setPosition(-Specular.camera.viewportWidth / 2 - 50, Specular.camera.viewportHeight / 2 - 205);
-		
+		staticBtn.setChecked(Specular.prefs.getBoolean("Static"));
 		staticBtn.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				Specular.prefs.putBoolean("Static", staticBtn.isChecked());
-				hideableUI.setVisible(false);
 				staticSticks = staticBtn.isChecked();
-				
+				stickPositionBtn.setVisible(staticBtn.isChecked());
 				if(staticBtn.isChecked()) {
 					inputProcessor.move.setBasePos(Specular.prefs.getFloat("Move Stick Pos X"), Specular.prefs.getFloat("Move Stick Pos Y"));
 					inputProcessor.shoot.setBasePos(Specular.prefs.getFloat("Shoot Stick Pos X"), Specular.prefs.getFloat("Shoot Stick Pos Y"));
+				} else {
+					Specular.prefs.putFloat("Move Stick Pos X", inputProcessor.move.getXBase());
+					Specular.prefs.putFloat("Move Stick Pos Y", inputProcessor.move.getYBase());
+					Specular.prefs.putFloat("Shoot Stick Pos X", inputProcessor.shoot.getXBase());
+					Specular.prefs.putFloat("Shoot Stick Pos Y", inputProcessor.shoot.getYBase());
 				}
 			}
 		});
@@ -138,9 +177,6 @@ public class ControlSetupState extends State {
 		hideableUI.addActor(staticBtn);
 		hideableUI.addActor(backBtn);
 		stage.addActor(hideableUI);
-		
-		Button setStickPosBtn = new Button();
-		setStickPosBtn.setPosition(-setStickPosBtn.getWidth() / 2, Specular.camera.viewportHeight / 2);
 	}
 	
 	private void renderGame() {
@@ -185,6 +221,13 @@ public class ControlSetupState extends State {
 			game.batch.draw(selectedTex, staticBtn.getX() + 47, staticBtn.getY() + 78);
 			game.batch.end();
 		}
+		
+		if(stickPositionBtn.isChecked()) {
+			game.batch.begin();
+			game.batch.draw(AnalogStick.base, inputProcessor.move.getXBase() - AnalogStick.base.getWidth() / 2, inputProcessor.move.getYBase() - AnalogStick.base.getHeight() / 2);
+			game.batch.draw(AnalogStick.base, inputProcessor.shoot.getXBase() - AnalogStick.base.getWidth() / 2, inputProcessor.shoot.getYBase() - AnalogStick.base.getHeight() / 2);
+			game.batch.end();
+		}
 	}
 
 	private void update() {
@@ -195,7 +238,18 @@ public class ControlSetupState extends State {
 				it.remove();
 		}
 	}
+	
+	private void saveAndExit() {
+		Specular.prefs.putFloat("Sensitivity", sensitivity);
+		if(staticSticks) {
+			Specular.prefs.putFloat("Move Stick Pos X", inputProcessor.move.getXBase());
+			Specular.prefs.putFloat("Move Stick Pos Y", inputProcessor.move.getYBase());
+			Specular.prefs.putFloat("Shoot Stick Pos X", inputProcessor.shoot.getXBase());
+			Specular.prefs.putFloat("Shoot Stick Pos Y", inputProcessor.shoot.getYBase());
+		}
 
+		game.enterState(States.SETTINGSMENUSTATE);
+	}
 
 	private class DummyPlayer {
 		public float x, y, dx, dy;
@@ -292,7 +346,7 @@ public class ControlSetupState extends State {
 		@Override
 		public boolean keyUp(int keycode) {
 			if(keycode == Keys.BACK)
-				game.enterState(States.SETTINGSMENUSTATE);
+				saveAndExit();
 			return super.keyUp(keycode);
 		}
 
@@ -301,55 +355,56 @@ public class ControlSetupState extends State {
 			float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 			float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 			
-			//Checking if touching boardshock button
-			if(viewporty > Specular.camera.viewportHeight - 90 &&
-					viewportx - Specular.camera.viewportWidth / 2 > -350 && viewportx - Specular.camera.viewportWidth / 2 < 350) {
-				gs.boardshock();
-				return false;
-			}
-			
 			// Sticks
 			
 			//If NOT tilt controls
-			if(!tilt) {
-				
-				//If touching left half
-				if(viewportx <= Specular.camera.viewportWidth / 2) {
-					
-					//If sticks are static set it to the right position
-					if(!staticSticks)
-						move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-		
-					move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-					move.setPointer(pointer);
-					
-				} else {//Touching right half
-					
-					//If sticks are static set it to the right position
+			if(stickPositionBtn.isChecked()) {
+				if(viewportx <= Specular.camera.viewportWidth / 2)
+					move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+				else
+					shoot.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+			} else {
+				if(!tilt) {
+					//If touching left half
+					if(viewportx <= Specular.camera.viewportWidth / 2) {
+						
+						//If sticks are static set it to the right position
+						if(!staticSticks)
+							move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+			
+						move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+						move.setPointer(pointer);
+						
+					} else {//Touching right half
+						
+						//If sticks are static set it to the right position
+						if(!staticSticks)
+							shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+						
+						
+						shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+						shoot.setPointer(pointer);
+					}
+				}
+				if(viewportx > Specular.camera.viewportWidth / 2) {
 					if(!staticSticks)
 						shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-					
 					
 					shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
 					shoot.setPointer(pointer);
 				}
-			}
-			if(viewportx > Specular.camera.viewportWidth / 2) {
-				if(!staticSticks)
-					shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-				
-				shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-				shoot.setPointer(pointer);
 			}
 			return false;
 		}
 
 		@Override
 		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-			if(move.getPointer() == pointer) {
-				move.setPointer(-1);
-			} else if(shoot.getPointer() == pointer) {
-				shoot.setPointer(-1);
+			if(!stickPositionBtn.isChecked()) {
+				if(move.getPointer() == pointer) {
+					move.setPointer(-1);
+				} else if(shoot.getPointer() == pointer) {
+					shoot.setPointer(-1);
+				}
 			}
 			
 			return false;
@@ -359,15 +414,20 @@ public class ControlSetupState extends State {
 		public boolean touchDragged(int screenX, int screenY, int pointer) {
 			float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 			float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
-			
-			if(pointer == shoot.getPointer())
-			shoot.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
-					- (viewporty - Specular.camera.viewportHeight / 2));
-			
-			else if(pointer == move.getPointer())
-			move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
-					- (viewporty - Specular.camera.viewportHeight / 2));
-		
+			if(stickPositionBtn.isChecked()) {
+				if(viewportx <= Specular.camera.viewportWidth / 2)
+					move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+				else
+					shoot.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+			} else {
+				if(pointer == shoot.getPointer())
+					shoot.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+						- (viewporty - Specular.camera.viewportHeight / 2));
+				
+				else if(pointer == move.getPointer())
+					move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+						- (viewporty - Specular.camera.viewportHeight / 2));
+			}
 			return false;
 		}
 		
@@ -389,6 +449,17 @@ public class ControlSetupState extends State {
 	@Override
 	public void hide() {
 		super.hide();
+		dispose();
 		Specular.prefs.flush();
 	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		stage.dispose();
+		circleTex.dispose();
+		selectedTex.dispose();
+	}
+	
+	
 }

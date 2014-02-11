@@ -37,6 +37,7 @@ public class BoardShock {
 			if(timeActivated >= 300) {
 				CameraShake.shake(0.5f, 0.03f);
 				activated = false;
+				zoom = 1;
 				for(Enemy e : gs.getEnemies()) {
 					e.hit(e.getLife());
 					gs.gameMode.enemyKilled(e);
