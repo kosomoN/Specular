@@ -11,7 +11,7 @@ import com.tint.specular.utils.Util;
 public class SettingsInputProcessor extends InputAdapter { 
   
     private Specular game; 
-    private boolean soundsMuted = true, musicMuted = true, particlesEnabled = true, backBtnPressed, controlsPressed; 
+    private boolean soundsMuted = true, musicMuted = true, particlesEnabled = true, backBtnPressed, controlsPressed;
       
     public SettingsInputProcessor(Specular game) {
         this.game = game; 
@@ -33,8 +33,8 @@ public class SettingsInputProcessor extends InputAdapter {
         // Translate screen coordinates to viewport coordinates 
         float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth; 
         float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight; 
-        backBtnPressed = Util.isTouching(touchpointx, touchpointy, 47, 888, 559, 192, false); 
-        controlsPressed = Util.isTouching(touchpointx, touchpointy, 1160, 910, 655, 90, false);
+        backBtnPressed = Util.isTouching(touchpointx, touchpointy, 80, 920, 435, 105, false); 
+        controlsPressed = Util.isTouching(touchpointx, touchpointy, 890, 925, 905, 110, false);
           
         return false; 
     } 
@@ -62,11 +62,11 @@ public class SettingsInputProcessor extends InputAdapter {
             soundsMuted = !soundsMuted; 
 
         // Controls
-        else if(Util.isTouching(touchpointx, touchpointy, 1160, 910, 655, 90, false))
+        else if(Util.isTouching(touchpointx, touchpointy, 890, 925, 905, 110, false))
         	game.enterState(States.CONTROLSETUPSTATE);
 
         // Back 
-        else if(Util.isTouching(touchpointx, touchpointy, 47, 888, 559, 192, false))
+        else if(Util.isTouching(touchpointx, touchpointy, 80, 920, 435, 105, false))
             game.enterState(States.MAINMENUSTATE); 
         
         backBtnPressed = false;
@@ -81,8 +81,8 @@ public class SettingsInputProcessor extends InputAdapter {
         float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth; 
         float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight; 
           
-        backBtnPressed = Util.isTouching(touchpointx, touchpointy, 47, 888, 559, 192, false); 
-        controlsPressed = Util.isTouching(touchpointx, touchpointy, 1160, 910, 655, 90, false);
+        backBtnPressed = Util.isTouching(touchpointx, touchpointy, 80, 920, 435, 105, false); 
+        controlsPressed = Util.isTouching(touchpointx, touchpointy, 890, 925, 905, 110, false);
         
         return false; 
     } 

@@ -55,7 +55,6 @@ public class SettingsMenuState extends State {
 			game.batch.draw(controls, Specular.camera.viewportWidth - controls.getWidth() - 47, -20);
 		else
 			game.batch.draw(controlsPressed, Specular.camera.viewportWidth - controls.getWidth() - 47, -20);
-		
 		game.batch.end();
 	}
 	
