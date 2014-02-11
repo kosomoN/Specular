@@ -40,17 +40,28 @@ public class SettingsInputProcessor extends InputAdapter {
     } 
   
     @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) { 
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+    	/*
+    	 * Explanation over system below
+    	 * 
+    	 * 1. Particles, Music, Sound y-coordinate: coordinates taken(always same) from bottom left corner and adjusted because input(0, 0) is upper left corner,
+    	 * Options-texture's height is 1080p
+    	 * 
+    	 * 2. Controls, Back y-coordinate: It is always same beacause its calculated by subtracting a predefined number from the screens height
+    	 * 
+    	 * 3. Controls x-coordinate: It is measured from the right side of the screen
+    	 */
+    	
         // Translate screen coordinates to viewport coordinates 
         float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth; 
         float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight; 
           
         // Particles 
-        if(Util.isTouching(touchpointx, touchpointy, 190, 365, 880, 128, false)) { 
+        if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 720 + Specular.camera.viewportHeight - 1080, 880, 128, false)) { 
             particlesEnabled = !particlesEnabled; 
         } 
         // Music 
-        else if(Util.isTouching(touchpointx, touchpointy, 190, 525, 550, 128, false)) { 
+        else if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 575 + Specular.camera.viewportHeight - 1080, 550, 128, false)) {
             musicMuted = !musicMuted;
             if(musicMuted)
             	((MainmenuState) game.getState(States.MAINMENUSTATE)).stopMusic();
@@ -58,7 +69,7 @@ public class SettingsInputProcessor extends InputAdapter {
             	((MainmenuState) game.getState(States.MAINMENUSTATE)).startMusic();
         } 
         // Sound 
-        else if(Util.isTouching(touchpointx, touchpointy, 190, 685, 410, 128, false))
+        else if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 440 + Specular.camera.viewportHeight - 1080, 410, 128, false))
             soundsMuted = !soundsMuted; 
 
         // Controls
