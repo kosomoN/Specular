@@ -59,7 +59,6 @@ public class Specular extends Game {
 		}
 		camera = new OrthographicCamera(w, h);
 		batch = new SpriteBatch();
-		System.out.println(Gdx.graphics.getHeight() / camera.viewportHeight);
 		
 		prefs = Gdx.app.getPreferences("Specular Preferences");
 		// Checks if the preferences are missing or it is the first time the app is run
