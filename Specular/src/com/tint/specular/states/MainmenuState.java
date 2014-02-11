@@ -21,6 +21,7 @@ public class MainmenuState extends State {
 	private Music music;
 	private MenuInputProcessor menuInputProcessor;
 	private boolean playBtnPressed, showHowToPlay;
+	private float screenHeightToCameraHeight;
 	
 	public MainmenuState(Specular game) {
 		super(game);
@@ -29,6 +30,7 @@ public class MainmenuState extends State {
 		howToPlay = new Texture(Gdx.files.internal("graphics/menu/mainmenu/How to Play.png"));
 		
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/MainMenuMusic.mp3"));
+		screenHeightToCameraHeight = Specular.camera.viewportHeight / 1080f;
 	}
 
 	@Override
@@ -38,7 +40,8 @@ public class MainmenuState extends State {
 		
 		if(showHowToPlay) {
 			game.batch.begin();
-			game.batch.draw(howToPlay, 0, 0);
+			float width =  screenHeightToCameraHeight * howToPlay.getWidth();
+			game.batch.draw(howToPlay, (Specular.camera.viewportWidth - width) / 2, 0, width, Specular.camera.viewportHeight);
 			game.batch.end();
 			
 			if(Gdx.input.justTouched()) {
