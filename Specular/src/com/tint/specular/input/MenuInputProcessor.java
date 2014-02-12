@@ -13,7 +13,7 @@ public class MenuInputProcessor extends InputAdapter {
 	
 	private Button playBtn, profileBtn, optionsBtn, helpBtn;
 	private Specular game;
-	private boolean firstTime, fromHowToPlay;
+	private boolean firstTime, howToPlay, helpPressed;
 	
 	private MainmenuState menuState;
     
@@ -45,7 +45,8 @@ public class MenuInputProcessor extends InputAdapter {
 	@Override
 	public boolean keyUp(int keycode) {
 		if(keycode == Keys.BACK)
-			Gdx.app.exit();
+			if(!howToPlay)
+				Gdx.app.exit();
 		return super.keyUp(keycode);
 	}
 
@@ -56,11 +57,11 @@ public class MenuInputProcessor extends InputAdapter {
 		float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 		float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 		
-		fromHowToPlay = menuState.showHowToPlay();
+		howToPlay = menuState.showHowToPlay();
 		
 		// It then checks if that touchpoint collides with the buttons on screen and doesn't return from how to play screen,
 		// and acts accordingly
-		if(!fromHowToPlay) {
+		if(!howToPlay) {
 			if(playBtn.isOver(touchpointx, touchpointy, true)) {
 				playBtn.touchOver(touchpointx, touchpointy);
 			} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
@@ -70,6 +71,13 @@ public class MenuInputProcessor extends InputAdapter {
 			} else if(helpBtn.isOver(touchpointx, touchpointy, true)) {
 				helpBtn.touchOver(touchpointx, touchpointy);
 			}
+		} else if(!helpPressed){
+			game.enterState(States.SINGLEPLAYER_GAMESTATE);
+			menuState.setHowToPlay(false);
+			menuState.stopMusic();
+		} else {
+			menuState.setHowToPlay(false);
+			helpPressed = false;
 		}
 //		//Play button sound
 //		Sound soundButton1 = Gdx.audio.newSound(Gdx.files.internal("audio/Button.wav"));	
@@ -90,13 +98,14 @@ public class MenuInputProcessor extends InputAdapter {
 		
 		// It then checks if that touchpoint collides with the buttons on screen and doesn't return from how to play screen,
 		// and acts accordingly
-		if(!fromHowToPlay) {
+		if(!howToPlay) {
 			if(playBtn.isOver(touchpointx, touchpointy, true)) {
 				playBtn.touchUp();
 				if(firstTime) {
-					menuState.setHowToPlay(true, true);
+					menuState.setHowToPlay(true);
 				} else {
 					game.enterState(States.SINGLEPLAYER_GAMESTATE);
+					menuState.setHowToPlay(false);
 					menuState.stopMusic();
 				}
 			} else if(profileBtn.isOver(touchpointx, touchpointy, true)) {
@@ -107,7 +116,8 @@ public class MenuInputProcessor extends InputAdapter {
 				game.enterState(States.SETTINGSMENUSTATE);
 			} else if(helpBtn.isOver(touchpointx, touchpointy, true)) {
 				helpBtn.touchUp();
-				menuState.setHowToPlay(true, false);
+				menuState.setHowToPlay(true);
+				helpPressed = true;
 			}
 		}
 		

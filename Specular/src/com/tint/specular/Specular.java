@@ -62,23 +62,7 @@ public class Specular extends Game {
 		
 		prefs = Gdx.app.getPreferences("Specular Preferences");
 		// Checks if the preferences are missing or it is the first time the app is run
-		if(!prefs.contains("Tilt")) {
-			prefs.putBoolean("Tilt", false);
-			prefs.putBoolean("Static", false);
-			prefs.putFloat("Sensitivity", 1f);
-			prefs.putBoolean("Particles", true);
-			prefs.putBoolean("MusicMuted", false);
-			prefs.putBoolean("SoundsMuted", false);
-			prefs.putBoolean("FirstTime", true);
-			prefs.putFloat("Move Stick Pos X", -camera.viewportWidth / 6 * 2);
-			prefs.putFloat("Move Stick Pos Y", -camera.viewportHeight / 6);
-			
-			prefs.putFloat("Shoot Stick Pos X", camera.viewportWidth / 6 * 2);
-			prefs.putFloat("Shoot Stick Pos Y", -camera.viewportHeight / 6);
-			
-			//Needed for android to save the settings
-			prefs.flush();
-		}
+		checkPreferences();
 		Gdx.input.setCatchBackKey(true);
 		
 		
@@ -86,6 +70,52 @@ public class Specular extends Game {
 		
 		//Enter loading screen state before main menu state
 		enterState(States.LOADINGSTATE);
+	}
+	
+	/**
+	 * Checks if everything is okay with the preferences and the program is good to go
+	 */
+	private void checkPreferences() {
+		try {
+			// Size needs to be changed if the amount of preferences or settings is changed
+			if(prefs.get().keySet().size() == 11) {
+				/* Checking that the entries are of valid type,
+				 * booleans doesn't need to be checked because in case of wrong case they return false
+				 */
+				prefs.getFloat("Sensitivity");
+				prefs.getFloat("Move Stick Pos X");
+				prefs.getFloat("Move Stick Pos Y");
+				prefs.getFloat("Shoot Stick Pos X");
+				prefs.getFloat("Shoot Stick Pos Y");
+			} else {
+				createPreferences();
+			}
+		} catch(NumberFormatException nfe) {
+			createPreferences();
+		}
+	}
+	
+	/**
+	 * Creates default preferences
+	 */
+	private void createPreferences() {
+		prefs.clear();
+		
+		prefs.putBoolean("Tilt", false);
+		prefs.putBoolean("Static", false);
+		prefs.putFloat("Sensitivity", 1f);
+		prefs.putBoolean("Particles", true);
+		prefs.putBoolean("MusicMuted", false);
+		prefs.putBoolean("SoundsMuted", false);
+		prefs.putBoolean("FirstTime", true);
+		prefs.putFloat("Move Stick Pos X", -camera.viewportWidth / 6 * 2);
+		prefs.putFloat("Move Stick Pos Y", -camera.viewportHeight / 6);
+		
+		prefs.putFloat("Shoot Stick Pos X", camera.viewportWidth / 6 * 2);
+		prefs.putFloat("Shoot Stick Pos Y", -camera.viewportHeight / 6);
+		
+		//Needed for android to save the settings
+		prefs.flush();
 	}
 	
 	public void load() {

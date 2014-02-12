@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.Specular;
-import com.tint.specular.Specular.States;
 import com.tint.specular.input.MenuInputProcessor;
 
 /**
@@ -20,7 +19,7 @@ public class MainmenuState extends State {
 	private Texture background, howToPlay;
 	private Music music;
 	private MenuInputProcessor menuInputProcessor;
-	private boolean playBtnPressed, showHowToPlay;
+	private boolean showHowToPlay;
 	private float screenHeightToCameraHeight;
 	
 	public MainmenuState(Specular game) {
@@ -45,14 +44,8 @@ public class MainmenuState extends State {
 			game.batch.draw(howToPlay, (Specular.camera.viewportWidth - width) / 2, 0, width, Specular.camera.viewportHeight);
 			game.batch.end();
 			
-			if(Gdx.input.justTouched()) {
-				if(playBtnPressed) {
-					game.enterState(States.SINGLEPLAYER_GAMESTATE);
-					stopMusic();
-				} else {
-					showHowToPlay = false;
-				}
-			}
+			if(Gdx.input.justTouched())
+				showHowToPlay = false;
 		} else {
 			game.batch.begin();
 			game.batch.draw(background, 0, 0);
@@ -64,9 +57,8 @@ public class MainmenuState extends State {
 		}
 	}
 	
-	public void setHowToPlay(boolean showHowToPlay, boolean playBtnPressed) {
+	public void setHowToPlay(boolean showHowToPlay) {
 		this.showHowToPlay = showHowToPlay;
-		this.playBtnPressed = playBtnPressed;
 	}
 	
 	public boolean showHowToPlay() {
