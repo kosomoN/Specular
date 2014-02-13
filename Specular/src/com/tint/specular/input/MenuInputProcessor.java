@@ -43,11 +43,20 @@ public class MenuInputProcessor extends InputAdapter {
 	}
     
 	@Override
+	public boolean keyDown(int keycode) {
+		howToPlay = menuState.showHowToPlay();
+		return false;
+	}
+
+	@Override
 	public boolean keyUp(int keycode) {
-		if(keycode == Keys.BACK)
-			if(!howToPlay)
+		if(keycode == Keys.BACK) {
+			if(howToPlay)
+				menuState.setHowToPlay(false);
+			else
 				Gdx.app.exit();
-		return super.keyUp(keycode);
+		}
+		return false;
 	}
 
 	@Override

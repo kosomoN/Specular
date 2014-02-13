@@ -1,6 +1,7 @@
 package com.tint.specular.input;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.Specular;
@@ -42,6 +43,13 @@ public class GameOverInputProcessor extends InputAdapter {
 		highscores = new Button(-420, -526, highscoresTex.getWidth(), highscoresTex.getHeight(), game.batch, highscoresTex, highscoresPressedTex);
 	}
 	
+	@Override
+	public boolean keyDown(int keycode) {
+		if(keycode == Keys.BACK)
+			game.enterState(States.MAINMENUSTATE);
+		return false;
+	}
+
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		//Translate touch event to per cent -> multiply with viewport to get viewport coordinates -> add half because 0, 0 is in the middle
