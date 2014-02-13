@@ -41,15 +41,10 @@ public class MenuInputProcessor extends InputAdapter {
 		
 		firstTime = Specular.prefs.getBoolean("FirstTime");
 	}
-    
-	@Override
-	public boolean keyDown(int keycode) {
-		howToPlay = menuState.showHowToPlay();
-		return false;
-	}
 
 	@Override
 	public boolean keyUp(int keycode) {
+ 		howToPlay = menuState.showHowToPlay();
 		if(keycode == Keys.BACK) {
 			if(howToPlay)
 				menuState.setHowToPlay(false);

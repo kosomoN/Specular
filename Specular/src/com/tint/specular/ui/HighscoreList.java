@@ -65,7 +65,7 @@ public class HighscoreList extends Widget implements Cullable, Disposable {
 
 	public void setItems(String[] scores) {
 		highscores = scores;
-		prefHeight = highscores.length * rowHeight;
+		prefHeight = highscores.length * rowHeight + rowHeight;
 		invalidateHierarchy();
 	}
 

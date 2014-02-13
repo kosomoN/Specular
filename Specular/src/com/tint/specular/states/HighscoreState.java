@@ -88,7 +88,6 @@ public class HighscoreState extends State {
 			});
 			
 			ScrollPane sp = new ScrollPane(list);
-			System.out.println(Specular.camera.viewportWidth + " " + Specular.camera.viewportHeight);
 			sp.setSize(Specular.camera.viewportWidth * (930f / 1920), Specular.camera.viewportHeight);
 			sp.setPosition(Specular.camera.viewportWidth * (850f / 1920), 0);
 	
@@ -111,7 +110,7 @@ public class HighscoreState extends State {
                         
                         @Override
                         public void loginSuccess() {
-                                shouldUpdate = true;
+                            shouldUpdate = true;
                         }
 
                         @Override

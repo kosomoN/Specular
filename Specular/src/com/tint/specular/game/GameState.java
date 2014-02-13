@@ -71,7 +71,8 @@ public class GameState extends State {
 	protected GameMode gameMode;
 	protected Player player;
 	private Stage stage;
-	private float cameraX, cameraY, cameraDx, cameraDy;
+	private float cameraX, cameraY;
+	private static final float CAMERA_SPEED = 5;
 	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
@@ -330,33 +331,22 @@ public class GameState extends State {
 			}
 			
 			CameraShake.update();
+			cameraX += (player.getX() - cameraX) / CAMERA_SPEED;
+			cameraY += (player.getY() - cameraY) / CAMERA_SPEED;
 		}
 	}
 	
 	protected void renderGame() {
 		// Clearing screen, positioning camera, rendering map and entities
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
-//		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE ); //Amazing stuff happens xD; Answer(Daniel): Jup xD
-
 		if(gameMode.isGameOver()) {
 			game.batch.setColor(0.6f, 0.6f, 0.6f, 1);
 		}
    
 		//Positioning camera to the player		
 		
-		cameraDx = (player.getX() - cameraX) / 5;
-		cameraDy = (player.getY() - cameraY) / 5;
-		
-		cameraX += cameraDx;
-		cameraY += cameraDy;
-		
-		cameraX = player.getX();
-		cameraY = player.getY();
-		
 		Specular.camera.position.set(cameraX, cameraY, 0);
 		Specular.camera.zoom = 1;
-		CameraShake.moveCamera();
+//		CameraShake.moveCamera();
 		Specular.camera.update();
 		
 		// Rendering map and entities
@@ -416,7 +406,7 @@ public class GameState extends State {
 		
 		game.batch.end();
 		//Required for the algorithm stopping the enemies from spawning on-screen
-		Specular.camera.position.set(player.getX(), player.getY(), 0);
+		Specular.camera.position.set(cameraX, cameraY, 0);
 	}
 	
 	public void addEntity(Entity entity) {

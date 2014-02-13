@@ -68,9 +68,8 @@ public class MainActivity extends AndroidApplication {
 					@Override
 					public void call(final Session session, SessionState state, Exception exception) {
 						Log.i("Specular", state.toString());
-						
 						//If logged in
-						if (state.equals(SessionState.OPENED)) {
+						if(state.equals(SessionState.OPENED) && fbuser != null) {
 							System.out.println("Opened");
 							
 							//Request user information
@@ -80,14 +79,17 @@ public class MainActivity extends AndroidApplication {
 									if (user != null) {
 										fbuser = user;
 				                        Toast.makeText(getApplicationContext(), "Hello " + user.getName() + "!", Toast.LENGTH_LONG).show();
+				                        callback.loginSuccess();
 				                    } else {
 				                    	Toast.makeText(getApplicationContext(), "User is null " + response.getError(), Toast.LENGTH_LONG).show();
 				                    	Log.e("Specular", "User is null " + response.getError());
+				                    	callback.loginFailed();
 				                    }
 								}
 							}).executeAsync();
-							callback.loginSuccess();
+							
 						} else if(state.equals(SessionState.CLOSED) || state.equals(SessionState.CLOSED_LOGIN_FAILED)) {
+							fbuser = null;
 							//If failed
 							Log.e("Specular Facebook", "Login failed", exception);
 							callback.loginFailed();
