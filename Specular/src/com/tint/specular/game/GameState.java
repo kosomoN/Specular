@@ -331,8 +331,15 @@ public class GameState extends State {
 			}
 			
 			CameraShake.update();
-			cameraX += (player.getX() - cameraX) / CAMERA_SPEED;
-			cameraY += (player.getY() - cameraY) / CAMERA_SPEED;
+//			cameraX += (player.getX() - cameraX) / CAMERA_SPEED;
+//			cameraY += (player.getY() - cameraY) / CAMERA_SPEED;
+			float cameraCenterRatio = 1.3f;
+			float playerSpeedOffset = 12f;
+			
+			float targetX = (player.getX() - currentMap.getWidth() / 2) / cameraCenterRatio + player.getDeltaX() * playerSpeedOffset;
+			float targetY = (player.getY() - currentMap.getHeight() / 2) / cameraCenterRatio + player.getDeltaY() * playerSpeedOffset;
+			cameraX += ((targetX + currentMap.getWidth() / 2) - cameraX) / CAMERA_SPEED;
+			cameraY += ((targetY + currentMap.getHeight() / 2) - cameraY) / CAMERA_SPEED;
 		}
 	}
 	
