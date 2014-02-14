@@ -3,7 +3,9 @@ package com.tint.specular.game.entities.enemies;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -12,8 +14,8 @@ public class EnemyShielder extends Enemy {
 
 	private static final float FORCE = 7, RANGE = 300;
 	
-	private static Texture texture;
-	private float rotation;
+	private static Animation anim;
+	private float animFrameTime;
 	
 	public EnemyShielder(float x, float y, GameState gs) {
 		super(x, y, gs, 10);
@@ -21,8 +23,10 @@ public class EnemyShielder extends Enemy {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		rotation -= Gdx.graphics.getDeltaTime() * 90;
-		Util.drawCentered(batch, texture, x, y, rotation);
+		animFrameTime += Gdx.graphics.getDeltaTime();
+		
+		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
+		batch.draw(frame, x - frame.getRegionWidth() / 2, y - frame.getRegionHeight() / 2, frame.getRegionWidth() / 2, frame.getRegionHeight() / 2, frame.getRegionWidth(), frame.getRegionHeight(), 1, 1, animFrameTime * 70, false);
 	}
 	
 	@Override
@@ -66,8 +70,10 @@ public class EnemyShielder extends Enemy {
 	}
 
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/Enemy Shielder.png"));
+		Texture texture = new Texture(Gdx.files.internal("graphics/game/Enemy Shielder.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		anim = Util.getAnimation(texture, 128, 128, 1 / 15f, 0, 0, 3, 1);
 	}
 
 	@Override
