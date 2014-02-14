@@ -50,7 +50,7 @@ public abstract class PowerUp implements Entity {
 	@Override
 	public void render(SpriteBatch batch) {
 		if(!isActivated() && despawnTime > 0)	
-			batch.draw(getTexture(), x, y);
+			batch.draw(getTexture(), x - getTexture().getWidth() / 2, y - getTexture().getHeight() / 2);
 	}
 	
 	protected abstract void affect(Player p);

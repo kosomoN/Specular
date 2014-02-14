@@ -333,10 +333,8 @@ public class GameState extends State {
 			}
 			
 			CameraShake.update();
-//			cameraX += (player.getX() - cameraX) / CAMERA_SPEED;
-//			cameraY += (player.getY() - cameraY) / CAMERA_SPEED;
-			float cameraCenterRatio = 1.3f;
-			float playerSpeedOffset = 12f;
+			float cameraCenterRatio = 1.45f;
+			float playerSpeedOffset = 8f;
 			
 			float targetX = (player.getX() - currentMap.getWidth() / 2) / cameraCenterRatio + player.getDeltaX() * playerSpeedOffset;
 			float targetY = (player.getY() - currentMap.getHeight() / 2) / cameraCenterRatio + player.getDeltaY() * playerSpeedOffset;
@@ -355,7 +353,7 @@ public class GameState extends State {
 		
 		Specular.camera.position.set(cameraX, cameraY, 0);
 		Specular.camera.zoom = 1;
-//		CameraShake.moveCamera();
+		CameraShake.moveCamera();
 		Specular.camera.update();
 		
 		// Rendering map and entities
@@ -374,13 +372,19 @@ public class GameState extends State {
 		currentMap.render(game.batch);
 		
 		for(Entity ent : entities) {
-			ent.render(game.batch);
+			if(!(ent instanceof Enemy))
+				ent.render(game.batch);
 		}
 		
 		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE );
 		
 		for(Particle p : particles)
 			p.render(game.batch);
+		
+		for(Entity ent : entities) {
+			if(ent instanceof Enemy)
+				ent.render(game.batch);
+		}
 		
 		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA  );
 		

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
+import com.tint.specular.utils.Util;
 
 /**
  * 
@@ -29,6 +30,7 @@ public class EnemyVirus extends Enemy {
 	private float growthRate = (float) (BASE_GROWTH_RATE + BASE_GROWTH_RATE * Math.random());
 	private Behavior behavior;
 	private double angle;
+	private float rotation;
 	
 	public EnemyVirus(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
@@ -48,7 +50,8 @@ public class EnemyVirus extends Enemy {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		batch.draw(tex, (float) x - tex.getWidth() / 2 * size, y - tex.getHeight() / 2 * size, tex.getWidth() * size, tex.getHeight() * size);
+		rotation += Gdx.graphics.getDeltaTime();
+		Util.drawCentered(batch, tex, (float) x - tex.getWidth() / 2 * size, y - tex.getHeight() / 2 * size, tex.getWidth() * size, tex.getHeight() * size, rotation * 90 % 360);
 	}
 	
 	@Override
@@ -131,7 +134,6 @@ public class EnemyVirus extends Enemy {
 		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Virus.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
-	
 
 	@Override
 	public Type getParticleType() {

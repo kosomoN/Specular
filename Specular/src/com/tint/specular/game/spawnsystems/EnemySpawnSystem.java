@@ -7,6 +7,8 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyFast;
+import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 
 /**
@@ -36,15 +38,19 @@ public class EnemySpawnSystem extends SpawnSystem {
 		
 		//Remove this in case you are going to use the concept above
 		if(enemyList.size < ticks / 100) {
-			int randomId = rand.nextInt(10);
-			if(randomId < 4) { // 40%
-				putIntoGame(new EnemyDasher(0, 0, gs));
-			} else if(randomId < 7) { // 30 %
+			int randomId = rand.nextInt(25);
+			if(randomId < 8) { // 40%
+				putIntoGame(new EnemyNormal(0, 0, gs));
+			} else if(randomId < 14) { // 30 %
 				putIntoGame(new EnemyWanderer(0, 0, gs));
-			} else if(randomId < 10) { // 20%
+			} else if(randomId < 18) { // 20%
 				putIntoGame(new EnemyFast(0, 0, gs));
-			} else { // 10%
+			} else if(randomId < 21){ // 10%
+				putIntoGame(new EnemyDasher(0, 0, gs));
+			} else if(randomId < 23){ // 10%
 				putIntoGame(new EnemyBooster(0, 0, gs));
+			} else {
+				putIntoGame(new EnemyShielder(0, 0, gs));
 			}
 		}
 	}
