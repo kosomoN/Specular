@@ -14,13 +14,13 @@ public class HUD {
 	public HUD(GameState gs) {
 		this.gs = gs;
 		
-		hudTop = new Texture(Gdx.files.internal("graphics/game/HUD top.png"));
-		hudBottom = new Texture(Gdx.files.internal("graphics/game/HUD bottom.png"));
-		bar = new Texture(Gdx.files.internal("graphics/game/Bar.png"));
+		hudTop = new Texture(Gdx.files.internal("graphics/game/HUD/HUD top.png"));
+		hudBottom = new Texture(Gdx.files.internal("graphics/game/HUD/HUD bottom.png"));
+		bar = new Texture(Gdx.files.internal("graphics/game/HUD/Bar.png"));
 		
-		multiplierBar = new Texture(Gdx.files.internal("graphics/game/MP Bar.png"));
+		multiplierBar = new Texture(Gdx.files.internal("graphics/game/HUD/MP Bar.png"));
 		for(int i = 0; i < 4; i++) {
-			boardshockChargeTex[i] = new Texture(Gdx.files.internal("graphics/game/HUD Boardshock " + i + ".png"));
+			boardshockChargeTex[i] = new Texture(Gdx.files.internal("graphics/game/HUD/HUD Boardshock " + i + ".png"));
 		}
 	}
 

@@ -79,7 +79,7 @@ public class EnemyBooster extends Enemy {
 	public float getOuterRadius() { return 30; }
 	
 	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Booster.png"));
+		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Booster.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 

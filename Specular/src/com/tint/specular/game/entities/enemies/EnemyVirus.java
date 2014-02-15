@@ -131,7 +131,7 @@ public class EnemyVirus extends Enemy {
 	}
 	
 	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Virus.png"));
+		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Virus.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 

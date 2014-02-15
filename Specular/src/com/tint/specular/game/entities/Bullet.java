@@ -30,7 +30,7 @@ public class Bullet implements Entity {
 	private Circle hitbox;
 	private GameState gs;
 
-	private float direction;
+	private double direction;
 	
 	public Bullet(float x, float y, float direction, float initialDx, float initialDy, GameState gs) {
 		this.x = x;
@@ -44,31 +44,38 @@ public class Bullet implements Entity {
 		//Move the bullet away from the player center
 		this.x += cos * 28;
 		this.y += sin * 28;
-		
 		this.gs = gs;
-		
-		this.direction = direction - 90;
+		this.direction = direction;
 	}
 
 	@Override
 	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, bulletTex, x, y, direction);
+		Util.drawCentered(batch, bulletTex, x, y, (float) direction - 90);
 	}
 	
 	@Override
 	public boolean update() {
+		boolean reflect = gs.getCurrentMap().isReflective();
 		x += dx;
 		y += dy;
 		
-		if((x + dx < 1 || x + dx > gs.getCurrentMap().getWidth() || y + dy < 0 || y + dy > gs.getCurrentMap().getHeight()) || isHit) {
-			if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
-					Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
-					Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
-					Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
-				if(gs.particlesEnabled())
-					gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
-			}
+		if(isHit) {
+			createParticles();
 			return true;
+		} else if(x + dx < 1 || x + dx > gs.getCurrentMap().getWidth()) {
+			createParticles();
+			if(reflect)
+				reflect(Math.toDegrees(Math.atan2(dy, dx)), true);
+			else
+				return true;
+			
+		} else if(y + dy < 0 || y + dy > gs.getCurrentMap().getHeight()) {
+			createParticles();
+			if(reflect)
+				reflect(Math.toDegrees(Math.atan2(dy, dx)), false);
+			else
+				return true;
+			
 		}
 		return false;
 	}
@@ -82,6 +89,34 @@ public class Bullet implements Entity {
 	
 	public void hit() {
 		isHit = true;
+	}
+	
+	private void createParticles() {
+		if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
+				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
+				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
+				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
+			if(gs.particlesEnabled())
+				gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
+		}
+	}
+	
+	/**
+	 * Changes direction as the law of reflection in physics
+	 * @param inAngle - The incoming angle which the object is moving towards the reflective surface
+	 * @param x - If the reflective surface is looked from above on the x-axis or the y-axis
+	 */
+	private void reflect(double inAngle, boolean x) {
+		direction = 180 - inAngle;
+		direction += x ? 0 : 180;
+		
+		if(direction < 0)
+			direction += 360;
+		else if(direction > 360)
+			direction -= 360;
+		
+		dx = (float) (Math.cos(direction / 180 * Math.PI) * (SPEED - 5));
+		dy = (float) (Math.sin(direction / 180 * Math.PI) * (SPEED - 5));
 	}
 	
 	public Circle getHitbox() { return hitbox; }

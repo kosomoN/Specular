@@ -21,7 +21,7 @@ public class SlowdownEnemies extends PowerUp {
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/Slowdown.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/powerups/Slowdown.png"));
 	}
 	
 	@Override

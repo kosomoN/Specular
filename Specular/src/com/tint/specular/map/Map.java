@@ -12,12 +12,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Map {
 	
-	//FIELDS
 	private int width, height;
+	private boolean reflective;
 	private Texture texture, parallax;
 	private String name;
 	
-	//CONSTRUCTORS
 	public Map(Texture texture, Texture parallax, String name, int width, int height) {
 		this.name = name;
 		this.texture = texture;
@@ -32,19 +31,17 @@ public class Map {
 		
 	}
 	
-	//RENDER
 	public void render(SpriteBatch batch) {
 		batch.draw(texture, 0, 0, width, height);
 	}
 
-	//GETTERS
+	public void setReflective(boolean reflective) { this.reflective = reflective; }
+	
+	public boolean isReflective() { return reflective; }
 	public int getWidth() { return width; }
 	public int getHeight() { return height;	}
 	public Texture getTexture() { return texture; }
 	public String getName() { return name; }
 	public void setTexture(Texture texture) { this.texture = texture; }
-
-	public Texture getParallax() {
-		return parallax;
-	}
+	public Texture getParallax() { return parallax;	}
 }

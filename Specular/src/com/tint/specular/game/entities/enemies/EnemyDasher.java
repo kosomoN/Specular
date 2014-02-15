@@ -96,7 +96,7 @@ public class EnemyDasher extends Enemy {
 	public float getOuterRadius() { return 30; }
 	
 	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/dasher.png"));
+		tex = new Texture(Gdx.files.internal("graphics/game/enemies/dasher.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 	

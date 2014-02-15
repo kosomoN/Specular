@@ -19,7 +19,7 @@ public class ScoreMultiplier extends PowerUp {
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/Multiplier.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/powerups/Multiplier.png"));
 	}
 	
 	@Override

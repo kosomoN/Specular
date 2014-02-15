@@ -57,10 +57,10 @@ public class EnemyWorm extends Enemy {
 	}
 	
 	public static void init() {
-		body1Tex = new Texture(Gdx.files.internal("graphics/game/Body 1.png"));
-		body2Tex = new Texture(Gdx.files.internal("graphics/game/Body 2.png"));
-		tailTex = new Texture(Gdx.files.internal("graphics/game/Tail.png"));
-		headTex = new Texture(Gdx.files.internal("graphics/game/Head.png"));
+		body1Tex = new Texture(Gdx.files.internal("graphics/game/enemies/Body 1.png"));
+		body2Tex = new Texture(Gdx.files.internal("graphics/game/enemies/Body 2.png"));
+		tailTex = new Texture(Gdx.files.internal("graphics/game/enemies/Tail.png"));
+		headTex = new Texture(Gdx.files.internal("graphics/game/enemies/Head.png"));
 	}
 
 	public class Part {

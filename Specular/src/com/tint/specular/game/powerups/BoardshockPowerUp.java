@@ -24,7 +24,7 @@ public class BoardshockPowerUp extends PowerUp {
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/BoardShock.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/powerups/BoardShock.png"));
 	}
 	
 }

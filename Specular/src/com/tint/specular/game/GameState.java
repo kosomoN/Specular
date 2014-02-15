@@ -125,8 +125,8 @@ public class GameState extends State {
 		super(game);
 		
 		// Loading map texture from a internal directory
-		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/Level.png"));
-		Texture parallax = new Texture(Gdx.files.internal("graphics/game/Parallax.png"));
+		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/maps/Level.png"));
+		Texture parallax = new Texture(Gdx.files.internal("graphics/game/maps/Parallax.png"));
 		
 		// Loading gameover texture
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
@@ -376,7 +376,7 @@ public class GameState extends State {
 				ent.render(game.batch);
 		}
 		
-		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE );
+		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE);
 		
 		for(Particle p : particles)
 			p.render(game.batch);
@@ -386,7 +386,7 @@ public class GameState extends State {
 				ent.render(game.batch);
 		}
 		
-		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA  );
+		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		
 		// Re-positioning camera for HUD
 		Specular.camera.position.set(0, 0, 0);
@@ -423,7 +423,6 @@ public class GameState extends State {
 	}
 	
 	public void addEntity(Entity entity) {
-
 		if(entity instanceof Particle) {
 			particles.add((Particle) entity);
 			return;

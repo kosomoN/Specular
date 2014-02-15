@@ -70,7 +70,7 @@ public class EnemyShielder extends Enemy {
 	}
 
 	public static void init() {
-		Texture texture = new Texture(Gdx.files.internal("graphics/game/Enemy Shielder.png"));
+		Texture texture = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Shielder.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		anim = Util.getAnimation(texture, 128, 128, 1 / 15f, 0, 0, 3, 1);

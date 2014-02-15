@@ -47,7 +47,7 @@ public class EnemyFast extends Enemy {
 /*_______________________________________________________________________*/
 	
 	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/Enemy Fast.png"));
+		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Fast.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 

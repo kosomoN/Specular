@@ -32,7 +32,7 @@ public class EnemyWanderer extends Enemy {
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/Enemy Wanderer.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Wanderer.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 	

@@ -41,7 +41,7 @@ public class EnemySpawnSystem extends SpawnSystem {
 			int randomId = rand.nextInt(25);
 			if(randomId < 8) { // 40%
 				putIntoGame(new EnemyNormal(0, 0, gs));
-			} else if(randomId < 14) { // 30 %
+			} else if(randomId < 14) { // 30%
 				putIntoGame(new EnemyWanderer(0, 0, gs));
 			} else if(randomId < 18) { // 20%
 				putIntoGame(new EnemyFast(0, 0, gs));
