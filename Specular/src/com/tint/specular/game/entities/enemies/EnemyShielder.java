@@ -60,7 +60,7 @@ public class EnemyShielder extends Enemy {
 					}
 					
 					e.setX(e.getX() + edx + dx * 1.1f);
-					e.setY(e.getY() + edy + dx * 1.1f);
+					e.setY(e.getY() + edy + dy * 1.1f);
 				}
 			}
 			

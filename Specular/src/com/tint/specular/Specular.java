@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.SingleplayerGameState;
 import com.tint.specular.states.ControlSetupState;
-import com.tint.specular.states.Facebook;
+import com.tint.specular.states.NativeAndroid;
 import com.tint.specular.states.HighscoreState;
 import com.tint.specular.states.LoadingState;
 import com.tint.specular.states.MainmenuState;
@@ -32,7 +32,7 @@ public class Specular extends Game {
 	
 	private static final int WIDTH = 1920, HEIGHT = 1080;
 	
-	public static Facebook facebook;
+	public static NativeAndroid nativeAndroid;
 	
 	private Map<States, State> states = new EnumMap<Specular.States, State>(States.class);
 	
@@ -41,8 +41,8 @@ public class Specular extends Game {
 	public SpriteBatch batch;
 	
 	
-	public Specular(Facebook facebook) {
-		Specular.facebook = facebook;
+	public Specular(NativeAndroid facebook) {
+		Specular.nativeAndroid = facebook;
 	}
 	
 	@Override

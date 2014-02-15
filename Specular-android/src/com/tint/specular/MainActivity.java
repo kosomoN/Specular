@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.facebook.HttpMethod;
@@ -24,7 +25,9 @@ import com.facebook.Session.StatusCallback;
 import com.facebook.SessionState;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
-import com.tint.specular.states.Facebook;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
+import com.tint.specular.states.NativeAndroid;
 
 public class MainActivity extends AndroidApplication {
 	
@@ -60,7 +63,7 @@ public class MainActivity extends AndroidApplication {
 			}).executeAsync();
         }
         	
-        initialize(new Specular(new Facebook() {
+        initialize(new Specular(new NativeAndroid() {
         	
 			@Override
 			public boolean login(final LoginCallback callback) {
@@ -225,6 +228,12 @@ public class MainActivity extends AndroidApplication {
 			public void logout() {
 				Session.getActiveSession().closeAndClearTokenInformation();
 			}
+
+			@Override
+			public void sendAnalytics() {
+				Gdx.app.log("Specular", "Sending death analytics");
+				EasyTracker.getInstance(MainActivity.this).send(MapBuilder.createEvent("Game event", "Death", null, null).build());
+			}
         }), cfg);
     }
     
@@ -235,12 +244,17 @@ public class MainActivity extends AndroidApplication {
     }
 
 	@Override
-	protected void onPause() {
-		super.onPause();
+	protected void onStart() {
+		super.onStart();
+		//Google analytics
+		EasyTracker.getInstance(this).activityStart(this);
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStop() {
+		super.onStop();
+		//Google analytics
+		EasyTracker.getInstance(this).activityStop(this);
 	}
+    
 }

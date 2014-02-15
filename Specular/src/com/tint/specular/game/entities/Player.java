@@ -75,8 +75,6 @@ public class Player implements Entity {
 	}
 
 	public void shoot(float direction, int offset, int spaces) {
-		if(soundEffects)
-			soundShoot1.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
 		
 		//If the amount of bullet "lines" are even
 		if(bulletBurst % 2 == 0) {
@@ -206,7 +204,8 @@ public class Player implements Entity {
 				int offset = 8;
 				
 				shoot(direction, offset, spaces);
-				
+				if(soundEffects)
+					soundShoot1.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
 				timeSinceLastFire = 0;
 			}
 		}

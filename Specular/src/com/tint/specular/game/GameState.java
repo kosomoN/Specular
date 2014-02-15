@@ -46,7 +46,7 @@ import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.input.GameOverInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
-import com.tint.specular.states.Facebook.LoginCallback;
+import com.tint.specular.states.NativeAndroid.LoginCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.HUD;
 import com.tint.specular.utils.Util;
@@ -316,18 +316,18 @@ public class GameState extends State {
 				else {
 					input.setInputProcessor(ggInputProcessor);
 					
-					if(!Specular.facebook.isLoggedIn()) {
-						Specular.facebook.login(new LoginCallback() {
+					if(!Specular.nativeAndroid.isLoggedIn()) {
+						Specular.nativeAndroid.login(new LoginCallback() {
 							@Override
 							public void loginSuccess() {
-								Specular.facebook.postHighscore(player.getScore());
+								Specular.nativeAndroid.postHighscore(player.getScore());
 							}
 							
 							public void loginFailed() {
 							}
 						});
 					} else {
-						Specular.facebook.postHighscore(player.getScore());
+						Specular.nativeAndroid.postHighscore(player.getScore());
 					}
 				}
 			}
@@ -336,8 +336,9 @@ public class GameState extends State {
 			float cameraCenterRatio = 1.45f;
 			float playerSpeedOffset = 8f;
 			
-			float targetX = (player.getX() - currentMap.getWidth() / 2) / cameraCenterRatio + player.getDeltaX() * playerSpeedOffset;
-			float targetY = (player.getY() - currentMap.getHeight() / 2) / cameraCenterRatio + player.getDeltaY() * playerSpeedOffset;
+			float targetX = (float) (Math.sin((player.getX() - currentMap.getWidth() / 2) / 700) / cameraCenterRatio * 1024 + player.getDeltaX() * playerSpeedOffset);
+			float targetY = (float) (Math.sin((player.getY() - currentMap.getHeight() / 2) / 700) / cameraCenterRatio* 1024 + player.getDeltaY() * playerSpeedOffset);
+
 			cameraX += ((targetX + currentMap.getWidth() / 2) - cameraX) / CAMERA_SPEED;
 			cameraY += ((targetY + currentMap.getHeight() / 2) - cameraY) / CAMERA_SPEED;
 		}

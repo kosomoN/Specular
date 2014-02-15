@@ -71,11 +71,11 @@ public class HighscoreState extends State {
 		stage = new Stage(Specular.camera.viewportWidth, Specular.camera.viewportHeight, false, game.batch);
 		stage.setCamera(Specular.camera);
 		
-		if(Specular.facebook.isLoggedIn()) {
+		if(Specular.nativeAndroid.isLoggedIn()) {
 			isLoggedIn = true;
 			list = new HighscoreList();
 			
-			Specular.facebook.getHighScores(new Facebook.HighscoreCallback() {
+			Specular.nativeAndroid.getHighScores(new NativeAndroid.HighscoreCallback() {
 
 				@Override
 				public void gotHighscores(String[] scores) {
@@ -106,7 +106,7 @@ public class HighscoreState extends State {
 			loginBtn.addListener(new ChangeListener() {
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {
-                    Specular.facebook.login(new Facebook.LoginCallback() {
+                    Specular.nativeAndroid.login(new NativeAndroid.LoginCallback() {
                         
                         @Override
                         public void loginSuccess() {

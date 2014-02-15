@@ -6,7 +6,7 @@ package com.tint.specular.states;
  *
  */
 
-public interface Facebook {
+public interface NativeAndroid {
 	public boolean login(LoginCallback loginCallback);
 	public void logout();
 	public boolean isLoggedIn();
@@ -21,4 +21,6 @@ public interface Facebook {
 		public void gotHighscores(String[] scores);
 	}
 	public void getHighScores(HighscoreCallback highscoreCallback);
+	
+	public void sendAnalytics();
 }
