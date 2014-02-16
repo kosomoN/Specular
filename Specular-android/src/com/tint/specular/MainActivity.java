@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -233,6 +234,16 @@ public class MainActivity extends AndroidApplication {
 			public void sendAnalytics() {
 				Gdx.app.log("Specular", "Sending death analytics");
 				EasyTracker.getInstance(MainActivity.this).send(MapBuilder.createEvent("Game event", "Death", null, null).build());
+			}
+
+			@Override
+			public String getVersionName() {
+				try {
+					return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+				} catch (NameNotFoundException e) {
+					e.printStackTrace();
+					return "NaN";
+				}
 			}
         }), cfg);
     }

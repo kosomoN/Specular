@@ -4,7 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pool.Poolable;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
@@ -16,7 +17,7 @@ import com.tint.specular.utils.Util;
  *
  */
 
-public class Bullet implements Entity {
+public class Bullet implements Entity, Poolable {
 	
 	private static final float SPEED = 25;
 
@@ -24,15 +25,105 @@ public class Bullet implements Entity {
 	
 	private static Texture bulletTex;
 	private static int size;
+
+	public static int maxBounces = 0;
 	
+	private static Pool<Bullet> bulletPool;
+	
+	private int bounces = 0;
 	private float x, y, dx, dy;
 	private boolean isHit;
-	private Circle hitbox;
 	private GameState gs;
 
-	private double direction;
+	private float direction;
 	
-	public Bullet(float x, float y, float direction, float initialDx, float initialDy, GameState gs) {
+	private Bullet(GameState gs) {
+		this.gs = gs;
+	}
+
+	@Override
+	public void render(SpriteBatch batch) {
+		Util.drawCentered(batch, bulletTex, x, y, direction - 90);
+	}
+	
+	@Override
+	public boolean update() {
+		x += dx;
+		y += dy;
+		
+		if(isHit) {
+			createParticles();
+			return true;
+		}
+		
+		if(x + dx - 18 < 0 || x + dx + 18 > gs.getCurrentMap().getHeight()) {
+			createParticles();
+			if(bounces >= maxBounces)
+				return true;
+			bounces++;
+			
+			direction = 180 - direction;
+			calculateDelta();
+		}
+		
+		if(y + dy - 18 < 0 || y + dy + 18 > gs.getCurrentMap().getHeight()) {
+			createParticles();
+			if(bounces >= maxBounces)
+				return true;
+			bounces++;
+			
+			direction = 360 - direction;
+			calculateDelta();
+		}
+		return false;
+	}
+	
+	private void calculateDelta() {
+		dx = (float) Math.cos(Math.toRadians(direction)) * SPEED;
+		dy = (float) Math.sin(Math.toRadians(direction)) * SPEED;
+	}
+
+	public static void init(final GameState gs) {
+		bulletTex = new Texture(Gdx.files.internal("graphics/game/Bullet.png"));
+		bulletTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		size = bulletTex.getWidth() / 2;
+		
+		bulletPool = new Pool<Bullet>() {
+			@Override
+			protected Bullet newObject() {
+				return new Bullet(gs);
+			}
+		};
+	}
+	
+	public void hit() {
+		isHit = true;
+	}
+	
+	private void createParticles() {
+		if(gs.particlesEnabled() && Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
+				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
+				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
+				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
+			gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
+		}
+	}
+	
+	public float getX() { return x; }
+	public float getY() { return y; }
+	public float getWidth() { return size; }
+	public float getHeight() { return size; }
+	
+	@Override
+	public void dispose() {
+		bulletTex.dispose();
+	}
+	
+	/**
+	 * This is called to re-use the particle to avoid garbage collection
+	 */
+	private Bullet reUse(float x, float y, float direction, float initialDx, float initialDy) {
 		this.x = x;
 		this.y = y;
 		direction += Math.random() * 6 - 3;
@@ -44,89 +135,22 @@ public class Bullet implements Entity {
 		//Move the bullet away from the player center
 		this.x += cos * 28;
 		this.y += sin * 28;
-		this.gs = gs;
 		this.direction = direction;
-	}
-
-	@Override
-	public void render(SpriteBatch batch) {
-		Util.drawCentered(batch, bulletTex, x, y, (float) direction - 90);
-	}
-	
-	@Override
-	public boolean update() {
-		boolean reflect = gs.getCurrentMap().isReflective();
-		x += dx;
-		y += dy;
 		
-		if(isHit) {
-			createParticles();
-			return true;
-		} else if(x + dx < 1 || x + dx > gs.getCurrentMap().getWidth()) {
-			createParticles();
-			if(reflect)
-				reflect(Math.toDegrees(Math.atan2(dy, dx)), true);
-			else
-				return true;
-			
-		} else if(y + dy < 0 || y + dy > gs.getCurrentMap().getHeight()) {
-			createParticles();
-			if(reflect)
-				reflect(Math.toDegrees(Math.atan2(dy, dx)), false);
-			else
-				return true;
-			
-		}
-		return false;
-	}
-	
-	public static void init() {
-		bulletTex = new Texture(Gdx.files.internal("graphics/game/Bullet.png"));
-		bulletTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bounces = 0;
+		isHit = false;
 		
-		size = bulletTex.getWidth() / 2;
+		return this;
 	}
-	
-	public void hit() {
-		isHit = true;
-	}
-	
-	private void createParticles() {
-		if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
-				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
-				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
-				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
-			if(gs.particlesEnabled())
-				gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
-		}
-	}
-	
-	/**
-	 * Changes direction as the law of reflection in physics
-	 * @param inAngle - The incoming angle which the object is moving towards the reflective surface
-	 * @param x - If the reflective surface is looked from above on the x-axis or the y-axis
-	 */
-	private void reflect(double inAngle, boolean x) {
-		direction = 180 - inAngle;
-		direction += x ? 0 : 180;
-		
-		if(direction < 0)
-			direction += 360;
-		else if(direction > 360)
-			direction -= 360;
-		
-		dx = (float) (Math.cos(direction / 180 * Math.PI) * (SPEED - 5));
-		dy = (float) (Math.sin(direction / 180 * Math.PI) * (SPEED - 5));
-	}
-	
-	public Circle getHitbox() { return hitbox; }
-	public float getX() { return x; }
-	public float getY() { return y; }
-	public float getWidth() { return size; }
-	public float getHeight() { return size; }
 	
 	@Override
-	public void dispose() {
-		bulletTex.dispose();
+	public void reset() {}
+	
+	public static Bullet obtainBullet(float x, float y, float direction, float initialDx, float initialDy) {
+		return bulletPool.obtain().reUse(x, y, direction, initialDx, initialDy);
+	}
+	
+	public static void free(Bullet bullet) {
+		bulletPool.free(bullet);
 	}
 }

@@ -297,9 +297,9 @@ public class ControlSetupState extends State {
 			direction = (float) (Math.toDegrees(Math.atan2(shootStick.getYHead() - shootStick.getYBase(), shootStick.getXHead() - shootStick.getXBase())));
 			if(shootStick.isActive()) {
 				if(timeSinceLastFire >= fireRate) {
-					bullets.add(new Bullet(x, y, direction + 8, dx, dy, gs));
-					bullets.add(new Bullet(x, y, direction, dx, dy, gs));
-					bullets.add(new Bullet(x, y, direction - 8, dx, dy, gs));
+					bullets.add(Bullet.obtainBullet(x, y, direction + 8, dx, dy));
+					bullets.add(Bullet.obtainBullet(x, y, direction, dx, dy));
+					bullets.add(Bullet.obtainBullet(x, y, direction - 8, dx, dy));
 					
 					timeSinceLastFire = 0;
 				}

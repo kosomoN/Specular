@@ -80,21 +80,21 @@ public class Player implements Entity {
 		if(bulletBurst % 2 == 0) {
 			for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
 				if(j == 0) {
-					gs.addEntity(new Bullet(centerx, centery, direction + offset / 2, dx, dy, gs));
-					gs.addEntity(new Bullet(centerx, centery, direction - offset / 2, dx, dy, gs));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2, dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2, dx, dy));
 				} else {
-					gs.addEntity(new Bullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy, gs));
-					gs.addEntity(new Bullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy, gs));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy));
 				}
 			}
 			
 		//If the number of bullet "lines" are odd
 		} else {
-			gs.addEntity(new Bullet(centerx, centery, direction, dx, dy, gs));
+			gs.addEntity(Bullet.obtainBullet(centerx, centery, direction, dx, dy));
 
 			for(int i = 0; i < spaces / 2; i++) {
-				gs.addEntity(new Bullet(centerx, centery, direction + (i + 1) * offset, dx, dy, gs));
-				gs.addEntity(new Bullet(centerx, centery, direction - (i + 1) * offset, dx, dy, gs));
+				gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + (i + 1) * offset, dx, dy));
+				gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - (i + 1) * offset, dx, dy));
 			}
 		}
 	}

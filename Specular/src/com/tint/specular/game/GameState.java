@@ -34,6 +34,7 @@ import com.tint.specular.game.powerups.AddLife;
 import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
+import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
 import com.tint.specular.game.powerups.SlowdownEnemies;
@@ -151,7 +152,7 @@ public class GameState extends State {
 		
 		// Initializing entities and analogstick statically
 		Player.init();
-		Bullet.init();
+		Bullet.init(this);
 		Particle.init();
 		EnemyWanderer.init();
 		EnemyNormal.init();
@@ -171,6 +172,7 @@ public class GameState extends State {
 		ShieldUpgrade.init();
 		SlowdownEnemies.init();
 		BoardshockPowerUp.init();
+		Ricochet.init();
 		
 		ess = new EnemySpawnSystem(this, enemies);
 		pss = new PlayerSpawnSystem(this);
@@ -286,9 +288,10 @@ public class GameState extends State {
 						pass.getPool().free((Particle) ent);
 					else if(ent instanceof Enemy)
 						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
-					else if(ent instanceof Bullet)
+					else if(ent instanceof Bullet) {
 						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
-					else if(ent instanceof Player) {
+						Bullet.free((Bullet) ent);
+					} else if(ent instanceof Player) {
 						gameMode.playerKilled();
 						playerKilled = true;
 					}
@@ -544,6 +547,8 @@ public class GameState extends State {
 		scoreMultiplierTimer = 0;
 		
 		boardshockCharge = 0;
+		
+		Bullet.maxBounces = 0;
 	}
 
 	@Override

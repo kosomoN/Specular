@@ -23,4 +23,5 @@ public interface NativeAndroid {
 	public void getHighScores(HighscoreCallback highscoreCallback);
 	
 	public void sendAnalytics();
+	public String getVersionName();
 }

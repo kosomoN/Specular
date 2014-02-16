@@ -2,9 +2,12 @@ package com.tint.specular.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GLTexture;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.tint.specular.Specular;
 import com.tint.specular.input.MenuInputProcessor;
 
@@ -21,6 +24,8 @@ public class MainmenuState extends State {
 	private MenuInputProcessor menuInputProcessor;
 	private boolean showHowToPlay;
 	private float screenHeightToCameraHeight;
+	private BitmapFont versionFont;
+	private String versionName;
 	
 	public MainmenuState(Specular game) {
 		super(game);
@@ -31,6 +36,13 @@ public class MainmenuState extends State {
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/MainMenuMusic.mp3"));
 		music.setLooping(true);
 		screenHeightToCameraHeight = Specular.camera.viewportHeight / 1080f;
+		
+		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
+		versionFont = fontGen.generateFont(50, "1234567890.:DevVrsion", false);
+		versionFont.setColor(Color.RED);
+		fontGen.dispose();
+		
+		versionName = "Version: " + Specular.nativeAndroid.getVersionName();
 	}
 
 	@Override
@@ -53,6 +65,9 @@ public class MainmenuState extends State {
 			menuInputProcessor.getProfileBtn().render();
 			menuInputProcessor.getOptionsBtn().render();
 			menuInputProcessor.getHelpButton().render();
+			
+			versionFont.draw(game.batch, versionName, 750, 80);
+			
 			game.batch.end();
 		}
 	}

@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class Map {
 	
 	private int width, height;
-	private boolean reflective;
 	private Texture texture, parallax;
 	private String name;
 	
@@ -35,9 +34,6 @@ public class Map {
 		batch.draw(texture, 0, 0, width, height);
 	}
 
-	public void setReflective(boolean reflective) { this.reflective = reflective; }
-	
-	public boolean isReflective() { return reflective; }
 	public int getWidth() { return width; }
 	public int getHeight() { return height;	}
 	public Texture getTexture() { return texture; }
