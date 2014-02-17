@@ -3,6 +3,8 @@ package com.tint.specular.game.spawnsystems;
 import java.util.Random;
 
 import com.badlogic.gdx.utils.Pool;
+import com.tint.specular.Specular;
+import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Particle.Type;
@@ -30,18 +32,23 @@ public class ParticleSpawnSystem extends SpawnSystem {
 	}
 	
 	public void spawn(Type type, float x, float y, float dx, float dy, int amount, boolean shouldSpawnLarge) {
-		float direction = 360f / amount;
-		int offset;
-		
-		Particle p;
-		for(int i = 0; i < amount; i++) {
-			offset = rand.nextInt(50) - 25;
+		if(gs.particlesEnabled() && Camera.getCameraX() - Specular.camera.viewportWidth / 2 - 100 < x &&
+				Camera.getCameraX() + Specular.camera.viewportWidth / 2 + 100 > x &&
+				Camera.getCameraY() - Specular.camera.viewportHeight / 2 - 100 < y &&
+				Camera.getCameraY() + Specular.camera.viewportHeight / 2 + 100 > y) {
+			float direction = 360f / amount;
+			int offset;
 			
-			p = particlePool.obtain();
-			p.reUse(x, y, i * direction + offset, dx, dy, (i % 2 == 0) && shouldSpawnLarge, type);
-			
-			//Adding particle to the game
-			gs.addEntity(p);
+			Particle p;
+			for(int i = 0; i < amount; i++) {
+				offset = rand.nextInt(50) - 25;
+				
+				p = particlePool.obtain();
+				p.reUse(x, y, i * direction + offset, dx, dy, (i % 2 == 0) && shouldSpawnLarge, type);
+				
+				//Adding particle to the game
+				gs.addEntity(p);
+			}
 		}
 	}
 

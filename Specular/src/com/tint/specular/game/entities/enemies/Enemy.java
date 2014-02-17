@@ -1,6 +1,5 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Particle.Type;
@@ -13,6 +12,10 @@ import com.tint.specular.game.entities.Particle.Type;
 
 public abstract class Enemy implements Entity {
 	
+	public enum EnemyType {
+		ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_FAST, ENEMY_NORMAL, ENEMY_SHIELDER, ENEMY_VIRUS, ENEMY_WANDERER;
+	}
+
 	protected float x, y, dx, dy;
 	protected float direction;
 	protected static float slowdown = 1;
@@ -48,17 +51,11 @@ public abstract class Enemy implements Entity {
 	
 	public void hit(double damage) {
 		life -= damage;
-		if(Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
-				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
-				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
-				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
-			if(gs.particlesEnabled()) {
-				if(life == 0)
-					gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx, dy, 15, true);
-				else
-					gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx, dy, 6, false);
-			}
-		}
+		
+		if(life == 0)
+			gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx, dy, 15, true);
+		else
+			gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx, dy, 6, false);
 	}
 	
 	public void addLife(int life) {

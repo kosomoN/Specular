@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
-import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -102,12 +101,7 @@ public class Bullet implements Entity, Poolable {
 	}
 	
 	private void createParticles() {
-		if(gs.particlesEnabled() && Specular.camera.position.x - Specular.camera.viewportWidth / 2 - 100 < x &&
-				Specular.camera.position.x + Specular.camera.viewportWidth / 2 + 100 > x &&
-				Specular.camera.position.y - Specular.camera.viewportHeight / 2 - 100 < y &&
-				Specular.camera.position.y + Specular.camera.viewportHeight / 2 + 100 > y) {//Check if the enemy is on the screen
-			gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
-		}
+		gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
 	}
 	
 	public float getX() { return x; }

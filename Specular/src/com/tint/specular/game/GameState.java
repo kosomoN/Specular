@@ -19,6 +19,8 @@ import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
+import com.tint.specular.game.entities.Wave;
+import com.tint.specular.game.entities.WaveManager;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
@@ -38,7 +40,6 @@ import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
 import com.tint.specular.game.powerups.SlowdownEnemies;
-import com.tint.specular.game.spawnsystems.EnemySpawnSystem;
 import com.tint.specular.game.spawnsystems.ParticleSpawnSystem;
 import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
 import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
@@ -60,11 +61,13 @@ import com.tint.specular.utils.Util;
 public class GameState extends State {
 	
 	// Different spawnsystems and a system for keeping track of combos
-	protected EnemySpawnSystem ess;
 	protected PlayerSpawnSystem pss;
 	protected PowerUpSpawnSystem puss;
 	protected ParticleSpawnSystem pass;
 	protected ComboSystem cs;
+	protected WaveManager waveManager;
+	protected Wave currentWave;
+	private int waveNumber;
 	
 	// Boolean fields for start and end of game
 	protected boolean ready;
@@ -73,8 +76,6 @@ public class GameState extends State {
 	protected GameMode gameMode;
 	protected Player player;
 	private Stage stage;
-	private float cameraX, cameraY;
-	private static final float CAMERA_SPEED = 5;
 	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
@@ -174,11 +175,11 @@ public class GameState extends State {
 		BoardshockPowerUp.init();
 		Ricochet.init();
 		
-		ess = new EnemySpawnSystem(this, enemies);
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
 		pass = new ParticleSpawnSystem(this);
 		cs = new ComboSystem();
+		waveManager = new WaveManager(this);
 		
 		input = Gdx.input;
 	}
@@ -228,8 +229,13 @@ public class GameState extends State {
 				player.updateHitDetection();
 				
 				// So that they don't spawn while death animation is playing
-				if(!player.isSpawning() && !player.isHit())
-					ess.update(ticks);
+				if(!player.isSpawning() && !player.isHit()) {
+					if(currentWave.update()) {
+						waveNumber++;
+						currentWave = waveManager.getWave(waveNumber);
+						currentWave.start();
+					}
+				}
 			}
 			
 			// Update power-ups
@@ -253,7 +259,7 @@ public class GameState extends State {
 							b.hit();
 							
 							//Adding a small camerashake
-							CameraShake.shake(0.1f, 0.05f);
+							Camera.shake(0.1f, 0.05f);
 							
 							// Rewarding player depending on game mode
 							if(e.getLife() <= 0) {
@@ -264,7 +270,7 @@ public class GameState extends State {
 								enemiesKilled++;
 								
 								//Adding a stronger camera shake when the enemy dies
-								CameraShake.shake(0.2f, 0.1f);
+								Camera.shake(0.2f, 0.1f);
 								break;
 							}
 						}
@@ -335,15 +341,7 @@ public class GameState extends State {
 				}
 			}
 			
-			CameraShake.update();
-			float cameraCenterRatio = 1.45f;
-			float playerSpeedOffset = 8f;
-			
-			float targetX = (float) (Math.sin((player.getX() - currentMap.getWidth() / 2) / 700) / cameraCenterRatio * 1024 + player.getDeltaX() * playerSpeedOffset);
-			float targetY = (float) (Math.sin((player.getY() - currentMap.getHeight() / 2) / 700) / cameraCenterRatio* 1024 + player.getDeltaY() * playerSpeedOffset);
-
-			cameraX += ((targetX + currentMap.getWidth() / 2) - cameraX) / CAMERA_SPEED;
-			cameraY += ((targetY + currentMap.getHeight() / 2) - cameraY) / CAMERA_SPEED;
+			Camera.update(this);
 		}
 	}
 	
@@ -354,10 +352,8 @@ public class GameState extends State {
 		}
    
 		//Positioning camera to the player		
-		
-		Specular.camera.position.set(cameraX, cameraY, 0);
 		Specular.camera.zoom = 1;
-		CameraShake.moveCamera();
+		Camera.setPosition();
 		Specular.camera.update();
 		
 		// Rendering map and entities
@@ -365,9 +361,10 @@ public class GameState extends State {
 		game.batch.begin();
 		
 		game.batch.setColor(1, 0, 0, 1);
-		game.batch.draw(currentMap.getParallax(), -1024 + cameraX / 2, -1024 +  cameraY / 2, 4096, 4096);
+		game.batch.draw(currentMap.getParallax(), -1024 + Camera.getCameraX() / 2, -1024 +  Camera.getCameraY() / 2, 4096, 4096);
 		game.batch.setColor(1, 1, 1, 1);
 		
+		Camera.setZoom();
 		BoardShock.setZoom();
 		
 		Specular.camera.update();
@@ -422,8 +419,6 @@ public class GameState extends State {
 		}
 		
 		game.batch.end();
-		//Required for the algorithm stopping the enemies from spawning on-screen
-		Specular.camera.position.set(cameraX, cameraY, 0);
 	}
 	
 	public void addEntity(Entity entity) {
@@ -549,6 +544,10 @@ public class GameState extends State {
 		boardshockCharge = 0;
 		
 		Bullet.maxBounces = 0;
+		
+		waveNumber = 0;
+		currentWave = waveManager.getWave(waveNumber);
+		currentWave.start();
 	}
 
 	@Override

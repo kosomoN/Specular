@@ -12,7 +12,7 @@ public class BoardShock {
 	private static float timeActivated;
 	private static boolean activated;
 	private static GameState gs;
-	private static float zoom = 1;
+	private static float zoom = 0;
 	
 	public static void activate(GameState gs) {
 		activated = true;
@@ -27,17 +27,15 @@ public class BoardShock {
 			timeActivated += GameState.TICK_LENGTH_MILLIS;
 			zoom = 1;
 			if(timeActivated > 225) {
-				zoom = 1 - ((1 - ((timeActivated - 225) / 75)) * (1 - ((timeActivated - 225) / 75))) * 0.25f;
+				zoom = 1 - 1 - ((1 - ((timeActivated - 225) / 75)) * (1 - ((timeActivated - 225) / 75))) * 0.3f;
 			} else {
-				zoom = 1 - (1 - (1 - ((timeActivated) / 225)) * (1 - ((timeActivated) / 225))) * 0.25f;
+				zoom = 1 - 1 - (1 - (1 - ((timeActivated) / 225)) * (1 - ((timeActivated) / 225))) * 0.3f;
 			}
 			
-			Specular.camera.zoom = zoom;
-			
 			if(timeActivated >= 300) {
-				CameraShake.shake(0.5f, 0.03f);
+				Camera.shake(0.5f, 0.03f);
 				activated = false;
-				zoom = 1;
+				zoom = 0;
 				for(Enemy e : gs.getEnemies()) {
 					e.hit(e.getLife());
 					gs.gameMode.enemyKilled(e);
@@ -55,7 +53,7 @@ public class BoardShock {
 	
 	
 	public static void setZoom() {
-		Specular.camera.zoom = zoom;
+		Specular.camera.zoom += zoom;
 	}
 
 	public static boolean isActivated() {
