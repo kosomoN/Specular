@@ -50,11 +50,11 @@ public class WaveManager {
 		wave1.addEnemies(ENEMY_WANDERER, 10, Formation.EDGES);
 		
 		wave2 = new Wave(gs).setTotalDuration(20).setRepeatTimes(2).setRepeatDelay(5);
-		wave2.addEnemies(ENEMY_NORMAL, 5, Formation.RANDOM);
-		wave2.addEnemies(ENEMY_FAST, 5, Formation.EDGES);
+		wave2.addEnemies(ENEMY_CIRCLER, 5, Formation.RANDOM);
+		wave2.addEnemies(ENEMY_STRIVER, 5, Formation.EDGES);
 		
 		wave3 = new Wave(gs).setTotalDuration(20).setRepeatTimes(2).setRepeatDelay(5);
-		wave3.addEnemies(new EnemyType[] {ENEMY_FAST, ENEMY_WANDERER, ENEMY_BOOSTER}, new int[] {3, 5, 2}, Formation.EDGES);
+		wave3.addEnemies(new EnemyType[] {ENEMY_STRIVER, ENEMY_WANDERER, ENEMY_BOOSTER}, new int[] {3, 5, 2}, Formation.EDGES);
 		
 		Wave wave = new Wave(gs).setTotalDuration(20);
 		wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY);

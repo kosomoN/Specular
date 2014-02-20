@@ -24,8 +24,8 @@ import com.tint.specular.game.entities.WaveManager;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
-import com.tint.specular.game.entities.enemies.EnemyFast;
-import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyStriver;
+import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
@@ -156,8 +156,8 @@ public class GameState extends State {
 		Bullet.init(this);
 		Particle.init();
 		EnemyWanderer.init();
-		EnemyNormal.init();
-		EnemyFast.init();
+		EnemyCircler.init();
+		EnemyStriver.init();
 		EnemyBooster.init();
 		EnemyWorm.init();
 		EnemyVirus.init();
@@ -229,7 +229,7 @@ public class GameState extends State {
 				player.updateHitDetection();
 				
 				// So that they don't spawn while death animation is playing
-				if(!player.isSpawning() && !player.isHit()) {
+				if(!player.isSpawning() && !player.isDying() && !player.isDead()) {
 					if(currentWave.update()) {
 						waveNumber++;
 						currentWave = waveManager.getWave(waveNumber);
@@ -254,7 +254,6 @@ public class GameState extends State {
 						if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
 								e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
 							
-							// Add " * damageBooster" to enable combo damage
 							e.hit(Bullet.damage);
 							b.hit();
 							
@@ -277,8 +276,7 @@ public class GameState extends State {
 					}
 				}
 				
-				if(!player.isHit() && player.isDead() && player.getLife() > 0) {
-					player.respawn();
+				if(!player.isDying() && player.isDead() && player.getLife() > 0) {
 		        	pss.spawn(player.getLife(), true);
 		        }
 			}
@@ -622,7 +620,7 @@ public class GameState extends State {
 	}
 
 	public void boardshock() {
-		if(boardshockCharge >= 1 && !player.isHit() && !player.isSpawning()) {
+		if(boardshockCharge >= 1 && !player.isDying() && !player.isSpawning()) {
 			BoardShock.activate(this);
 			boardshockCharge = 0;
 		}

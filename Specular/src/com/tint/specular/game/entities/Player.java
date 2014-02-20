@@ -321,7 +321,7 @@ public class Player implements Entity {
 	public int getShields() { return shields; }
 
 	public boolean hasShield() { return shields > 0; }
-	public boolean isHit() { return dying; }
+	public boolean isDying() { return dying; }
 	public boolean isSpawning() { return spawning; }
 	public boolean isDead() { return dead; }
 	public GameState getGameState() { return gs; }

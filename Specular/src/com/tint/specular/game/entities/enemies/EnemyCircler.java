@@ -14,7 +14,7 @@ import com.tint.specular.utils.Util;
  *
  */
 
-public class EnemyNormal extends Enemy {
+public class EnemyCircler extends Enemy {
 
 	private static Texture tex;
 	private float rotation;
@@ -22,7 +22,7 @@ public class EnemyNormal extends Enemy {
 	private double angle;
 	private float speed;
 	
-	public EnemyNormal(float x, float y, GameState gs) {
+	public EnemyCircler(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
 		
 	    if(Math.random() < 0.5) {

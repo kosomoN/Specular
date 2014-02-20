@@ -13,7 +13,7 @@ import com.tint.specular.game.entities.Particle.Type;
 public abstract class Enemy implements Entity {
 	
 	public enum EnemyType {
-		ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_FAST, ENEMY_NORMAL, ENEMY_SHIELDER, ENEMY_VIRUS, ENEMY_WANDERER;
+		ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_STRIVER, ENEMY_CIRCLER, ENEMY_SHIELDER, ENEMY_VIRUS, ENEMY_WANDERER;
 	}
 
 	protected float x, y, dx, dy;
@@ -41,9 +41,7 @@ public abstract class Enemy implements Entity {
 
 	/**
 	 * 
-	 * @param slowdown - Max value 1, minimum value 0.
-	 * If it is higher than 1 or lower than 0, it will be changed to
-	 * the nearest accepted value
+	 * @param slowdown - 1 means normal speed, 0 means no speed.
 	 */
 	public static void setSlowdown(float slowdown) {
 		Enemy.slowdown = slowdown;

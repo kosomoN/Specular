@@ -2,7 +2,7 @@ package com.tint.specular;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.tint.specular.states.Facebook;
+import com.tint.specular.states.NativeAndroid;
 
 /**
  * 
@@ -19,7 +19,7 @@ public class Main {
 		cfg.height = 720;
 		
 		//There is no need to implement Facebook highscores in the desktop-version, so these are left empty
-		new LwjglApplication(new Specular(new Facebook() {
+		new LwjglApplication(new Specular(new NativeAndroid() {
 
 			@Override
 			public boolean login(LoginCallback loginCallback) {
@@ -45,6 +45,16 @@ public class Main {
 			@Override
 			public void logout() {
 				
+			}
+
+			@Override
+			public void sendAnalytics() {
+				
+			}
+
+			@Override
+			public String getVersionName() {
+				return null;
 			}
 			
 		}), cfg);

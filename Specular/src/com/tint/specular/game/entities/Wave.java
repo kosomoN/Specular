@@ -7,8 +7,8 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy.EnemyType;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
-import com.tint.specular.game.entities.enemies.EnemyFast;
-import com.tint.specular.game.entities.enemies.EnemyNormal;
+import com.tint.specular.game.entities.enemies.EnemyStriver;
+import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
@@ -126,8 +126,8 @@ public class Wave {
 		case ENEMY_WANDERER:
 			gs.addEntity(new EnemyWanderer(es.x, es.y, gs));
 			break;
-		case ENEMY_FAST:
-			gs.addEntity(new EnemyFast(es.x, es.y, gs));
+		case ENEMY_STRIVER:
+			gs.addEntity(new EnemyStriver(es.x, es.y, gs));
 			break;
 		case ENEMY_BOOSTER:
 			gs.addEntity(new EnemyBooster(es.x, es.y, gs));
@@ -135,8 +135,8 @@ public class Wave {
 		case ENEMY_DASHER:
 			gs.addEntity(new EnemyDasher(es.x, es.y, gs));
 			break;
-		case ENEMY_NORMAL:
-			gs.addEntity(new EnemyNormal(es.x, es.y, gs));
+		case ENEMY_CIRCLER:
+			gs.addEntity(new EnemyCircler(es.x, es.y, gs));
 			break;
 		case ENEMY_SHIELDER:
 			gs.addEntity(new EnemyShielder(es.x, es.y, gs));

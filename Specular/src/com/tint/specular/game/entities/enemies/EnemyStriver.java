@@ -14,13 +14,13 @@ import com.tint.specular.utils.Util;
  *
  */
 
-public class EnemyFast extends Enemy {
+public class EnemyStriver extends Enemy {
 
 	private static Texture tex;
 	private float rotation;
 	private float speed;
 
-	public EnemyFast(float x, float y, GameState gs) {
+	public EnemyStriver(float x, float y, GameState gs) {
 		super(x, y, gs, 2);
 		
 		speed = (float) (Math.random() * 2 + 2);
