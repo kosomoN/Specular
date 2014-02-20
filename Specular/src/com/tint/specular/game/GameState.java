@@ -233,7 +233,6 @@ public class GameState extends State {
 					if(currentWave.update()) {
 						waveNumber++;
 						currentWave = waveManager.getWave(waveNumber);
-						currentWave.start();
 					}
 				}
 			}
@@ -545,7 +544,6 @@ public class GameState extends State {
 		
 		waveNumber = 0;
 		currentWave = waveManager.getWave(waveNumber);
-		currentWave.start();
 	}
 
 	@Override

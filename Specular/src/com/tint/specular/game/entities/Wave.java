@@ -32,7 +32,9 @@ public class Wave {
 	public boolean update() {
 		do {
 			duration++;
-			
+			if(duration == 1) {
+				start();
+			}
 			if(maxRepeatTimes > repeatTimes && (int) (repeatDelay * (repeatTimes + 1) * repeatDelayChange) == duration) {
 				repeatTimes++;
 				for(EnemySpawnFormation esf : enemieFormations) {
@@ -49,7 +51,7 @@ public class Wave {
 		return false;
 	}
 	
-	public void start() {
+	private void start() {
 		if(modifier != null)
 			modifier.affect(gs);
 		for(EnemySpawnFormation esf : enemieFormations) {
