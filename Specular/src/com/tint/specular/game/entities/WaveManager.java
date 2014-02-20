@@ -46,19 +46,26 @@ public class WaveManager {
 	
 	public void initWaves(GameState gs) {
 		Gdx.app.log("Specular", "Loading Waves");
-		wave1 = new Wave(gs).setTotalDuration(20).setRepeatTimes(2).setRepeatDelay(5);
+		wave1 = new Wave(gs, 0).setTotalDuration(20).setRepeatTimes(2).setRepeatDelay(5);
 		wave1.addEnemies(ENEMY_WANDERER, 10, Formation.EDGES);
 		
-		wave2 = new Wave(gs).setTotalDuration(20).setRepeatTimes(2).setRepeatDelay(5);
+		wave2 = new Wave(gs, 1).setTotalDuration(20).setRepeatTimes(2).setRepeatDelay(5);
 		wave2.addEnemies(ENEMY_CIRCLER, 5, Formation.RANDOM);
 		wave2.addEnemies(ENEMY_STRIVER, 5, Formation.EDGES);
 		
-		wave3 = new Wave(gs).setTotalDuration(20).setRepeatTimes(2).setRepeatDelay(5);
+		wave3 = new Wave(gs, 2).setTotalDuration(20).setRepeatTimes(2).setRepeatDelay(5);
 		wave3.addEnemies(new EnemyType[] {ENEMY_STRIVER, ENEMY_WANDERER, ENEMY_BOOSTER}, new int[] {3, 5, 2}, Formation.EDGES);
 		
-		Wave wave = new Wave(gs).setTotalDuration(20);
+		Wave wave = new Wave(gs, 3).setTotalDuration(20);
 		wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY);
+		wave.addEnemies(ENEMY_BOOSTER, 3, Formation.EDGES);
 		waves.add(wave);
+		
+		wave = new Wave(gs, 4).setRepeatTimes(2).setRepeatDelay(5).setTotalDuration(20);
+		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER}, new int[] {5, 20, 10, 6}, Formation.RANDOM);
+		
+		waves.add(wave);
+		
 		Gdx.app.log("Specular", "Loading Waves Complete");
 	}
 }

@@ -8,7 +8,7 @@ import com.tint.specular.game.entities.Wave.EnemySpawn;
 
 public enum Formation {
 	
-	EDGES {
+	EDGES(false) {
 		@Override
 		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
 			int side;
@@ -29,52 +29,57 @@ public enum Formation {
 				EnemySpawn es = enemies.get(i);
 				//Top
 				if(side == 0) {
-					es.x = gs.getCurrentMap().getWidth() / (top + 1) * (i / 4 + 1);
-					es.y = gs.getCurrentMap().getHeight() - 100;
+					es.setX(gs.getCurrentMap().getWidth() / (top + 1) * (i / 4 + 1));
+					es.setY(gs.getCurrentMap().getHeight() - 100);
 				} else if(side == 2) {//Bottom
-					es.x = gs.getCurrentMap().getWidth() / (bottom + 1) * (i / 4 + 1);
-					es.y = 100;
+					es.setX(gs.getCurrentMap().getWidth() / (bottom + 1) * (i / 4 + 1));
+					es.setY(100);
 				} else if(side == 1){//Right
-					es.x = gs.getCurrentMap().getWidth() - 100;
-					es.y = gs.getCurrentMap().getHeight() / (right + 1) * (i / 4 + 1);
+					es.setX(gs.getCurrentMap().getWidth() - 100);
+					es.setY(gs.getCurrentMap().getHeight() / (right + 1) * (i / 4 + 1));
 				} else {//Left
-					es.x = 100;
-					es.y = gs.getCurrentMap().getHeight() / (left + 1) * (i / 4 + 1);
+					es.setX(100);
+					es.setY(gs.getCurrentMap().getHeight() / (left + 1) * (i / 4 + 1));
 				}
 			}
 		}
-	}, RANDOM {
+	}, RANDOM(true) {
 		Random rand = new Random();
 		@Override
 		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
 			for(EnemySpawn es : enemies) {
-				es.x = rand.nextInt(gs.getCurrentMap().getWidth());
-				es.y = rand.nextInt(gs.getCurrentMap().getHeight());
+				es.setX(rand.nextInt(gs.getCurrentMap().getWidth()));
+				es.setY(rand.nextInt(gs.getCurrentMap().getHeight()));
 			}
 				
 		}
 	}, 
 	/**
-	 * Surrounds the first enemy int the list at a random position, other around it
+	 * Surrounds the first enemy in the list at a random position, others around it
 	 */
-	SURROUND_ENEMY {
+	SURROUND_ENEMY(true) {
 		Random rand = new Random();
 		@Override
 		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
 			float x = rand.nextInt(gs.getCurrentMap().getWidth());
 			float y = rand.nextInt(gs.getCurrentMap().getHeight());
-			enemies.get(0).x = x;
-			enemies.get(0).y = y;
+			enemies.get(0).setX(x);
+			enemies.get(0).setY(y);
 			
 			EnemySpawn es;
 			for(int i = 1; i < enemies.size(); i++) {
 				double angle = i / (enemies.size() - 1d) * Math.PI * 2;
 				es = enemies.get(i);
-				es.x = (float) (x + Math.cos(angle) * rand.nextInt(50) + 25);
-				es.y = (float) (y + Math.sin(angle) * rand.nextInt(50) + 25);
+				es.setX((float) (x + Math.cos(angle) * rand.nextInt(50) + 25));
+				es.setY((float) (y + Math.sin(angle) * rand.nextInt(50) + 25));
 			}
 		}
 	};
 	
+	public final boolean needsRecalculation;
 	public abstract void setFormation(List<EnemySpawn> enemies, GameState gs);
+	
+	private Formation(boolean needsRecalculation) {
+		this.needsRecalculation = needsRecalculation;
+	}
 }

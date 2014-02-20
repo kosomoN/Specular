@@ -1,5 +1,6 @@
 package com.tint.specular;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.tint.specular.states.NativeAndroid;
@@ -14,7 +15,7 @@ public class Main {
 	public static void main(String[] args) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Specular";
-		cfg.useGL20 = false;
+		cfg.useGL20 = true;
 		cfg.width = 1280;
 		cfg.height = 720;
 		
@@ -39,7 +40,6 @@ public class Main {
 
 			@Override
 			public void getHighScores(HighscoreCallback highscoreCallback) {
-				
 			}
 
 			@Override
@@ -48,13 +48,13 @@ public class Main {
 			}
 
 			@Override
-			public void sendAnalytics() {
-				
+			public String getVersionName() {
+				return "Dev";
 			}
 
 			@Override
-			public String getVersionName() {
-				return null;
+			public void sendAnalytics(String category, String action, String label, Long value) {
+				Gdx.app.log("Specular", "Sending analytics: " + category + " + "+ action + " + " + label + " + " + value);
 			}
 			
 		}), cfg);

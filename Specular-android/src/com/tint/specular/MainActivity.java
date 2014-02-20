@@ -27,6 +27,7 @@ import com.facebook.SessionState;
 import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.tint.specular.states.NativeAndroid;
 
@@ -41,9 +42,12 @@ public class MainActivity extends AndroidApplication {
         final Activity activity = this;
         
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
-        cfg.useGL20 = false;
+        cfg.useGL20 = true;
         cfg.useAccelerometer = false;
         cfg.useCompass = false;
+        
+        //When running dry no data is sent to the Google servers
+        GoogleAnalytics.getInstance(this).setDryRun(true);
         
         //Check if user has previously logged in and in that case log in again
         Session.openActiveSession(activity, false, null);
@@ -231,9 +235,9 @@ public class MainActivity extends AndroidApplication {
 			}
 
 			@Override
-			public void sendAnalytics() {
-				Gdx.app.log("Specular", "Sending death analytics");
-				EasyTracker.getInstance(MainActivity.this).send(MapBuilder.createEvent("Game event", "Death", null, null).build());
+			public void sendAnalytics(String category, String action, String label, Long value) {
+				Gdx.app.log("Specular", "Sending analytics: " + category + " + "+ action + " + " + label + " + " + value);
+				EasyTracker.getInstance(MainActivity.this).send(MapBuilder.createEvent(category, action, label, value).build());
 			}
 
 			@Override
