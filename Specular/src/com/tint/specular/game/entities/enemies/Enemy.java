@@ -17,12 +17,14 @@ public abstract class Enemy implements Entity {
 	}
 
 	protected float x, y, dx, dy;
+	protected float speed;
 	protected float direction;
 	protected static float slowdown = 1;
 	
 	protected int life;
 	protected static int MAX_LIFE;
-	protected boolean isHit;
+
+	protected boolean pushed;
 	
 	protected GameState gs;
 	
@@ -36,6 +38,13 @@ public abstract class Enemy implements Entity {
 	
 	@Override
 	public boolean update() {
+		if(pushed) {
+			if(speed > 0)
+				speed -= 0.1f;
+			else
+				pushed = false;
+		}
+		
 		return life <= 0;
 	}
 
@@ -69,6 +78,7 @@ public abstract class Enemy implements Entity {
 	public float getY() { return y; }
 	public float getDx() { return dx; }
 	public float getDy() { return dy; }
+	public float getSpeed() { return speed; }
 	public static float getSlowdown() { return slowdown; }
 
 	public int getLife() { return life; }
@@ -85,5 +95,12 @@ public abstract class Enemy implements Entity {
 	
 	public void setY(float y) {
 		this.y = y;
+	}
+	
+	public void push(float dx, float dy) {
+		speed = 5;
+		this.dx += dx * speed;
+		this.dy += dy * speed;
+		pushed = true;
 	}
 }

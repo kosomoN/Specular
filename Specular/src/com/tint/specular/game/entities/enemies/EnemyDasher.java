@@ -38,8 +38,12 @@ public class EnemyDasher extends Enemy {
 		if(boostingDelay > 50) {
 			speed += 0.1;
 			
-			dx = (float) (Math.cos(direction) * speed);
-			dy = (float) (Math.sin(direction) * speed);
+			if(!pushed) {
+				dx = (float) (Math.cos(direction) * speed);
+				dy = (float) (Math.sin(direction) * speed);
+			} else {
+				speed = super.speed;
+			}
 			x += dx * slowdown;
 			y += dy * slowdown;
 			

@@ -20,7 +20,6 @@ public class EnemyCircler extends Enemy {
 	private float rotation;
 	private float offset;
 	private double angle;
-	private float speed;
 	
 	public EnemyCircler(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
@@ -45,8 +44,17 @@ public class EnemyCircler extends Enemy {
 		if(gs.getPlayer() != null)
 			angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x) + offset;
 		
-		dx = (float) (Math.cos(angle) * speed);
-		dy = (float) (Math.sin(angle) * speed);
+		if(!pushed) {
+			if(speed < 3)
+				speed += 0.1f;
+			else
+				speed = (float) (Math.random() * 2 + 1);
+			
+			dx = (float) (Math.cos(angle) * speed);
+			dy = (float) (Math.sin(angle) * speed);
+		} else {
+			speed = super.speed;
+		}
 		x += dx * slowdown;
 		y += dy * slowdown;
 		

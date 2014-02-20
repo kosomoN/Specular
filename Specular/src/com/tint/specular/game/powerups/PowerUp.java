@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
+import com.tint.specular.game.entities.enemies.Enemy;
 
 /**
  * 
@@ -35,6 +36,17 @@ public abstract class PowerUp implements Entity {
 					< (Player.getRadius() + getRadius()) * (Player.getRadius() + getRadius())) {
 				affect(gs.getPlayer());
 				activated = true;
+				
+				// Pushing enemies away when picked up
+				for(Enemy e : gs.getEnemies()) {
+					float angle = (float) Math.atan2(y - e.getY(), x - e.getX());
+					float distance = (float) Math.sqrt((x - e.getX()) * (x - e.getX()) + (y - e.getY()) * (y - e.getY()));
+					float pushDx = (float) Math.cos(angle) * (1 - distance / 2896 * 0.2f);
+					float pushDy = (float) Math.sin(angle) * (1 - distance / 2896 * 0.2f);
+					
+					e.push(-pushDx, -pushDy);
+				}
+				
 			}
 			return despawnTime <= 0;
 		} else {

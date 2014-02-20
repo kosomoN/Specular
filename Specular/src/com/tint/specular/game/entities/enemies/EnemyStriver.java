@@ -37,8 +37,19 @@ public class EnemyStriver extends Enemy {
 		//Calculating angle of movement based on closest player
 		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 		
-		dx = (float) (Math.cos(angle) * speed);
-		dy = (float) (Math.sin(angle) * speed);
+		if(!pushed) {
+			if(speed < 4)
+				speed += 0.1f;
+			else
+				speed = (float) (Math.random() * 2 + 2);
+
+			dx = (float) (Math.cos(angle) * speed);
+			dy = (float) (Math.sin(angle) * speed);
+		} else {
+			speed = super.speed;
+		}
+		
+		System.out.println(speed);
 		x += dx * slowdown;
 		y += dy * slowdown;
 		

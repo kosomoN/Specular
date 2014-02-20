@@ -34,8 +34,17 @@ public class EnemyShielder extends Enemy {
 		
 		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 		
-		dx = (float) (Math.cos(angle) * 5);
-		dy = (float) (Math.sin(angle) * 5);
+		if(!pushed) {
+			if(speed < 4.5f)
+				speed += 0.1f;
+			else
+				speed = 5;
+			
+			dx = (float) (Math.cos(angle) * 5);
+			dy = (float) (Math.sin(angle) * 5);
+		} else {
+			speed = super.speed;
+		}
 		x += dx * slowdown;
 		y += dy * slowdown;
 		
