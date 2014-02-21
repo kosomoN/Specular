@@ -29,33 +29,22 @@ public class EnemyStriver extends Enemy {
 	@Override
 	public void render(SpriteBatch batch) {
 		rotation += Gdx.graphics.getDeltaTime();
-		Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
+		if(hasSpawned)
+			Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
+		else
+			Util.drawCentered(batch, tex, x, y, tex.getWidth() * (spawnTimer / 100f), tex.getHeight() * (spawnTimer / 100f), rotation * 90 % 360);
 	}
 	
 	@Override
-	public boolean update() {
+	public void updateMovement() {
 		//Calculating angle of movement based on closest player
 		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 		
-		if(!pushed) {
-			if(speed < 4)
-				speed += 0.1f;
-			else
-				speed = (float) (Math.random() * 2 + 2);
-
-			dx = (float) (Math.cos(angle) * speed);
-			dy = (float) (Math.sin(angle) * speed);
-		} else {
-			speed = super.speed;
-		}
-		
-		System.out.println(speed);
+		dx = (float) (Math.cos(angle) * speed);
+		dy = (float) (Math.sin(angle) * speed);
 		x += dx * slowdown;
 		y += dy * slowdown;
-		
-		return super.update();
 	}
-/*_______________________________________________________________________*/
 	
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Fast.png"));
@@ -80,5 +69,10 @@ public class EnemyStriver extends Enemy {
 	@Override
 	public Type getParticleType() {
 		return Type.ENEMY_FAST;
+	}	
+	
+	@Override
+	public int getSpawnTime() {
+		return 100;
 	}
 }

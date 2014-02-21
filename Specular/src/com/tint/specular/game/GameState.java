@@ -250,7 +250,7 @@ public class GameState extends State {
 				// Checking if any bullet hit an enemy
 				for(Bullet b : bullets) {
 					for(Enemy e : enemies) {
-						if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
+						if(e.hasSpawned() && (b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
 								e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
 							
 							e.hit(Bullet.damage);
@@ -406,6 +406,8 @@ public class GameState extends State {
 			// Drawing MULTIPLIER on screen
 			Util.writeCentered(game.batch, multiplierFont, Math.round(scoreMultiplier) + "x", 0,
 					Specular.camera.viewportHeight / 2 - 98);
+			
+			multiplierFont.draw(game.batch, String.valueOf(currentWave.getID()), -Specular.camera.viewportWidth / 2 + 20, Specular.camera.viewportHeight / 2 - 20);
 			gameMode.render(game.batch);
 		} else {
 				game.batch.setColor(Color.WHITE);

@@ -80,6 +80,10 @@ public class Camera {
 	public static void setZoom() {
 		Specular.camera.zoom = cameraZoom;
 	}
+	
+	public static float getZoom() {
+		return cameraZoom;
+	}
 
 	public static float getCameraX() {
 		return cameraX;

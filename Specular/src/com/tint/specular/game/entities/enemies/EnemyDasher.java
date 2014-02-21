@@ -32,18 +32,14 @@ public class EnemyDasher extends Enemy {
 	}
 	
 	@Override
-	public boolean update() {
-	
+	public void updateMovement() {
+		
 		//Boosting and changing direction
 		if(boostingDelay > 50) {
 			speed += 0.1;
 			
-			if(!pushed) {
-				dx = (float) (Math.cos(direction) * speed);
-				dy = (float) (Math.sin(direction) * speed);
-			} else {
-				speed = super.speed;
-			}
+			dx = (float) (Math.cos(direction) * speed);
+			dy = (float) (Math.sin(direction) * speed);
 			x += dx * slowdown;
 			y += dy * slowdown;
 			
@@ -89,10 +85,7 @@ public class EnemyDasher extends Enemy {
 				boostingDelay = 0;	
 			}
 		}
-		
-		return super.update();
 	}
-
 
 	@Override
 	public float getInnerRadius() { return 16; }
@@ -117,5 +110,10 @@ public class EnemyDasher extends Enemy {
 	@Override
 	public Type getParticleType() {
 		return Type.ENEMY_WANDERER;
+	}	
+	
+	@Override
+	public int getSpawnTime() {
+		return 100;
 	}
 }

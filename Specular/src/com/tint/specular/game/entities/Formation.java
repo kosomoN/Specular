@@ -48,8 +48,8 @@ public enum Formation {
 		@Override
 		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
 			for(EnemySpawn es : enemies) {
-				es.setX(rand.nextInt(gs.getCurrentMap().getWidth()));
-				es.setY(rand.nextInt(gs.getCurrentMap().getHeight()));
+				es.setX(rand.nextInt(gs.getCurrentMap().getWidth() - 200) + 100);
+				es.setY(rand.nextInt(gs.getCurrentMap().getHeight() - 200) + 100);
 			}
 				
 		}
@@ -61,8 +61,8 @@ public enum Formation {
 		Random rand = new Random();
 		@Override
 		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
-			float x = rand.nextInt(gs.getCurrentMap().getWidth());
-			float y = rand.nextInt(gs.getCurrentMap().getHeight());
+			float x = rand.nextInt(gs.getCurrentMap().getWidth() - 200) + 100;
+			float y = rand.nextInt(gs.getCurrentMap().getHeight() - 200) + 100;
 			enemies.get(0).setX(x);
 			enemies.get(0).setY(y);
 			

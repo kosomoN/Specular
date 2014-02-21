@@ -17,14 +17,12 @@ public abstract class Enemy implements Entity {
 	}
 
 	protected float x, y, dx, dy;
-	protected float speed;
 	protected float direction;
 	protected static float slowdown = 1;
 	
 	protected int life;
-	protected static int MAX_LIFE;
-
-	protected boolean pushed;
+	protected boolean isHit, hasSpawned;
+	protected int spawnTimer;
 	
 	protected GameState gs;
 	
@@ -33,20 +31,22 @@ public abstract class Enemy implements Entity {
 		this.y = y;
 		this.gs = gs;
 		this.life = life;
-		MAX_LIFE = life;
 	}
 	
 	@Override
 	public boolean update() {
-		if(pushed) {
-			if(speed > 0)
-				speed -= 0.1f;
-			else
-				pushed = false;
+		if(hasSpawned)
+			updateMovement();
+		else {
+			spawnTimer++;
+			if(spawnTimer >= getSpawnTime())
+				hasSpawned = true;
 		}
-		
 		return life <= 0;
 	}
+	
+	public abstract void updateMovement();
+	public abstract int getSpawnTime();
 
 	/**
 	 * 
@@ -56,7 +56,7 @@ public abstract class Enemy implements Entity {
 		Enemy.slowdown = slowdown;
 	}
 	
-	public void hit(double damage) {
+	public void hit(int damage) {
 		life -= damage;
 		
 		if(life == 0)
@@ -67,8 +67,6 @@ public abstract class Enemy implements Entity {
 	
 	public void addLife(int life) {
 		this.life += life;
-		if(this.life > MAX_LIFE)
-			this.life = MAX_LIFE;
 	}
 	
 	public abstract int getValue();
@@ -78,7 +76,6 @@ public abstract class Enemy implements Entity {
 	public float getY() { return y; }
 	public float getDx() { return dx; }
 	public float getDy() { return dy; }
-	public float getSpeed() { return speed; }
 	public static float getSlowdown() { return slowdown; }
 
 	public int getLife() { return life; }
@@ -96,11 +93,8 @@ public abstract class Enemy implements Entity {
 	public void setY(float y) {
 		this.y = y;
 	}
-	
-	public void push(float dx, float dy) {
-		speed = 5;
-		this.dx += dx * speed;
-		this.dy += dy * speed;
-		pushed = true;
+
+	public boolean hasSpawned() {
+		return hasSpawned;
 	}
 }

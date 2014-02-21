@@ -50,6 +50,11 @@ public class EnemyWorm extends Enemy {
 	}
 
 	@Override
+	public void updateMovement() {
+		
+	}
+
+	@Override
 	public void render(SpriteBatch batch) {
 		head.render(batch);
 		for(Part p : parts)
@@ -143,5 +148,10 @@ public class EnemyWorm extends Enemy {
 	@Override
 	public Type getParticleType() {
 		return Type.ENEMY_BOOSTER;
+	}	
+	
+	@Override
+	public int getSpawnTime() {
+		return 100;
 	}
 }

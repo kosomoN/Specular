@@ -29,7 +29,6 @@ public class EnemyWanderer extends Enemy {
 		super(x, y, gs, 1);
 		angle = random.nextInt(360);
 		turnRate = random.nextInt(40) - 20;
-		speed = (float) (Math.random() + 1);
 	}
 	
 	public static void init() {
@@ -40,11 +39,14 @@ public class EnemyWanderer extends Enemy {
 	@Override
 	public void render(SpriteBatch batch) {
 		rotation -= Gdx.graphics.getDeltaTime();
-		Util.drawCentered(batch, texture, x, y, rotation * 90 % 360);
+		if(hasSpawned)
+			Util.drawCentered(batch, texture, x, y, rotation * 90 % 360);
+		else
+			Util.drawCentered(batch, texture, x, y, texture.getWidth() * (spawnTimer / 100f), texture.getHeight() * (spawnTimer / 100f), rotation * 90 % 360);
 	}
-	
+
 	@Override
-	public boolean update() {
+	public void updateMovement() {
 		//10 ms is the update rate
 		timeSinceLastDirChange += 10;
 		if(timeSinceLastDirChange > dirChangeRateMs) {
@@ -53,17 +55,8 @@ public class EnemyWanderer extends Enemy {
 		}
 		angle += turnRate / 180 * Math.PI;
 		
-		if(!pushed) {
-			if(speed < 2)
-				speed += 0.1f;
-			else
-				speed = (float) (Math.random() + 1);
-			
-			dx = (float) (Math.cos(angle / 180 * Math.PI) * speed);
-			dy = (float) (Math.sin(angle / 180 * Math.PI) * speed);
-		} else {
-			speed = super.speed;
-		}
+		dx = (float) (Math.cos(angle / 180 * Math.PI) * 2);
+		dy = (float) (Math.sin(angle / 180 * Math.PI) * 2);
 		x += dx * slowdown;
 		y += dy * slowdown;
 		
@@ -92,8 +85,6 @@ public class EnemyWanderer extends Enemy {
 			
 			angle = random.nextInt(90) + 225;
 		}
-		
-		return super.update();
 	}
 	
 	@Override
@@ -114,5 +105,10 @@ public class EnemyWanderer extends Enemy {
 	@Override
 	public Type getParticleType() {
 		return Type.ENEMY_WANDERER;
+	}
+
+	@Override
+	public int getSpawnTime() {
+		return 100;
 	}
 }

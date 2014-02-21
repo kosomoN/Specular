@@ -20,6 +20,7 @@ public class EnemyCircler extends Enemy {
 	private float rotation;
 	private float offset;
 	private double angle;
+	private float speed;
 	
 	public EnemyCircler(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
@@ -36,25 +37,19 @@ public class EnemyCircler extends Enemy {
 	@Override
 	public void render(SpriteBatch batch) {
 		rotation += Gdx.graphics.getDeltaTime();
-		Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
+		if(hasSpawned)
+			Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
+		else
+			Util.drawCentered(batch, tex, x, y, tex.getWidth() * (spawnTimer / 100f), tex.getHeight() * (spawnTimer / 100f), rotation * 90 % 360);
 	}
 	
 	@Override
-	public boolean update() {
+	public void updateMovement() {
 		if(gs.getPlayer() != null)
 			angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x) + offset;
 		
-		if(!pushed) {
-			if(speed < 3)
-				speed += 0.1f;
-			else
-				speed = (float) (Math.random() * 2 + 1);
-			
-			dx = (float) (Math.cos(angle) * speed);
-			dy = (float) (Math.sin(angle) * speed);
-		} else {
-			speed = super.speed;
-		}
+		dx = (float) (Math.cos(angle) * speed);
+		dy = (float) (Math.sin(angle) * speed);
 		x += dx * slowdown;
 		y += dy * slowdown;
 		
@@ -70,9 +65,6 @@ public class EnemyCircler extends Enemy {
 		} else if(y + 20 + 18 > gs.getCurrentMap().getHeight()){
 			offset = -offset;
 		}
-		
-		
-		return super.update();
 	}
 	
 	@Override
@@ -98,5 +90,10 @@ public class EnemyCircler extends Enemy {
 	@Override
 	public Type getParticleType() {
 		return Type.ENEMY_NORMAL;
+	}	
+	
+	@Override
+	public int getSpawnTime() {
+		return 100;
 	}
 }

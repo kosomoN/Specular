@@ -23,7 +23,7 @@ public class ParticleSpawnSystem extends SpawnSystem {
 		super(gs);
 		this.gs = gs;
 		rand = new Random();
-		particlePool = new Pool<Particle>() {
+		particlePool = new Pool<Particle>(0, 10) {
 			@Override
 			protected Particle newObject() {
 				return new Particle(gs);
@@ -32,10 +32,10 @@ public class ParticleSpawnSystem extends SpawnSystem {
 	}
 	
 	public void spawn(Type type, float x, float y, float dx, float dy, int amount, boolean shouldSpawnLarge) {
-		if(gs.particlesEnabled() && Camera.getCameraX() - Specular.camera.viewportWidth / 2 - 100 < x &&
-				Camera.getCameraX() + Specular.camera.viewportWidth / 2 + 100 > x &&
-				Camera.getCameraY() - Specular.camera.viewportHeight / 2 - 100 < y &&
-				Camera.getCameraY() + Specular.camera.viewportHeight / 2 + 100 > y) {
+		if(gs.particlesEnabled() && Camera.getCameraX() - Specular.camera.viewportWidth / 2 * Camera.getZoom() - 100 < x &&
+				Camera.getCameraX() + Specular.camera.viewportWidth / 2 * Camera.getZoom() + 100 > x &&
+				Camera.getCameraY() - Specular.camera.viewportHeight / 2 * Camera.getZoom() - 100 < y &&
+				Camera.getCameraY() + Specular.camera.viewportHeight / 2 * Camera.getZoom() + 100 > y) {
 			float direction = 360f / amount;
 			int offset;
 			

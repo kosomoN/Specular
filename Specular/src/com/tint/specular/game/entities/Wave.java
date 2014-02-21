@@ -15,7 +15,8 @@ import com.tint.specular.game.entities.enemies.EnemyWanderer;
 
 public class Wave {
 
-	private WaveModifier modifier;
+	//Permanent modifier will always be used for this wave
+	private WaveModifier modifier, permanentModifier;
 	private int totalDuration;
 	private int duration;
 	private GameState gs;
@@ -41,9 +42,13 @@ public class Wave {
 					for(EnemySpawn es : esf.getEnemies())
 						spawnEnemy(gs, es);
 				}
+				if(modifier != null)
+					modifier.affectRepeat(gs);
+				if(permanentModifier != null)
+					permanentModifier.affectRepeat(gs);
 			}
 			
-			if(totalDuration == duration) {
+			if(totalDuration <= duration) {
 				end();
 				return true;
 			}
@@ -52,17 +57,21 @@ public class Wave {
 	}
 	
 	private void start() {
-		if(modifier != null)
-			modifier.affect(gs);
 		for(EnemySpawnFormation esf : enemieFormations) {
 			for(EnemySpawn es : esf.getEnemies())
 				spawnEnemy(gs, es);
 		}
+		if(modifier != null)
+			modifier.affect(gs);
+		if(permanentModifier != null)
+			permanentModifier.affect(gs);
 	}
 	
 	public void end() {
 		if(modifier != null)
-			modifier.affect(gs);
+			modifier.removeEffect(gs);
+		if(permanentModifier != null)
+			permanentModifier.removeEffect(gs);
 	}
 	
 	public void reset() {
@@ -75,8 +84,14 @@ public class Wave {
 		this.modifier = modifier;
 	}
 	
-	public abstract class WaveModifier {
+	public Wave setPermanentModifer(WaveModifier permanentModifier) {
+		this.permanentModifier = permanentModifier;
+		return this;
+	}
+	
+	public static abstract class WaveModifier {
 		public abstract void affect(GameState gs);
+		public abstract void affectRepeat(GameState gs);
 		public abstract void removeEffect(GameState gs);
 	}
 	

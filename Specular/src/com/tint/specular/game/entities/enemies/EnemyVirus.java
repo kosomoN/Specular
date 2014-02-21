@@ -56,64 +56,62 @@ public class EnemyVirus extends Enemy {
 	
 	@Override
 	public boolean update() {
-		if(!pushed) {
-			switch(behavior) {
-			case POINTLESS:
-				if(x - 20 < 0) {
-					angle = Math.PI - angle + Math.random() * 0.2;
-					dx = (float) (Math.cos(angle) * 3);
-					dy = (float) (Math.sin(angle) * 3);
-					x = 20;
-				}
-				
-				if( x + 20 > gs.getCurrentMap().getHeight()) {
-					angle = Math.PI - angle + Math.random() * 0.2;
-					dx = (float) (Math.cos(angle) * 3);
-					dy = (float) (Math.sin(angle) * 3);
-					x = gs.getCurrentMap().getHeight() - 20;
-				}
-				
-				if(y - 20 < 0) {
-					angle = Math.PI * 2 - angle;
-					dx = (float) (Math.cos(angle) * 3);
-					dy = (float) (Math.sin(angle) * 3);
-					y = 20;
-				}
-				
-				if(y + 20 > gs.getCurrentMap().getHeight()){
-					angle = Math.PI * 2 - angle;
-					dx = (float) (Math.cos(angle) * 3);
-					dy = (float) (Math.sin(angle) * 3);
-					y = gs.getCurrentMap().getHeight() - 20;
-				}
-				break;
-			case FOLLOW:
-				double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
+		boolean isDead = super.update();
+		if(isDead) {
+			virusAmount--;
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void updateMovement() {
+		switch(behavior) {
+		case POINTLESS:
+			if(x - 20 < 0) {
+				angle = Math.PI - angle + Math.random() * 0.2;
 				dx = (float) (Math.cos(angle) * 3);
 				dy = (float) (Math.sin(angle) * 3);
-				break;
+				x = 20;
 			}
+			
+			if( x + 20 > gs.getCurrentMap().getHeight()) {
+				angle = Math.PI - angle + Math.random() * 0.2;
+				dx = (float) (Math.cos(angle) * 3);
+				dy = (float) (Math.sin(angle) * 3);
+				x = gs.getCurrentMap().getHeight() - 20;
+			}
+			
+			if(y - 20 < 0) {
+				angle = Math.PI * 2 - angle;
+				dx = (float) (Math.cos(angle) * 3);
+				dy = (float) (Math.sin(angle) * 3);
+				y = 20;
+			}
+			
+			if(y + 20 > gs.getCurrentMap().getHeight()){
+				angle = Math.PI * 2 - angle;
+				dx = (float) (Math.cos(angle) * 3);
+				dy = (float) (Math.sin(angle) * 3);
+				y = gs.getCurrentMap().getHeight() - 20;
+			}
+			break;
+		case FOLLOW:
+			double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
+			dx = (float) (Math.cos(angle) * 3);
+			dy = (float) (Math.sin(angle) * 3);
+			break;
 		}
 
 		
 		x += dx * slowdown;
 		y += dy * slowdown;
 		
-		
-		
 		size += growthRate * 10 / virusAmount;
 		if(size >= 1) {
 			size = 0.5f;
 			gs.addEntity(new EnemyVirus(x, y, gs));
 		}
-		
-		boolean isDead = super.update();
-		if(isDead) {
-			virusAmount--;
-			return true;
-		}
-		
-		return false;
 	}
 
 	@Override
@@ -139,5 +137,10 @@ public class EnemyVirus extends Enemy {
 	@Override
 	public Type getParticleType() {
 		return Type.ENEMY_VIRUS;
+	}
+	
+	@Override
+	public int getSpawnTime() {
+		return 0;
 	}
 }

@@ -215,7 +215,7 @@ public class Player implements Entity {
         boolean clearEnemies = false;
 		for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
-    		if(e.getLife() > 0) {
+    		if(e.hasSpawned() && e.getLife() > 0) {
     			float distX = centerx - e.getX();
     			float distY = centery - e.getY();
         		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {

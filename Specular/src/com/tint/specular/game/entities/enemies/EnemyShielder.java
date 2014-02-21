@@ -28,23 +28,13 @@ public class EnemyShielder extends Enemy {
 		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
 		batch.draw(frame, x - frame.getRegionWidth() / 2, y - frame.getRegionHeight() / 2, frame.getRegionWidth() / 2, frame.getRegionHeight() / 2, frame.getRegionWidth(), frame.getRegionHeight(), 1, 1, animFrameTime * 70, false);
 	}
-	
+
 	@Override
-	public boolean update() {
-		
+	public void updateMovement() {
 		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 		
-		if(!pushed) {
-			if(speed < 4.5f)
-				speed += 0.1f;
-			else
-				speed = 5;
-			
-			dx = (float) (Math.cos(angle) * 5);
-			dy = (float) (Math.sin(angle) * 5);
-		} else {
-			speed = super.speed;
-		}
+		dx = (float) (Math.cos(angle) * 5);
+		dy = (float) (Math.sin(angle) * 5);
 		x += dx * slowdown;
 		y += dy * slowdown;
 		
@@ -72,12 +62,9 @@ public class EnemyShielder extends Enemy {
 					e.setY(e.getY() + edy + dy * 1.1f);
 				}
 			}
-			
 		}
-		
-		return super.update();
 	}
-
+	
 	public static void init() {
 		Texture texture = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Shielder.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -98,5 +85,10 @@ public class EnemyShielder extends Enemy {
 	@Override
 	public Type getParticleType() {
 		return Type.ENEMY_BOOSTER;
+	}	
+	
+	@Override
+	public int getSpawnTime() {
+		return 100;
 	}
 }

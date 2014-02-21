@@ -20,7 +20,7 @@ public class Bullet implements Entity, Poolable {
 	
 	private static final float SPEED = 25;
 
-	public static float damage = 1;
+	public static int damage = 1;
 	
 	private static Texture bulletTex;
 	private static int size;
