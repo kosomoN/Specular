@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.Enemy.EnemyType;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
-import com.tint.specular.game.entities.enemies.EnemyDasher;
-import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
+import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
+import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 
@@ -38,14 +39,15 @@ public class Wave {
 			}
 			if(maxRepeatTimes > repeatTimes && (int) (repeatDelay * (repeatTimes + 1) * repeatDelayChange) == duration) {
 				repeatTimes++;
+				List<Enemy> newEnemies = new ArrayList<Enemy>();
 				for(EnemySpawnFormation esf : enemieFormations) {
 					for(EnemySpawn es : esf.getEnemies())
-						spawnEnemy(gs, es);
+						newEnemies.add(spawnEnemy(gs, es));
 				}
 				if(modifier != null)
-					modifier.affectRepeat(gs);
+					modifier.affectRepeat(gs, newEnemies);
 				if(permanentModifier != null)
-					permanentModifier.affectRepeat(gs);
+					permanentModifier.affectRepeat(gs, newEnemies);
 			}
 			
 			if(totalDuration <= duration) {
@@ -57,14 +59,15 @@ public class Wave {
 	}
 	
 	private void start() {
+		List<Enemy> newEnemies = new ArrayList<Enemy>();
 		for(EnemySpawnFormation esf : enemieFormations) {
 			for(EnemySpawn es : esf.getEnemies())
-				spawnEnemy(gs, es);
+				newEnemies.add(spawnEnemy(gs, es));
 		}
 		if(modifier != null)
-			modifier.affect(gs);
+			modifier.affect(gs, newEnemies);
 		if(permanentModifier != null)
-			permanentModifier.affect(gs);
+			permanentModifier.affect(gs, newEnemies);
 	}
 	
 	public void end() {
@@ -90,8 +93,8 @@ public class Wave {
 	}
 	
 	public static abstract class WaveModifier {
-		public abstract void affect(GameState gs);
-		public abstract void affectRepeat(GameState gs);
+		public abstract void affect(GameState gs, List<Enemy> justSpawnedEnemies);
+		public abstract void affectRepeat(GameState gs, List<Enemy> justSpawnedEnemies);
 		public abstract void removeEffect(GameState gs);
 	}
 	
@@ -166,30 +169,34 @@ public class Wave {
 		return this;
 	}
 	
-	private static void spawnEnemy(GameState gs, EnemySpawn es) {
+	private static Enemy spawnEnemy(GameState gs, EnemySpawn es) {
+		Enemy e = null;
 		switch(es.enemyType) {
 		case ENEMY_WANDERER:
-			gs.addEntity(new EnemyWanderer(es.getX(), es.getY(), gs));
+			e = new EnemyWanderer(es.getX(), es.getY(), gs);
 			break;
 		case ENEMY_STRIVER:
-			gs.addEntity(new EnemyStriver(es.getX(), es.getY(), gs));
+			e = new EnemyStriver(es.getX(), es.getY(), gs);
 			break;
 		case ENEMY_BOOSTER:
-			gs.addEntity(new EnemyBooster(es.getX(), es.getY(), gs));
+			e = new EnemyBooster(es.getX(), es.getY(), gs);
 			break;
 		case ENEMY_DASHER:
-			gs.addEntity(new EnemyDasher(es.getX(), es.getY(), gs));
+			e = new EnemyDasher(es.getX(), es.getY(), gs);
 			break;
 		case ENEMY_CIRCLER:
-			gs.addEntity(new EnemyCircler(es.getX(), es.getY(), gs));
+			e = new EnemyCircler(es.getX(), es.getY(), gs);
 			break;
 		case ENEMY_SHIELDER:
-			gs.addEntity(new EnemyShielder(es.getX(), es.getY(), gs));
+			e = new EnemyShielder(es.getX(), es.getY(), gs);
 			break;
 		case ENEMY_VIRUS:
-			gs.addEntity(new EnemyVirus(es.getX(), es.getY(), gs));
+			e = new EnemyVirus(es.getX(), es.getY(), gs);
 			break;
 		}
+		
+		gs.addEntity(e);
+		return e;
 	}
 
 	public long getID() {

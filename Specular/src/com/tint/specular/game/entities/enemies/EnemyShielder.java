@@ -12,7 +12,7 @@ import com.tint.specular.utils.Util;
 
 public class EnemyShielder extends Enemy {
 
-	private static final float FORCE = 7, RANGE = 300;
+	private static final float FORCE = 7, RANGE = 300 * 300;
 	
 	private static Animation anim;
 	private float animFrameTime;
@@ -33,33 +33,20 @@ public class EnemyShielder extends Enemy {
 	public void updateMovement() {
 		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 		
-		dx = (float) (Math.cos(angle) * 5);
-		dy = (float) (Math.sin(angle) * 5);
+		dx = (float) (Math.cos(angle) * 6);
+		dy = (float) (Math.sin(angle) * 6);
 		x += dx * slowdown;
 		y += dy * slowdown;
 		
+		float distanceSquared;
 		for(Enemy e : gs.getEnemies()) {
 			if(!(e instanceof EnemyShielder)) {
-				if(Math.abs(e.getX() - x) < RANGE && Math.abs(e.getY() - y) < RANGE) {
-					float xDiff = x - e.getX();
-					float yDiff = y - e.getY();
-					
-					float edx = 0, edy = 0;
-					
-					if(Math.abs(xDiff) > 64) {
-						edx = xDiff / RANGE * FORCE;
-					} else if(Math.abs(xDiff) < 56){
-						edx = xDiff > 0 ? -1 : 1;
-					}
-					
-					if(Math.abs(yDiff) > 64) {
-						edy = yDiff / RANGE * FORCE;
-					} else if(Math.abs(xDiff) < 56){
-						edy = yDiff > 0 ? -1 : 1;
-					}
-					
-					e.setX(e.getX() + edx + dx * 1.1f);
-					e.setY(e.getY() + edy + dy * 1.1f);
+				distanceSquared = (e.getX() - getX()) * (e.getX() - getX()) + (e.getY() - getY()) * (e.getY() - getY());
+				if(RANGE > distanceSquared) {
+					//If the enemy is too close to the shielder it should be pushed away
+					angle = Math.atan2(getY() - e.getY(), getX() - e.getX());
+					e.setX((float) (e.getX() + Math.cos(angle) * FORCE * ((distanceSquared + 15000) / RANGE)) + dx);
+					e.setY((float) (e.getY() + Math.sin(angle) * FORCE * ((distanceSquared + 15000) / RANGE)) + dy);
 				}
 			}
 		}

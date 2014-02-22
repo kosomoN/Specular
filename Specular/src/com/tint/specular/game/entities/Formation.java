@@ -70,8 +70,8 @@ public enum Formation {
 			for(int i = 1; i < enemies.size(); i++) {
 				double angle = i / (enemies.size() - 1d) * Math.PI * 2;
 				es = enemies.get(i);
-				es.setX((float) (x + Math.cos(angle) * rand.nextInt(50) + 25));
-				es.setY((float) (y + Math.sin(angle) * rand.nextInt(50) + 25));
+				es.setX((float) (x + Math.cos(angle) * 100));
+				es.setY((float) (y + Math.sin(angle) * 100));
 			}
 		}
 	};

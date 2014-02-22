@@ -235,6 +235,9 @@ public class Player implements Entity {
         				it.remove();
 	        			shields--;
         			} else {
+        				
+        				Specular.nativeAndroid.sendAnalytics("Game Event", "Death", e.getClass().getSimpleName(), gs.getCurrentWave().getID());
+        				
     					addLives(-1);
     					dying = true;
     					

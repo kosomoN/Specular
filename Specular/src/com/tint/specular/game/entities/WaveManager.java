@@ -10,6 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Wave.WaveModifier;
 import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.Enemy.EnemyType;
 
 public class WaveManager {
@@ -60,8 +61,28 @@ public class WaveManager {
 		wave3 = new Wave(gs, 2).setTotalDuration(20);
 		wave3.addEnemies(new EnemyType[] {ENEMY_STRIVER, ENEMY_WANDERER, ENEMY_BOOSTER}, new int[] {3, 5, 2}, Formation.EDGES);
 		
-		Wave wave = new Wave(gs, 3).setTotalDuration(5);
-		wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY);
+		Wave wave = new Wave(gs, 3).setTotalDuration(5).setPermanentModifer(new WaveModifier() {
+			
+			@Override
+			public void removeEffect(GameState gs) {}
+			
+			@Override
+			public void affectRepeat(GameState gs, List<Enemy> justSpawnedEnemies) {
+				for(Enemy e : justSpawnedEnemies) {
+					if(e instanceof EnemyWanderer)
+						e.addLife(5);
+				}
+			}
+			
+			@Override
+			public void affect(GameState gs, List<Enemy> justSpawnedEnemies) {
+				for(Enemy e : justSpawnedEnemies) {
+					if(e instanceof EnemyWanderer)
+						e.addLife(5);
+				}
+			}
+		});;
+		wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 40}, Formation.SURROUND_ENEMY);
 		wave.addEnemies(ENEMY_BOOSTER, 3, Formation.EDGES);
 		waves.add(wave);
 		
@@ -70,27 +91,27 @@ public class WaveManager {
 		
 		waves.add(wave);
 		
-		wave = new Wave(gs, 5).setRepeatTimes(2).setRepeatDelay(5).setTotalDuration(20).setPermanentModifer(new WaveModifier() {
+		wave = new Wave(gs, 5).setRepeatTimes(1).setRepeatDelay(5).setTotalDuration(20).setPermanentModifer(new WaveModifier() {
 			
 			@Override
 			public void removeEffect(GameState gs) {}
 			
 			@Override
-			public void affectRepeat(GameState gs) {
-				for(Enemy e : gs.getEnemies()) {
+			public void affectRepeat(GameState gs, List<Enemy> justSpawnedEnemies) {
+				for(Enemy e : justSpawnedEnemies) {
 					e.addLife(-e.getLife() + 1);
 				}
 			}
 			
 			@Override
-			public void affect(GameState gs) {
-				for(Enemy e : gs.getEnemies()) {
+			public void affect(GameState gs, List<Enemy> justSpawnedEnemies) {
+				for(Enemy e : justSpawnedEnemies) {
 					e.addLife(-e.getLife() + 1);
 				}
 			}
 		});
 		wave.addEnemies(ENEMY_STRIVER, 50, Formation.EDGES);
-		
+	
 		waves.add(wave);
 		
 		virusWave = new Wave(gs, 1000).setTotalDuration(0);

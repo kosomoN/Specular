@@ -228,7 +228,7 @@ public class GameState extends State {
 			if(!gameMode.isGameOver()) {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
-//				player.updateHitDetection();
+				player.updateHitDetection();
 				
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isDying() && !player.isDead()) {
@@ -546,7 +546,7 @@ public class GameState extends State {
 		
 		Bullet.maxBounces = 0;
 		
-		waveNumber = 0;
+		waveNumber = 3;
 		currentWave = waveManager.getWave(waveNumber);
 	}
 
@@ -634,5 +634,9 @@ public class GameState extends State {
 		if(music != null)
 			music.dispose();
 		music = null;
+	}
+
+	public Wave getCurrentWave() {
+		return currentWave;
 	}
 }
