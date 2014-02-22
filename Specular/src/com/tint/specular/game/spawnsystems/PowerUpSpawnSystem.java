@@ -12,6 +12,7 @@ import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.PowerUp;
+import com.tint.specular.game.powerups.PushAway;
 import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
@@ -51,7 +52,8 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 				slow = Enemy.getSlowdown() / 1f * 0.75f + rand.nextInt(10) / 10f, 
 				shield = 1f - player.getShields() / 3 * 0.6f + rand.nextInt(10) / 10f, 
 				board = 1f - gs.getBoardshockCharge() * 0.85f + rand.nextInt(10) / 10f, 
-				ricochet = 0.5f + rand.nextInt(10) / 10f;
+				ricochet = 0.5f + rand.nextInt(10) / 10f,
+				pushAway = 0.5f + rand.nextInt(10) / 10f;
 		
 		// Sorting values in a descending order wwith the highest value on top
 		List<Float> importance = new ArrayList<Float>();
@@ -63,6 +65,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		importance.add(shield);
 		importance.add(board);
 		importance.add(ricochet);
+		importance.add(pushAway);
 		Collections.sort(importance);
 		Collections.reverse(importance);
 		
@@ -85,6 +88,8 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 			gs.addEntity(new BoardshockPowerUp(x, y, gs));
 		else if(powerUp == ricochet)
 			gs.addEntity(new Ricochet(x, y, gs));
+		else if(powerUp == pushAway)
+			gs.addEntity(new PushAway(x, y, gs));
 	}
 	
 	/**

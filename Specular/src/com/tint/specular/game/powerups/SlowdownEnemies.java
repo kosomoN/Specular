@@ -30,13 +30,11 @@ public class SlowdownEnemies extends PowerUp {
 	}
 
 	@Override
-	public boolean update() {
-		if(isActivated() && !hasUpdatedSlowdown) {
+	protected void updatePowerup(Player player) {
+		if(!hasUpdatedSlowdown) {
 			hasUpdatedSlowdown = true;
 			Enemy.setSlowdown(Enemy.getSlowdown() + 0.75f / 300);
 		}
-		
-		return super.update();
 	}
 
 	@Override

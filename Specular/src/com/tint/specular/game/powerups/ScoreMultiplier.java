@@ -28,11 +28,6 @@ public class ScoreMultiplier extends PowerUp {
 	}
 
 	@Override
-	public boolean update() {
-		return super.update() == true ? true : despawnTime <= 0;
-	}
-
-	@Override
 	public Texture getTexture() {
 		return texture;
 	}

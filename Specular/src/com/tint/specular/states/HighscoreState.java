@@ -27,7 +27,7 @@ import com.tint.specular.ui.HighscoreList;
 public class HighscoreState extends State {
 	
 	private Stage stage;
-	private Texture background;
+	private Texture profileTex, highscoreBar;
 	private boolean shouldUpdate;
 	private HighscoreList list;
 	private boolean isLoggedIn = false;
@@ -47,7 +47,9 @@ public class HighscoreState extends State {
 		if(isLoggedIn) {
 			game.batch.setColor(Color.WHITE);
 			game.batch.begin();
-			game.batch.draw(background, 0, 0, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
+			game.batch.draw(profileTex, 0, 0);
+			game.batch.draw(highscoreBar, Specular.camera.viewportWidth * (800f / 1920), 0, highscoreBar.getWidth(), Specular.camera.viewportHeight);
+			game.batch.draw(highscoreBar, Specular.camera.viewportWidth * (1780f / 1920), 0, highscoreBar.getWidth(), Specular.camera.viewportHeight);
 			game.batch.end();
 		}
 		stage.act();
@@ -58,7 +60,8 @@ public class HighscoreState extends State {
 	public void show() {
 		super.show();
 		createUi();
-		background = new Texture(Gdx.files.internal("graphics/menu/highscore/Frames.png"));
+		profileTex = new Texture(Gdx.files.internal("graphics/menu/highscore/Profile.png"));
+		highscoreBar = new Texture(Gdx.files.internal("graphics/menu/highscore/Bar.png"));
 		
 		Specular.camera.position.set(Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight / 2, 0);
 		Specular.camera.update();
@@ -71,7 +74,7 @@ public class HighscoreState extends State {
 		stage = new Stage(Specular.camera.viewportWidth, Specular.camera.viewportHeight, false, game.batch);
 		stage.setCamera(Specular.camera);
 		
-		if(Specular.nativeAndroid.isLoggedIn()) {
+		if(!Specular.nativeAndroid.isLoggedIn()) {
 			isLoggedIn = true;
 			list = new HighscoreList();
 			
@@ -163,6 +166,7 @@ public class HighscoreState extends State {
 		if(list != null)
 			list.dispose();
 		stage.dispose();
-		background.dispose();
+		profileTex.dispose();
+		highscoreBar.dispose();
 	}
 }

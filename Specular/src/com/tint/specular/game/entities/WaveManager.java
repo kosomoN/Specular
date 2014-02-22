@@ -79,7 +79,6 @@ public class WaveManager {
 			public void affectRepeat(GameState gs) {
 				for(Enemy e : gs.getEnemies()) {
 					e.addLife(-e.getLife() + 1);
-					System.out.println(e.getLife());
 				}
 			}
 			

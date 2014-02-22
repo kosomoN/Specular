@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
+import com.tint.specular.game.entities.enemies.Enemy;
 
 /**
  * 
@@ -13,18 +14,20 @@ import com.tint.specular.game.entities.Player;
  */
 
 public abstract class PowerUp implements Entity {
+	private static final int PUSHAWAY_TIME = 180, PUSHAWAY_RANGE_SQUARED = 500 * 500;
 	
 	protected GameState gs;
 	protected float x, y;
-	protected float despawnTime = 900; // 15s
-	protected float activeTime;
-	private boolean activated;
+	private float despawnTime = 900; // 15s
+	private float activeTime;
+	private boolean activated, hasRemovedEffect;
+	private float maxActiveTime;
 	
-	public PowerUp(float x, float y, GameState gs, float activeTime) {
+	public PowerUp(float x, float y, GameState gs, float maxActiveTime) {
 		this.x = x;
 		this.y = y;
 		this.gs = gs;
-		this.activeTime = activeTime;
+		this.maxActiveTime = maxActiveTime;
 	}
 	
 	@Override
@@ -38,22 +41,46 @@ public abstract class PowerUp implements Entity {
 			}
 			return despawnTime <= 0;
 		} else {
-			if(activeTime > 0)
-				activeTime--;
-			else
-				return true;
+			if(activeTime >= maxActiveTime) {
+				if(!hasRemovedEffect) {
+					removeEffect(gs.getPlayer());
+					hasRemovedEffect = true;
+				}
+				if(activeTime >= PUSHAWAY_TIME)
+					return true;
+			}
+			activeTime++;
+			
+			if(activeTime < maxActiveTime)
+				updatePowerup(gs.getPlayer());
+			
+			if(activeTime < PUSHAWAY_TIME) {
+				float distanceSquared;
+				double angle;
+				for(Enemy e : gs.getEnemies()) {
+					distanceSquared = (e.getX() - getX()) * (e.getX() - getX()) + (e.getY() - getY()) * (e.getY() - getY());
+					if(PUSHAWAY_RANGE_SQUARED > distanceSquared) {
+						angle = Math.atan2(e.getY() - getY(), e.getX() - getX());
+						//Math.cos(angle) * distance (0-1) to make it push less if the enemy is far away * time^2 to make it smoothly disappear
+						e.setX((float) (e.getX() + Math.cos(angle) * 10 * (1 - distanceSquared / PUSHAWAY_RANGE_SQUARED) * (1 - (activeTime / PUSHAWAY_TIME) * (activeTime / PUSHAWAY_TIME))));
+						e.setY((float) (e.getY() + Math.sin(angle) * 10 * (1 - distanceSquared / PUSHAWAY_RANGE_SQUARED) * (1 - (activeTime / PUSHAWAY_TIME) * (activeTime / PUSHAWAY_TIME))));
+					}
+				}
+			}
 			
 			return false;
 		}
 	}
+	
+	protected void updatePowerup(Player player) {}
+	protected void affect(Player player) {}
+	protected void removeEffect(Player player) {}
 	
 	@Override
 	public void render(SpriteBatch batch) {
 		if(!isActivated() && despawnTime > 0)	
 			batch.draw(getTexture(), x - getTexture().getWidth() / 2, y - getTexture().getHeight() / 2);
 	}
-	
-	protected abstract void affect(Player p);
 
 	public void setPosition(float x, float y) {
 		this.x = x;

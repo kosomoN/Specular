@@ -24,15 +24,8 @@ public class Ricochet extends PowerUp {
 	}
 	
 	@Override
-	public boolean update() {
-		if(super.update()) {
-			if(isActivated()) {
-				Bullet.maxBounces -= 1;
-			}
-			return true;
-		}
-		
-		return false;
+	protected void removeEffect(Player p) {
+		Bullet.maxBounces -= 1;
 	}
 
 	@Override

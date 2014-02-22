@@ -68,32 +68,32 @@ public class EnemyVirus extends Enemy {
 	public void updateMovement() {
 		switch(behavior) {
 		case POINTLESS:
-			if(x - 20 < 0) {
+			if(x - 20 - 18 < 0) {
 				angle = Math.PI - angle + Math.random() * 0.2;
 				dx = (float) (Math.cos(angle) * 3);
 				dy = (float) (Math.sin(angle) * 3);
-				x = 20;
+				x = 20 + 18;
 			}
 			
-			if( x + 20 > gs.getCurrentMap().getHeight()) {
+			if(x + 20 + 18 > gs.getCurrentMap().getHeight()) {
 				angle = Math.PI - angle + Math.random() * 0.2;
 				dx = (float) (Math.cos(angle) * 3);
 				dy = (float) (Math.sin(angle) * 3);
-				x = gs.getCurrentMap().getHeight() - 20;
+				x = gs.getCurrentMap().getHeight() - 20 - 18;
 			}
 			
-			if(y - 20 < 0) {
+			if(y - 20 - 18 < 0) {
 				angle = Math.PI * 2 - angle;
 				dx = (float) (Math.cos(angle) * 3);
 				dy = (float) (Math.sin(angle) * 3);
-				y = 20;
+				y = 20 + 18;
 			}
 			
-			if(y + 20 > gs.getCurrentMap().getHeight()){
+			if(y + 20 + 18 > gs.getCurrentMap().getHeight()){
 				angle = Math.PI * 2 - angle;
 				dx = (float) (Math.cos(angle) * 3);
 				dy = (float) (Math.sin(angle) * 3);
-				y = gs.getCurrentMap().getHeight() - 20;
+				y = gs.getCurrentMap().getHeight() - 20 - 18;
 			}
 			break;
 		case FOLLOW:

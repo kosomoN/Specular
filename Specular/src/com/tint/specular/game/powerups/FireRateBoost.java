@@ -13,7 +13,6 @@ import com.tint.specular.game.entities.Player;
 
 public class FireRateBoost extends PowerUp {
 	private static Texture texture;
-	private Player player;
 	
 	public FireRateBoost(float x, float y, GameState gs) {
 		super(x, y, gs, 600);
@@ -25,19 +24,12 @@ public class FireRateBoost extends PowerUp {
 	
 	@Override
 	protected void affect(Player player) {
-		this.player = player;
 		player.setFireRate(player.getFireRate() * 3 / 4f); // 50% boost
 	}
-
+	
 	@Override
-	public boolean update() {
-		if(super.update()) {
-			if(isActivated())
-				player.setFireRate(10f);
-			return true;
-		}
-		
-		return false;
+	protected void removeEffect(Player player) {
+		player.setFireRate(10f);
 	}
 	
 	@Override

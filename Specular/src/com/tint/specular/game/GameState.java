@@ -23,10 +23,10 @@ import com.tint.specular.game.entities.Wave;
 import com.tint.specular.game.entities.WaveManager;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
-import com.tint.specular.game.entities.enemies.EnemyDasher;
-import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
+import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
+import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
@@ -36,6 +36,7 @@ import com.tint.specular.game.powerups.AddLife;
 import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
+import com.tint.specular.game.powerups.PushAway;
 import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
@@ -174,6 +175,7 @@ public class GameState extends State {
 		SlowdownEnemies.init();
 		BoardshockPowerUp.init();
 		Ricochet.init();
+		PushAway.init();
 		
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
@@ -226,7 +228,7 @@ public class GameState extends State {
 			if(!gameMode.isGameOver()) {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
-				player.updateHitDetection();
+//				player.updateHitDetection();
 				
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isDying() && !player.isDead()) {

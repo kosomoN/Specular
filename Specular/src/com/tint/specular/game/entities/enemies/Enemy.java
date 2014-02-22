@@ -87,11 +87,19 @@ public abstract class Enemy implements Entity {
 	public void dispose() {}
 
 	public void setX(float x) {
-		this.x = x;
+		this.x = x < 38 ? 38 : (x > gs.getCurrentMap().getWidth() - 38 ? gs.getCurrentMap().getWidth() - 38 : x);
 	}
 	
 	public void setY(float y) {
-		this.y = y;
+		this.y = y < 38 ? 38 : (y > gs.getCurrentMap().getHeight() - 38 ? gs.getCurrentMap().getHeight() - 38 : y);
+	}
+	
+	protected void addDx(float dx) {
+		this.dx += (this.dx - dx) / 5;
+	}
+	
+	protected void addDy(float dy) {
+		
 	}
 
 	public boolean hasSpawned() {

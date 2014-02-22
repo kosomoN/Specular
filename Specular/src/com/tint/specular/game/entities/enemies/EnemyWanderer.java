@@ -94,12 +94,12 @@ public class EnemyWanderer extends Enemy {
 
 	@Override
 	public float getInnerRadius() {
-		return texture.getWidth() / 4;
+		return 16;
 	}
 
 	@Override
 	public float getOuterRadius() {
-		return texture.getWidth() / 2;
+		return 30;
 	}
 	
 	@Override

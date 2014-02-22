@@ -15,7 +15,7 @@ public class BoardshockPowerUp extends PowerUp {
 
 	@Override
 	protected void affect(Player p) {
-		gs.addBoardshockCharge(0.5f);
+		gs.addBoardshockCharge(1f);
 	}
 
 	@Override

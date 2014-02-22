@@ -48,8 +48,12 @@ public class BulletBurst extends PowerUp {
 			}
 			return true;
 		}
-		
-		if(isActivated() && gs.getGameProcessor().getShootStick().isActive()) {
+		return false;
+	}
+	
+	@Override
+	protected void updatePowerup(Player player) {
+		if(gs.getGameProcessor().getShootStick().isActive()) {
 			if(playersFired.contains(player))
 				timesFiredSamePlayer++;
 
@@ -87,8 +91,6 @@ public class BulletBurst extends PowerUp {
 				}
 			}
 		}
-		
-		return false;
 	}
 	
 	public static void updateBulletBursts() {
