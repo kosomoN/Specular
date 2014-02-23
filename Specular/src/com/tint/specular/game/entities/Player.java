@@ -13,6 +13,7 @@ import com.tint.specular.Specular;
 import com.tint.specular.game.BoardShock;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
 
@@ -138,6 +139,17 @@ public class Player implements Entity {
 		if(!dying && !spawning) {
 			updateMovement();
 			updateShooting();
+		} else if(spawning) {
+			float distanceSquared;
+			double angle;
+			for(Enemy e : gs.getEnemies()) {
+				distanceSquared = (e.getX() - getX()) * (e.getX() - getX()) + (e.getY() - getY()) * (e.getY() - getY());
+				if(250000 > distanceSquared) {
+					angle = Math.atan2(e.getY() - getY(), e.getX() - getX());
+					e.setX((float) (e.getX() + Math.cos(angle) * 20 * (1 - distanceSquared / 250000)));
+					e.setY((float) (e.getY() + Math.sin(angle) * 20 * (1 - distanceSquared / 250000)));
+				}
+			}
 		}
 		
 		//Movement
@@ -219,23 +231,19 @@ public class Player implements Entity {
     			float distX = centerx - e.getX();
     			float distY = centery - e.getY();
         		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
-        			
+                	e.hit(e.getLife());
+    				gs.getEntities().removeValue(e, true);
+    				it.remove();
+    				
         			//Make the player invincible when the boardshock is activated to avoid wasting and annoying moments
         			if(BoardShock.isActivated()) {
-                    	e.hit(e.getLife());
-        				gs.getEntities().removeValue(e, true);
-        				it.remove();
-        				
         				break;
         			} else if(shields > 0) {
 	        			//Repel effect after collision with shield
 //	        			setSpeed(dx + e.getDx(), dy + e.getDy());
 	        			
-	        			gs.getEntities().removeValue(e, true);
-        				it.remove();
 	        			shields--;
         			} else {
-        				
         				Specular.nativeAndroid.sendAnalytics("Game Event", "Death", e.getClass().getSimpleName(), gs.getCurrentWave().getID());
         				
     					addLives(-1);
@@ -257,9 +265,11 @@ public class Player implements Entity {
         	// Removing all enemies from lists
         	for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
             	Enemy e = it.next();
-            	e.hit(e.getLife());
-            	gs.getEntities().removeValue(e, true);
-            	it.remove();
+            	if(!(e instanceof EnemyVirus)) {
+	            	e.hit(e.getLife());
+	            	gs.getEntities().removeValue(e, true);
+	            	it.remove();
+            	}
         	}
         }
 	}

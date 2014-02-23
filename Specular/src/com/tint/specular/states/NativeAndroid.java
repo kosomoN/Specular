@@ -1,5 +1,7 @@
 package com.tint.specular.states;
 
+import com.tint.specular.ui.HighscoreList.Highscore;
+
 /**
  * 
  * @author Onni Kosomaa
@@ -7,18 +9,18 @@ package com.tint.specular.states;
  */
 
 public interface NativeAndroid {
-	public boolean login(LoginCallback loginCallback);
+	public boolean login(RequestCallback loginCallback);
 	public void logout();
 	public boolean isLoggedIn();
 	public boolean postHighscore(int score);
 	
-	public interface LoginCallback {
-		public void loginSuccess();
-		public void loginFailed();
+	public interface RequestCallback {
+		public void success();
+		public void failed();
 	}
 	
 	public interface HighscoreCallback {
-		public void gotHighscores(String[] scores);
+		public void gotHighscores(Highscore[] scores);
 	}
 	public void getHighScores(HighscoreCallback highscoreCallback);
 	

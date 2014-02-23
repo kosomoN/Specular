@@ -36,6 +36,7 @@ import com.tint.specular.game.powerups.AddLife;
 import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
+import com.tint.specular.game.powerups.PowerUp;
 import com.tint.specular.game.powerups.PushAway;
 import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
@@ -49,7 +50,7 @@ import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.input.GameOverInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
-import com.tint.specular.states.NativeAndroid.LoginCallback;
+import com.tint.specular.states.NativeAndroid.RequestCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.HUD;
 import com.tint.specular.utils.Util;
@@ -167,6 +168,7 @@ public class GameState extends State {
 		AnalogStick.init();
 		
 		// Initializing power-ups
+		PowerUp.init();
 		AddLife.init();
 		BulletBurst.init();
 		FireRateBoost.init();
@@ -228,10 +230,11 @@ public class GameState extends State {
 			if(!gameMode.isGameOver()) {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
-				player.updateHitDetection();
+				
 				
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isDying() && !player.isDead()) {
+					player.updateHitDetection();
 					if(currentWave.update()) {
 						waveNumber++;
 						currentWave = waveManager.getWave(waveNumber);
@@ -322,16 +325,17 @@ public class GameState extends State {
 				}
 				// Ranked
 				else {
+					saveStats();
 					input.setInputProcessor(ggInputProcessor);
 					
 					if(!Specular.nativeAndroid.isLoggedIn()) {
-						Specular.nativeAndroid.login(new LoginCallback() {
+						Specular.nativeAndroid.login(new RequestCallback() {
 							@Override
-							public void loginSuccess() {
+							public void success() {
 								Specular.nativeAndroid.postHighscore(player.getScore());
 							}
 							
-							public void loginFailed() {
+							public void failed() {
 							}
 						});
 					} else {
@@ -510,7 +514,6 @@ public class GameState extends State {
 	 * Reset only game time
 	 */
 	private void resetGameTime() {
-		ticks = 0;
 		lastTickTime = System.nanoTime();
 	}
 	
@@ -519,6 +522,8 @@ public class GameState extends State {
 	 */
 	public void reset() {
 		clearLists();
+		
+		ticks = 0;
 		
 		soundsEnabled = Specular.prefs.getBoolean("SoundsMuted");
 		particlesEnabled = Specular.prefs.getBoolean("Particles");
@@ -570,6 +575,9 @@ public class GameState extends State {
 				}
 			});
 		}
+		
+		ticks = 0;
+		
 		reset();
 	}
 	private Random rand = new Random();
@@ -634,6 +642,24 @@ public class GameState extends State {
 		if(music != null)
 			music.dispose();
 		music = null;
+		
+		if(!gameMode.isGameOver()) {
+			saveStats();
+		}
+	}
+	
+	private void saveStats() {
+		Specular.prefs.putInteger("Time Played Ticks", Specular.prefs.getInteger("Time Played Ticks") + ticks);
+		Specular.prefs.putInteger("Bullets Fired", Specular.prefs.getInteger("Bullets Fired") + Bullet.bulletsFired);
+		Bullet.bulletsFired = 0;
+		
+		Specular.prefs.putInteger("Bullets Missed", Specular.prefs.getInteger("Bullets Missed") + Bullet.bulletsMissed);
+		Bullet.bulletsMissed = 0;
+		
+		Specular.prefs.putInteger("Enemies Killed", Specular.prefs.getInteger("Enemies Killed") + enemiesKilled);
+		Specular.prefs.putInteger("Games Played", Specular.prefs.getInteger("Games Played") + 1);
+		
+		Specular.prefs.flush();
 	}
 
 	public Wave getCurrentWave() {

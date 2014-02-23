@@ -61,7 +61,7 @@ public class GameInputProcessor implements InputProcessor {
 		else if(keycode == Keys.D)
 			d = false;
 		
-		if(keycode == Keys.BACK)
+		if(keycode == Keys.BACK || keycode == Keys.ESCAPE)
 			game.enterState(States.MAINMENUSTATE);
 		
 		return false;

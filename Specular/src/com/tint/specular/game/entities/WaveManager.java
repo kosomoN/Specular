@@ -70,7 +70,7 @@ public class WaveManager {
 			public void affectRepeat(GameState gs, List<Enemy> justSpawnedEnemies) {
 				for(Enemy e : justSpawnedEnemies) {
 					if(e instanceof EnemyWanderer)
-						e.addLife(5);
+						e.addLife(10);
 				}
 			}
 			
@@ -78,16 +78,16 @@ public class WaveManager {
 			public void affect(GameState gs, List<Enemy> justSpawnedEnemies) {
 				for(Enemy e : justSpawnedEnemies) {
 					if(e instanceof EnemyWanderer)
-						e.addLife(5);
+						e.addLife(10);
 				}
 			}
 		});;
-		wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 40}, Formation.SURROUND_ENEMY);
+		wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY);
 		wave.addEnemies(ENEMY_BOOSTER, 3, Formation.EDGES);
 		waves.add(wave);
 		
-		wave = new Wave(gs, 4).setTotalDuration(20);
-		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER}, new int[] {5, 20, 10, 6}, Formation.RANDOM);
+		wave = new Wave(gs, 4).setTotalDuration(20).setRepeatDelay(7).setRepeatTimes(1);
+		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER}, new int[] {2, 10, 5, 3}, Formation.RANDOM);
 		
 		waves.add(wave);
 		
@@ -115,7 +115,7 @@ public class WaveManager {
 		waves.add(wave);
 		
 		virusWave = new Wave(gs, 1000).setTotalDuration(0);
-		virusWave.addEnemies(ENEMY_VIRUS, 4, Formation.RANDOM);
+		virusWave.addEnemies(ENEMY_VIRUS, 9, Formation.RANDOM);
 		
 		Gdx.app.log("Specular", "Loading Waves Complete");
 	}

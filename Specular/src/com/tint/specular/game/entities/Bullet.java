@@ -29,6 +29,8 @@ public class Bullet implements Entity, Poolable {
 	
 	private static Pool<Bullet> bulletPool;
 	
+	public static int bulletsFired, bulletsMissed;
+	
 	private int bounces = 0;
 	private float x, y, dx, dy;
 	private boolean isHit;
@@ -57,8 +59,10 @@ public class Bullet implements Entity, Poolable {
 		
 		if(x + dx - 18 < 0 || x + dx + 18 > gs.getCurrentMap().getHeight()) {
 			createParticles();
-			if(bounces >= maxBounces)
+			if(bounces >= maxBounces) {
+				bulletsMissed++;
 				return true;
+			}
 			bounces++;
 			
 			direction = 180 - direction;
@@ -67,8 +71,10 @@ public class Bullet implements Entity, Poolable {
 		
 		if(y + dy - 18 < 0 || y + dy + 18 > gs.getCurrentMap().getHeight()) {
 			createParticles();
-			if(bounces >= maxBounces)
+			if(bounces >= maxBounces) {
+				bulletsMissed++;
 				return true;
+			}
 			bounces++;
 			
 			direction = 360 - direction;
@@ -118,6 +124,8 @@ public class Bullet implements Entity, Poolable {
 	 * This is called to re-use the particle to avoid garbage collection
 	 */
 	private Bullet reUse(float x, float y, float direction, float initialDx, float initialDy) {
+		bulletsFired++;
+		
 		this.x = x;
 		this.y = y;
 		direction += Math.random() * 6 - 3;

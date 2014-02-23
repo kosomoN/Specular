@@ -22,19 +22,24 @@ public class Main {
 		//There is no need to implement Facebook highscores in the desktop-version, so these are left empty
 		new LwjglApplication(new Specular(new NativeAndroid() {
 
+			private boolean isLoggedIn = false;
+			
 			@Override
-			public boolean login(LoginCallback loginCallback) {
-				loginCallback.loginFailed();
+			public boolean login(RequestCallback loginCallback) {
+				isLoggedIn = true;
+				loginCallback.success();
 				return false;
 			}
 
 			@Override
 			public boolean isLoggedIn() {
-				return false;
+				return isLoggedIn;
 			}
 
 			@Override
 			public boolean postHighscore(int score) {
+				Specular.prefs.putInteger("Highscore", score);
+				Specular.prefs.flush();
 				return false;
 			}
 

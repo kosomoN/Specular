@@ -30,6 +30,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.MapBuilder;
 import com.tint.specular.states.NativeAndroid;
+import com.tint.specular.ui.HighscoreList.Highscore;
 
 public class MainActivity extends AndroidApplication {
 	
@@ -71,7 +72,7 @@ public class MainActivity extends AndroidApplication {
         initialize(new Specular(new NativeAndroid() {
         	
 			@Override
-			public boolean login(final LoginCallback callback) {
+			public boolean login(final RequestCallback callback) {
 				Session.StatusCallback sessioinCallback = new Session.StatusCallback() {
 					@Override
 					public void call(final Session session, SessionState state, Exception exception) {
@@ -87,11 +88,11 @@ public class MainActivity extends AndroidApplication {
 									if (user != null) {
 										fbuser = user;
 				                        Toast.makeText(getApplicationContext(), "Hello " + user.getName() + "!", Toast.LENGTH_LONG).show();
-				                        callback.loginSuccess();
+				                        callback.success();
 				                    } else {
 				                    	Toast.makeText(getApplicationContext(), "User is null " + response.getError(), Toast.LENGTH_LONG).show();
 				                    	Log.e("Specular", "User is null " + response.getError());
-				                    	callback.loginFailed();
+				                    	callback.failed();
 				                    }
 								}
 							}).executeAsync();
@@ -100,7 +101,7 @@ public class MainActivity extends AndroidApplication {
 							fbuser = null;
 							//If failed
 							Log.e("Specular Facebook", "Login failed", exception);
-							callback.loginFailed();
+							callback.failed();
 						}
 					}
 				};
@@ -186,7 +187,7 @@ public class MainActivity extends AndroidApplication {
 			}
 			
 
-			private void sendHighscore(int score, Session session) {
+			private void sendHighscore(final int score, Session session) {
 				//Send a highscore post request
 				Bundle b = new Bundle();
 				b.putString("access_token", session.getAccessToken());
@@ -194,7 +195,11 @@ public class MainActivity extends AndroidApplication {
 				new Request(session, fbuser.getId() + "/scores", b, HttpMethod.POST, new Request.Callback() {
 					@Override
 					public void onCompleted(Response response) {
-						Toast.makeText(getApplicationContext(), "Highscore post response: " + response.getGraphObject().getInnerJSONObject().toString().contains("true"), Toast.LENGTH_LONG).show();
+						boolean success = response.getGraphObject().getInnerJSONObject().toString().contains("true");
+						if(success)
+							Toast.makeText(getApplicationContext(), "Highscore posting successful", Toast.LENGTH_LONG).show();
+						else
+							Toast.makeText(getApplicationContext(), "Highscore posting failed: " + response.getError(), Toast.LENGTH_LONG).show();
 					}
 				}).executeAsync();
 			}
@@ -208,15 +213,25 @@ public class MainActivity extends AndroidApplication {
 				final Request r = new Request(session, session.getApplicationId() + "/scores", b, HttpMethod.GET, new Request.Callback() {
 					@Override
 					public void onCompleted(Response response) {
-						Log.i("Specular", "Highscore get response: " + response);
-						List<String> scores = new ArrayList<String>();
-						
-						//Read scores from list
-						for(GraphObject go : response.getGraphObject().getPropertyAsList("data", GraphObject.class)) {
-							scores.add(go.getPropertyAs("user", GraphObject.class).getProperty("name") + ": " + go.getProperty("score"));
+						if(response.getError() == null) {
+							Log.i("Specular", "Highscore get response: " + response);
+							List<Highscore> scores = new ArrayList<Highscore>();
+							
+							//Read scores from list
+							for(GraphObject go : response.getGraphObject().getPropertyAsList("data", GraphObject.class)) {
+								String name = go.getPropertyAs("user", GraphObject.class).getProperty("name").toString();
+								if(go.getPropertyAs("user", GraphObject.class).getProperty("id").equals(fbuser.getId())) {
+									Specular.prefs.putInteger("Highscore", (Integer) go.getProperty("score"));
+									Specular.prefs.flush();
+								}
+								scores.add(new Highscore(name, (Integer) go.getProperty("score")));
+							}
+							Highscore[] array = scores.toArray(new Highscore[scores.size()]);
+							highscoreCallback.gotHighscores(array);
+						} else {
+							Log.e("Specular", "Highscore load error: " + response.getError());
+							highscoreCallback.gotHighscores(null);
 						}
-						String[] array = scores.toArray(new String[scores.size()]);
-						highscoreCallback.gotHighscores(array);
 					}
 				});
 				

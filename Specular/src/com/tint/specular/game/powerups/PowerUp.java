@@ -1,5 +1,6 @@
 package com.tint.specular.game.powerups;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
@@ -15,6 +16,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 
 public abstract class PowerUp implements Entity {
 	private static final int PUSHAWAY_TIME = 180, PUSHAWAY_RANGE_SQUARED = 500 * 500;
+	private static Texture shockWaveTex;
 	
 	protected GameState gs;
 	protected float x, y;
@@ -80,6 +82,11 @@ public abstract class PowerUp implements Entity {
 	public void render(SpriteBatch batch) {
 		if(!isActivated() && despawnTime > 0)	
 			batch.draw(getTexture(), x - getTexture().getWidth() / 2, y - getTexture().getHeight() / 2);
+		
+		if(activated && activeTime < 40) {
+			float size = 900 * (activeTime / 40);
+			batch.draw(shockWaveTex, x -  size / 2, y - size / 2, size, size);
+		}
 	}
 
 	public void setPosition(float x, float y) {
@@ -99,5 +106,9 @@ public abstract class PowerUp implements Entity {
 
 	public float getRadius() {
 		return getTexture().getWidth() / 2;
+	}
+	
+	public static void init() {
+		shockWaveTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Circle.png"));
 	}
 }

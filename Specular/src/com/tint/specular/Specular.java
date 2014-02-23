@@ -78,7 +78,8 @@ public class Specular extends Game {
 	private void checkPreferences() {
 		try {
 			// Size needs to be changed if the amount of preferences or settings is changed
-			if(prefs.get().keySet().size() == 11) {
+			System.out.println(prefs.get().keySet().size());
+			if(prefs.get().keySet().size() == 17) {
 				/* Checking that the entries are of valid type,
 				 * booleans doesn't need to be checked because in case of wrong case they return false
 				 */
@@ -87,10 +88,17 @@ public class Specular extends Game {
 				prefs.getFloat("Move Stick Pos Y");
 				prefs.getFloat("Shoot Stick Pos X");
 				prefs.getFloat("Shoot Stick Pos Y");
+				
+				prefs.getInteger("Time Played Ticks");
+				prefs.getInteger("Games Played");
+				prefs.getInteger("Shots Fired");
+				prefs.getInteger("Shots Missed");
+				prefs.getInteger("Enemies Killed");
 			} else {
 				createPreferences();
 			}
 		} catch(NumberFormatException nfe) {
+			nfe.printStackTrace();
 			createPreferences();
 		}
 	}
@@ -114,6 +122,14 @@ public class Specular extends Game {
 		prefs.putFloat("Shoot Stick Pos X", camera.viewportWidth / 6 * 2);
 		prefs.putFloat("Shoot Stick Pos Y", -camera.viewportHeight / 6);
 		
+		
+		prefs.putInteger("Highscore", 0);
+		prefs.putInteger("Time Played Ticks", 0);
+		prefs.putInteger("Games Played", 0);
+		prefs.putInteger("Bullets Fired", 0);
+		prefs.putInteger("Bullets Missed", 0);
+		prefs.putInteger("Enemies Killed", 0);
+
 		//Needed for android to save the settings
 		prefs.flush();
 	}
