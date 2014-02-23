@@ -16,12 +16,13 @@ import com.tint.specular.utils.Util;
 
 public class EnemyBooster extends Enemy {
 
-	private static final double MAX_TURNANGLE = Math.PI / 4; // 45 degrees
+	private static final double MAX_TURNANGLE = Math.PI / 256; // 0.012 degrees (per tick)
 	private static Texture tex;
 	
 	private float speed;
 	private double direction;
 	private int boostingDelay;
+	public boolean passed;
 	
 	public EnemyBooster(float x, float y, GameState gs) {
 		super(x, y, gs, 3);
@@ -42,16 +43,21 @@ public class EnemyBooster extends Enemy {
 		/* It turns by the half of the angle created when the current direction and target direction are as angle legs
 		 * If the angle is 1 Pi rad, which means the player is in the opposite direction of the travelling direction, it's not turning
 		 */
-		if(boostingDelay > 60 && boostingDelay < 180) {
-			double targetDir = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
-			double turn = 0;
-			if(targetDir - direction > Math.PI)
-				turn = (targetDir - direction) / 2 - Math.PI;
-			else if(targetDir - direction < Math.PI)
-				turn = (targetDir - direction) / 2;
-			
-			// There is a limit of turning angle
-			direction += turn < -MAX_TURNANGLE ? -MAX_TURNANGLE : turn > MAX_TURNANGLE ? MAX_TURNANGLE : turn;
+		if(!passed) {
+			if(boostingDelay > 60) {
+				double targetDir = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
+				double turn = 0;
+				passed = Math.abs(targetDir - direction) > 11 / 180f * Math.PI;
+				
+				// In case of smaller angles
+				if(targetDir - direction > Math.PI)
+					turn = (targetDir - direction) / 2 - Math.PI;
+				else if(targetDir - direction < Math.PI)
+					turn = (targetDir - direction) / 2;
+				
+				// There is a limit of turning angle
+				direction += turn < -MAX_TURNANGLE ? -MAX_TURNANGLE : turn > MAX_TURNANGLE ? MAX_TURNANGLE : turn;
+			}
 		}
 		
 		if(boostingDelay > 30) {
@@ -68,6 +74,7 @@ public class EnemyBooster extends Enemy {
 				direction = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 			
 			speed = 0;
+			passed = false;
 			boostingDelay++;
 		} else {
 			boostingDelay++;
