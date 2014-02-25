@@ -16,6 +16,7 @@ int attr show_search_box 0x7f01000b
 int attr show_title_bar 0x7f010002
 int attr title_bar_background 0x7f010005
 int attr title_text 0x7f010003
+int bool ga_reportUncaughtExceptions 0x7f090000
 int color com_facebook_blue 0x7f060002
 int color com_facebook_loginview_text_color 0x7f060006
 int color com_facebook_picker_search_bar_background 0x7f060000
@@ -109,8 +110,8 @@ int layout com_facebook_placepickerfragment_list_row 0x7f03000b
 int layout com_facebook_search_bar_layout 0x7f03000c
 int layout com_facebook_usersettingsfragment 0x7f03000d
 int layout main 0x7f03000e
-int string app_id 0x7f07001a
-int string app_name 0x7f070019
+int string app_id 0x7f07001b
+int string app_name 0x7f07001a
 int string com_facebook_choose_friends 0x7f07000f
 int string com_facebook_dialogloginactivity_ok_button 0x7f070000
 int string com_facebook_internet_permission_error_message 0x7f070013
@@ -136,6 +137,7 @@ int string com_facebook_requesterror_web_login 0x7f070014
 int string com_facebook_usersettingsfragment_log_in_button 0x7f070008
 int string com_facebook_usersettingsfragment_logged_in 0x7f070009
 int string com_facebook_usersettingsfragment_not_logged_in 0x7f07000a
+int string ga_trackingId 0x7f070019
 int style com_facebook_loginview_default_style 0x7f080000
 int style com_facebook_loginview_silver_style 0x7f080001
 int[] styleable com_facebook_friend_picker_fragment { 0x7f010007 }
