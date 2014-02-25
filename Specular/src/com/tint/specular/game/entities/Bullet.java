@@ -18,7 +18,7 @@ import com.tint.specular.utils.Util;
 
 public class Bullet implements Entity, Poolable {
 	
-	private static final float SPEED = 25;
+	private static final float SPEED = 35;
 
 	public static int damage = 1;
 	
