@@ -16,7 +16,7 @@ public class PushAway extends PowerUp {
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/powerups/FireRate.png"));
+		texture = new Texture(Gdx.files.internal("graphics/game/powerups/Repulsor.png"));
 	}
 	
 	@Override
