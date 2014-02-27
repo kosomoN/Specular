@@ -24,34 +24,33 @@ public class Camera {
 		cameraX += ((targetX + gs.getCurrentMap().getWidth() / 2) - cameraX) / CAMERA_SPEED;
 		cameraY += ((targetY + gs.getCurrentMap().getHeight() / 2) - cameraY) / CAMERA_SPEED;
 		
-		float highestDeltaX = 1;
-		float highestDeltaY = 1;
-		
-		float delta;
-		for(Enemy e : gs.getEnemies()) {
-			delta = Math.abs(e.getX() - cameraX);
-			if(highestDeltaX < delta) {
-				highestDeltaX = delta;
-			}
+		float targetCameraZoom = 1;
+		if(gs.getEnemies().size > 0) {
+			float lowestDeltaX = Math.abs(gs.getEnemies().get(0).getX() - cameraX);
+			float lowestDeltaY = Math.abs(gs.getEnemies().get(0).getY() - cameraY);
 			
-			delta = Math.abs(e.getY() - cameraY);
-			if(highestDeltaY < delta) {
-				highestDeltaY = delta;
+			float delta;
+			for(Enemy e : gs.getEnemies()) {
+				delta = Math.abs(e.getX() - cameraX);
+				if(lowestDeltaX > delta) {
+					lowestDeltaX = delta;
+				}
+				
+				delta = Math.abs(e.getY() - cameraY);
+				if(lowestDeltaY > delta) {
+					lowestDeltaY = delta;
+				}
 			}
+			System.out.println(lowestDeltaX + " " + lowestDeltaY);
+			lowestDeltaY += 50;
+			lowestDeltaY += 50;
+			
+			float zoomX = lowestDeltaX / (Specular.camera.viewportWidth / 2);
+			float zoomY = lowestDeltaY / (Specular.camera.viewportHeight / 2);
+			
+			targetCameraZoom = zoomX > zoomY ? zoomX : zoomY;
+			targetCameraZoom = targetCameraZoom < 1 ? 1 : targetCameraZoom;
 		}
-		highestDeltaX += 200;
-		highestDeltaY += 200;
-		
-		float zoomX = highestDeltaX / (Specular.camera.viewportWidth / 2);
-		if(zoomX < 1)
-			zoomX = 1;
-		float zoomY = highestDeltaY / (Specular.camera.viewportHeight / 2);
-		if(zoomY < 1)
-			zoomY = 1;
-		
-		float targetCameraZoom = zoomX > zoomY ? zoomX : zoomY;
-		targetCameraZoom = targetCameraZoom > 1.5f ? 1.5f : targetCameraZoom;
-		
 		cameraZoom += (targetCameraZoom - cameraZoom) / 50;
 		
 		if(shakeIntensity > 0){

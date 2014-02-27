@@ -35,7 +35,7 @@ public class EnemyDasher extends Enemy {
 	public void updateMovement() {
 		
 		//Boosting and changing direction
-		if(boostingDelay > 50) {
+		if(boostingDelay > 30) {
 			speed += 0.1;
 			
 			dx = (float) (Math.cos(direction) * speed);
@@ -93,7 +93,7 @@ public class EnemyDasher extends Enemy {
 	public float getOuterRadius() { return 30; }
 	
 	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/enemies/dasher.png"));
+		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Dasher.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 	

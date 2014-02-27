@@ -168,7 +168,6 @@ public class GameState extends State {
 		AnalogStick.init();
 		
 		// Initializing power-ups
-		PowerUp.init();
 		AddLife.init();
 		BulletBurst.init();
 		FireRateBoost.init();
@@ -410,7 +409,7 @@ public class GameState extends State {
 			Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
 					Specular.camera.viewportHeight / 2 - 36);
 			// Drawing MULTIPLIER on screen
-			Util.writeCentered(game.batch, multiplierFont, Math.round(scoreMultiplier) + "x", 0,
+			Util.writeCentered(game.batch, multiplierFont, "x" + Math.round(scoreMultiplier), 0,
 					Specular.camera.viewportHeight / 2 - 98);
 			
 			multiplierFont.draw(game.batch, String.valueOf(currentWave.getID()), -Specular.camera.viewportWidth / 2 + 20, Specular.camera.viewportHeight / 2 - 20);

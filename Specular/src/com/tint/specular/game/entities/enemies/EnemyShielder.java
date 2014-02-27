@@ -40,7 +40,7 @@ public class EnemyShielder extends Enemy {
 		
 		float distanceSquared;
 		for(Enemy e : gs.getEnemies()) {
-			if(!(e instanceof EnemyShielder)) {
+			if(!(e instanceof EnemyShielder) && !(e instanceof EnemyDasher)) {
 				distanceSquared = (e.getX() - getX()) * (e.getX() - getX()) + (e.getY() - getY()) * (e.getY() - getY());
 				if(RANGE > distanceSquared) {
 					//If the enemy is too close to the shielder it should be pushed away

@@ -16,7 +16,6 @@ import com.tint.specular.game.entities.enemies.Enemy;
 
 public abstract class PowerUp implements Entity {
 	private static final int PUSHAWAY_TIME = 160, PUSHAWAY_RANGE_SQUARED = 500 * 500;
-	private static Texture shockWaveTex;
 	
 	protected GameState gs;
 	protected float x, y;
@@ -84,8 +83,6 @@ public abstract class PowerUp implements Entity {
 			batch.draw(getTexture(), x - getTexture().getWidth() / 2, y - getTexture().getHeight() / 2);
 		
 		if(activated && activeTime < 40) {
-			float size = 900 * (activeTime / 40);
-			batch.draw(shockWaveTex, x -  size / 2, y - size / 2, size, size);
 		}
 	}
 
@@ -106,9 +103,5 @@ public abstract class PowerUp implements Entity {
 
 	public float getRadius() {
 		return getTexture().getWidth() / 2;
-	}
-	
-	public static void init() {
-		shockWaveTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Circle.png"));
 	}
 }

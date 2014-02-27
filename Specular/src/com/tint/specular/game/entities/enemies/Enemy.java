@@ -60,9 +60,9 @@ public abstract class Enemy implements Entity {
 		life -= damage;
 		
 		if(life == 0)
-			gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx, dy, 15, true);
+			gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx * slowdown, dy * slowdown, 15, true);
 		else
-			gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx, dy, 6, false);
+			gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx * slowdown, dy * slowdown, 6, false);
 	}
 	
 	public void addLife(int life) {
