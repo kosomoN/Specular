@@ -85,92 +85,59 @@ public class Specular extends Game {
 			 * MUST BE KEPT IN SAME ORDER AS IN 'CREATEPREFERENCES(List<Integer> i)'!
 			 */
 			if(ints != null) {
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Sensitivity"))
-						prefs.getFloat("Sensitivity");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Sensitivity"))
 						throw new NoPreferenceKeyException("Sensitivity missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Move Stick Pos X"))
-						prefs.getFloat("Move Stick Pos X");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Move Stick Pos X"))
 						throw new NoPreferenceKeyException("Move Stick Pos X missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Move Stick Pos Y"))
-						prefs.getFloat("Move Stick Pos Y");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Move Stick Pos Y"))
 						throw new NoPreferenceKeyException("Move Stick Pos Y missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Shoot Stick Pos X"))
-						prefs.getFloat("Shoot Stick Pos X");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Shoot Stick Pos X"))
 						throw new NoPreferenceKeyException("Shoot Stick Pos X missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Shoot Stick Pos Y"))
-						prefs.getFloat("Shoot Stick Pos Y");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Shoot Stick Pos Y"))
 						throw new NoPreferenceKeyException("Shoot Stick Pos Y missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Highscore"))
-						prefs.getFloat("Highscore");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Highscore"))
 						throw new NoPreferenceKeyException("Highscore missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Time Played Ticks"))
-						prefs.getFloat("Time Played Ticks");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Time Played Ticks"))
 						throw new NoPreferenceKeyException("Time Played Ticks missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Games Played"))
-						prefs.getFloat("Games Played");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Games Played"))
 						throw new NoPreferenceKeyException("Games Played missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Bullets Fired"))
-						prefs.getFloat("Bullets Fired");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Bullets Fired"))
 						throw new NoPreferenceKeyException("Bullets Fired missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Bullets Missed"))
-						prefs.getFloat("Bullets Missed");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Bullets Missed"))
 						throw new NoPreferenceKeyException("Shots Missed missing");
-				}
 				prefsFailureIndex++;
 				
-				if(!ints.contains(prefsFailureIndex)) {
-					if(prefs.contains("Enemies Killed"))
-						prefs.getFloat("Enemies Killed");
-					else
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Enemies Killed"))
 						throw new NoPreferenceKeyException("Enemies Killed missing");
-				}
 				prefsFailureIndex++;
 				
 				if(!ints.contains(prefsFailureIndex))

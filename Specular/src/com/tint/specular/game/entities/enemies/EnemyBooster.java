@@ -43,21 +43,21 @@ public class EnemyBooster extends Enemy {
 		/* It turns by the half of the angle created when the current direction and target direction are as angle legs
 		 * If the angle is 1 Pi rad, which means the player is in the opposite direction of the travelling direction, it's not turning
 		 */
-		if(!passed) {
-			if(boostingDelay > 60) {
-				double targetDir = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
-				double turn = 0;
-				passed = Math.abs(targetDir - direction) > 11 / 180f * Math.PI;
-				
-				// In case of smaller angles
-				if(targetDir - direction > Math.PI)
-					turn = (targetDir - direction) / 2 - Math.PI;
-				else if(targetDir - direction < Math.PI)
-					turn = (targetDir - direction) / 2;
-				
-				// There is a limit of turning angle
-				direction += turn < -MAX_TURNANGLE ? -MAX_TURNANGLE : turn > MAX_TURNANGLE ? MAX_TURNANGLE : turn;
-			}
+		if(boostingDelay > 60) {
+			double targetDir = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
+			double turn = 0;
+			double diffDir = targetDir - direction;
+			
+			// In case of smaller angles
+			if(diffDir >= Math.PI)
+				turn = diffDir - 2 * Math.PI;
+			else if(diffDir <= -Math.PI)
+				turn = diffDir + 2 * Math.PI;
+			else if(diffDir < 0 || diffDir > 0)
+				turn = diffDir;
+			
+			// There is a limit of turning angle
+			direction += turn < -MAX_TURNANGLE ? -MAX_TURNANGLE : turn > MAX_TURNANGLE ? MAX_TURNANGLE : turn;
 		}
 		
 		if(boostingDelay > 30) {
