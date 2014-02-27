@@ -71,7 +71,7 @@ public class EnemyShielder extends Enemy {
 
 	@Override
 	public Type getParticleType() {
-		return Type.ENEMY_BOOSTER;
+		return Type.ENEMY_SHIELDER;
 	}	
 	
 	@Override

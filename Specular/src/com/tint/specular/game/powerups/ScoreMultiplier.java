@@ -24,7 +24,7 @@ public class ScoreMultiplier extends PowerUp {
 	
 	@Override
 	protected void affect(Player player) {
-		gs.setScoreMultiplier(gs.getScoreMultiplier() + 1);
+		gs.setScoreMultiplier(gs.getScoreMultiplier() * 2);
 	}
 
 	@Override

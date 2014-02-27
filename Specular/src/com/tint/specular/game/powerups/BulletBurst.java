@@ -21,7 +21,7 @@ public class BulletBurst extends PowerUp {
 	private float timeSinceLastFire, fireRate;
 	
 	public BulletBurst(float x, float y, GameState gs) {
-		super(x, y, gs, 600);
+		super(x, y, gs, 800);
 	}
 	
 	public static void init() {

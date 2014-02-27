@@ -34,7 +34,7 @@ public class BoardShock {
 			}
 			
 			if(timeActivated >= 300) {
-				Camera.shake(0.5f, 0.03f);
+				Camera.shake(2.5f, 0.1f);
 				activated = false;
 				zoom = 0;
 				for(Enemy e : gs.getEnemies()) {

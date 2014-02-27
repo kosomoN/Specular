@@ -107,7 +107,7 @@ public class Bullet implements Entity, Poolable {
 	}
 	
 	private void createParticles() {
-		gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 4, false);
+		gs.getParticleSpawnSystem().spawn(Type.BULLET, x, y, 0, 0, 3, false);
 	}
 	
 	public float getX() { return x; }

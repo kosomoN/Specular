@@ -15,7 +15,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
  */
 
 public abstract class PowerUp implements Entity {
-	private static final int PUSHAWAY_TIME = 180, PUSHAWAY_RANGE_SQUARED = 500 * 500;
+	private static final int PUSHAWAY_TIME = 160, PUSHAWAY_RANGE_SQUARED = 500 * 500;
 	private static Texture shockWaveTex;
 	
 	protected GameState gs;

@@ -11,7 +11,7 @@ public class Ricochet extends PowerUp {
 	private static Texture texture;
 	
 	public Ricochet(float x, float y, GameState gs) {
-		super(x, y, gs, 600);
+		super(x, y, gs, 1000);
 	}
 	
 	public static void init() {

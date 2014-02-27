@@ -15,7 +15,7 @@ public class FireRateBoost extends PowerUp {
 	private static Texture texture;
 	
 	public FireRateBoost(float x, float y, GameState gs) {
-		super(x, y, gs, 600);
+		super(x, y, gs, 800);
 	}
 	
 	public static void init() {
@@ -24,7 +24,7 @@ public class FireRateBoost extends PowerUp {
 	
 	@Override
 	protected void affect(Player player) {
-		player.setFireRate(player.getFireRate() * 3 / 4f); // 50% boost
+		player.setFireRate(player.getFireRate() * 4 / 6f);
 	}
 	
 	@Override

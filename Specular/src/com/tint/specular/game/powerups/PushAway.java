@@ -12,7 +12,7 @@ public class PushAway extends PowerUp {
 	private static Texture texture;
 	
 	public PushAway(float x, float y, GameState gs) {
-		super(x, y, gs, 600);
+		super(x, y, gs, 800);
 	}
 	
 	public static void init() {

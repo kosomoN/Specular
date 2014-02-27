@@ -273,7 +273,7 @@ public class GameState extends State {
 								enemiesKilled++;
 								
 								//Adding a stronger camera shake when the enemy dies
-								Camera.shake(0.2f, 0.1f);
+								Camera.shake(0.3f, 0.1f);
 								break;
 							}
 						}

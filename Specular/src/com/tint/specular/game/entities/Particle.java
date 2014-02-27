@@ -19,7 +19,7 @@ import com.tint.specular.utils.Util;
 public class Particle implements Entity, Poolable {
 	
 	public enum Type {
-		BULLET, ENEMY_NORMAL, ENEMY_WANDERER, ENEMY_FAST, ENEMY_BOOSTER, ENEMY_VIRUS;
+		BULLET, ENEMY_NORMAL, ENEMY_WANDERER, ENEMY_STRIVER, ENEMY_VIRUS, ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_SHIELDER;
 	}
 	
 	//FIELDS
@@ -31,7 +31,7 @@ public class Particle implements Entity, Poolable {
 	private int textureIndexInArray;
 	private float rotation;
 	
-	private static final float ROTATION_SPEED = 2;
+	private static final float ROTATION_SPEED = 6;
 	private static TextureRegion[] textures;
 	private static Texture bigBase, smallBase;
 	private static Random rand = new Random();
@@ -78,11 +78,11 @@ public class Particle implements Entity, Poolable {
 		
 		//Loop through image and create sub-images
 		for(int i = 0; i < 2; i++) {
-			for(int j = 0; j < 3; j++) {
-				textures[i * 3 + j] = new TextureRegion(smallBase, j * smallBase.getWidth() / 3, i * smallBase.getWidth() / 3,
-																		smallBase.getWidth() / 3, smallBase.getWidth() / 3);
-				textures[i * 3 + j + 6] = new TextureRegion(bigBase, j * bigBase.getWidth() / 3, i * bigBase.getWidth() / 3,
-						bigBase.getWidth() / 3, bigBase.getWidth() / 3);
+			for(int j = 0; j < 4; j++) {
+				textures[i * 4 + j] = new TextureRegion(smallBase, j * smallBase.getWidth() / 4, i * smallBase.getWidth() / 4,
+																		smallBase.getWidth() / 4, smallBase.getWidth() / 4);
+				textures[i * 4 + j + 8] = new TextureRegion(bigBase, j * bigBase.getWidth() / 4, i * bigBase.getWidth() / 4,
+																		bigBase.getWidth() / 4, bigBase.getWidth() / 4);
 			}
 		}
 	}
@@ -109,10 +109,10 @@ public class Particle implements Entity, Poolable {
 		dx += initialDx;
 		dy += initialDy;
 		
-		this.textureIndexInArray = type.ordinal() + (large ? 6 : 0); //This is just a variable to make getting the subimage easier
+		this.textureIndexInArray = type.ordinal() + (large ? 8 : 0); //This is just a variable to make getting the subimage easier
 		this.type = type;
 		
-		lifetime = 25 + rand.nextInt(25);
+		lifetime = 30 + rand.nextInt(20);
 		
 		rotation = rand.nextInt(360);
 	}

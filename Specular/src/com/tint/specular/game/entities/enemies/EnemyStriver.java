@@ -68,7 +68,7 @@ public class EnemyStriver extends Enemy {
 
 	@Override
 	public Type getParticleType() {
-		return Type.ENEMY_FAST;
+		return Type.ENEMY_STRIVER;
 	}	
 	
 	@Override
