@@ -1,5 +1,11 @@
 package com.tint.specular.game.entities.enemies;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Particle.Type;
@@ -15,7 +21,7 @@ public abstract class Enemy implements Entity {
 	public enum EnemyType {
 		ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_STRIVER, ENEMY_CIRCLER, ENEMY_SHIELDER, ENEMY_VIRUS, ENEMY_WANDERER;
 	}
-
+	
 	protected float x, y, dx, dy;
 	protected float direction;
 	protected static float slowdown = 1;
@@ -39,14 +45,37 @@ public abstract class Enemy implements Entity {
 			updateMovement();
 		else {
 			spawnTimer++;
-			if(spawnTimer >= getSpawnTime())
+			//16 frames, 1 / 15s per frame and 3 seconds for the warning. Multiply with 60 to get ticks
+			if(spawnTimer >= (1 / 15f * 16 + 2) * 60)
 				hasSpawned = true;
 		}
 		return life <= 0;
 	}
 	
+	@Override
+	public void render(SpriteBatch batch) {
+		if(hasSpawned)
+			renderEnemy(batch);
+		else {
+			
+			//Show warning image
+			if(spawnTimer < 2f * 60) {
+				batch.setColor(1, 1, 1, ((float) Math.cos(spawnTimer / 60f * Math.PI * 2 + Math.PI) + 1) / 2);
+				batch.draw(getWarningTex(), x - getWarningTex().getWidth() / 2, y - getWarningTex().getHeight() / 2);
+				batch.setColor(1, 1, 1, 1);
+			} else {
+				TextureRegion tr = getSpawnAnim().getKeyFrame(spawnTimer / 60f - 2);
+				batch.draw(tr, x - tr.getRegionWidth() / 2, y - tr.getRegionHeight() / 2);
+			}
+		}
+	}
+
+	protected abstract void renderEnemy(SpriteBatch batch);
+	
+	protected abstract Animation getSpawnAnim();
+	protected abstract Texture getWarningTex();
+	
 	public abstract void updateMovement();
-	public abstract int getSpawnTime();
 
 	/**
 	 * 
@@ -94,14 +123,6 @@ public abstract class Enemy implements Entity {
 		this.y = y < 38 ? 38 : (y > gs.getCurrentMap().getHeight() - 38 ? gs.getCurrentMap().getHeight() - 38 : y);
 	}
 	
-	protected void addDx(float dx) {
-		this.dx += (this.dx - dx) / 5;
-	}
-	
-	protected void addDy(float dy) {
-		
-	}
-
 	public boolean hasSpawned() {
 		return hasSpawned;
 	}

@@ -5,6 +5,7 @@ import static com.tint.specular.game.entities.enemies.EnemyVirus.Behavior.POINTL
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
@@ -25,14 +26,15 @@ public class EnemyVirus extends Enemy {
 	private static final float BASE_GROWTH_RATE = 0.0025f;
 	public static int virusAmount;
 	
-	private static Texture tex;
+	private static Animation anim;
+	private static Texture tex, warningTex;
 	private float size = 0.5f;
 	private float growthRate = (float) (BASE_GROWTH_RATE + BASE_GROWTH_RATE * Math.random());
 	private Behavior behavior;
 	private double angle;
 	private float rotation;
 	
-	public EnemyVirus(float x, float y, GameState gs) {
+	public EnemyVirus(float x, float y, GameState gs, boolean spawnedFromOtherVirus) {
 		super(x, y, gs, 1);
 		virusAmount++;
 		
@@ -46,10 +48,13 @@ public class EnemyVirus extends Enemy {
 		angle = Math.random() * Math.PI * 2;
 		dx = (float) (Math.cos(angle) * 3);
 		dy = (float) (Math.sin(angle) * 3);
+		
+		if(spawnedFromOtherVirus)
+			hasSpawned = true;
 	}
 
 	@Override
-	public void render(SpriteBatch batch) {
+	public void renderEnemy(SpriteBatch batch) {
 		rotation += Gdx.graphics.getDeltaTime();
 		Util.drawCentered(batch, tex, (float) x - tex.getWidth() / 2 * size, y - tex.getHeight() / 2 * size, tex.getWidth() * size, tex.getHeight() * size, rotation * 90 % 360);
 	}
@@ -74,7 +79,7 @@ public class EnemyVirus extends Enemy {
 				dy = (float) (Math.sin(angle) * 3);
 				x = 20 + 18;
 			}
-			
+			 
 			if(x + 20 + 18 > gs.getCurrentMap().getHeight()) {
 				angle = Math.PI - angle + Math.random() * 0.2;
 				dx = (float) (Math.cos(angle) * 3);
@@ -110,7 +115,7 @@ public class EnemyVirus extends Enemy {
 		size += growthRate * 10 / virusAmount;
 		if(size >= 1) {
 			size = 0.5f;
-			gs.addEntity(new EnemyVirus(x, y, gs));
+			gs.addEntity(new EnemyVirus(x, y, gs, true));
 		}
 	}
 
@@ -131,7 +136,12 @@ public class EnemyVirus extends Enemy {
 	
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Virus.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);		
+		
+		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Warning.png"));
+		
+		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Anim.png"));
+		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
 	}
 
 	@Override
@@ -140,7 +150,12 @@ public class EnemyVirus extends Enemy {
 	}
 	
 	@Override
-	public int getSpawnTime() {
-		return 0;
+	protected Animation getSpawnAnim() {
+		return anim;
+	}
+
+	@Override
+	protected Texture getWarningTex() {
+		return warningTex;
 	}
 }

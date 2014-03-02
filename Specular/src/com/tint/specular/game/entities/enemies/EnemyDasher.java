@@ -3,6 +3,7 @@ package com.tint.specular.game.entities.enemies;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
@@ -16,7 +17,8 @@ import com.tint.specular.utils.Util;
 
 public class EnemyDasher extends Enemy {
 
-	private static Texture tex;
+	private static Animation anim;
+	private static Texture tex, warningTex;
 
 	private float speed;
 	private double direction;
@@ -27,7 +29,7 @@ public class EnemyDasher extends Enemy {
 	}
 
 	@Override
-	public void render(SpriteBatch batch) {
+	public void renderEnemy(SpriteBatch batch) {
 		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction) - 90);
 	}
 	
@@ -94,7 +96,12 @@ public class EnemyDasher extends Enemy {
 	
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Dasher.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
+		
+		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Dasher Warning.png"));
+		
+		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Dasher Anim.png"));
+		anim = Util.getAnimation(animTex, 128, 128, 1 / 15f, 0, 0, 3, 3);
 	}
 	
 	@Override
@@ -109,11 +116,16 @@ public class EnemyDasher extends Enemy {
 	 
 	@Override
 	public Type getParticleType() {
-		return Type.ENEMY_WANDERER;
+		return Type.ENEMY_DASHER;
 	}	
 	
 	@Override
-	public int getSpawnTime() {
-		return 100;
+	protected Animation getSpawnAnim() {
+		return anim;
+	}
+
+	@Override
+	protected Texture getWarningTex() {
+		return warningTex;
 	}
 }

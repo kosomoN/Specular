@@ -14,7 +14,8 @@ public class EnemyShielder extends Enemy {
 
 	private static final float FORCE = 7, RANGE = 300 * 300;
 	
-	private static Animation anim;
+	private static Animation anim, spawnAnim;
+	private static Texture warningTex;
 	private float animFrameTime;
 	
 	public EnemyShielder(float x, float y, GameState gs) {
@@ -22,7 +23,7 @@ public class EnemyShielder extends Enemy {
 	}
 
 	@Override
-	public void render(SpriteBatch batch) {
+	public void renderEnemy(SpriteBatch batch) {
 		animFrameTime += Gdx.graphics.getDeltaTime();
 		
 		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
@@ -56,7 +57,12 @@ public class EnemyShielder extends Enemy {
 		Texture texture = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Shielder.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
-		anim = Util.getAnimation(texture, 128, 128, 1 / 15f, 0, 0, 3, 1);
+		anim = Util.getAnimation(texture, 128, 128, 1 / 15f, 0, 0, 3, 1);		
+		
+		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Shielder Warning.png"));
+		
+		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Shielder Anim.png"));
+		spawnAnim = Util.getAnimation(animTex, 128, 128, 1 / 15f, 0, 0, 3, 3);
 	}
 
 	@Override
@@ -75,7 +81,12 @@ public class EnemyShielder extends Enemy {
 	}	
 	
 	@Override
-	public int getSpawnTime() {
-		return 100;
+	protected Animation getSpawnAnim() {
+		return spawnAnim;
+	}
+
+	@Override
+	protected Texture getWarningTex() {
+		return warningTex;
 	}
 }

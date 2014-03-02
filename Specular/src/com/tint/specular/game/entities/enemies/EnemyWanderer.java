@@ -5,6 +5,7 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
@@ -18,7 +19,8 @@ import com.tint.specular.utils.Util;
 
 public class EnemyWanderer extends Enemy {
 
-	private static Texture texture;
+	private static Animation anim;
+	private static Texture tex, warningTex;
 	private static Random random = new Random();
 	private float rotation;
 	private float dirChangeRateMs = 2000f;
@@ -32,17 +34,19 @@ public class EnemyWanderer extends Enemy {
 	}
 	
 	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Wanderer.png"));
-		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Wanderer.png"));
+		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);		
+		
+		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Wanderer Warning.png"));
+		
+		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Wanderer Anim.png"));
+		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
 	}
 	
 	@Override
-	public void render(SpriteBatch batch) {
+	public void renderEnemy(SpriteBatch batch) {
 		rotation -= Gdx.graphics.getDeltaTime();
-		if(hasSpawned)
-			Util.drawCentered(batch, texture, x, y, rotation * 90 % 360);
-		else
-			Util.drawCentered(batch, texture, x, y, texture.getWidth() * (spawnTimer / 100f), texture.getHeight() * (spawnTimer / 100f), rotation * 90 % 360);
+		Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
 	}
 
 	@Override
@@ -108,7 +112,12 @@ public class EnemyWanderer extends Enemy {
 	}
 
 	@Override
-	public int getSpawnTime() {
-		return 100;
+	protected Animation getSpawnAnim() {
+		return anim;
+	}
+
+	@Override
+	protected Texture getWarningTex() {
+		return warningTex;
 	}
 }

@@ -191,7 +191,7 @@ public class Wave {
 			e = new EnemyShielder(es.getX(), es.getY(), gs);
 			break;
 		case ENEMY_VIRUS:
-			e = new EnemyVirus(es.getX(), es.getY(), gs);
+			e = new EnemyVirus(es.getX(), es.getY(), gs, false);
 			break;
 		}
 		

@@ -83,7 +83,7 @@ public class WaveManager {
 			}
 		});;
 		wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY);
-		wave.addEnemies(ENEMY_BOOSTER, 3, Formation.EDGES);
+		wave.addEnemies(ENEMY_DASHER, 3, Formation.EDGES);
 		waves.add(wave);
 		
 		wave = new Wave(gs, 4).setTotalDuration(20).setRepeatDelay(7).setRepeatTimes(1);

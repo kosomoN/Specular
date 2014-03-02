@@ -3,6 +3,7 @@ package com.tint.specular.game.entities.enemies;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
@@ -16,7 +17,8 @@ import com.tint.specular.utils.Util;
 
 public class EnemyStriver extends Enemy {
 
-	private static Texture tex;
+	private static Animation anim;
+	private static Texture tex, warningTex;
 	private float rotation;
 	private float speed;
 
@@ -27,7 +29,7 @@ public class EnemyStriver extends Enemy {
 	}
 
 	@Override
-	public void render(SpriteBatch batch) {
+	public void renderEnemy(SpriteBatch batch) {
 		rotation += Gdx.graphics.getDeltaTime();
 		if(hasSpawned)
 			Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
@@ -47,8 +49,13 @@ public class EnemyStriver extends Enemy {
 	}
 	
 	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Fast.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver.png"));
+		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);		
+		
+		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Warning.png"));
+		
+		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Anim.png"));
+		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
 	}
 
 	@Override
@@ -72,7 +79,12 @@ public class EnemyStriver extends Enemy {
 	}	
 	
 	@Override
-	public int getSpawnTime() {
-		return 100;
+	protected Animation getSpawnAnim() {
+		return anim;
+	}
+
+	@Override
+	protected Texture getWarningTex() {
+		return warningTex;
 	}
 }

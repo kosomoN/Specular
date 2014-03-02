@@ -2,6 +2,7 @@ package com.tint.specular.game.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.game.GameState;
@@ -149,9 +150,22 @@ public class EnemyWorm extends Enemy {
 	public Type getParticleType() {
 		return Type.ENEMY_BOOSTER;
 	}	
-	
+
 	@Override
-	public int getSpawnTime() {
-		return 100;
+	protected void renderEnemy(SpriteBatch batch) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected Animation getSpawnAnim() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected Texture getWarningTex() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
