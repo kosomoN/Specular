@@ -41,7 +41,6 @@ public class Camera {
 					lowestDeltaY = delta;
 				}
 			}
-			System.out.println(lowestDeltaX + " " + lowestDeltaY);
 			lowestDeltaY += 50;
 			lowestDeltaY += 50;
 			

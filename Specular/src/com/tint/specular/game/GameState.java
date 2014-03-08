@@ -21,12 +21,14 @@ import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.Wave;
 import com.tint.specular.game.entities.WaveManager;
+import com.tint.specular.game.entities.Player.AmmoType;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
+import com.tint.specular.game.entities.enemies.EnemySuicider;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
@@ -103,6 +105,7 @@ public class GameState extends State {
 	private Array<Enemy> enemies = new Array<Enemy>(false, 64);
 	private Array<Bullet> bullets = new Array<Bullet>(false, 64);
 	private Array<Particle> particles = new Array<Particle>(false, 64);
+	private Array<PowerUp> powerups = new Array<PowerUp>(false, 64);
 	
 	// Map control
 	private Map currentMap;
@@ -164,6 +167,7 @@ public class GameState extends State {
 		EnemyWorm.init();
 		EnemyVirus.init();
 		EnemyShielder.init();
+		EnemySuicider.init();
 		EnemyDasher.init();
 		AnalogStick.init();
 		
@@ -251,34 +255,7 @@ public class GameState extends State {
 			}
 					
 			if(player != null && !gameMode.isGameOver()) {
-				// Checking if any bullet hit an enemy
-				for(Bullet b : bullets) {
-					for(Enemy e : enemies) {
-						if(e.hasSpawned() && (b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
-								e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
-							
-							e.hit(Bullet.damage);
-							b.hit();
-							
-							//Adding a small camerashake
-							Camera.shake(0.1f, 0.05f);
-							
-							// Rewarding player depending on game mode
-							if(e.getLife() <= 0) {
-								gameMode.enemyKilled(e);
-								
-								cs.activate(enemies.size);
-								
-								enemiesKilled++;
-								
-								//Adding a stronger camera shake when the enemy dies
-								Camera.shake(0.3f, 0.1f);
-								break;
-							}
-						}
-					}
-				}
-				
+				updateHitDetections();
 				if(!player.isDying() && player.isDead() && player.getLife() > 0) {
 		        	pss.spawn(player.getLife(), true);
 		        }
@@ -295,6 +272,8 @@ public class GameState extends State {
 						pass.getPool().free((Particle) ent);
 					else if(ent instanceof Enemy)
 						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
+					else if(ent instanceof PowerUp)
+						powerups.removeIndex(powerups.indexOf((PowerUp) ent, true));
 					else if(ent instanceof Bullet) {
 						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
 						Bullet.free((Bullet) ent);
@@ -425,6 +404,44 @@ public class GameState extends State {
 		game.batch.end();
 	}
 	
+	public void updateHitDetections() {
+		if(getPlayer().getAmmoType() == AmmoType.BULLET) { 
+			// Checking if any bullet hit an enemy
+			for(Bullet b : bullets) {
+				for(Enemy e : enemies) {
+					if(e.hasSpawned() && e.getLife() > 0 && (b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
+							e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
+						
+						e.hit(Bullet.damage);
+						b.hit();
+						
+						//Adding a small camerashake
+						Camera.shake(0.1f, 0.05f);
+						
+						// Rewarding player depending on game mode
+						if(e.getLife() <= 0) {
+							gameMode.enemyKilled(e);
+							
+							cs.activate(enemies.size);
+							
+							enemiesKilled++;
+							
+							//Adding a stronger camera shake when the enemy dies
+							Camera.shake(0.3f, 0.1f);
+							break;
+						}
+					}
+				}
+			}
+		} else if(getPlayer().getAmmoType() == AmmoType.LASER) {
+			for(Enemy e : enemies) {
+				if(e.hasSpawned() && e.getLife() > 0 && Util.isOnLine(getPlayer().getX(), getPlayer().getY(), Gdx.input.getX(), Gdx.input.getY(), e.getX(), e.getY(), 1)) {
+					System.out.println("hit");
+				}
+			}
+		}
+	}
+	
 	public void addEntity(Entity entity) {
 		if(entity instanceof Particle) {
 			particles.add((Particle) entity);
@@ -433,10 +450,24 @@ public class GameState extends State {
 			bullets.add((Bullet) entity);
 		else if(entity instanceof Enemy)
 			enemies.add((Enemy) entity);
+		else if(entity instanceof PowerUp)
+			powerups.add((PowerUp) entity);
 		else if(entity instanceof Player)
 			player = (Player) entity;
 
 		entities.add(entity);
+	}
+	
+	public void clearEnemies() {
+		// Removing all enemies from lists
+    	for(Iterator<Enemy> it = enemies.iterator(); it.hasNext(); ) {
+        	Enemy e = it.next();
+        	if(!(e instanceof EnemyVirus)) {
+            	e.hit(e.getLife());
+            	entities.removeValue(e, true);
+            	it.remove();
+        	}
+    	}
 	}
 	
 	public void setScoreMultiplier(int multiplier) {
@@ -449,6 +480,7 @@ public class GameState extends State {
 	public Stage getStage() { return stage;	}
 	
 	public Array<Bullet> getBullets() {	return bullets;	}
+	public Array<PowerUp> getPowerUps() { return powerups; }
 	public Array<Enemy> getEnemies() { return enemies; }
 	public Array<Entity> getEntities() { return entities; }
 	public MapHandler getMapHandler() { return mapHandler; }
@@ -505,6 +537,7 @@ public class GameState extends State {
 		// Entity reset
 		entities.clear();
 		enemies.clear();
+		powerups.clear();
 		bullets.clear();
 		particles.clear();
 	}
@@ -550,7 +583,7 @@ public class GameState extends State {
 		
 		Bullet.maxBounces = 0;
 		
-		waveNumber = 3;
+		waveNumber = 0;
 		currentWave = waveManager.getWave(waveNumber);
 	}
 
@@ -625,6 +658,7 @@ public class GameState extends State {
 			ent.dispose();
 		
 		enemies.clear();
+		powerups.clear();
 		bullets.clear();
 	}
 

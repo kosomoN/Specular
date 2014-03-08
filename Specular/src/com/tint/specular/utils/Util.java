@@ -48,6 +48,23 @@ public class Util {
 		return false;
 	}
 	
+	public static boolean isOnLine(float startX, float startY, float endX, float endY, float checkX, float checkY, float lineWidth) {
+		float startDirection = (float) (Math.atan2(startY - endY, startX - endX));
+		float direction = (float) Math.atan2(startY - checkY, startX - checkX);
+		
+		if(lineWidth != 1) {
+			float maxDifference = (float) Math.abs((startDirection - 2f * Math.atan2(startY - endY, startX - (endX + lineWidth / 2))));
+			if(direction < startDirection + maxDifference && direction > startDirection - maxDifference) {
+				return true;
+			}
+		} else {
+			if(direction == startDirection) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * Calculates distance with pythagoras statement
 	 *  @param x1 - x value of the first point

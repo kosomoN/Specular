@@ -1,6 +1,5 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;

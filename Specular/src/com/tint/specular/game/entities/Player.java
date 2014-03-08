@@ -13,7 +13,7 @@ import com.tint.specular.Specular;
 import com.tint.specular.game.BoardShock;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
-import com.tint.specular.game.entities.enemies.EnemyVirus;
+import com.tint.specular.game.entities.enemies.EnemySuicider;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
 
@@ -33,6 +33,7 @@ public class Player implements Entity {
 	public static int radius;
 	
 	private GameState gs;
+	private AmmoType ammo = AmmoType.BULLET;
 	
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
@@ -62,7 +63,10 @@ public class Player implements Entity {
 	Sound soundHit3 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit3.wav"));
 			
 //---------------SOUND FX END---------------------		
-		
+
+	public enum AmmoType {
+		BULLET, LASER
+	}
 
 	public Player(GameState gs, float x, float y, int lives) {
 		this.gs = gs;
@@ -75,8 +79,7 @@ public class Player implements Entity {
 		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
 	}
 
-	public void shoot(float direction, int offset, int spaces) {
-		
+	public void shootBullet(float direction, int offset, int spaces) {
 		//If the amount of bullet "lines" are even
 		if(bulletBurst % 2 == 0) {
 			for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
@@ -100,7 +103,9 @@ public class Player implements Entity {
 		}
 	}
 	
-
+	public void shootLaser(float direction) {
+		
+	}
 	
 	@Override
 	public void render(SpriteBatch batch) {
@@ -215,7 +220,7 @@ public class Player implements Entity {
 				int spaces = bulletBurst - 1;
 				int offset = 8;
 				
-				shoot(direction, offset, spaces);
+				shootBullet(direction, offset, spaces);
 				if(soundEffects)
 					soundShoot1.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
 				timeSinceLastFire = 0;
@@ -227,7 +232,7 @@ public class Player implements Entity {
         boolean clearEnemies = false;
 		for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
-    		if(e.hasSpawned() && e.getLife() > 0) {
+    		if(!(e instanceof EnemySuicider) && e.hasSpawned() && e.getLife() > 0) {
     			float distX = centerx - e.getX();
     			float distY = centery - e.getY();
         		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
@@ -262,18 +267,10 @@ public class Player implements Entity {
         }	
 		
         if(clearEnemies) {
-        	// Removing all enemies from lists
-        	for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
-            	Enemy e = it.next();
-            	if(!(e instanceof EnemyVirus)) {
-	            	e.hit(e.getLife());
-	            	gs.getEntities().removeValue(e, true);
-	            	it.remove();
-            	}
-        	}
+        	gs.clearEnemies();
         }
 	}
-
+	
 	public void addShield() {
 		if(shields < 3)
 			shields++;
@@ -315,8 +312,19 @@ public class Player implements Entity {
 	public void setBulletBurstLevel(int level) { bulletBurstLevel = level; }
 	public void addBulletBurstLevel(int level) { bulletBurstLevel += level; }
 	
+	public void changeAmmo(AmmoType ammo) { this.ammo = ammo; }
+	
 	public void setLife(int life) { this.life = life; }
-	public void kill() { life = 0; }
+	public void kill() {
+		addLives(-1);
+		dying = true;
+		
+		//Hit sound (randomize)
+//		int randomNum = rand.nextInt(3);
+//		if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
+		animFrameTime = 0;
+		gs.clearEnemies();
+	}
 	
 	
 	@Override public float getX() { return centerx; }
@@ -338,6 +346,7 @@ public class Player implements Entity {
 	public boolean isSpawning() { return spawning; }
 	public boolean isDead() { return dead; }
 	public GameState getGameState() { return gs; }
+	public AmmoType getAmmoType() { return ammo; }
 	
 	public void respawn() {
 		animFrameTime = 0;

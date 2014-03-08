@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
+import com.tint.specular.game.entities.Player.AmmoType;
 
 /**
  * 
@@ -53,7 +54,7 @@ public class BulletBurst extends PowerUp {
 	
 	@Override
 	protected void updatePowerup(Player player) {
-		if(gs.getGameProcessor().getShootStick().isActive()) {
+		if(player.getAmmoType() != AmmoType.LASER && gs.getGameProcessor().getShootStick().isActive()) {
 			if(playersFired.contains(player))
 				timesFiredSamePlayer++;
 
@@ -74,17 +75,17 @@ public class BulletBurst extends PowerUp {
 					if(level > 1) {
 						direction += 90;
 						direction = direction % 360;
-						player.shoot(direction, offset, spaces - 2);
+						player.shootBullet(direction, offset, spaces - 2);
 						
 						direction -= 180;
 						direction = direction % 360;
-						player.shoot(direction, offset, spaces - 2);
+						player.shootBullet(direction, offset, spaces - 2);
 					}
 					
 					if(level > 2) {
 						direction -= 90;
 						direction = direction % 360;
-						player.shoot(direction, offset, spaces - 2);
+						player.shootBullet(direction, offset, spaces - 2);
 					}
 					
 					timeSinceLastFire = 0;

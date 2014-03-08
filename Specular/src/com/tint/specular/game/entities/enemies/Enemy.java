@@ -1,7 +1,5 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,7 +17,7 @@ import com.tint.specular.game.entities.Particle.Type;
 public abstract class Enemy implements Entity {
 	
 	public enum EnemyType {
-		ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_STRIVER, ENEMY_CIRCLER, ENEMY_SHIELDER, ENEMY_VIRUS, ENEMY_WANDERER;
+		ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_STRIVER, ENEMY_CIRCLER, ENEMY_SHIELDER, ENEMY_VIRUS, ENEMY_WANDERER, ENEMY_SUICIDER;
 	}
 	
 	protected float x, y, dx, dy;
@@ -88,15 +86,14 @@ public abstract class Enemy implements Entity {
 	public void hit(int damage) {
 		life -= damage;
 		
-		if(life == 0)
+		if(life <= 0)
 			gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx * slowdown, dy * slowdown, 15, true);
 		else
 			gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx * slowdown, dy * slowdown, 6, false);
 	}
 	
-	public void addLife(int life) {
-		this.life += life;
-	}
+	public void addLife(int life) { this.life += life; }
+	public void kill() { hit(life); }
 	
 	public abstract int getValue();
 	public abstract Type getParticleType();
@@ -121,6 +118,14 @@ public abstract class Enemy implements Entity {
 	
 	public void setY(float y) {
 		this.y = y < 38 ? 38 : (y > gs.getCurrentMap().getHeight() - 38 ? gs.getCurrentMap().getHeight() - 38 : y);
+	}
+	
+	public void addDx(float dx) {
+		this.dx += dx;
+	}
+	
+	public void addDy(float dy) {
+		this.dy += dy;
 	}
 	
 	public boolean hasSpawned() {
