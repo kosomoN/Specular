@@ -125,7 +125,7 @@ public class GameState extends State {
 	private HUD hud;
 	private Texture gameOverTex;
 	private Music music;
-	private final String[] musicFileNames = new String[]{"01.mp3","02.mp3","05.mp3","06.mp3"};
+	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","03.ogg","04.ogg","05.mp3","06.mp3"};
 	private int currentMusic = -1;
 	
 	public GameState(Specular game) {
