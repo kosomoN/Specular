@@ -12,6 +12,7 @@ import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemySuicider;
+import com.tint.specular.game.entities.enemies.EnemyTanker;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 
@@ -193,6 +194,9 @@ public class Wave {
 			break;
 		case ENEMY_VIRUS:
 			e = new EnemyVirus(es.getX(), es.getY(), gs, false);
+			break;
+		case ENEMY_TANKER:
+			e = new EnemyTanker(es.getX(), es.getY(), gs);
 			break;
 		case ENEMY_SUICIDER:
 			e = new EnemySuicider(es.getX(), es.getY(), gs);

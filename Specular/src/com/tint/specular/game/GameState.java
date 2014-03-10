@@ -19,9 +19,9 @@ import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
+import com.tint.specular.game.entities.Player.AmmoType;
 import com.tint.specular.game.entities.Wave;
 import com.tint.specular.game.entities.WaveManager;
-import com.tint.specular.game.entities.Player.AmmoType;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
@@ -29,6 +29,7 @@ import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemySuicider;
+import com.tint.specular.game.entities.enemies.EnemyTanker;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
@@ -119,7 +120,7 @@ public class GameState extends State {
 	// Custom and default fonts
 	private BitmapFont arial15 = new BitmapFont();
 	private BitmapFont scoreFont, multiplierFont;
-	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
+	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"ï¿½`'<>";
 	
 	// Art
 	private HUD hud;
@@ -169,6 +170,7 @@ public class GameState extends State {
 		EnemyShielder.init();
 		EnemySuicider.init();
 		EnemyDasher.init();
+		EnemyTanker.init();
 		AnalogStick.init();
 		
 		// Initializing power-ups
