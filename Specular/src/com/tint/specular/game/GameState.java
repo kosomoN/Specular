@@ -125,8 +125,9 @@ public class GameState extends State {
 	// Art
 	private HUD hud;
 	private Texture gameOverTex;
+	private Texture pauseTex;
 	private Music music;
-	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","03.ogg","04.ogg","05.mp3","06.mp3"};
+	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","03.ogg","04.ogg","05.ogg","06.ogg"};
 	private int currentMusic = -1;
 	
 	public GameState(Specular game) {
@@ -138,6 +139,9 @@ public class GameState extends State {
 		
 		// Loading gameover texture
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
+		
+		// Loading pause menu texture
+//		pauseTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/PauseMenu.png"));
 		
 		//Loading HUD
 		hud = new HUD(this);
@@ -379,7 +383,15 @@ public class GameState extends State {
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
 		// Drawing analogsticks
-		if(!gameMode.isGameOver()) {
+		if(gameMode.isGameOver()) {
+			game.batch.setColor(Color.WHITE);
+			game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
+			ggInputProcessor.getRetryBtn().render();
+			ggInputProcessor.getMenuBtn().render();
+			ggInputProcessor.getHighscoreBtn().render();
+		} /*else if(paused) { 
+			Util.drawCentered(game.batch, pauseTex, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
+		} */else {
 			gameInputProcessor.getShootStick().render(game.batch);
 			gameInputProcessor.getMoveStick().render(game.batch);
 
@@ -395,12 +407,6 @@ public class GameState extends State {
 			
 			multiplierFont.draw(game.batch, String.valueOf(currentWave.getID()), -Specular.camera.viewportWidth / 2 + 20, Specular.camera.viewportHeight / 2 - 20);
 			gameMode.render(game.batch);
-		} else {
-				game.batch.setColor(Color.WHITE);
-				game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
-			ggInputProcessor.getRetryBtn().render();
-			ggInputProcessor.getMenuBtn().render();
-			ggInputProcessor.getHighscoreBtn().render();
 		}
 		
 		game.batch.end();
@@ -476,6 +482,11 @@ public class GameState extends State {
 		scoreMultiplier = multiplier;
 		scoreMultiplierTimer = 0;
 	}
+	
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+	public boolean isPaused() { return paused; }
 	
 	public Specular getGame() {	return game; }
 	public GameInputProcessor getGameProcessor() { return gameInputProcessor; }

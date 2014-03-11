@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.game.entities.Player;
@@ -19,6 +20,8 @@ public class EnemySuicider extends Enemy {
 	private float rotation;
 	private int fuse = FULL_FUSE;
 	private boolean fuseStart;
+	
+	private Array<Enemy> enemiesHit = new Array<Enemy>();
 	
 	public EnemySuicider(float x, float y, GameState gs) {
 		super(x, y, gs, 2);
@@ -93,17 +96,22 @@ public class EnemySuicider extends Enemy {
 		double angle;
 		// Enemies
 		for(Enemy e : gs.getEnemies()) {
-			if(!e.equals(this)) {
+			if(!e.equals(this) && !enemiesHit.contains(e, true)) {
 				distanceSquared = (e.getX() - getX()) * (e.getX() - getX()) + (e.getY() - getY()) * (e.getY() - getY());
 				if(distanceSquared - 32 * 32 < explotionRadius * explotionRadius && distanceSquared + 32 * 32 > explotionRadius * explotionRadius) {
 					angle = Math.atan2(e.getY() - getY(), e.getX() - getX());
 					//Math.cos(angle) * distance (0-1) to make it push less if the enemy is far away * time^2 to make it smoothly disappear
-					e.addDx((float) (Math.cos(angle) * 10 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED)));
-					e.addDy((float) (Math.sin(angle) * 10 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED)));
+					float explotionProgress = 1 - explotionRadius / EXPLODE_RANGE_SQUARED;
+					float explotionPower = 10 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED);
+					float damage = (1f - (distanceSquared / EXPLODE_RANGE_SQUARED));
 					
-					float damage = 20 * ((explotionRadius * explotionRadius + 32 * 32 - distanceSquared) / (explotionRadius * explotionRadius));
+					e.setX((float) (e.getX() + Math.cos(angle) * explotionPower * explotionProgress * explotionProgress));
+					e.setY((float) (e.getY() + Math.sin(angle) * explotionPower * explotionProgress * explotionProgress));
+					
 					damage = damage < 0 ? 0 : damage;
-					e.hit(Math.round(damage));
+					e.hit(damage);
+					if(e.getLife() > 0)
+						enemiesHit.add(e);
 				}
 			}
 		}
@@ -133,7 +141,7 @@ public class EnemySuicider extends Enemy {
 	}
 	
 	@Override
-	public void hit(int damage) {
+	public void hit(float damage) {
 		life -= damage;
 	}
 

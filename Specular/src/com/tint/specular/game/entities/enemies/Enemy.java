@@ -24,8 +24,8 @@ public abstract class Enemy implements Entity {
 	protected float direction;
 	protected static float slowdown = 1;
 	
-	protected int life;
-	protected boolean isHit, hasSpawned;
+	protected float life;
+	protected boolean hasSpawned;
 	protected int spawnTimer;
 	
 	protected GameState gs;
@@ -83,7 +83,7 @@ public abstract class Enemy implements Entity {
 		Enemy.slowdown = slowdown;
 	}
 	
-	public void hit(int damage) {
+	public void hit(float damage) {
 		life -= damage;
 		
 		if(life <= 0)
@@ -92,7 +92,7 @@ public abstract class Enemy implements Entity {
 			gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx * slowdown, dy * slowdown, 6, false);
 	}
 	
-	public void addLife(int life) { this.life += life; }
+	public void addLife(float life) { this.life += life; }
 	public void kill() { hit(life); }
 	
 	public abstract int getValue();
@@ -104,7 +104,7 @@ public abstract class Enemy implements Entity {
 	public float getDy() { return dy; }
 	public static float getSlowdown() { return slowdown; }
 
-	public int getLife() { return life; }
+	public float getLife() { return life; }
 	
 	public abstract float getInnerRadius();
 	public abstract float getOuterRadius();
