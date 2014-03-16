@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Entity;
+import com.tint.specular.game.entities.Laser;
 import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.Player.AmmoType;
@@ -39,6 +40,7 @@ import com.tint.specular.game.powerups.AddLife;
 import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
+import com.tint.specular.game.powerups.LaserPowerup;
 import com.tint.specular.game.powerups.PowerUp;
 import com.tint.specular.game.powerups.PushAway;
 import com.tint.specular.game.powerups.Ricochet;
@@ -187,6 +189,9 @@ public class GameState extends State {
 		BoardshockPowerUp.init();
 		Ricochet.init();
 		PushAway.init();
+		LaserPowerup.init();
+		
+		Laser.init(this);
 		
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
@@ -212,7 +217,7 @@ public class GameState extends State {
 	protected void update() {
 		if(!paused) {
 			// Adding played time
-			if(entities.contains(player, true))
+			if(gameMode.isGameOver())
 				ticks++;
 			
 			// Updating combos
@@ -260,7 +265,7 @@ public class GameState extends State {
 				}
 			}
 					
-			if(player != null && !gameMode.isGameOver()) {
+			if(!gameMode.isGameOver()) {
 				updateHitDetections();
 				if(!player.isDying() && player.isDead() && player.getLife() > 0) {
 		        	pss.spawn(player.getLife(), true);
@@ -268,6 +273,11 @@ public class GameState extends State {
 			}
 			
 			boolean playerKilled = false;		// A variable to keep track of player status
+			
+			if(!gameMode.isGameOver() && player.update()) {
+				gameMode.playerKilled();
+				playerKilled = true;
+			}
 			
 			// Removing destroyed entities
 			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
@@ -283,13 +293,11 @@ public class GameState extends State {
 					else if(ent instanceof Bullet) {
 						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
 						Bullet.free((Bullet) ent);
-					} else if(ent instanceof Player) {
-						gameMode.playerKilled();
-						playerKilled = true;
 					}
 					it.remove();
 				}
 			}
+
 			for(Iterator<Particle> it = particles.iterator(); it.hasNext();) {
 				if(it.next().update())
 					it.remove();
@@ -373,8 +381,11 @@ public class GameState extends State {
 			if(ent instanceof Enemy)
 				ent.render(game.batch);
 		}
-		
+
 		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		
+		if(!gameMode.isGameOver())
+			player.render(game.batch);
 		
 		// Re-positioning camera for HUD
 		Specular.camera.position.set(0, 0, 0);
@@ -427,15 +438,8 @@ public class GameState extends State {
 						Camera.shake(0.1f, 0.05f);
 						
 						// Rewarding player depending on game mode
+						enemyHit(e);
 						if(e.getLife() <= 0) {
-							gameMode.enemyKilled(e);
-							
-							cs.activate(enemies.size);
-							
-							enemiesKilled++;
-							
-							//Adding a stronger camera shake when the enemy dies
-							Camera.shake(0.3f, 0.1f);
 							break;
 						}
 					}
@@ -450,6 +454,18 @@ public class GameState extends State {
 		}
 	}
 	
+	public void enemyHit(Enemy e) {
+		if(e.getLife() <= 0) {
+			gameMode.enemyKilled(e);
+			
+			cs.activate(enemies.size);
+			
+			enemiesKilled++;
+			
+			Camera.shake(0.3f, 0.1f);
+		}
+	}
+	
 	public void addEntity(Entity entity) {
 		if(entity instanceof Particle) {
 			particles.add((Particle) entity);
@@ -460,8 +476,10 @@ public class GameState extends State {
 			enemies.add((Enemy) entity);
 		else if(entity instanceof PowerUp)
 			powerups.add((PowerUp) entity);
-		else if(entity instanceof Player)
+		else if(entity instanceof Player) {
 			player = (Player) entity;
+			return;
+		}
 
 		entities.add(entity);
 	}

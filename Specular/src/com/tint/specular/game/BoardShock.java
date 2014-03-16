@@ -38,7 +38,7 @@ public class BoardShock {
 				activated = false;
 				zoom = 0;
 				for(Enemy e : gs.getEnemies()) {
-					if(!(e instanceof EnemyVirus)) {
+					if(!(e instanceof EnemyVirus) || Math.random() > 0.25) {
 						e.hit(e.getLife());
 						gs.gameMode.enemyKilled(e);
 					}

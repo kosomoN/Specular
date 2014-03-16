@@ -5,12 +5,12 @@ import java.util.Iterator;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.Specular;
 import com.tint.specular.game.BoardShock;
+import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemySuicider;
@@ -103,8 +103,93 @@ public class Player implements Entity {
 		}
 	}
 	
-	public void shootLaser(float direction) {
+	private void shootLaser(float direction) {
+		float dist1 = Integer.MAX_VALUE, dist2 = Integer.MAX_VALUE, dist3 = Integer.MAX_VALUE;
+		Enemy e1 = null, e2 = null, e3 = null;
+		for(Enemy e : gs.getEnemies()) {
+			if(!e.hasSpawned())
+				continue;
+			
+			float distance = Util.getDistanceSquared(centerx, centery, e.getX(), e.getY());
+			
+			if(dist3 > distance) {
+				double angleToEnemy = Math.toDegrees(Math.atan2(e.getY() - centery, e.getX() - centerx));
+				double deltaAngle = (angleToEnemy - direction + 360) % 360;
+				if(deltaAngle > 180) 
+					deltaAngle = 360 - deltaAngle;
+				
+				if(deltaAngle < 30) {
+					if(dist1 > distance) {
+						dist3 = dist2;
+						dist2 = dist1;
+						dist1 = distance;
+						
+						e3 = e2;
+						e2 = e1;
+						e1 = e;
+					} else if(dist2 > distance) {
+						dist3 = dist2;
+						dist2 = distance;
+						
+						e3 = e2;
+						e2 = e;
+					} else if(dist1 > distance) {
+						dist3 = distance;
+						e3 = e;
+					}
+				}
+			}
+		}
 		
+		if(e1 != null) {
+			e1.hit(1);
+			Camera.shake(0.1f, 0.05f);
+			gs.enemyHit(e1);
+			gs.addEntity(Laser.obtainLaser(centerx, centery, e1.getX(), e1.getY(), 0));
+		} else {
+			shootLaserInDir(direction, 0);
+		}
+		
+		if(e2 != null) {
+			e2.hit(1);
+			Camera.shake(0.1f, 0.05f);
+			gs.enemyHit(e2);
+			gs.addEntity(Laser.obtainLaser(centerx, centery, e2.getX(), e2.getY(), -1));
+		} else {
+			shootLaserInDir(direction - 8, -1);
+		}
+		
+		if(e3 != null) {
+			e3.hit(1);
+			Camera.shake(0.1f, 0.05f);
+			gs.enemyHit(e3);
+			gs.addEntity(Laser.obtainLaser(centerx, centery, e3.getX(), e3.getY(), 1));
+		} else {
+			shootLaserInDir(direction + 8, 1);
+		}
+	}
+	
+	private void shootLaserInDir(float dir, int barrelIndex) {
+		float sin = (float) Math.sin(Math.toRadians(dir));
+		float cos = (float) Math.cos(Math.toRadians(dir));
+		float x2 = 0, y2 = 0;
+		if(cos < 0) {
+			x2 = 0;
+			y2 = centery + sin * centerx / -cos;
+		} else {
+			x2 = gs.getCurrentMap().getWidth();
+			y2 = centery + sin * (gs.getCurrentMap().getWidth() - centerx) / cos;
+		}
+		
+		if(y2 < 0) {
+			y2 = 0;
+			x2 = centerx + cos * centery / -sin;
+		} else if(y2 > gs.getCurrentMap().getHeight()) {
+			y2 = gs.getCurrentMap().getHeight();
+			x2 = centerx + cos * (gs.getCurrentMap().getHeight() - centery) / sin;
+		}
+		
+		gs.addEntity(Laser.obtainLaser(centerx, centery, x2, y2, barrelIndex));
 	}
 	
 	@Override
@@ -216,13 +301,21 @@ public class Player implements Entity {
 		direction = (float) (Math.toDegrees(Math.atan2(shootStick.getYHead() - shootStick.getYBase(), shootStick.getXHead() - shootStick.getXBase())));
 		if(shootStick.isActive()) {
 			if(timeSinceLastFire >= fireRate) {
+				switch(ammo) {
+				case BULLET:
+					int spaces = bulletBurst - 1;
+					int offset = 8;
+					
+					shootBullet(direction, offset, spaces);
+					if(soundEffects)
+						soundShoot1.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
+					break;
+				case LASER:
+					shootLaser(direction);
+					break;
+				}
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
-				int spaces = bulletBurst - 1;
-				int offset = 8;
 				
-				shootBullet(direction, offset, spaces);
-				if(soundEffects)
-					soundShoot1.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
 				timeSinceLastFire = 0;
 			}
 		}
@@ -357,15 +450,12 @@ public class Player implements Entity {
 	
 	public static void init() {
 		playerTex  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
-		playerTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(playerTex, 128, 128, 1 / 16f, 0, 0, 7, 3);
 		
 		playerSpawnTex  = new Texture(Gdx.files.internal("graphics/game/Player Spawn Anim.png"));
-		playerSpawnTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		spawnAnim = Util.getAnimation(playerSpawnTex, 128, 128, 1 / 16f, 0, 0, 4, 3);
 		
 		playerDeathTex  = new Texture(Gdx.files.internal("graphics/game/Player Death Anim.png"));
-		playerDeathTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		deathAnim = Util.getAnimation(playerDeathTex, 128, 128, 1 / 16f, 0, 0, 3, 3);
 		
 		radius = (anim.getKeyFrame(0).getRegionWidth() - 10) / 2;
@@ -378,5 +468,13 @@ public class Player implements Entity {
 	@Override
 	public void dispose() {
 		playerTex.dispose();
+	}
+	
+	public float getBarrelPosX(int barrelIndex) {
+		return (float) (centerx + Math.cos(Math.toRadians(direction + barrelIndex * 8)) * 60);
+	}
+	
+	public float getBarrelPosY(int barrelIndex) {
+		return (float) (centery + Math.sin(Math.toRadians(direction + barrelIndex * 8)) * 60);
 	}
 }

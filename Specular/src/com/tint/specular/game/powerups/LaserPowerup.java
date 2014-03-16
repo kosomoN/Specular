@@ -7,16 +7,16 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.Player.AmmoType;
 
-public class Laser extends PowerUp {
+public class LaserPowerup extends PowerUp {
 
 	private static Texture tex;
 	
-	public Laser(float x, float y, GameState gs) {
+	public LaserPowerup(float x, float y, GameState gs) {
 		super(x, y, gs, 800);
 	}
 	
 	public static void init() {
-		tex = new Texture(Gdx.files.internal(""));
+		tex = new Texture(Gdx.files.internal("graphics/game/powerups/Swarm.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 

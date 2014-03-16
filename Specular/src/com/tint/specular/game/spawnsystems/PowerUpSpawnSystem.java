@@ -2,11 +2,13 @@ package com.tint.specular.game.spawnsystems;
 
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
+import com.tint.specular.game.entities.Player.AmmoType;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.powerups.AddLife;
 import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
+import com.tint.specular.game.powerups.LaserPowerup;
 import com.tint.specular.game.powerups.PowerUp;
 import com.tint.specular.game.powerups.PushAway;
 import com.tint.specular.game.powerups.Ricochet;
@@ -78,6 +80,10 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		if(pushAway > importance)
 			importance = pushAway;
 		
+		float laser = rand.nextInt(10) / 10f * 0.7f * (gs.getPlayer().getAmmoType().equals(AmmoType.LASER) ? 0 : 1);
+		if(laser > importance)
+			importance = laser;
+		
 		if(importance == life && player.getLife() < 4)
 			gs.addEntity(new AddLife(x, y, gs));
 		else if(importance == fireRate)
@@ -96,6 +102,8 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 			gs.addEntity(new Ricochet(x, y, gs));
 		else if(importance == pushAway)
 			gs.addEntity(new PushAway(x, y, gs));
+		else if(importance == laser)
+			gs.addEntity(new LaserPowerup(x, y, gs));
 	}
 	
 	/**
