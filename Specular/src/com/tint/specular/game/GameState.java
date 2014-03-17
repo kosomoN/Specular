@@ -29,7 +29,7 @@ import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
-import com.tint.specular.game.entities.enemies.EnemySuicider;
+import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.game.entities.enemies.EnemyTanker;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
@@ -53,6 +53,7 @@ import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.input.GameOverInputProcessor;
+import com.tint.specular.input.PauseInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.NativeAndroid.RequestCallback;
@@ -90,7 +91,7 @@ public class GameState extends State {
 	private float unprocessed;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
-	private boolean paused = false;
+	private boolean isPaused = false;
 	private int powerUpSpawnTime = 400;		// 10 sec in updates / ticks
 	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
 	private float boardshockCharge = 0; //Value between 0 and 1
@@ -118,6 +119,7 @@ public class GameState extends State {
 	private Input input;
 	private GameInputProcessor gameInputProcessor;
 	private GameOverInputProcessor ggInputProcessor;
+	private PauseInputProcessor pauseInputProcessor;
 	
 	// Custom and default fonts
 	private BitmapFont arial15 = new BitmapFont();
@@ -143,7 +145,7 @@ public class GameState extends State {
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
 		
 		// Loading pause menu texture
-//		pauseTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/PauseMenu.png"));
+		pauseTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Pause.png"));
 		
 		//Loading HUD
 		hud = new HUD(this);
@@ -174,7 +176,7 @@ public class GameState extends State {
 		EnemyWorm.init();
 		EnemyVirus.init();
 		EnemyShielder.init();
-		EnemySuicider.init();
+		EnemyExploder.init();
 		EnemyDasher.init();
 		EnemyTanker.init();
 		AnalogStick.init();
@@ -215,7 +217,7 @@ public class GameState extends State {
 	}
 	
 	protected void update() {
-		if(!paused) {
+		if(!isPaused) {
 			// Adding played time
 			if(gameMode.isGameOver())
 				ticks++;
@@ -342,10 +344,6 @@ public class GameState extends State {
 	
 	protected void renderGame() {
 		// Clearing screen, positioning camera, rendering map and entities
-		if(gameMode.isGameOver()) {
-			game.batch.setColor(0.6f, 0.6f, 0.6f, 1);
-		}
-   
 		//Positioning camera to the player		
 		Specular.camera.zoom = 1;
 		Camera.setPosition();
@@ -400,9 +398,11 @@ public class GameState extends State {
 			ggInputProcessor.getRetryBtn().render();
 			ggInputProcessor.getMenuBtn().render();
 			ggInputProcessor.getHighscoreBtn().render();
-		} /*else if(paused) { 
-			Util.drawCentered(game.batch, pauseTex, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
-		} */else {
+		} else if(isPaused) { 
+			Util.drawCentered(game.batch, pauseTex, (Gdx.graphics.getWidth() - pauseTex.getWidth()) / 2, (Gdx.graphics.getHeight() - pauseTex.getHeight()) / 2, 0);
+			pauseInputProcessor.getResumeButton().render();
+			pauseInputProcessor.getToMenuButton().render();
+		} else {
 			gameInputProcessor.getShootStick().render(game.batch);
 			gameInputProcessor.getMoveStick().render(game.batch);
 
@@ -502,12 +502,14 @@ public class GameState extends State {
 	}
 	
 	public void setPaused(boolean paused) {
-		this.paused = paused;
+		this.isPaused = paused;
 	}
-	public boolean isPaused() { return paused; }
+	
+	public boolean isPaused() { return isPaused; }
 	
 	public Specular getGame() {	return game; }
 	public GameInputProcessor getGameProcessor() { return gameInputProcessor; }
+	public PauseInputProcessor getPauseProcessor() { return pauseInputProcessor; }
 	public Stage getStage() { return stage;	}
 	
 	public Array<Bullet> getBullets() {	return bullets;	}
@@ -600,7 +602,8 @@ public class GameState extends State {
 		gameInputProcessor.reset();
 		input.setInputProcessor(gameInputProcessor);
 		ggInputProcessor = new GameOverInputProcessor(game, this);
-		
+		pauseInputProcessor = new PauseInputProcessor(game, this);
+
 		resetGameTime();
 		
 		// Disable or enable virus spawn in start, > 0 = enable & < 0 = disable
@@ -611,7 +614,6 @@ public class GameState extends State {
 		scoreMultiplierTimer = 0;
 		
 		boardshockCharge = 0;
-		
 		Bullet.maxBounces = 0;
 		
 		waveNumber = 0;
@@ -671,13 +673,13 @@ public class GameState extends State {
 	public void resume() {
 		super.resume();
 		lastTickTime = System.nanoTime();
-		paused = false;
+		isPaused = false;
 	}
 
 	@Override
 	public void pause() {
 		super.pause();
-		paused = true;
+		isPaused = true;
 	}
 
 	@Override
@@ -710,6 +712,8 @@ public class GameState extends State {
 		if(!gameMode.isGameOver()) {
 			saveStats();
 		}
+		
+		isPaused = false;
 	}
 	
 	private void saveStats() {

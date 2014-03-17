@@ -45,7 +45,7 @@ public class MenuInputProcessor extends InputAdapter {
 	@Override
 	public boolean keyUp(int keycode) {
  		howToPlay = menuState.showHowToPlay();
-		if(keycode == Keys.BACK) {
+		if(keycode == Keys.BACK || keycode == Keys.ESCAPE) {
 			if(howToPlay)
 				menuState.setHowToPlay(false);
 			else

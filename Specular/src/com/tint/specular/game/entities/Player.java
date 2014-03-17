@@ -13,7 +13,7 @@ import com.tint.specular.game.BoardShock;
 import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
-import com.tint.specular.game.entities.enemies.EnemySuicider;
+import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
 
@@ -325,7 +325,7 @@ public class Player implements Entity {
         boolean clearEnemies = false;
 		for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
-    		if(!(e instanceof EnemySuicider) && e.hasSpawned() && e.getLife() > 0) {
+    		if(!(e instanceof EnemyExploder) && e.hasSpawned() && e.getLife() > 0) {
     			float distX = centerx - e.getX();
     			float distY = centery - e.getY();
         		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {

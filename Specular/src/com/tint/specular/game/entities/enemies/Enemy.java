@@ -17,7 +17,7 @@ import com.tint.specular.game.entities.Particle.Type;
 public abstract class Enemy implements Entity {
 	
 	public enum EnemyType {
-		ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_STRIVER, ENEMY_CIRCLER, ENEMY_SHIELDER, ENEMY_VIRUS, ENEMY_WANDERER, ENEMY_SUICIDER, ENEMY_TANKER;
+		ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_STRIVER, ENEMY_CIRCLER, ENEMY_SHIELDER, ENEMY_VIRUS, ENEMY_WANDERER, ENEMY_EXPLODER, ENEMY_TANKER;
 	}
 	
 	protected float x, y, dx, dy;
@@ -62,8 +62,8 @@ public abstract class Enemy implements Entity {
 				batch.draw(getWarningTex(), x - getWarningTex().getWidth() / 2, y - getWarningTex().getHeight() / 2);
 				batch.setColor(1, 1, 1, 1);
 			} else {
-				TextureRegion tr = getSpawnAnim().getKeyFrame(spawnTimer / 60f - 2);
-				batch.draw(tr, x - tr.getRegionWidth() / 2, y - tr.getRegionHeight() / 2);
+				/*TextureRegion tr = getSpawnAnim().getKeyFrame(spawnTimer / 60f - 2);
+				batch.draw(tr, x - tr.getRegionWidth() / 2, y - tr.getRegionHeight() / 2);*/
 			}
 		}
 	}

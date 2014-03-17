@@ -11,7 +11,7 @@ import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
-import com.tint.specular.game.entities.enemies.EnemySuicider;
+import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.game.entities.enemies.EnemyTanker;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
@@ -23,7 +23,7 @@ public class Wave {
 	private int totalDuration;
 	private int duration;
 	private GameState gs;
-	private List<EnemySpawnFormation> enemieFormations = new ArrayList<EnemySpawnFormation>();
+	private List<EnemySpawnFormation> enemyFormations = new ArrayList<EnemySpawnFormation>();
 	private int maxRepeatTimes, repeatTimes, repeatDelay;
 	private float repeatDelayChange = 1;
 	private long ID;
@@ -42,7 +42,7 @@ public class Wave {
 			if(maxRepeatTimes > repeatTimes && (int) (repeatDelay * (repeatTimes + 1) * repeatDelayChange) == duration) {
 				repeatTimes++;
 				List<Enemy> newEnemies = new ArrayList<Enemy>();
-				for(EnemySpawnFormation esf : enemieFormations) {
+				for(EnemySpawnFormation esf : enemyFormations) {
 					for(EnemySpawn es : esf.getEnemies())
 						newEnemies.add(spawnEnemy(gs, es));
 				}
@@ -62,7 +62,7 @@ public class Wave {
 	
 	private void start() {
 		List<Enemy> newEnemies = new ArrayList<Enemy>();
-		for(EnemySpawnFormation esf : enemieFormations) {
+		for(EnemySpawnFormation esf : enemyFormations) {
 			for(EnemySpawn es : esf.getEnemies())
 				newEnemies.add(spawnEnemy(gs, es));
 		}
@@ -140,7 +140,7 @@ public class Wave {
 				tempEnemies.add(new EnemySpawn(enemyTypes[i]));
 		}
 		formation.setFormation(tempEnemies, gs);
-		enemieFormations.add(new EnemySpawnFormation(tempEnemies, formation));
+		enemyFormations.add(new EnemySpawnFormation(tempEnemies, formation));
 	}
 	
 	public void addEnemies(EnemyType enemyType, int amount, Formation formation) {
@@ -148,7 +148,7 @@ public class Wave {
 		for(int j = 0; j < amount; j++)
 			tempEnemies.add(new EnemySpawn(enemyType));
 		formation.setFormation(tempEnemies, gs);
-		enemieFormations.add(new EnemySpawnFormation(tempEnemies, formation));
+		enemyFormations.add(new EnemySpawnFormation(tempEnemies, formation));
 	}
 
 	public Wave setTotalDuration(int seconds) {
@@ -198,8 +198,8 @@ public class Wave {
 		case ENEMY_TANKER:
 			e = new EnemyTanker(es.getX(), es.getY(), gs);
 			break;
-		case ENEMY_SUICIDER:
-			e = new EnemySuicider(es.getX(), es.getY(), gs);
+		case ENEMY_EXPLODER:
+			e = new EnemyExploder(es.getX(), es.getY(), gs);
 			break;
 		default:
 			break;

@@ -14,7 +14,7 @@ import com.tint.specular.game.entities.Particle.Type;
 public class Laser implements Entity, Poolable {
 
 	private static final int FADE_DELAY = 10;
-	private static Texture laserTexture, overlayLaserTexture;
+	private static Texture laserTexture;
 	private static Pool<Laser> laserPool;
 	
 	private float[] verticies = new float[4 * 5];
@@ -62,15 +62,11 @@ public class Laser implements Entity, Poolable {
 	@Override
 	public void dispose() {
 		laserTexture.dispose();
-		overlayLaserTexture.dispose();
 	}
 	
 	public static void init(final GameState gs) {
 		laserTexture = new Texture(Gdx.files.internal("graphics/game/Laser.png"));
 		laserTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		
-		overlayLaserTexture = new Texture(Gdx.files.internal("graphics/game/Laser Overlay.png"));
-		overlayLaserTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		laserPool = new Pool<Laser>() {
 

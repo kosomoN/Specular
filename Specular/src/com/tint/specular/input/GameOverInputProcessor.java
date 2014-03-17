@@ -80,16 +80,15 @@ public class GameOverInputProcessor extends InputAdapter {
 			if(retry.isOver(touchpointx, touchpointy, false)) {
 				// Restart game
 				gs.reset();
-			} else {
-				retry.touchUp();
 			}
-			if(menu.isOver(touchpointx, touchpointy, false)) {
 			
+			if(menu.isOver(touchpointx, touchpointy, false)) {
 				// Return to menu
 				game.enterState(States.MAINMENUSTATE);
-			} else {
-				menu.touchUp();
-			}
+		}
+			
+			retry.touchUp();
+			menu.touchUp();
 			
 			if(highscores.isOver(touchpointx, touchpointy, false)) {
 				
