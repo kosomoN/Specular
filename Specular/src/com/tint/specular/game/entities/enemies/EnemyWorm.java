@@ -168,4 +168,10 @@ public class EnemyWorm extends Enemy {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	protected float getRotationSpeed() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

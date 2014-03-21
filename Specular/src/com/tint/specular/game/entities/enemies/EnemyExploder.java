@@ -202,4 +202,9 @@ public class EnemyExploder extends Enemy {
 		return warningTex;
 	}
 
+	@Override
+	protected float getRotationSpeed() {
+		return 10;
+	}
+
 }

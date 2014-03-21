@@ -19,7 +19,6 @@ public class EnemyTanker extends Enemy {
 
 	private static Animation anim;
 	private static Texture tex, warningTex;
-	private float rotation;
 	private float speed;
 
 	public EnemyTanker(float x, float y, GameState gs) {
@@ -29,9 +28,8 @@ public class EnemyTanker extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		rotation += Gdx.graphics.getDeltaTime();
 		if(hasSpawned)
-			Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
+			Util.drawCentered(batch, tex, x, y, rotation * 60 % 360);
 		else
 			Util.drawCentered(batch, tex, x, y, tex.getWidth() * (spawnTimer / 100f), tex.getHeight() * (spawnTimer / 100f), rotation * 90 % 360);
 	}
@@ -92,5 +90,10 @@ public class EnemyTanker extends Enemy {
 	@Override
 	protected Texture getWarningTex() {
 		return warningTex;
+	}
+
+	@Override
+	protected float getRotationSpeed() {
+		return 60;
 	}
 }

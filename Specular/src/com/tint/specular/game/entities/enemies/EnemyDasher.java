@@ -16,7 +16,7 @@ import com.tint.specular.utils.Util;
  */		
 
 public class EnemyDasher extends Enemy {
-
+	
 	private static Animation anim;
 	private static Texture tex, warningTex;
 
@@ -127,5 +127,10 @@ public class EnemyDasher extends Enemy {
 	@Override
 	protected Texture getWarningTex() {
 		return warningTex;
+	}
+
+	@Override
+	protected float getRotationSpeed() {
+		return 0;
 	}
 }

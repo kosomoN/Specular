@@ -19,7 +19,6 @@ public class EnemyStriver extends Enemy {
 
 	private static Animation anim;
 	private static Texture tex, warningTex;
-	private float rotation;
 	private float speed;
 
 	public EnemyStriver(float x, float y, GameState gs) {
@@ -30,7 +29,6 @@ public class EnemyStriver extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		rotation += Gdx.graphics.getDeltaTime();
 		if(hasSpawned)
 			Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
 		else
@@ -86,5 +84,10 @@ public class EnemyStriver extends Enemy {
 	@Override
 	protected Texture getWarningTex() {
 		return warningTex;
+	}
+
+	@Override
+	protected float getRotationSpeed() {
+		return 90;
 	}
 }

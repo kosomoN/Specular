@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Particle.Type;
+import com.tint.specular.utils.Util;
 
 /**
  * 
@@ -21,7 +22,7 @@ public abstract class Enemy implements Entity {
 	}
 	
 	protected float x, y, dx, dy;
-	protected float direction;
+	protected float direction, rotation;
 	protected static float slowdown = 1;
 	
 	protected float life;
@@ -39,6 +40,7 @@ public abstract class Enemy implements Entity {
 	
 	@Override
 	public boolean update() {
+		rotation += 1 / 60f;
 		if(hasSpawned)
 			updateMovement();
 		else {
@@ -59,11 +61,11 @@ public abstract class Enemy implements Entity {
 			//Show warning image
 			if(spawnTimer < 2f * 60) {
 				batch.setColor(1, 1, 1, ((float) Math.cos(spawnTimer / 60f * Math.PI * 2 + Math.PI) + 1) / 2);
-				batch.draw(getWarningTex(), x - getWarningTex().getWidth() / 2, y - getWarningTex().getHeight() / 2);
+				Util.drawCentered(batch, getWarningTex(), x, y, rotation * getRotationSpeed());
 				batch.setColor(1, 1, 1, 1);
-			} else if(getSpawnAnim() != null) {
+			} else {
 				TextureRegion tr = getSpawnAnim().getKeyFrame(spawnTimer / 60f - 2);
-				batch.draw(tr, x - tr.getRegionWidth() / 2, y - tr.getRegionHeight() / 2);
+				Util.drawCentered(batch, tr, x, y, rotation * getRotationSpeed());
 			}
 		}
 	}
@@ -71,6 +73,7 @@ public abstract class Enemy implements Entity {
 	protected abstract void renderEnemy(SpriteBatch batch);
 	
 	protected abstract Animation getSpawnAnim();
+	protected abstract float getRotationSpeed();
 	protected abstract Texture getWarningTex();
 	
 	public abstract void updateMovement();

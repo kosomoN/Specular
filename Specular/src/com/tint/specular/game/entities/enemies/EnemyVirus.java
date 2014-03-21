@@ -28,11 +28,10 @@ public class EnemyVirus extends Enemy {
 	
 	private static Animation anim;
 	private static Texture tex, warningTex;
-	private float size = 0.5f;
+	private float size = 1;
 	private float growthRate = (float) (BASE_GROWTH_RATE + BASE_GROWTH_RATE * Math.random());
 	private Behavior behavior;
 	private double angle;
-	private float rotation;
 	
 	public EnemyVirus(float x, float y, GameState gs, boolean spawnedFromOtherVirus) {
 		super(x, y, gs, 1);
@@ -55,8 +54,7 @@ public class EnemyVirus extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		rotation += Gdx.graphics.getDeltaTime();
-		Util.drawCentered(batch, tex, (float) x - tex.getWidth() / 2 * size, y - tex.getHeight() / 2 * size, tex.getWidth() * size, tex.getHeight() * size, rotation * 90 % 360);
+		Util.drawCentered(batch, tex, (float) x - tex.getWidth() / 2 * size, y - tex.getHeight() / 2 * size, tex.getWidth() * size, tex.getHeight() * size, rotation * 80 % 360);
 	}
 	
 	@Override
@@ -113,8 +111,8 @@ public class EnemyVirus extends Enemy {
 		y += dy * slowdown;
 		
 		size += growthRate * 10 / virusAmount;
-		if(size >= 1) {
-			size = 0.5f;
+		if(size >= 1.5f) {
+			size = 1;
 			gs.addEntity(new EnemyVirus(x, y, gs, true));
 		}
 	}
@@ -157,5 +155,10 @@ public class EnemyVirus extends Enemy {
 	@Override
 	protected Texture getWarningTex() {
 		return warningTex;
+	}
+
+	@Override
+	protected float getRotationSpeed() {
+		return 80;
 	}
 }

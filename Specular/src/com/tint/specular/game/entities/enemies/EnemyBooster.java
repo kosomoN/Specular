@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -33,6 +34,24 @@ public class EnemyBooster extends Enemy {
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
 		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction) - 90);
+	}
+	
+	@Override
+	public void render(SpriteBatch batch) {
+		if(hasSpawned)
+			renderEnemy(batch);
+		else {
+			//Show warning image
+			rotation = (float) Math.toDegrees(Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x));
+			if(spawnTimer < 2f * 60) {
+				batch.setColor(1, 1, 1, ((float) Math.cos(spawnTimer / 60f * Math.PI * 2 + Math.PI) + 1) / 2);
+				Util.drawCentered(batch, getWarningTex(), x, y, rotation - 90);
+				batch.setColor(1, 1, 1, 1);
+			} else {
+				TextureRegion tr = getSpawnAnim().getKeyFrame(spawnTimer / 60f - 2);
+				Util.drawCentered(batch, tr, x, y, rotation - 90);
+			}
+		}
 	}
 	
 	@Override
@@ -75,6 +94,8 @@ public class EnemyBooster extends Enemy {
 			speed = 0;
 			passed = false;
 			boostingDelay++;
+			dx = 0;
+			dy = 0;
 		} else {
 			boostingDelay++;
 		}
@@ -96,7 +117,7 @@ public class EnemyBooster extends Enemy {
 			boostingDelay = 0;
 		}
 	}
-
+	
 	@Override
 	public float getInnerRadius() { return 16; }
 	@Override
@@ -135,5 +156,10 @@ public class EnemyBooster extends Enemy {
 	@Override
 	protected Texture getWarningTex() {
 		return warningTex;
+	}
+
+	@Override
+	protected float getRotationSpeed() {
+		return 0;
 	}
 }

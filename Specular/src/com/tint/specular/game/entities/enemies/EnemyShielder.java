@@ -27,7 +27,7 @@ public class EnemyShielder extends Enemy {
 		animFrameTime += Gdx.graphics.getDeltaTime();
 		
 		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
-		batch.draw(frame, x - frame.getRegionWidth() / 2, y - frame.getRegionHeight() / 2, frame.getRegionWidth() / 2, frame.getRegionHeight() / 2, frame.getRegionWidth(), frame.getRegionHeight(), 1, 1, animFrameTime * 70, false);
+		Util.drawCentered(batch, frame, x, y, rotation * 70);
 	}
 
 	@Override
@@ -88,5 +88,10 @@ public class EnemyShielder extends Enemy {
 	@Override
 	protected Texture getWarningTex() {
 		return warningTex;
+	}
+
+	@Override
+	protected float getRotationSpeed() {
+		return 70;
 	}
 }

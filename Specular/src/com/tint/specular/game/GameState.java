@@ -705,6 +705,7 @@ public class GameState extends State {
 	@Override
 	public void hide() {
 		super.hide();
+		music.stop();
 		if(music != null)
 			music.dispose();
 		music = null;

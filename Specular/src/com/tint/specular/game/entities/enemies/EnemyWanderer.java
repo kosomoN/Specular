@@ -22,7 +22,6 @@ public class EnemyWanderer extends Enemy {
 	private static Animation anim;
 	private static Texture tex, warningTex;
 	private static Random random = new Random();
-	private float rotation;
 	private float dirChangeRateMs = 2000f;
 	private float timeSinceLastDirChange;
 	private double angle, turnRate;
@@ -45,8 +44,7 @@ public class EnemyWanderer extends Enemy {
 	
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		rotation -= Gdx.graphics.getDeltaTime();
-		Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
+		Util.drawCentered(batch, tex, x, y, rotation * 70 % 360);
 	}
 
 	@Override
@@ -119,5 +117,10 @@ public class EnemyWanderer extends Enemy {
 	@Override
 	protected Texture getWarningTex() {
 		return warningTex;
+	}
+
+	@Override
+	protected float getRotationSpeed() {
+		return 70;
 	}
 }

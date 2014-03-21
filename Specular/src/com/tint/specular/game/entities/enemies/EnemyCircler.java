@@ -40,7 +40,7 @@ public class EnemyCircler extends Enemy {
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
 		rotation += Gdx.graphics.getDeltaTime();
-		Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
+		Util.drawCentered(batch, tex, x, y, rotation * 100 % 360);
 	}
 	
 	@Override
@@ -105,5 +105,10 @@ public class EnemyCircler extends Enemy {
 	@Override
 	protected Texture getWarningTex() {
 		return warningTex;
+	}
+
+	@Override
+	protected float getRotationSpeed() {
+		return 100;
 	}
 }
