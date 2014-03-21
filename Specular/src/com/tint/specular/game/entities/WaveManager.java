@@ -52,7 +52,7 @@ public class WaveManager {
 	public void initWaves(GameState gs) {
 		Gdx.app.log("Specular", "Loading Waves");
 		wave1 = new Wave(gs, 0).setTotalDuration(20);
-		wave1.addEnemies(EnemyType.ENEMY_WANDERER, 10, Formation.EDGES);
+		wave1.addEnemies(EnemyType.ENEMY_EXPLODER, 10, Formation.EDGES);
 		
 		wave2 = new Wave(gs, 1).setTotalDuration(20);
 		wave2.addEnemies(ENEMY_CIRCLER, 5, Formation.RANDOM);

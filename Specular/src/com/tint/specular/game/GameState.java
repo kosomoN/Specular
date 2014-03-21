@@ -284,18 +284,18 @@ public class GameState extends State {
 			// Removing destroyed entities
 			for(Iterator<Entity> it = entities.iterator(); it.hasNext();) {
 				Entity ent = it.next();
-				
 				if(ent.update()) {
 					if(ent instanceof Particle)
 						pass.getPool().free((Particle) ent);
-					else if(ent instanceof Enemy)
+					else if(ent instanceof Enemy) {
 						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
-					else if(ent instanceof PowerUp)
+					} else if(ent instanceof PowerUp)
 						powerups.removeIndex(powerups.indexOf((PowerUp) ent, true));
 					else if(ent instanceof Bullet) {
 						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
 						Bullet.free((Bullet) ent);
 					}
+					
 					it.remove();
 				}
 			}
@@ -391,18 +391,22 @@ public class GameState extends State {
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
-		// Drawing analogsticks
+		// Game over screen
 		if(gameMode.isGameOver()) {
 			game.batch.setColor(Color.WHITE);
 			game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
 			ggInputProcessor.getRetryBtn().render();
 			ggInputProcessor.getMenuBtn().render();
 			ggInputProcessor.getHighscoreBtn().render();
-		} else if(isPaused) { 
+		}
+		// Pause menu
+		else if(isPaused) { 
 			Util.drawCentered(game.batch, pauseTex, (Gdx.graphics.getWidth() - pauseTex.getWidth()) / 2, (Gdx.graphics.getHeight() - pauseTex.getHeight()) / 2, 0);
 			pauseInputProcessor.getResumeButton().render();
 			pauseInputProcessor.getToMenuButton().render();
-		} else {
+		}
+		// In-game
+		else {
 			gameInputProcessor.getShootStick().render(game.batch);
 			gameInputProcessor.getMoveStick().render(game.batch);
 
