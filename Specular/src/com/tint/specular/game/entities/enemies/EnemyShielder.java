@@ -16,7 +16,6 @@ public class EnemyShielder extends Enemy {
 	
 	private static Animation anim, spawnAnim;
 	private static Texture warningTex;
-	private float animFrameTime;
 	
 	public EnemyShielder(float x, float y, GameState gs) {
 		super(x, y, gs, 10);
@@ -24,9 +23,7 @@ public class EnemyShielder extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		animFrameTime += Gdx.graphics.getDeltaTime();
-		
-		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
+		TextureRegion frame = anim.getKeyFrame(rotation, true);
 		Util.drawCentered(batch, frame, x, y, rotation * 70);
 	}
 

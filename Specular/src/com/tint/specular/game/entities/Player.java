@@ -195,7 +195,7 @@ public class Player implements Entity {
 	
 	@Override
 	public void render(SpriteBatch batch) {
-		animFrameTime += Gdx.graphics.getDeltaTime();
+		
 		if(spawning) {
 			// Spawn animation
 			TextureRegion frame = spawnAnim.getKeyFrame(animFrameTime, false);
@@ -227,6 +227,8 @@ public class Player implements Entity {
 	@Override
 	public boolean update() {
 		// Taking control away when player is hit and respawning
+		animFrameTime += 1 / 60f;
+		
 		if(!dying && !spawning) {
 			updateMovement();
 			updateShooting();
@@ -354,7 +356,7 @@ public class Player implements Entity {
     					animFrameTime = 0;
     					clearEnemies = true;
     					
-    					gs.getParticleSpawnSystem().spawn(Type.BULLET, getX(), getY(), getDeltaX(), getDeltaY(), 20, true);
+    					gs.getParticleSpawnSystem().spawn(Type.BULLET, getX(), getY(), getDeltaX(), getDeltaY(), 20, false);
     					
     					break;
         			}	
@@ -420,6 +422,8 @@ public class Player implements Entity {
 //		if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
 		animFrameTime = 0;
 		gs.clearEnemies();
+		
+		System.out.println("Kill");
 	}
 	
 	

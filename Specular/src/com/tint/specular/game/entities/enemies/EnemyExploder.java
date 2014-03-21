@@ -29,8 +29,6 @@ public class EnemyExploder extends Enemy {
 	// Animation
 	private static Animation spawnAnim, anim;
 	private static Texture warningTex, explotionTex;
-	private float rotation;
-	private float animFrameTime;
 	
 	// Movement
 	private int timeSinceLastDirChange;
@@ -60,11 +58,8 @@ public class EnemyExploder extends Enemy {
 	
 	@Override
 	protected void renderEnemy(SpriteBatch batch) {
-		rotation += Gdx.graphics.getDeltaTime();
-		animFrameTime += Gdx.graphics.getDeltaTime();
-
 		// Normal animation
-		TextureRegion frame = anim.getKeyFrame(animFrameTime, true);
+		TextureRegion frame = anim.getKeyFrame(rotation, true);
 		Util.drawCentered(batch, frame, x, y, rotation * 10 % 360);
 	}
 	
@@ -148,12 +143,12 @@ public class EnemyExploder extends Enemy {
 		angle = Math.atan2(player.getY() - getY(), player.getX() - getX());
 		
 		if(distanceSquared < EXPLODE_RANGE_SQUARED) {
-			player.setSpeed(player.getDeltaX() + (float) (Math.cos(angle) * 10 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED)),
-					player.getDeltaY() + (float) (Math.sin(angle) * 10 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED)));
+			player.setSpeed(player.getDeltaX() + (float) (Math.cos(angle) * 20 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED)),
+					player.getDeltaY() + (float) (Math.sin(angle) * 20 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED)));
 			player.kill();
+		} else {
+			exploded = true;
 		}
-		
-		exploded = true;
 	}
 
 	@Override
@@ -163,14 +158,9 @@ public class EnemyExploder extends Enemy {
 
 	@Override
 	public Type getParticleType() {
-		return null;
+		return Type.ENEMY_WANDERER;
 	}
 	
-	@Override
-	public void hit(float damage) {
-		life -= damage;
-	}
-
 	@Override
 	public float getInnerRadius() {	return 45; }
 

@@ -39,7 +39,6 @@ public class EnemyCircler extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		rotation += Gdx.graphics.getDeltaTime();
 		Util.drawCentered(batch, tex, x, y, rotation * 100 % 360);
 	}
 	

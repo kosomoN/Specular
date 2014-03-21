@@ -36,6 +36,8 @@ public abstract class Enemy implements Entity {
 		this.y = y;
 		this.gs = gs;
 		this.life = life;
+		
+		rotation = (float) (Math.random() * 5);
 	}
 	
 	@Override

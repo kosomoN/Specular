@@ -287,9 +287,9 @@ public class GameState extends State {
 				if(ent.update()) {
 					if(ent instanceof Particle)
 						pass.getPool().free((Particle) ent);
-					else if(ent instanceof Enemy) {
+					else if(ent instanceof Enemy)
 						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
-					} else if(ent instanceof PowerUp)
+					else if(ent instanceof PowerUp)
 						powerups.removeIndex(powerups.indexOf((PowerUp) ent, true));
 					else if(ent instanceof Bullet) {
 						bullets.removeIndex(bullets.indexOf((Bullet) ent, true));
@@ -379,11 +379,12 @@ public class GameState extends State {
 			if(ent instanceof Enemy)
 				ent.render(game.batch);
 		}
-
-		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		
 		if(!gameMode.isGameOver())
 			player.render(game.batch);
+		
+		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
 		
 		// Re-positioning camera for HUD
 		Specular.camera.position.set(0, 0, 0);

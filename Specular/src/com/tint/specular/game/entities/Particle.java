@@ -42,6 +42,8 @@ public class Particle implements Entity, Poolable {
 	
 	@Override
 	public boolean update() {
+		rotation += ROTATION_SPEED;
+		
 		//Lifetime update
 		lifetime -= 1;
 	
@@ -58,7 +60,6 @@ public class Particle implements Entity, Poolable {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		rotation += ROTATION_SPEED;
 		float alpha = (lifetime / 25f) * (lifetime / 25f);
 		batch.setColor(1, 1, 1, alpha < 1 ? alpha : 1);
 		Util.drawCentered(batch, textures[textureIndexInArray], x, y, rotation);

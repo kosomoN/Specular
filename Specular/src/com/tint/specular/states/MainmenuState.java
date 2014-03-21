@@ -104,7 +104,7 @@ public class MainmenuState extends State {
 	}
 
 	public void stopMusic() {
-		music.pause();
+		music.stop();
 	}
 	
 	public void startMusic() {
