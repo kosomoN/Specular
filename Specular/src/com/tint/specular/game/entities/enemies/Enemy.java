@@ -61,9 +61,9 @@ public abstract class Enemy implements Entity {
 				batch.setColor(1, 1, 1, ((float) Math.cos(spawnTimer / 60f * Math.PI * 2 + Math.PI) + 1) / 2);
 				batch.draw(getWarningTex(), x - getWarningTex().getWidth() / 2, y - getWarningTex().getHeight() / 2);
 				batch.setColor(1, 1, 1, 1);
-			} else {
-				/*TextureRegion tr = getSpawnAnim().getKeyFrame(spawnTimer / 60f - 2);
-				batch.draw(tr, x - tr.getRegionWidth() / 2, y - tr.getRegionHeight() / 2);*/
+			} else if(getSpawnAnim() != null) {
+				TextureRegion tr = getSpawnAnim().getKeyFrame(spawnTimer / 60f - 2);
+				batch.draw(tr, x - tr.getRegionWidth() / 2, y - tr.getRegionHeight() / 2);
 			}
 		}
 	}

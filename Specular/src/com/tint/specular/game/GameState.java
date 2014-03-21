@@ -598,7 +598,7 @@ public class GameState extends State {
 		// Adding player and setting up input processor
 		pss.spawn(3, false);
 		
-		gameInputProcessor = new GameInputProcessor(this, game);
+		gameInputProcessor = new GameInputProcessor(this);
 		gameInputProcessor.reset();
 		input.setInputProcessor(gameInputProcessor);
 		ggInputProcessor = new GameOverInputProcessor(game, this);

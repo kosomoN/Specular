@@ -12,6 +12,7 @@ import com.tint.specular.Specular;
 import com.tint.specular.game.BoardShock;
 import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.input.AnalogStick;
@@ -352,6 +353,8 @@ public class Player implements Entity {
 //    					if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
     					animFrameTime = 0;
     					clearEnemies = true;
+    					
+    					gs.getParticleSpawnSystem().spawn(Type.BULLET, getX(), getY(), getDeltaX(), getDeltaY(), 20, true);
     					
     					break;
         			}	

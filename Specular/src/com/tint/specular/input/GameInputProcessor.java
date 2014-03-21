@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.tint.specular.Specular;
-import com.tint.specular.Specular.States;
 import com.tint.specular.game.GameState;
 
 /**
@@ -20,9 +19,8 @@ public class GameInputProcessor implements InputProcessor {
 	private boolean tilt, staticSticks;
 	private AnalogStick shoot, move;
 	private GameState gs;
-	private Specular game;
 	
-	public GameInputProcessor(GameState gs, Specular game) {
+	public GameInputProcessor(GameState gs) {
 		this.gs = gs;
 		
 		tilt = Specular.prefs.getBoolean("Tilt");
@@ -30,7 +28,6 @@ public class GameInputProcessor implements InputProcessor {
 		
 		shoot = new AnalogStick();
 		move = new AnalogStick();
-		this.game = game;
 		
 		move.setBasePos(Specular.prefs.getFloat("Move Stick Pos X"), Specular.prefs.getFloat("Move Stick Pos Y"));
 		shoot.setBasePos(Specular.prefs.getFloat("Shoot Stick Pos X"), Specular.prefs.getFloat("Shoot Stick Pos Y"));
