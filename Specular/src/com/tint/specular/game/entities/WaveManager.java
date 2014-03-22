@@ -15,7 +15,7 @@ import com.tint.specular.game.entities.enemies.Enemy.EnemyType;
 
 public class WaveManager {
 
-	private Wave wave1, wave2, wave3, virusWave;
+	private Wave wave1, wave2, wave3, wave4, wave5, wave6, wave7, virusWave;
 	private List<Wave> waves = new ArrayList<Wave>();
 	private Random rand = new Random();
 	
@@ -33,6 +33,18 @@ public class WaveManager {
 		} else if(waveNumber == 2) {
 			wave3.reset();
 			return wave3;
+		} else if(waveNumber == 3) {
+			wave4.reset();
+			return wave4;
+		} else if(waveNumber == 4) {
+			wave5.reset();
+			return wave5;
+		} else if(waveNumber == 5) {
+			wave6.reset();
+			return wave6;
+		} else if(waveNumber == 6) {
+			wave7.reset();
+			return wave7;
 		} else if(waveNumber == 7) {
 			virusWave.reset();
 			return virusWave;
@@ -51,17 +63,30 @@ public class WaveManager {
 	
 	public void initWaves(GameState gs) {
 		Gdx.app.log("Specular", "Loading Waves");
-		wave1 = new Wave(gs, 0).setTotalDuration(20);
-		wave1.addEnemies(EnemyType.ENEMY_EXPLODER, 10, Formation.EDGES);
+		wave1 = new Wave(gs, 0).setTotalDuration(15);
+		wave1.addEnemies(ENEMY_WANDERER, 16, Formation.EDGES);
 		
-		wave2 = new Wave(gs, 1).setTotalDuration(20);
-		wave2.addEnemies(ENEMY_CIRCLER, 5, Formation.RANDOM);
-		wave2.addEnemies(ENEMY_STRIVER, 5, Formation.EDGES);
+		wave2 = new Wave(gs, 1).setTotalDuration(15);
+		wave2.addEnemies(ENEMY_CIRCLER, 8, Formation.RANDOM);
+		wave2.addEnemies(ENEMY_STRIVER, 8, Formation.EDGES);
 		
-		wave3 = new Wave(gs, 2).setTotalDuration(20);
-		wave3.addEnemies(new EnemyType[] {ENEMY_STRIVER, ENEMY_WANDERER, ENEMY_BOOSTER}, new int[] {3, 5, 2}, Formation.EDGES);
+		wave3 = new Wave(gs, 2).setTotalDuration(15);
+		wave3.addEnemies(new EnemyType[] {ENEMY_STRIVER, ENEMY_WANDERER, ENEMY_BOOSTER}, new int[] {4, 10, 2}, Formation.EDGES);
 		
-		Wave wave = new Wave(gs, 3).setTotalDuration(5).setPermanentModifer(new WaveModifier() {
+		wave4 = new Wave(gs, 3).setTotalDuration(10);
+		wave4.addEnemies(ENEMY_EXPLODER, 6, Formation.EDGES);
+		wave4.addEnemies(ENEMY_CIRCLER, 20, Formation.RANDOM);
+		
+		wave5 = new Wave(gs, 4).setTotalDuration(10);
+		wave5.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER}, new int[] {6, 20, 10, 6}, Formation.RANDOM);
+		
+		wave6 = new Wave(gs, 5).setTotalDuration(10);
+		wave6.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER}, new int[] {6, 10, 10, 6}, Formation.RANDOM);
+		
+		wave7 = new Wave(gs, 5).setTotalDuration(10);
+		wave7.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_BOOSTER, ENEMY_DASHER}, new int[] {6, 10, 6, 8}, Formation.RANDOM);
+		
+		Wave wave = new Wave(gs, 6).setTotalDuration(5).setPermanentModifer(new WaveModifier() {
 			
 			@Override
 			public void removeEffect(GameState gs) {}
@@ -86,12 +111,12 @@ public class WaveManager {
 		wave.addEnemies(ENEMY_DASHER, 3, Formation.EDGES);
 		waves.add(wave);
 		
-		wave = new Wave(gs, 4).setTotalDuration(20).setRepeatDelay(7).setRepeatTimes(1);
+		wave = new Wave(gs, 7).setTotalDuration(20).setRepeatDelay(7).setRepeatTimes(1);
 		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER}, new int[] {2, 10, 5, 3}, Formation.RANDOM);
 		
 		waves.add(wave);
 		
-		wave = new Wave(gs, 5).setRepeatTimes(1).setRepeatDelay(5).setTotalDuration(20).setPermanentModifer(new WaveModifier() {
+		wave = new Wave(gs, 8).setRepeatTimes(1).setRepeatDelay(5).setTotalDuration(20).setPermanentModifer(new WaveModifier() {
 			
 			@Override
 			public void removeEffect(GameState gs) {}
