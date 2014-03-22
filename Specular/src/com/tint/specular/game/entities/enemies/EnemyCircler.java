@@ -20,7 +20,6 @@ public class EnemyCircler extends Enemy {
 	private static Animation anim;
 	private static Texture tex, warningTex;
 	
-	private float rotation;
 	private float offset;
 	private double angle;
 	private float speed;
@@ -39,7 +38,7 @@ public class EnemyCircler extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		Util.drawCentered(batch, tex, x, y, rotation * 100 % 360);
+		Util.drawCentered(batch, tex, x, y, rotation * 100);
 	}
 	
 	@Override
@@ -76,8 +75,10 @@ public class EnemyCircler extends Enemy {
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Circler Warning.png"));
+		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Circler Anim.png"));
+		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
 	}
 

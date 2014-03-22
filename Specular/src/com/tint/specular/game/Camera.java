@@ -24,8 +24,8 @@ public class Camera {
 		
 		float targetCameraZoom = 1;
 		if(gs.getEnemies().size > 0) {
-			float lowestDeltaX = gs.getEnemies().get(0).getX() - cameraX;
-			float lowestDeltaY = gs.getEnemies().get(0).getY() - cameraY;
+			float lowestDeltaX = Integer.MAX_VALUE;
+			float lowestDeltaY = Integer.MAX_VALUE;
 			
 			float delta;
 			
@@ -37,20 +37,20 @@ public class Camera {
 				totalY += e.getY();
 				
 				//Calculate delta and compare it to other deltas
-				delta = e.getX() - cameraX;
-				if(Math.abs(lowestDeltaX) > Math.abs(delta)) {
+				delta = Math.abs(e.getX() - cameraX);
+				if(lowestDeltaX > Math.abs(delta)) {
 					lowestDeltaX = delta;
 				}
 				
 				delta = Math.abs(e.getY() - cameraY);
-				if(Math.abs(lowestDeltaY) > Math.abs(delta)) {
+				if(lowestDeltaY > Math.abs(delta)) {
 					lowestDeltaY = delta;
 				}
 			}
 			
 			//Calculate zoom - distance divided by half of the screen, basically how many screen halves away the enemy is
-			float zoomX = Math.abs(lowestDeltaX) / (Specular.camera.viewportWidth / 2);
-			float zoomY = Math.abs(lowestDeltaY) / (Specular.camera.viewportHeight / 2);
+			float zoomX = lowestDeltaX / (Specular.camera.viewportWidth / 2);
+			float zoomY = lowestDeltaY / (Specular.camera.viewportHeight / 2);
 			
 			//Clamping the zoom value
 			targetCameraZoom = zoomX > zoomY ? zoomX : zoomY;

@@ -128,8 +128,10 @@ public class EnemyBooster extends Enemy {
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Booster Warning.png"));
+		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Booster Anim.png"));
+		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
 	}
 

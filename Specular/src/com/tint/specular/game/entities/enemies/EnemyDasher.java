@@ -99,8 +99,10 @@ public class EnemyDasher extends Enemy {
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);	
 		
 		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Dasher Warning.png"));
+		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Dasher Anim.png"));
+		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(animTex, 128, 128, 1 / 15f, 0, 0, 3, 3);
 	}
 	

@@ -23,10 +23,13 @@ public class PushAway extends PowerUp {
 	protected void updatePowerup(Player player) {
 		float distanceSquared;
 		double angle;
+		float playerX = player.getX(), playerY = player.getY(), deltaX = 0, deltaY = 0;
 		for(Enemy e : gs.getEnemies()) {
-			distanceSquared = (e.getX() - player.getX()) * (e.getX() - player.getX()) + (e.getY() - player.getY()) * (e.getY() - player.getY());
+			deltaX = e.getX() - playerX;
+			deltaY = e.getY() - playerY;
+			distanceSquared = deltaX * deltaX + deltaY * deltaY;
 			if(PUSHAWAY_RANGE > distanceSquared) {
-				angle = Math.atan2(e.getY() - player.getY(), e.getX() - player.getX());
+				angle = Math.atan2(deltaY, deltaX);
 				e.setX((float) (e.getX() + Math.cos(angle) * 20 * (1 - distanceSquared / PUSHAWAY_RANGE)));
 				e.setY((float) (e.getY() + Math.sin(angle) * 20 * (1 - distanceSquared / PUSHAWAY_RANGE)));
 			}
