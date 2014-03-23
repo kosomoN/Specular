@@ -402,7 +402,7 @@ public class GameState extends State {
 		}
 		// Pause menu
 		else if(isPaused) { 
-			Util.drawCentered(game.batch, pauseTex, (Gdx.graphics.getWidth() - pauseTex.getWidth()) / 2, (Gdx.graphics.getHeight() - pauseTex.getHeight()) / 2, 0);
+			Util.drawCentered(game.batch, pauseTex, (Specular.camera.viewportWidth - pauseTex.getWidth()) / 2, (Specular.camera.viewportWidth- pauseTex.getHeight()) / 2, 0);
 			pauseInputProcessor.getResumeButton().render();
 			pauseInputProcessor.getToMenuButton().render();
 		}
@@ -448,12 +448,6 @@ public class GameState extends State {
 							break;
 						}
 					}
-				}
-			}
-		} else if(getPlayer().getAmmoType() == AmmoType.LASER) {
-			for(Enemy e : enemies) {
-				if(e.hasSpawned() && e.getLife() > 0 && Util.isOnLine(getPlayer().getX(), getPlayer().getY(), Gdx.input.getX(), Gdx.input.getY(), e.getX(), e.getY(), 1)) {
-					System.out.println("hit");
 				}
 			}
 		}

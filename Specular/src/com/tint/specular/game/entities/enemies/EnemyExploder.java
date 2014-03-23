@@ -68,7 +68,7 @@ public class EnemyExploder extends Enemy {
 		if(super.update() && !exploded)
 			explode();
 
-		return exploded; 
+		return exploded;
 	}
 
 	@Override
