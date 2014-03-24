@@ -67,15 +67,15 @@ public class WaveManager {
 		waves.add(wave);
 		
 		wave = new Wave(gs, 4).setTotalDuration(10);
-		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER}, new int[] {6, 20, 10, 6}, Formation.RANDOM);
+		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER, ENEMY_TANKER}, new int[] {6, 20, 10, 6, 4}, Formation.RANDOM);
 		waves.add(wave);
 		
 		wave = new Wave(gs, 5).setTotalDuration(10);
-		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER}, new int[] {6, 10, 10, 6}, Formation.RANDOM);
+		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_STRIVER, ENEMY_BOOSTER, ENEMY_TANKER}, new int[] {6, 10, 10, 6, 6}, Formation.RANDOM);
 		waves.add(wave);
 		
 		wave = new Wave(gs, 5).setTotalDuration(10);
-		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_BOOSTER, ENEMY_DASHER}, new int[] {6, 10, 6, 8}, Formation.RANDOM);
+		wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_CIRCLER, ENEMY_BOOSTER, ENEMY_DASHER, ENEMY_TANKER}, new int[] {6, 10, 6, 8, 6}, Formation.RANDOM);
 		waves.add(wave);
 		
 		wave = new Wave(gs, 6).setTotalDuration(5).setPermanentModifer(new WaveModifier() {

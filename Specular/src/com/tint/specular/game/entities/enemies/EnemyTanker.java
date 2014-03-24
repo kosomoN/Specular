@@ -19,6 +19,7 @@ public class EnemyTanker extends Enemy {
 
 	private static Animation anim;
 	private static Texture tex, warningTex;
+	private float rotation;
 	private float speed;
 
 	public EnemyTanker(float x, float y, GameState gs) {
@@ -28,39 +29,39 @@ public class EnemyTanker extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
+		rotation += Gdx.graphics.getDeltaTime();
 		if(hasSpawned)
-			Util.drawCentered(batch, tex, x, y, rotation * 60 % 360);
+			Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
 		else
 			Util.drawCentered(batch, tex, x, y, tex.getWidth() * (spawnTimer / 100f), tex.getHeight() * (spawnTimer / 100f), rotation * 90 % 360);
 	}
-	
-	@Override
 	public void updateMovement() {
 		//Calculating angle of movement based on closest player
-		double angle = Math.atan2(gs.getPlayer().getY() - y , gs.getPlayer().getX() - x) - 200;
+		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x) -  (Math.PI / 4);
 		
 		dx = (float) (Math.cos(angle) * speed);
 		dy = (float) (Math.sin(angle) * speed);
 		x += dx * slowdown;
-		y += dy * slowdown;
+		y += dy * slowdown;			
+
 	}
 
 
 	@Override
 	public void hit(float damage) {	
 		speed *= 1.3f;
-		super.hit(damage);
-	}
+		super.hit(damage);	
+	}	
+
+
 
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);		
 		
 		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Warning.png"));
-		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Anim.png"));
-		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
 	}
 
@@ -96,6 +97,6 @@ public class EnemyTanker extends Enemy {
 
 	@Override
 	protected float getRotationSpeed() {
-		return 60;
+		return 0;
 	}
 }
