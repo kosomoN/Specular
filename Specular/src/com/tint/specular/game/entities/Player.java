@@ -4,11 +4,14 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.Specular;
+import com.tint.specular.effects.Trail;
+import com.tint.specular.effects.TrailPart;
 import com.tint.specular.game.BoardShock;
 import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
@@ -35,6 +38,7 @@ public class Player implements Entity {
 	
 	private GameState gs;
 	private AmmoType ammo = AmmoType.BULLET;
+	private Trail playerTrail;
 	
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
@@ -78,6 +82,8 @@ public class Player implements Entity {
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
+	
+		playerTrail = new Trail(10f);
 	}
 
 	public void shootBullet(float direction, int offset, int spaces) {
@@ -367,6 +373,11 @@ public class Player implements Entity {
         if(clearEnemies) {
         	gs.clearEnemies();
         }
+	}
+	
+	public void updateTrail() {
+		playerTrail.addTrailPart(new TrailPart(getX(), getY(), Color.RED));
+		playerTrail.update();
 	}
 	
 	public void addShield() {

@@ -20,16 +20,15 @@ import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Laser;
 import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
-import com.tint.specular.game.entities.Player.AmmoType;
 import com.tint.specular.game.entities.Wave;
 import com.tint.specular.game.entities.WaveManager;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
+import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
-import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.game.entities.enemies.EnemyTanker;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
@@ -401,8 +400,8 @@ public class GameState extends State {
 			ggInputProcessor.getHighscoreBtn().render();
 		}
 		// Pause menu
-		else if(isPaused) { 
-			Util.drawCentered(game.batch, pauseTex, (Specular.camera.viewportWidth - pauseTex.getWidth()) / 2, (Specular.camera.viewportWidth- pauseTex.getHeight()) / 2, 0);
+		else if(isPaused) {
+			game.batch.draw(pauseTex, -pauseTex.getWidth() / 2, 100);
 			pauseInputProcessor.getResumeButton().render();
 			pauseInputProcessor.getToMenuButton().render();
 		}
@@ -429,24 +428,22 @@ public class GameState extends State {
 	}
 	
 	public void updateHitDetections() {
-		if(getPlayer().getAmmoType() == AmmoType.BULLET) { 
-			// Checking if any bullet hit an enemy
-			for(Bullet b : bullets) {
-				for(Enemy e : enemies) {
-					if(e.hasSpawned() && e.getLife() > 0 && (b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
-							e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
-						
-						e.hit(Bullet.damage);
-						b.hit();
-						
-						//Adding a small camerashake
-						Camera.shake(0.1f, 0.05f);
-						
-						// Rewarding player depending on game mode
-						enemyHit(e);
-						if(e.getLife() <= 0) {
-							break;
-						}
+		// Checking if any bullet hit an enemy
+		for(Bullet b : bullets) {
+			for(Enemy e : enemies) {
+				if(e.hasSpawned() && e.getLife() > 0 && (b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
+						e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
+					
+					e.hit(Bullet.damage);
+					b.hit();
+					
+					//Adding a small camerashake
+					Camera.shake(0.1f, 0.05f);
+					
+					// Rewarding player depending on game mode
+					enemyHit(e);
+					if(e.getLife() <= 0) {
+						break;
 					}
 				}
 			}
@@ -502,6 +499,7 @@ public class GameState extends State {
 	
 	public void setPaused(boolean paused) {
 		this.isPaused = paused;
+		Gdx.input.setInputProcessor(getPauseProcessor());
 	}
 	
 	public boolean isPaused() { return isPaused; }
@@ -678,7 +676,7 @@ public class GameState extends State {
 	@Override
 	public void pause() {
 		super.pause();
-		isPaused = true;
+		setPaused(true);
 	}
 
 	@Override

@@ -58,10 +58,8 @@ public class GameInputProcessor implements InputProcessor {
 		else if(keycode == Keys.D)
 			d = false;
 		
-		if(keycode == Keys.BACK || keycode == Keys.ESCAPE) {
-			Gdx.input.setInputProcessor(gs.getPauseProcessor());
+		if(keycode == Keys.BACK || keycode == Keys.ESCAPE)
 			gs.setPaused(true);
-		}
 		
 		return false;
 	}
