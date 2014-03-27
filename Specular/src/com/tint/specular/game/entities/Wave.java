@@ -1,176 +1,159 @@
 package com.tint.specular.game.entities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.WaveManager.WaveModifier;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.Enemy.EnemyType;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
+import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
-import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.game.entities.enemies.EnemyTanker;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 
 public class Wave {
-
-	//Permanent modifier will always be used for this wave
-	private WaveModifier modifier, permanentModifier;
-	private int totalDuration;
-	private int duration;
-	private GameState gs;
-	private List<EnemySpawnFormation> enemyFormations = new ArrayList<EnemySpawnFormation>();
-	private int maxRepeatTimes, repeatTimes, repeatDelay;
-	private float repeatDelayChange = 1;
-	private long ID;
+	private static final Random rand = new Random();
 	
-	public Wave(GameState gs, long ID) {
+	private long ID;
+	private GameState gs;
+	private WaveModifier modifier;
+	private int timer, totalLength;
+	//This list is used to recalculate the formation
+	private List<EnemySpawnFormation> formationList = new ArrayList<EnemySpawnFormation>();
+	
+	//A sorted list with ascending "spawntime" (time when they should spawn)
+	private List<EnemySpawn> specialEnemies = new ArrayList<EnemySpawn>(), baseEnemies = new ArrayList<EnemySpawn>();
+	//At which point in the list we are at, e.g. which enemies has already spawned
+	private int specialListIndexSpawned, baseListIndexSpawned;
+
+	public Wave(GameState gs, long ID, int totalLengthTicks) {
 		this.gs = gs;
 		this.ID = ID;
+		this.totalLength = totalLengthTicks;
+	}
+	
+	public long getID() {
+		return ID;
 	}
 
 	public boolean update() {
 		do {
-			duration++;
-			if(duration == 1) {
+			timer++;
+			
+			if(timer == 1) {
 				start();
 			}
-			if(maxRepeatTimes > repeatTimes && (int) (repeatDelay * (repeatTimes + 1) * repeatDelayChange) == duration) {
-				repeatTimes++;
-				List<Enemy> newEnemies = new ArrayList<Enemy>();
-				for(EnemySpawnFormation esf : enemyFormations) {
-					for(EnemySpawn es : esf.getEnemies())
-						newEnemies.add(spawnEnemy(gs, es));
-				}
-				if(modifier != null)
-					modifier.affectRepeat(gs, newEnemies);
-				if(permanentModifier != null)
-					permanentModifier.affectRepeat(gs, newEnemies);
+			
+			//Check if the enemy spawned
+			if(specialEnemies.size() > specialListIndexSpawned && specialEnemies.get(specialListIndexSpawned).spawn(timer)) {
+				//Loop until next enemy which has not spawned is found, this is required to be able to spawn many enemies in one tick
+				do {
+					specialListIndexSpawned++;
+					if(specialEnemies.size() <= specialListIndexSpawned)
+						break;
+				} while(specialEnemies.get(specialListIndexSpawned).spawn(timer));
 			}
 			
-			if(totalDuration <= duration) {
+			//Check if the enemy spawned
+			if(baseEnemies.size() > baseListIndexSpawned && baseEnemies.get(baseListIndexSpawned).spawn(timer)) {
+				//Loop until next enemy which has not spawned is found, this is required to be able to spawn many enemies in one tick
+				do {
+					baseListIndexSpawned++;
+					if(baseEnemies.size() <= baseListIndexSpawned)
+						break;
+				} while(baseEnemies.get(baseListIndexSpawned).spawn(timer));
+			}
+			
+			//The wave is over when the timer has ran out
+			if(timer >= totalLength) {
 				end();
 				return true;
 			}
 		} while(gs.getEnemies().size <= 0);
+		
+		
 		return false;
 	}
-	
+
+	private void end() {
+		modifier.end(gs);
+	}
+
 	private void start() {
-		List<Enemy> newEnemies = new ArrayList<Enemy>();
-		for(EnemySpawnFormation esf : enemyFormations) {
-			for(EnemySpawn es : esf.getEnemies())
-				newEnemies.add(spawnEnemy(gs, es));
-		}
-		if(modifier != null)
-			modifier.affect(gs, newEnemies);
-		if(permanentModifier != null)
-			permanentModifier.affect(gs, newEnemies);
-	}
-	
-	public void end() {
-		if(modifier != null)
-			modifier.removeEffect(gs);
-		if(permanentModifier != null)
-			permanentModifier.removeEffect(gs);
-	}
-	
-	public void reset() {
-		duration = 0;
-		repeatTimes = 0;
-		modifier = null;
+		modifier.start(gs);
 	}
 
-	public void setModifer(WaveModifier modifier) {
-		this.modifier = modifier;
-	}
-	
-	public Wave setPermanentModifer(WaveModifier permanentModifier) {
-		this.permanentModifier = permanentModifier;
-		return this;
-	}
-	
-	public static abstract class WaveModifier {
-		public abstract void affect(GameState gs, List<Enemy> justSpawnedEnemies);
-		public abstract void affectRepeat(GameState gs, List<Enemy> justSpawnedEnemies);
-		public abstract void removeEffect(GameState gs);
-	}
-	
-	public class EnemySpawn {
-		private EnemyType enemyType;
-		private float x, y;
-		public EnemySpawn(EnemyType enemyType) { this.enemyType = enemyType; }
+	public void reset(int waveNumber) {
+		specialListIndexSpawned = 0;
+		baseListIndexSpawned = 0;
+		timer = 0;
 		
-		public float getX() {
-			return x;
+		for(EnemySpawnFormation esf : formationList)
+			esf.reset();
+		
+		
+		//Initialize basewave
+		baseEnemies = new ArrayList<EnemySpawn>();
+		EnemyType et = null;
+		for(int i = 0; i < 20; i++) {
+			int random = rand.nextInt(10);
+			if(random < 10)
+				et = EnemyType.ENEMY_CIRCLER;
+			baseEnemies.add(new EnemySpawn(et, 3));
 		}
-
-		public float getY() {
-			return y;
-		}
-			
-		public void setX(float x) { this.x = x;}
-		public void setY(float y) { this.y = y;}
+		
+		Formation.RANDOM.setFormation(baseEnemies, gs);
 	}
-	
-	public class EnemySpawnFormation {
-		private List<EnemySpawn> enemies;
-		private Formation formation;
-
-		public EnemySpawnFormation(List<EnemySpawn> enemies, Formation formation) {
-			this.enemies = enemies;
-			this.formation = formation;
-		}
-
-		public List<EnemySpawn> getEnemies() {
-			if(formation.needsRecalculation)
-				formation.setFormation(enemies, gs);
-			return enemies;
-		}
-	}
-	
-	public void addEnemies(EnemyType[] enemyTypes, int[] amounts, Formation formation) {
+	/**
+	 * @param enemyTypes
+	 * @param amounts
+	 * @param formation
+	 * @param spawnTime The tick they will spawn at, 0 for the beginning of the wave
+	 * @param spawndelay The delay that will added between enemy spawns
+	 */
+	public void addEnemies(EnemyType[] enemyTypes, int[] amounts, Formation formation, int spawnTime, float spawndelayTicks) {
 		List<EnemySpawn> tempEnemies = new ArrayList<EnemySpawn>();
 		for(int i = 0; i < enemyTypes.length; i++) {
 			for(int j = 0; j < amounts[i]; j++)
-				tempEnemies.add(new EnemySpawn(enemyTypes[i]));
+				tempEnemies.add(new EnemySpawn(enemyTypes[i], spawnTime));
 		}
+		Collections.shuffle(tempEnemies);
+		
+		for(int i = 0; i < tempEnemies.size(); i++) {
+			tempEnemies.get(i).spawnTime += spawndelayTicks * i;
+		}
+		
 		formation.setFormation(tempEnemies, gs);
-		enemyFormations.add(new EnemySpawnFormation(tempEnemies, formation));
+		formationList.add(new EnemySpawnFormation(tempEnemies, formation));
+		
+		specialEnemies.addAll(tempEnemies);
 	}
-	
-	public void addEnemies(EnemyType enemyType, int amount, Formation formation) {
+
+	public void addEnemies(EnemyType enemyType, int amount, Formation formation, int spawnTime, float spawndelayTicks) {
 		List<EnemySpawn> tempEnemies = new ArrayList<EnemySpawn>();
 		for(int j = 0; j < amount; j++)
-			tempEnemies.add(new EnemySpawn(enemyType));
+			tempEnemies.add(new EnemySpawn(enemyType, spawnTime));
+		
+		Collections.shuffle(tempEnemies);
+		
+		for(int i = 0; i < tempEnemies.size(); i++) {
+			tempEnemies.get(i).spawnTime += spawndelayTicks * i;
+		}
+		
 		formation.setFormation(tempEnemies, gs);
-		enemyFormations.add(new EnemySpawnFormation(tempEnemies, formation));
+		formationList.add(new EnemySpawnFormation(tempEnemies, formation));
+		
+		specialEnemies.addAll(tempEnemies);
 	}
 
-	public Wave setTotalDuration(int seconds) {
-		this.totalDuration = seconds * 60;
-		return this;
-	}
-
-	public Wave setRepeatTimes(int x) {
-		this.maxRepeatTimes = x;
-		return this;
-	}
-
-	public Wave setRepeatDelay(int seconds) {
-		this.repeatDelay = seconds * 60;
-		return this;
-	}
-	
-	public Wave setRepeatDelayChange(float change) {
-		this.repeatDelayChange = change;
-		return this;
-	}
-	
 	private static Enemy spawnEnemy(GameState gs, EnemySpawn es) {
 		Enemy e = null;
 		switch(es.enemyType) {
@@ -201,15 +184,68 @@ public class Wave {
 		case ENEMY_EXPLODER:
 			e = new EnemyExploder(es.getX(), es.getY(), gs);
 			break;
-		default:
-			break;
 		}
 		
 		gs.addEntity(e);
 		return e;
 	}
+	
+	public class EnemySpawn implements Comparable<EnemySpawn> {
+		private EnemyType enemyType;
+		private float x, y;
+		private int spawnTime;
+		
+		public EnemySpawn(EnemyType enemyType, int spawnTime) {
+			this.enemyType = enemyType;
+			this.spawnTime = spawnTime;
+		}
 
-	public long getID() {
-		return ID;
+		public float getX() {
+			return x;
+		}
+		
+		public boolean spawn(int timer) {
+			if(spawnTime <= timer) {
+				
+				modifier.affect(gs, spawnEnemy(gs, this));
+				return true;
+			}
+			return false;
+		}
+
+		public void setX(float x) {
+			this.x = x;
+		}
+		
+		public float getY() {
+			return y;
+		}
+		
+		public void setY(float y) {
+			this.y = y;
+		}
+
+		@Override
+		public int compareTo(EnemySpawn es) {
+			return this.spawnTime - es.spawnTime;
+		}
+	}
+	
+	public class EnemySpawnFormation {
+		private List<EnemySpawn> enemies;
+		private Formation formation;
+
+		public EnemySpawnFormation(List<EnemySpawn> enemies, Formation formation) {
+			this.enemies = enemies;
+			this.formation = formation;
+		}
+
+		public void reset() {
+			formation.setFormation(enemies, gs);
+		}
+	}
+
+	public void setModifer(WaveModifier modifier) {
+		this.modifier = modifier;
 	}
 }

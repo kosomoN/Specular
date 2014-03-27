@@ -379,11 +379,10 @@ public class GameState extends State {
 				ent.render(game.batch);
 		}
 		
+		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		
 		if(!gameMode.isGameOver())
 			player.render(game.batch);
-		
-		game.batch.setBlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-
 		
 		// Re-positioning camera for HUD
 		Specular.camera.position.set(0, 0, 0);
@@ -407,12 +406,12 @@ public class GameState extends State {
 		}
 		// In-game
 		else {
-			gameInputProcessor.getShootStick().render(game.batch);
-			gameInputProcessor.getMoveStick().render(game.batch);
-
 			//Drawing HUD
 			hud.render(game.batch, scoreMultiplierTimer);
 			
+			gameInputProcessor.getShootStick().render(game.batch);
+			gameInputProcessor.getMoveStick().render(game.batch);
+
 			// Drawing SCORE in the middle top of the screen
 			Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
 					Specular.camera.viewportHeight / 2 - 36);
