@@ -84,11 +84,13 @@ public class Wave {
 	}
 
 	private void end() {
-		modifier.end(gs);
+		if(modifier != null)
+			modifier.end(gs);
 	}
 
 	private void start() {
-		modifier.start(gs);
+		if(modifier != null)
+			modifier.start(gs);
 	}
 
 	public void reset(int waveNumber) {
@@ -207,7 +209,11 @@ public class Wave {
 		public boolean spawn(int timer) {
 			if(spawnTime <= timer) {
 				
-				modifier.affect(gs, spawnEnemy(gs, this));
+				if(modifier != null)
+					modifier.affect(gs, spawnEnemy(gs, this));
+				else
+					spawnEnemy(gs, this);
+					
 				return true;
 			}
 			return false;
