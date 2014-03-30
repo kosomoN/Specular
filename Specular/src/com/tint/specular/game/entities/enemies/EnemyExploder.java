@@ -34,7 +34,6 @@ public class EnemyExploder extends Enemy {
 	private int timeSinceLastDirChange;
 	private int dirChangeRate = 200;
 	private double angle, turnRate;
-	private float speed;
 	
 	public EnemyExploder(float x, float y, GameState gs) {
 		super(x, y, gs, 2);

@@ -33,10 +33,10 @@ public class EnemyWorm extends Enemy {
 			parts.add(new Part(i * 100, 100, i + 1, i == 5, p));
 		}
 		
-		setSpeed(5);
+		setWormSpeed(5);
 	}
 	
-	private void setSpeed(float speed) {
+	private void setWormSpeed(float speed) {
 		this.speed = speed;
 		ticks = (int) (150 / speed);
 	}

@@ -22,7 +22,6 @@ public class EnemyCircler extends Enemy {
 	
 	private float offset;
 	private double angle;
-	private float speed;
 	
 	public EnemyCircler(float x, float y, GameState gs) {
 		super(x, y, gs, 1);

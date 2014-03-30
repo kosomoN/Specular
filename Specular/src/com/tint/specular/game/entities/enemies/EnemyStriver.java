@@ -19,7 +19,6 @@ public class EnemyStriver extends Enemy {
 
 	private static Animation anim;
 	private static Texture tex, warningTex;
-	private float speed;
 
 	public EnemyStriver(float x, float y, GameState gs) {
 		super(x, y, gs, 2);

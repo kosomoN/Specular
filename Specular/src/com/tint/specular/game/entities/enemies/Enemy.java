@@ -24,6 +24,7 @@ public abstract class Enemy implements Entity {
 	protected float x, y, dx, dy;
 	protected float direction, rotation;
 	protected static float slowdown = 1;
+	protected float speed;
 	
 	protected float life;
 	protected boolean hasSpawned;
@@ -98,6 +99,7 @@ public abstract class Enemy implements Entity {
 	}
 	
 	public void addLife(float life) { this.life += life; }
+	public void setLife(float life) { this.life = life; }
 	public void kill() { hit(life); }
 	
 	public abstract int getValue();
@@ -135,5 +137,9 @@ public abstract class Enemy implements Entity {
 	
 	public boolean hasSpawned() {
 		return hasSpawned;
+	}
+	
+	public void setSpeed(float speed) {
+		this.speed = speed;
 	}
 }

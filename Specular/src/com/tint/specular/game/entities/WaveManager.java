@@ -27,9 +27,10 @@ public class WaveManager {
 		return null;
 	}
 	
-	public static interface WaveModifier {
-		public void affect(GameState gs, Enemy justSpawnedEnemy);
-		public void end(GameState gs);
-		public void start(GameState gs);
+	public static abstract class WaveModifier {
+		public void affectSpecial(GameState gs, Enemy justSpawnedEnemy) {}
+		public void affectBase(GameState gs, Enemy justSpawnedEnemy) {}
+		public void end(GameState gs) {}
+		public void start(GameState gs) {}
 	}
 }

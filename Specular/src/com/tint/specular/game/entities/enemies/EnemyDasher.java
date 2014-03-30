@@ -20,7 +20,6 @@ public class EnemyDasher extends Enemy {
 	private static Animation anim;
 	private static Texture tex, warningTex;
 
-	private float speed;
 	private double direction;
 	private int boostingDelay = -1;
 

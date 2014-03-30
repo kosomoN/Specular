@@ -22,7 +22,6 @@ public class EnemyBooster extends Enemy {
 	private static Animation anim;
 	private static Texture tex, warningTex;
 	
-	private float speed;
 	private double direction;
 	private int boostingDelay;
 	public boolean passed;

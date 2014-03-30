@@ -30,6 +30,8 @@ public class EnemyWanderer extends Enemy {
 		super(x, y, gs, 1);
 		angle = random.nextInt(360);
 		turnRate = random.nextInt(40) - 20;
+		
+		speed = (float) (2 + Math.random());
 	}
 	
 	public static void init() {
@@ -59,8 +61,8 @@ public class EnemyWanderer extends Enemy {
 		}
 		angle += turnRate / 180 * Math.PI;
 		
-		dx = (float) (Math.cos(angle / 180 * Math.PI) * 2);
-		dy = (float) (Math.sin(angle / 180 * Math.PI) * 2);
+		dx = (float) (Math.cos(angle / 180 * Math.PI) * speed);
+		dy = (float) (Math.sin(angle / 180 * Math.PI) * speed);
 		x += dx * slowdown;
 		y += dy * slowdown;
 		

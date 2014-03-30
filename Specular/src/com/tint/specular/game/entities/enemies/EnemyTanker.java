@@ -20,7 +20,6 @@ public class EnemyTanker extends Enemy {
 	private static Animation anim;
 	private static Texture tex, warningTex;
 	private float rotation;
-	private float speed;
 
 	public EnemyTanker(float x, float y, GameState gs) {
 		super(x, y, gs, 20);	
