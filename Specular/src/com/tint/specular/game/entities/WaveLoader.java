@@ -16,10 +16,13 @@ public class WaveLoader {
 
 	public static void initWaves(GameState gs, List<Wave> specialWaves) {
 		Gdx.app.log("Specular", "Loading Waves");
+w		
+		//shieldwave, I am shielder, I am pain, I am darkness
 		Wave wave = new Wave(gs, 0, 800);
 		wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY, 0, 1);
-		wave.addEnemies(ENEMY_DASHER, 4, Formation.EDGES, 0, 20);
 		wave.setPermanentModifer(new WaveModifier() {
+		
+
 			@Override
 			public void affectSpecial(GameState gs, Enemy justSpawnedEnemy) {
 				if(justSpawnedEnemy instanceof EnemyWanderer) {
@@ -29,10 +32,22 @@ public class WaveLoader {
 		});
 		specialWaves.add(wave);
 		
-		Wave wave2 = new Wave(gs, 8, 800);
-		wave2.addEnemies(ENEMY_EXPLODER, 8, Formation.RANDOM, 0, 20);
-		specialWaves.add(wave2);
+		wave = new Wave(gs, 1, 400);
+			wave.addEnemies(ENEMY_WANDERER, 30, Formation.RANDOM, 0, 5);
+		specialWaves.add(wave);
 		
+		wave = new Wave(gs, 2, 600);
+			wave.addEnemies(ENEMY_BOOSTER, 10, Formation.EDGES, 0, 50);
+		specialWaves.add(wave);
+		
+		wave = new Wave(gs, 3, 600);
+			wave.addEnemies(ENEMY_EXPLODER, 10, Formation.RANDOM, 0, 60);
+		specialWaves.add(wave);
+		
+		wave = new Wave(gs, 4, 400);
+			wave.addEnemies(ENEMY_DASHER, 6, Formation.RANDOM, 0, 20);
+		specialWaves.add(wave);
+			
 		Gdx.app.log("Specular", "Loading Waves Complete");
 	}
 }

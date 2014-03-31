@@ -108,7 +108,7 @@ public class Wave {
 		//Initialize basewave
 		baseEnemies = new ArrayList<EnemySpawn>();
 		EnemyType et = null;
-		for(int i = 0; i < 20; i++) {
+		for(int i = 0; i < 10 + waveNumber; i++) {
 			int random = rand.nextInt(3);
 			if(random < 1)
 				et = EnemyType.ENEMY_CIRCLER;
