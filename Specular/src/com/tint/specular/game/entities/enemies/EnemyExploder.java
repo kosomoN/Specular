@@ -3,6 +3,7 @@ package com.tint.specular.game.entities.enemies;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -24,11 +25,13 @@ public class EnemyExploder extends Enemy {
 
 	private static final int EXPLODE_RANGE_SQUARED = 400 * 400;
 	private Random random = new Random();
-	private boolean exploded;
+	private boolean exploded, explosionDone;
 	
-	// Animation
+	// Animation and graphics
 	private static Animation spawnAnim, anim;
-	private static Texture warningTex, explotionTex;
+	private static Texture warningTex, explosionTex;
+	private float alpha;
+	private int updatesExploded;
 	
 	// Movement
 	private int timeSinceLastDirChange;
@@ -48,8 +51,8 @@ public class EnemyExploder extends Enemy {
 		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(animTex, 128, 128, 1 / 16f, 0, 0, 3, 1);
 		
-		explotionTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Circle.png"));
-		explotionTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		explosionTex = new Texture(Gdx.files.internal("graphics/game/effects/ExploderEffect.png"));
+		explosionTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Exploder Warning.png"));
 		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -57,7 +60,24 @@ public class EnemyExploder extends Enemy {
 	
 	@Override
 	protected void renderEnemy(SpriteBatch batch) {
+		if(exploded) {
+			updatesExploded++;
+			alpha += 0.7f;
+		} else {
+			alpha += 0.001f;
+			alpha = alpha % 0.2f;
+		}
+		
+		if(updatesExploded > 3)
+			explosionDone = true;
+		
+		// Explosion
+		Color color = batch.getColor();
+		batch.setColor(color.r, color.g, color.b, alpha);
+		Util.drawCentered(batch, explosionTex, x, y, 0);
+		
 		// Normal animation
+		batch.setColor(color);
 		TextureRegion frame = anim.getKeyFrame(rotation, true);
 		Util.drawCentered(batch, frame, x, y, rotation * 10 % 360);
 	}
@@ -66,8 +86,7 @@ public class EnemyExploder extends Enemy {
 	public boolean update() {
 		if(super.update() && !exploded)
 			explode();
-
-		return exploded;
+		return explosionDone;
 	}
 
 	@Override
@@ -120,18 +139,17 @@ public class EnemyExploder extends Enemy {
 		for(Enemy e : gs.getEnemies()) {
 			if(!e.equals(this)) {
 				distanceSquared = (e.getX() - getX()) * (e.getX() - getX()) + (e.getY() - getY()) * (e.getY() - getY());
-				if(distanceSquared - 32 * 32 < EXPLODE_RANGE_SQUARED && distanceSquared + 32 * 32 > EXPLODE_RANGE_SQUARED) {
+				if(distanceSquared - 32 * 32 < EXPLODE_RANGE_SQUARED) {
 					angle = Math.atan2(e.getY() - getY(), e.getX() - getX());
 					
 					// Explosion power is how much the enemy is pushed
-					float explotionPower = 10 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED);
-					float damage = (1f - (distanceSquared / EXPLODE_RANGE_SQUARED));
+					float explosionPower = 10 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED);
+					float damage = 20 * (1f - (distanceSquared / EXPLODE_RANGE_SQUARED));
 					
-					e.addDx((float) (Math.cos(angle) * explotionPower));
-					e.addDy((float) (Math.sin(angle) * explotionPower));
+					e.addDx((float) (Math.cos(angle) * explosionPower));
+					e.addDy((float) (Math.sin(angle) * explosionPower));
 					
 					damage = damage < 0 ? 0 : damage;
-					e.hit(damage);
 				}
 			}
 		}

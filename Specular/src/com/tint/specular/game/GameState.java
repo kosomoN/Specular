@@ -498,7 +498,11 @@ public class GameState extends State {
 	
 	public void setPaused(boolean paused) {
 		this.isPaused = paused;
-		Gdx.input.setInputProcessor(getPauseProcessor());
+		
+		if(paused)
+			Gdx.input.setInputProcessor(getPauseProcessor());
+		else
+			Gdx.input.setInputProcessor(getGameProcessor());
 	}
 	
 	public boolean isPaused() { return isPaused; }
@@ -669,7 +673,7 @@ public class GameState extends State {
 	public void resume() {
 		super.resume();
 		lastTickTime = System.nanoTime();
-		isPaused = false;
+		setPaused(true);
 	}
 
 	@Override
@@ -710,7 +714,7 @@ public class GameState extends State {
 			saveStats();
 		}
 		
-		isPaused = false;
+		setPaused(false);
 	}
 	
 	private void saveStats() {

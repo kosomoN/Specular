@@ -17,7 +17,6 @@ import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.game.entities.enemies.Enemy;
-import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
 
@@ -334,7 +333,7 @@ public class Player implements Entity {
         boolean clearEnemies = false;
 		for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
-    		if(!(e instanceof EnemyExploder) && e.hasSpawned() && e.getLife() > 0) {
+    		if(e.hasSpawned() && e.getLife() > 0) {
     			float distX = centerx - e.getX();
     			float distY = centery - e.getY();
         		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
@@ -433,8 +432,6 @@ public class Player implements Entity {
 //		if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
 		animFrameTime = 0;
 		gs.clearEnemies();
-		
-		System.out.println("Kill");
 	}
 	
 	
