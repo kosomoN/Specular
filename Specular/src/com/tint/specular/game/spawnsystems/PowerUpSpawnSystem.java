@@ -68,7 +68,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		if(shield > importance)
 			importance = shield;
 		
-		float board = rand.nextInt(10) / 10f * 0.7f - gs.getBoardshockCharge() + 0.15f; 
+		float board = rand.nextInt(10) / 10f * 0.7f - gs.getBoardshockCharge(); 
 		if(board > importance)
 			importance = board;
 		

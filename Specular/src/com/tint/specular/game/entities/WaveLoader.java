@@ -16,13 +16,11 @@ public class WaveLoader {
 
 	public static void initWaves(GameState gs, List<Wave> specialWaves) {
 		Gdx.app.log("Specular", "Loading Waves");
-w		
+		
 		//shieldwave, I am shielder, I am pain, I am darkness
 		Wave wave = new Wave(gs, 0, 800);
 		wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY, 0, 1);
 		wave.setPermanentModifer(new WaveModifier() {
-		
-
 			@Override
 			public void affectSpecial(GameState gs, Enemy justSpawnedEnemy) {
 				if(justSpawnedEnemy instanceof EnemyWanderer) {

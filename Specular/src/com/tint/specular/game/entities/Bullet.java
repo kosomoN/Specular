@@ -128,7 +128,7 @@ public class Bullet implements Entity, Poolable {
 		
 		this.x = x;
 		this.y = y;
-		direction += Math.random() * 6 - 3;
+		direction += Math.random() - 0.5f;
 		float cos = (float) Math.cos(Math.toRadians(direction));
 		float sin = (float) Math.sin(Math.toRadians(direction));
 		this.dx = cos * SPEED;

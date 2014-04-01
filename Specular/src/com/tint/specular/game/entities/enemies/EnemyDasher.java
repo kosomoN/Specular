@@ -36,19 +36,43 @@ public class EnemyDasher extends Enemy {
 	public void updateMovement() {
 		
 		//Boosting and changing direction
-		if(boostingDelay > 30) {
-			speed += 0.1;
+		if(boostingDelay > 120) {
+			speed += 0.5;
 			
 			dx = (float) (Math.cos(direction) * speed);
 			dy = (float) (Math.sin(direction) * speed);
 			x += dx * slowdown;
 			y += dy * slowdown;
 			
-			boostingDelay++;
-		}              
-		
-		if(boostingDelay == 0) {
-					
+			if(boostingDelay > 150) {
+				if (direction == 0) {
+					if(gs.getPlayer().getX() < x) {
+						boostingDelay = 0;
+						dx = 0;
+						dy = 0;
+					}
+				} else if (direction == Math.PI) {
+					if(gs.getPlayer().getX() > x) {
+						boostingDelay = 0;
+						dx = 0;
+						dy = 0;
+					}
+				} else if (direction == Math.PI / 2) {
+					if(gs.getPlayer().getY() < y) {
+						boostingDelay = 0;
+						dx = 0;
+						dy = 0;
+					}
+				} else if (direction == Math.PI / 2 * 3) {
+					if(gs.getPlayer().getY() > y) {
+						boostingDelay = 0;	
+						dx = 0;
+						dy = 0;
+					}
+				}
+			}
+			
+		} else if(boostingDelay == 119) {
 			if(gs.getPlayer() != null) {
 				int dx = (int) (gs.getPlayer().getX() - x);
 				int dy = (int) (gs.getPlayer().getY() - y);
@@ -63,29 +87,10 @@ public class EnemyDasher extends Enemy {
 			dx = 0;
 			dy = 0;
 			speed = 0;
-			boostingDelay += 1;
-		} else {
-			boostingDelay++;
 		}
-		 
-		//If going right, check if the player is still on the right side
-		if (direction == 0) {
-			if(gs.getPlayer().getX() < x) {
-				boostingDelay = 0;
-			}
-		} else if (direction == Math.PI) {
-			if(gs.getPlayer().getX() > x) {
-				boostingDelay = 0;
-			}
-		} else if (direction == Math.PI / 2) {
-			if(gs.getPlayer().getY() < y) {
-				boostingDelay = 0;
-			}
-		} else if (direction == Math.PI / 2 * 3) {
-			if(gs.getPlayer().getY() > y) {
-				boostingDelay = 0;	
-			}
-		}
+		
+		boostingDelay++;
+
 	}
 
 	@Override

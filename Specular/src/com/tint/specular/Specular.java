@@ -247,7 +247,7 @@ public class Specular extends Game {
 		i++;
 		
 		if(indexInts.contains(i))
-			prefs.putBoolean("Static", false);
+			prefs.putBoolean("Static", true);
 		i++;
 		
 		if(indexInts.contains(i))
