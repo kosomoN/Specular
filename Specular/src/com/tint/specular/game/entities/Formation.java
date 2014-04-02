@@ -74,10 +74,27 @@ public enum Formation {
 				es.setY((float) (y + Math.sin(angle) * 100));
 			}
 		}
+	},
+	
+	RINGS(true) {
+		@Override
+		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
+			float x = gs.getCurrentMap().getWidth() / 2;
+			float y = gs.getCurrentMap().getHeight() / 2;
+			EnemySpawn es;
+			for(int i = 0; i < enemies.size(); i++) {
+				double angle = i / (double) enemies.size() * Math.PI * 2;
+				es = enemies.get(i);
+				es.setX((float) (x + Math.cos(angle) * radius));
+				es.setY((float) (y + Math.sin(angle) * radius));
+			}
+		}
 	};
 	
 	public final boolean needsRecalculation;
+	public float radius = 100;
 	public abstract void setFormation(List<EnemySpawn> enemies, GameState gs);
+	public void setRadius(float radius) { this.radius = radius; }
 	
 	private Formation(boolean needsRecalculation) {
 		this.needsRecalculation = needsRecalculation;

@@ -32,6 +32,7 @@ public class EnemyExploder extends Enemy {
 	private static Texture warningTex, explosionTex;
 	private float alpha;
 	private int updatesExploded;
+	private int showExplotionTime;
 	
 	// Movement
 	private int timeSinceLastDirChange;
@@ -60,16 +61,20 @@ public class EnemyExploder extends Enemy {
 	
 	@Override
 	protected void renderEnemy(SpriteBatch batch) {
-		if(exploded) {
+		if(exploded) { // Explosion brightness
 			updatesExploded++;
 			alpha += 0.7f;
+		} else if(showExplotionTime > 120) { // Pause before fading in again
+			alpha += 0.005f;
+			if(alpha > 0.2f) {
+				showExplotionTime = 0;
+				alpha = 0;
+			}
 		} else {
-			alpha += 0.001f;
-			alpha = alpha % 0.2f;
+			showExplotionTime++;
 		}
 		
-		if(updatesExploded > 3)
-			explosionDone = true;
+		explosionDone = updatesExploded > 3;
 		
 		// Explosion
 		Color color = batch.getColor();
@@ -139,7 +144,7 @@ public class EnemyExploder extends Enemy {
 		for(Enemy e : gs.getEnemies()) {
 			if(!e.equals(this)) {
 				distanceSquared = (e.getX() - getX()) * (e.getX() - getX()) + (e.getY() - getY()) * (e.getY() - getY());
-				if(distanceSquared - 32 * 32 < EXPLODE_RANGE_SQUARED) {
+				if(distanceSquared < EXPLODE_RANGE_SQUARED) {
 					angle = Math.atan2(e.getY() - getY(), e.getX() - getX());
 					
 					// Explosion power is how much the enemy is pushed
