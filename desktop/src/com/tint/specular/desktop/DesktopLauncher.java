@@ -17,7 +17,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Specular";
 		cfg.width = 1280;
-		cfg.height = 720;
+		cfg.height = 680;
 		
 		//There is no need to implement Facebook highscores in the desktop-version, so these are left empty
 		new LwjglApplication(new Specular(new NativeAndroid() {

@@ -7,14 +7,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.badlogic.gdx.Gdx;
@@ -46,6 +43,7 @@ public class AndroidLauncher extends AndroidApplication {
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
         cfg.useAccelerometer = false;
         cfg.useCompass = false;
+        cfg.useImmersiveMode = true;
         
         //Check if user has previously logged in and in that case log in again
         Session.openActiveSession(activity, false, null);
@@ -70,7 +68,7 @@ public class AndroidLauncher extends AndroidApplication {
         	
 			@Override
 			public boolean login(final RequestCallback callback) {
-				Session.StatusCallback sessioinCallback = new Session.StatusCallback() {
+				final Session.StatusCallback sessioinCallback = new Session.StatusCallback() {
 					@Override
 					public void call(final Session session, SessionState state, Exception exception) {
 						Log.i("Specular", state.toString());
@@ -82,6 +80,7 @@ public class AndroidLauncher extends AndroidApplication {
 							Request.newMeRequest(session, new Request.GraphUserCallback() {
 								@Override
 								public void onCompleted(GraphUser user, Response response) {
+									
 									if (user != null) {
 										fbuser = user;
 				                        Toast.makeText(getApplicationContext(), "Hello " + user.getName() + "!", Toast.LENGTH_LONG).show();
@@ -102,15 +101,21 @@ public class AndroidLauncher extends AndroidApplication {
 						}
 					}
 				};
-
-				Session.openActiveSession(activity, true, sessioinCallback);
+				AndroidLauncher.this.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Session.openActiveSession(activity, false, sessioinCallback);
+						Session.openActiveSession(activity, true, sessioinCallback);
+					}
+				});
+				
             	
 				return true;
 			}
 			
 			@Override
 			public boolean isLoggedIn() {
-				return Session.getActiveSession() != null ? Session.getActiveSession().isOpened() : false;
+				return Session.getActiveSession() != null ? Session.getActiveSession().isOpened() && fbuser != null : false;
 			}
 
 			@Override
@@ -217,6 +222,7 @@ public class AndroidLauncher extends AndroidApplication {
 							//Read scores from list
 							for(GraphObject go : response.getGraphObject().getPropertyAsList("data", GraphObject.class)) {
 								String name = go.getPropertyAs("user", GraphObject.class).getProperty("name").toString();
+								System.out.println(fbuser);
 								if(go.getPropertyAs("user", GraphObject.class).getProperty("id").equals(fbuser.getId())) {
 									Specular.prefs.putInteger("Highscore", (Integer) go.getProperty("score"));
 									Specular.prefs.flush();
@@ -263,20 +269,6 @@ public class AndroidLauncher extends AndroidApplication {
         }), cfg);
     }
 	
-	@TargetApi(Build.VERSION_CODES.KITKAT)
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-	    if (hasFocus) {
-	    	getWindow().getDecorView().setSystemUiVisibility(
-	                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-	                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-	                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-	                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-	                | View.SYSTEM_UI_FLAG_FULLSCREEN
-	                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);}
-	}
-    
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);

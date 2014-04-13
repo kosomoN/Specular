@@ -29,7 +29,7 @@ public class WaveLoader {
 			}
 		});
 		specialWaves.add(wave);
-		
+		/*
 		wave = new Wave(gs, 1, 400);
 			wave.addEnemies(ENEMY_WANDERER, 30, Formation.RANDOM, 0, 5);
 		specialWaves.add(wave);
@@ -37,24 +37,24 @@ public class WaveLoader {
 		wave = new Wave(gs, 2, 600);
 			wave.addEnemies(ENEMY_BOOSTER, 10, Formation.EDGES, 0, 50);
 		specialWaves.add(wave);
-		
+		/*
 		wave = new Wave(gs, 3, 600);
 			wave.addEnemies(ENEMY_EXPLODER, 10, Formation.RANDOM, 0, 60);
 		specialWaves.add(wave);
-		
+		*/
 		wave = new Wave(gs, 4, 400);
-			wave.addEnemies(ENEMY_DASHER, 6, Formation.RANDOM, 0, 20);
+			wave.addEnemies(ENEMY_DASHER, 2, Formation.RANDOM, 0, 20);
 		specialWaves.add(wave);
 		
 		Formation f = Formation.RINGS;
 			wave = new Wave(gs, 5, 800);
-			wave.addEnemies(ENEMY_CIRCLER, 8, f, 0, 0);
+			wave.addEnemies(ENEMY_CIRCLER, 8, f, 10, 1, false);
 			
-			f.setRadius(200);
-			wave.addEnemies(ENEMY_CIRCLER, 16, f, 0, 0);
+			f.setRadius(400);
+			wave.addEnemies(ENEMY_CIRCLER, 16, f, 20, 1, false);
 			
-			f.setRadius(300);
-			wave.addEnemies(ENEMY_CIRCLER, 32, f, 0, 0);
+			f.setRadius(700);
+			wave.addEnemies(ENEMY_CIRCLER, 32, f, 30, 1, false);
 		specialWaves.add(wave);
 
 		Gdx.app.log("Specular", "Loading Waves Complete");

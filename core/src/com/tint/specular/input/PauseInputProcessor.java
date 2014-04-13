@@ -27,11 +27,11 @@ public class PauseInputProcessor implements InputProcessor {
 		// Initializing buttons
 		Texture resumeTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Resume.png"));
 		Texture resumePressedTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Resume Pressed.png"));
-		resume = new Button(-resumeTex.getWidth() / 2, -300, resumeTex.getWidth(), resumeTex.getHeight(), game.batch, resumeTex, resumePressedTex);
+		resume = new Button(-resumeTex.getWidth() / 2, -200, resumeTex.getWidth(), resumeTex.getHeight(), game.batch, resumeTex, resumePressedTex);
 	
 		Texture toMenuTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Menu.png"));
 		Texture toMenuPressedTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Menu Pressed.png"));
-		backToMenu = new Button(-toMenuTex.getWidth() / 2, -500, toMenuTex.getWidth(), toMenuTex.getHeight(), game.batch, toMenuTex, toMenuPressedTex);
+		backToMenu = new Button(-toMenuTex.getWidth() / 2, -400, toMenuTex.getWidth(), toMenuTex.getHeight(), game.batch, toMenuTex, toMenuPressedTex);
 	}
 	
 	@Override

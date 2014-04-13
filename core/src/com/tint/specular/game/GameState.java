@@ -129,9 +129,9 @@ public class GameState extends State {
 	// Art
 	private HUD hud;
 	private Texture gameOverTex;
-	private Texture pauseTex;
+	private Texture pauseTex, greyPixel;
 	private Music music;
-	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","03.ogg","04.ogg","05.ogg","06.ogg"};
+	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","03.ogg","05.ogg","06.ogg"};
 	private int currentMusic = -1;
 	
 	public GameState(Specular game) {
@@ -146,6 +146,7 @@ public class GameState extends State {
 		
 		// Loading pause menu texture
 		pauseTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Pause.png"));
+		greyPixel = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Grey Pixel.png"));
 		
 		//Loading HUD
 		hud = new HUD(this);
@@ -223,7 +224,7 @@ public class GameState extends State {
 	protected void update() {
 		if(!isPaused) {
 			// Adding played time
-			if(gameMode.isGameOver())
+			if(!gameMode.isGameOver())
 				ticks++;
 			
 			// Updating combos
@@ -254,7 +255,7 @@ public class GameState extends State {
 				
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isDying() && !player.isDead()) {
-					player.updateHitDetection();
+//					player.updateHitDetection();
 					if(currentWave.update()) {
 						waveNumber++;
 						currentWave = waveManager.getWave(waveNumber);
@@ -275,6 +276,8 @@ public class GameState extends State {
 				updateHitDetections();
 				if(!player.isDying() && player.isDead() && player.getLife() > 0) {
 		        	pss.spawn(player.getLife(), true);
+		        	waveNumber++;
+					currentWave = waveManager.getWave(waveNumber);
 		        }
 			}
 			
@@ -315,13 +318,11 @@ public class GameState extends State {
 			SlowdownEnemies.setUpdatedSlowdown(false);
 			
 			if(playerKilled) {
-				// Time attack
 				if(!gameMode.isGameOver()) {
 					clearLists();
 					resetGameTime();
 					pss.spawn(3, false);
 				}
-				// Ranked
 				else {
 					saveStats();
 					input.setInputProcessor(ggInputProcessor);
@@ -395,28 +396,15 @@ public class GameState extends State {
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
-		// Game over screen
-		if(gameMode.isGameOver()) {
-			game.batch.setColor(Color.WHITE);
-			game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
-			ggInputProcessor.getRetryBtn().render();
-			ggInputProcessor.getMenuBtn().render();
-			ggInputProcessor.getHighscoreBtn().render();
-		}
-		// Pause menu
-		else if(isPaused) {
-			game.batch.draw(pauseTex, -pauseTex.getWidth() / 2, 100);
-			pauseInputProcessor.getResumeButton().render();
-			pauseInputProcessor.getToMenuButton().render();
-		}
-		// In-game
-		else {
+		
+		
+		if(!gameMode.isGameOver()) {
 			//Drawing HUD
 			hud.render(game.batch, scoreMultiplierTimer);
-			
-			gameInputProcessor.getShootStick().render(game.batch);
-			gameInputProcessor.getMoveStick().render(game.batch);
-
+			if(!isPaused) {
+				gameInputProcessor.getShootStick().render(game.batch);
+				gameInputProcessor.getMoveStick().render(game.batch);
+			}
 			// Drawing SCORE in the middle top of the screen
 			Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
 					Specular.camera.viewportHeight / 2 - 36);
@@ -424,8 +412,25 @@ public class GameState extends State {
 			Util.writeCentered(game.batch, multiplierFont, "x" + Math.round(scoreMultiplier), 0,
 					Specular.camera.viewportHeight / 2 - 98);
 			
-			multiplierFont.draw(game.batch, String.valueOf(currentWave.getID()), -Specular.camera.viewportWidth / 2 + 20, Specular.camera.viewportHeight / 2 - 20);
 			gameMode.render(game.batch);
+		}
+		
+		
+		// Game over screen
+		if(gameMode.isGameOver()) {
+			game.batch.setColor(Color.WHITE);
+			game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
+			game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
+			ggInputProcessor.getRetryBtn().render();
+			ggInputProcessor.getMenuBtn().render();
+			ggInputProcessor.getHighscoreBtn().render();
+		}
+		// Pause menu
+		else if(isPaused) {
+			game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
+			game.batch.draw(pauseTex, -pauseTex.getWidth() / 2, 100);
+			pauseInputProcessor.getResumeButton().render();
+			pauseInputProcessor.getToMenuButton().render();
 		}
 		
 		game.batch.end();
@@ -502,12 +507,14 @@ public class GameState extends State {
 	}
 	
 	public void setPaused(boolean paused) {
-		this.isPaused = paused;
-		
-		if(paused)
-			Gdx.input.setInputProcessor(getPauseProcessor());
-		else
-			Gdx.input.setInputProcessor(getGameProcessor());
+		if(!gameMode.isGameOver()) {
+			this.isPaused = paused;
+			if(paused) {
+				if(Gdx.input.getInputProcessor() == getGameProcessor())
+					Gdx.input.setInputProcessor(getPauseProcessor());
+			} else if(Gdx.input.getInputProcessor() == getPauseProcessor())
+				Gdx.input.setInputProcessor(getGameProcessor());
+		}
 	}
 	
 	public boolean isPaused() { return isPaused; }

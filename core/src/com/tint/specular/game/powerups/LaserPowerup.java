@@ -16,7 +16,7 @@ public class LaserPowerup extends PowerUp {
 	}
 	
 	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/powerups/Swarm.png"));
+		tex = new Texture(Gdx.files.internal("graphics/game/powerups/Laser.png"));
 		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 	}
 

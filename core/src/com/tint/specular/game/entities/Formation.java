@@ -76,7 +76,7 @@ public enum Formation {
 		}
 	},
 	
-	RINGS(true) {
+	RINGS(false) {
 		@Override
 		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
 			float x = gs.getCurrentMap().getWidth() / 2;

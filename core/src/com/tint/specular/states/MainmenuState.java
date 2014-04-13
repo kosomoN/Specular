@@ -25,7 +25,6 @@ public class MainmenuState extends State {
 	private boolean showHowToPlay;
 	private float screenHeightToCameraHeight;
 	private BitmapFont versionFont;
-	private String versionName;
 	
 	public MainmenuState(Specular game) {
 		super(game);
@@ -43,8 +42,6 @@ public class MainmenuState extends State {
 		versionFont = fontGen.generateFont(ftfp);
 		versionFont.setColor(Color.RED);
 		fontGen.dispose();
-		
-		versionName = "Version: " + Specular.nativeAndroid.getVersionName();
 	}
 
 	@Override
@@ -67,8 +64,6 @@ public class MainmenuState extends State {
 			menuInputProcessor.getProfileBtn().render();
 			menuInputProcessor.getOptionsBtn().render();
 			menuInputProcessor.getHelpButton().render();
-			
-			versionFont.draw(game.batch, versionName, 750, 80);
 			
 			game.batch.end();
 		}

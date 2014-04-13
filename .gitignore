@@ -55,3 +55,7 @@ nb-configuration.xml
 
 .gradle
 build/
+
+Thumbs.db
+
+*.db

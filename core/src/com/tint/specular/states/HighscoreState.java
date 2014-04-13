@@ -18,7 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.tint.specular.Specular;
 import com.tint.specular.ui.HighscoreList;
 import com.tint.specular.ui.HighscoreList.Highscore;
@@ -117,15 +117,13 @@ public class HighscoreState extends State {
 		int minutes = seconds / 60;
 		seconds -= minutes * 60;
 		timePlayed = hours + ":" + minutes + ":" + seconds;
-		
 		float accuracy = 1 - (float) Specular.prefs.getInteger("Bullets Missed") / Specular.prefs.getInteger("Bullets Fired");
-		accuracy = (int) (accuracy * 1000);
-		accuracy /= 10;
-		this.accuracy = accuracy + "%";
+		accuracy *= 100;
+		this.accuracy = String.format("%.1f", accuracy) + "%";
 	}
 	
 	private void createUi() {
-		stage = new Stage(new ScreenViewport(Specular.camera), game.batch);
+		stage = new Stage(new ExtendViewport(1920, 1080), game.batch);
 		
 		if(Specular.nativeAndroid.isLoggedIn()) {
 			isLoggedIn = true;

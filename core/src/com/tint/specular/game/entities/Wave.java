@@ -34,6 +34,8 @@ public class Wave {
 	//At which point in the list we are at, e.g. which enemies has already spawned
 	private int specialListIndexSpawned, baseListIndexSpawned;
 
+	private int waveNumber;
+
 	public Wave(GameState gs, long ID, int totalLengthTicks) {
 		this.gs = gs;
 		this.ID = ID;
@@ -50,6 +52,27 @@ public class Wave {
 			
 			if(timer == 1) {
 				start();
+			}
+			
+			if(timer % (totalLength / (waveNumber * 2  + 5)) == 0) {
+				int random = rand.nextInt(3);
+				EnemyType et;
+				if(random < 1)
+					et = EnemyType.ENEMY_CIRCLER;
+				else if(random < 2)
+					et = EnemyType.ENEMY_STRIVER;
+				else
+					et = EnemyType.ENEMY_WANDERER;
+				
+				Enemy e = spawnEnemy(gs, 50 + rand.nextInt(gs.getCurrentMap().getWidth() - 100), 50 + rand.nextInt(gs.getCurrentMap().getHeight() - 100), et);
+				
+				if(permanentModifier != null) {
+					permanentModifier.affectBase(gs, e);
+				}
+				
+				if(modifier != null) {
+					modifier.affectBase(gs, e);
+				}
 			}
 			
 			//Check if the enemy spawned
@@ -98,6 +121,7 @@ public class Wave {
 	}
 
 	public void reset(int waveNumber) {
+		this.waveNumber = waveNumber;
 		specialListIndexSpawned = 0;
 		baseListIndexSpawned = 0;
 		timer = 0;
@@ -108,7 +132,7 @@ public class Wave {
 		//Initialize basewave
 		baseEnemies = new ArrayList<EnemySpawn>();
 		EnemyType et = null;
-		for(int i = 0; i < 10 + waveNumber; i++) {
+		for(int i = 0; i < 8; i++) {
 			int random = rand.nextInt(3);
 			if(random < 1)
 				et = EnemyType.ENEMY_CIRCLER;
@@ -149,11 +173,16 @@ public class Wave {
 	}
 
 	public void addEnemies(EnemyType enemyType, int amount, Formation formation, int spawnTime, float spawndelayTicks) {
+		addEnemies(enemyType, amount, formation, spawnTime, spawndelayTicks, true);
+	}
+	
+	public void addEnemies(EnemyType enemyType, int amount, Formation formation, int spawnTime, float spawndelayTicks, boolean shuffle) {
 		List<EnemySpawn> tempEnemies = new ArrayList<EnemySpawn>();
 		for(int j = 0; j < amount; j++)
 			tempEnemies.add(new EnemySpawn(enemyType, spawnTime));
 		
-		Collections.shuffle(tempEnemies);
+		if(shuffle)
+			Collections.shuffle(tempEnemies);
 		
 		for(int i = 0; i < tempEnemies.size(); i++) {
 			tempEnemies.get(i).spawnTime += spawndelayTicks * i;
@@ -166,34 +195,38 @@ public class Wave {
 	}
 
 	private static Enemy spawnEnemy(GameState gs, EnemySpawn es) {
+		return spawnEnemy(gs, es.getX(), es.getY(), es.enemyType);
+	}
+	
+	private static Enemy spawnEnemy(GameState gs, float x, float y, EnemyType et) {
 		Enemy e = null;
-		switch(es.enemyType) {
+		switch(et) {
 		case ENEMY_WANDERER:
-			e = new EnemyWanderer(es.getX(), es.getY(), gs);
+			e = new EnemyWanderer(x, y, gs);
 			break;
 		case ENEMY_STRIVER:
-			e = new EnemyStriver(es.getX(), es.getY(), gs);
+			e = new EnemyStriver(x, y, gs);
 			break;
 		case ENEMY_BOOSTER:
-			e = new EnemyBooster(es.getX(), es.getY(), gs);
+			e = new EnemyBooster(x, y, gs);
 			break;
 		case ENEMY_DASHER:
-			e = new EnemyDasher(es.getX(), es.getY(), gs);
+			e = new EnemyDasher(x, y, gs);
 			break;
 		case ENEMY_CIRCLER:
-			e = new EnemyCircler(es.getX(), es.getY(), gs);
+			e = new EnemyCircler(x, y, gs);
 			break;
 		case ENEMY_SHIELDER:
-			e = new EnemyShielder(es.getX(), es.getY(), gs);
+			e = new EnemyShielder(x, y, gs);
 			break;
 		case ENEMY_VIRUS:
-			e = new EnemyVirus(es.getX(), es.getY(), gs, false);
+			e = new EnemyVirus(x, y, gs, false);
 			break;
 		case ENEMY_TANKER:
-			e = new EnemyTanker(es.getX(), es.getY(), gs);
+			e = new EnemyTanker(x, y, gs);
 			break;
 		case ENEMY_EXPLODER:
-			e = new EnemyExploder(es.getX(), es.getY(), gs);
+			e = new EnemyExploder(x, y, gs);
 			break;
 		}
 		
@@ -264,7 +297,8 @@ public class Wave {
 		}
 
 		public void reset() {
-			formation.setFormation(enemies, gs);
+			if(formation.needsRecalculation)
+				formation.setFormation(enemies, gs);
 		}
 	}
 

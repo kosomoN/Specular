@@ -19,6 +19,7 @@ public class GameInputProcessor implements InputProcessor {
 	private boolean tilt, staticSticks;
 	private AnalogStick shoot, move;
 	private GameState gs;
+	private boolean pausePressed;
 	
 	public GameInputProcessor(GameState gs) {
 		this.gs = gs;
@@ -80,6 +81,10 @@ public class GameInputProcessor implements InputProcessor {
 			gs.boardshock();
 			return false;
 		}
+		if(viewporty < 70 && viewportx > Specular.camera.viewportWidth - 400) {
+			pausePressed = true;
+			return false;
+		}
 		
 		// Sticks
 		
@@ -122,6 +127,15 @@ public class GameInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
+		float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
+		if(viewporty < 70 && viewportx > Specular.camera.viewportWidth - 400) {
+			if(pausePressed) {
+				gs.setPaused(true);
+				pausePressed = false;
+				return false;
+			}
+		}
 		if(touch) {
 			if(move.getPointer() == pointer) {
 				move.setPointer(-1);
@@ -129,6 +143,9 @@ public class GameInputProcessor implements InputProcessor {
 				shoot.setPointer(-1);
 			}
 		}
+		
+		if(pausePressed)
+			pausePressed = false;
 		
 		return false;
 	}

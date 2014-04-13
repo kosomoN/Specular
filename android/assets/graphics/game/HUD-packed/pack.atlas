@@ -59,3 +59,10 @@ MP Bar
   orig: 512, 96
   offset: 8, 18
   index: -1
+Pause
+  rotate: false
+  xy: 494, 0
+  size: 384, 64
+  orig: 369, 64
+  offset: 0, 0
+  index: -1

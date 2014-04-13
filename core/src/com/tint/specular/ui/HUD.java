@@ -9,7 +9,7 @@ import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 
 public class HUD {
-	private AtlasRegion hudTopLeft, hudTopRight, hudBottom, bar, barFlipped;
+	private AtlasRegion hudTopLeft, hudTopRight, hudBottom, bar, barFlipped, pause;
 	private Texture multiplierBar;
 	private AtlasRegion boardshockChargeTex[] = new AtlasRegion[4];
 	private GameState gs;
@@ -20,6 +20,7 @@ public class HUD {
 		hudTopLeft = atlas.findRegion("HUD Top Left");
 		hudTopRight = atlas.findRegion("HUD Top Right");
 		hudBottom = atlas.findRegion("HUD bottom");
+		pause = atlas.findRegion("Pause");
 		bar = atlas.findRegion("Bar");
 		barFlipped = new AtlasRegion(atlas.findRegion("Bar"));
 		barFlipped.flip(true, false);
@@ -41,6 +42,7 @@ public class HUD {
 		
 		batch.draw(hudTopLeft, -hudTopLeft.getRegionWidth(), Specular.camera.viewportHeight / 2 - hudTopLeft.getRegionHeight());
 		batch.draw(hudTopRight, 0, Specular.camera.viewportHeight / 2 - hudTopRight.getRegionHeight());
+		batch.draw(pause, Specular.camera.viewportWidth / 2 - pause.getRegionWidth(), Specular.camera.viewportHeight / 2 - pause.getRegionHeight());
 		
 		//Drawing LIFE
 		for(int i = 0; i < gs.getPlayer().getLife(); i++)

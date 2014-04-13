@@ -21,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
 import com.tint.specular.game.GameState;
@@ -66,7 +66,7 @@ public class ControlSetupState extends State {
 		player.barrelTexture = Player.barrelTexture;
 		
 		//Input
-		stage = new Stage(new ScreenViewport(Specular.camera), game.batch);
+		stage = new Stage(new ExtendViewport(1920, 1080), game.batch);
 		
 		lastTickTime = System.nanoTime();
 		
@@ -91,7 +91,7 @@ public class ControlSetupState extends State {
 		// Slider
 		final Slider sensitivitySlider = new Slider(0.2f, 2f, 0.01f, false, sliderStyle);
 		sensitivitySlider.setSize(1280, 200);
-		sensitivitySlider.setPosition(-sensitivitySlider.getWidth() / 2 + 250, -Specular.camera.viewportHeight / 2 + 8);
+		sensitivitySlider.setPosition((stage.getWidth() - sensitivitySlider.getWidth()) / 2 + 250, (stage.getHeight() - Specular.camera.viewportHeight) / 2 + 8);
 		sensitivitySlider.setValue(Specular.prefs.getFloat("Sensitivity"));
 		
 		sensitivitySlider.addListener(new ChangeListener() {
@@ -105,7 +105,7 @@ public class ControlSetupState extends State {
 		TextureRegion backButtonDown = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/highscore/Back Pressed.png")));
 		Button backBtn = new Button(new TextureRegionDrawable(backButton), new TextureRegionDrawable(backButtonDown));
 		
-		backBtn.setPosition(-Specular.camera.viewportWidth / 2 + 47, -Specular.camera.viewportHeight / 2);
+		backBtn.setPosition((stage.getWidth() - Specular.camera.viewportWidth) / 2 + 47, (stage.getHeight() - Specular.camera.viewportHeight) / 2);
 		
 		backBtn.addListener(new ChangeListener() {
 			@Override
@@ -118,7 +118,7 @@ public class ControlSetupState extends State {
 		TextureRegion testBtnTexPressed = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Test Pressed.png")));
 		final Button testBtn = new Button(new TextureRegionDrawable(testBtnTex), new TextureRegionDrawable(testBtnTexPressed));
 		
-		testBtn.setPosition(-testBtn.getWidth() / 2, Specular.camera.viewportHeight / 2 - testBtnTex.getRegionHeight());
+		testBtn.setPosition((stage.getWidth() - testBtn.getWidth()) / 2, (stage.getHeight() + Specular.camera.viewportHeight) / 2 - testBtnTex.getRegionHeight());
 		
 		testBtn.addListener(new ChangeListener() {
 			@Override
@@ -134,7 +134,7 @@ public class ControlSetupState extends State {
 		TextureRegion stickPositionTexDown = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Positions Pressed.png")));
 		stickPositionBtn = new Button(new TextureRegionDrawable(stickPositionTex), new TextureRegionDrawable(stickPositionTexDown));
 		
-		stickPositionBtn.setPosition(-stickPositionBtn.getWidth() / 2, Specular.camera.viewportHeight / 2 - 250);
+		stickPositionBtn.setPosition((stage.getWidth() - stickPositionBtn.getWidth()) / 2, (stage.getHeight() + Specular.camera.viewportHeight) / 2 - 250);
 		
 		stickPositionBtn.setVisible(Specular.prefs.getBoolean("Static"));
 		
@@ -152,7 +152,7 @@ public class ControlSetupState extends State {
 		
 		staticBtn = new Button(new TextureRegionDrawable(controlButtonsTex));
 		
-		staticBtn.setPosition(-Specular.camera.viewportWidth / 2 - 50, Specular.camera.viewportHeight / 2 - 205);
+		staticBtn.setPosition((stage.getWidth() - Specular.camera.viewportWidth) / 2 - 50, (stage.getHeight() + Specular.camera.viewportHeight) / 2 - 205);
 		staticBtn.setChecked(Specular.prefs.getBoolean("Static"));
 		staticBtn.addListener(new ChangeListener() {
 			@Override
@@ -224,8 +224,8 @@ public class ControlSetupState extends State {
 		
 		if(stickPositionBtn.isChecked()) {
 			game.batch.begin();
-			game.batch.draw(AnalogStick.base, inputProcessor.move.getXBase() - AnalogStick.base.getWidth() / 2, inputProcessor.move.getYBase() - AnalogStick.base.getHeight() / 2);
-			game.batch.draw(AnalogStick.base, inputProcessor.shoot.getXBase() - AnalogStick.base.getWidth() / 2, inputProcessor.shoot.getYBase() - AnalogStick.base.getHeight() / 2);
+			game.batch.draw(AnalogStick.base, stage.getWidth() / 2 + inputProcessor.move.getXBase() - AnalogStick.base.getWidth() / 2, stage.getHeight() / 2 + inputProcessor.move.getYBase() - AnalogStick.base.getHeight() / 2);
+			game.batch.draw(AnalogStick.base, stage.getWidth() / 2 + inputProcessor.shoot.getXBase() - AnalogStick.base.getWidth() / 2, stage.getHeight() / 2 + inputProcessor.shoot.getYBase() - AnalogStick.base.getHeight() / 2);
 			game.batch.end();
 		}
 	}
