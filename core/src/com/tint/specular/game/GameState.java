@@ -139,6 +139,7 @@ public class GameState extends State {
 		
 		// Loading map texture from a internal directory
 		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/maps/Level.png"));
+		Texture shockLight = new Texture(Gdx.files.internal("graphics/game/maps/ShockLight.png"));
 		Texture parallax = new Texture(Gdx.files.internal("graphics/game/maps/Parallax.png"));
 		
 		// Loading gameover texture
@@ -153,7 +154,7 @@ public class GameState extends State {
 		
 		// Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
-		mapHandler.addMap("Map", mapTexture, parallax, mapTexture.getWidth(), mapTexture.getHeight());
+		mapHandler.addMap("Map", mapTexture, shockLight, parallax, mapTexture.getWidth(), mapTexture.getHeight(), this);
 		currentMap = mapHandler.getMap("Map");
 		
 		// Initializing font
@@ -255,7 +256,7 @@ public class GameState extends State {
 				
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isDying() && !player.isDead()) {
-//					player.updateHitDetection();
+					player.updateHitDetection();
 					if(currentWave.update()) {
 						waveNumber++;
 						currentWave = waveManager.getWave(waveNumber);
@@ -268,7 +269,7 @@ public class GameState extends State {
 			if(powerUpSpawnTime < 0) {
 				if(enablePowerUps) {
 					puss.spawn();
-					powerUpSpawnTime = 400;
+					powerUpSpawnTime = 200;
 				}
 			}
 					
@@ -348,6 +349,10 @@ public class GameState extends State {
 	}
 	
 	protected void renderGame() {
+		
+		Gdx.gl.glClearDepthf(1f);
+		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+		
 		// Clearing screen, positioning camera, rendering map and entities
 		//Positioning camera to the player		
 		Specular.camera.zoom = 1;
@@ -627,6 +632,7 @@ public class GameState extends State {
 		
 		boardshockCharge = 0;
 		Bullet.maxBounces = 0;
+		FireRateBoost.stacks = 0;
 		
 		waveNumber = 0;
 		currentWave = waveManager.getWave(waveNumber);

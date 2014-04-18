@@ -54,7 +54,7 @@ public class BulletBurst extends PowerUp {
 	
 	@Override
 	protected void updatePowerup(Player player) {
-		if(player.getAmmoType() != AmmoType.LASER && gs.getGameProcessor().getShootStick().isActive()) {
+		if(player.getAmmoType() != AmmoType.LASER && gs.getGameProcessor().getShootStick().isActive() && !player.isDying() && !player.isSpawning()) {
 			if(playersFired.contains(player))
 				timesFiredSamePlayer++;
 

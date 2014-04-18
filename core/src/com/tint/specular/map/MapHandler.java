@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.tint.specular.game.GameState;
 
 /**
  * 
@@ -24,9 +25,9 @@ public class MapHandler {
 	 * @param width - The width
 	 * @param height - The height
 	 */
-	public void addMap(String name, Texture texture, Texture parallax, int width, int height) {
+	public void addMap(String name, Texture texture, Texture shockLight, Texture parallax, int width, int height, GameState gs) {
 		if(!maps.containsKey(name))
-			maps.put(name, new Map(texture, parallax, name, width, height));
+			maps.put(name, new Map(texture, shockLight, parallax, name, width, height, gs));
 	}
 	
 	/**

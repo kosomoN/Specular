@@ -1,22 +1,23 @@
 package com.tint.specular.game.entities;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.Specular;
-import com.tint.specular.effects.Trail;
 import com.tint.specular.effects.TrailPart;
 import com.tint.specular.game.BoardShock;
 import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
 
@@ -32,12 +33,12 @@ public class Player implements Entity {
 	public static final float FRICTION = 0.95f;
 	
 	public static Animation anim, spawnAnim, deathAnim;
-	public static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture, barrelTexture;
+	public static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture, barrelTexture[] = new Texture[7];
 	public static int radius;
 	
 	private GameState gs;
 	private AmmoType ammo = AmmoType.BULLET;
-	private Trail playerTrail;
+	private List<TrailPart> playerTrail = new ArrayList<TrailPart>();
 	
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
@@ -81,8 +82,10 @@ public class Player implements Entity {
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
-	
-		playerTrail = new Trail(10f);
+		
+		for(int i = 0; i < 30; i++) {
+			playerTrail.add(new TrailPart(centerx, centery, (int) (i / 30f * 60)));
+		}
 	}
 
 	public void shootBullet(float direction, int offset, int spaces) {
@@ -221,7 +224,18 @@ public class Player implements Entity {
 		} else {
 			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
 			batch.draw(baseAnimFrame, centerx - baseAnimFrame.getRegionWidth() / 2, centery - baseAnimFrame.getRegionHeight() / 2);
-			Util.drawCentered(batch, barrelTexture, getX(), getY(), direction);
+			
+			//Barrel
+			Util.drawCentered(batch, barrelTexture[bulletBurstLevel < 4 ? bulletBurstLevel : 3], getX(), getY(), direction);
+			
+			
+			if(FireRateBoost.stacks == 1)
+				Util.drawCentered(batch, barrelTexture[4], getX(), getY(), direction);
+			if(FireRateBoost.stacks == 2)
+				Util.drawCentered(batch, barrelTexture[5], getX(), getY(), direction);
+			if(FireRateBoost.stacks >= 3)
+				Util.drawCentered(batch, barrelTexture[6], getX(), getY(), direction);
+			
 			for(int i = 0; i < shields; i++) {
 				Util.drawCentered(batch, shieldTexture, getX(), getY(), -animFrameTime * 360 + 360f * i / shields);
 			}
@@ -231,6 +245,13 @@ public class Player implements Entity {
 	
 	@Override
 	public boolean update() {
+		
+		for(TrailPart tp : playerTrail) {
+			if(tp.update())
+				tp.reset(centerx, centery);
+			
+		}
+		
 		// Taking control away when player is hit and respawning
 		animFrameTime += 1 / 60f;
 		
@@ -374,11 +395,6 @@ public class Player implements Entity {
         }
 	}
 	
-	public void updateTrail() {
-		playerTrail.addTrailPart(new TrailPart(getX(), getY(), Color.RED));
-		playerTrail.update();
-	}
-	
 	public void addShield() {
 		if(shields < 3)
 			shields++;
@@ -477,7 +493,14 @@ public class Player implements Entity {
 		
 		shieldTexture = new Texture(Gdx.files.internal("graphics/game/Shield.png"));
 		
-		barrelTexture = new Texture(Gdx.files.internal("graphics/game/Barrels.png"));
+		barrelTexture[0] = new Texture(Gdx.files.internal("graphics/game/Barrels.png"));
+		barrelTexture[1] = new Texture(Gdx.files.internal("graphics/game/Barrels Spread 1.png"));
+		barrelTexture[2] = new Texture(Gdx.files.internal("graphics/game/Barrels Spread 2.png"));
+		barrelTexture[3] = new Texture(Gdx.files.internal("graphics/game/Barrels Spread 3.png"));
+		
+		barrelTexture[4] = new Texture(Gdx.files.internal("graphics/game/Rate 1.png"));
+		barrelTexture[5] = new Texture(Gdx.files.internal("graphics/game/Rate 2.png"));
+		barrelTexture[6] = new Texture(Gdx.files.internal("graphics/game/Rate 3.png"));
 	}
 	
 	@Override
@@ -491,5 +514,9 @@ public class Player implements Entity {
 	
 	public float getBarrelPosY(int barrelIndex) {
 		return (float) (centery + Math.sin(Math.toRadians(direction + barrelIndex * 8)) * 60);
+	}
+
+	public List<TrailPart> getTrail() {
+		return playerTrail;
 	}
 }

@@ -63,7 +63,7 @@ public class ControlSetupState extends State {
 		player.x = map.getWidth() / 2;
 		player.y = map.getHeight() / 2;
 		player.anim = Player.anim;
-		player.barrelTexture = Player.barrelTexture;
+		player.barrelTexture = Player.barrelTexture[0];
 		
 		//Input
 		stage = new Stage(new ExtendViewport(1920, 1080), game.batch);

@@ -1,7 +1,6 @@
 package com.tint.specular.game.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -29,7 +28,7 @@ public class EnemyDasher extends Enemy {
 	}
 
 	@Override
-	public void renderEnemy(SpriteBatch batch) {
+	public void renderEnemy(SpriteBatch batch) {/*
 		if(boostingDelay < 120) {
 			batch.setColor(1, 1, 1, ((float) Math.cos(boostingDelay / 60f * Math.PI * 2 + Math.PI) + 1) / 2);
 			
@@ -53,7 +52,7 @@ public class EnemyDasher extends Enemy {
 			}
 			
 			batch.setColor(Color.WHITE);
-		}
+		}*/
 		
 		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction) - 90);
 	}
