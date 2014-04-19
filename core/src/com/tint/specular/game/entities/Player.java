@@ -83,8 +83,8 @@ public class Player implements Entity {
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
 		
-		for(int i = 0; i < 30; i++) {
-			playerTrail.add(new TrailPart(centerx, centery, (int) (i / 30f * 60)));
+		for(int i = 0; i < TrailPart.AMOUNT; i++) {
+			playerTrail.add(new TrailPart(centerx, centery, (int) (i / (float) TrailPart.AMOUNT * TrailPart.SIZE)));
 		}
 	}
 

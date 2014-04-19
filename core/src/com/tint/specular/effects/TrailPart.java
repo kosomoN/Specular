@@ -3,6 +3,7 @@ package com.tint.specular.effects;
 
 public class TrailPart {
 		
+	public static final int AMOUNT = 50, SIZE = 128;
 	private float x;
 	private float y;
 	private float size;
@@ -14,7 +15,7 @@ public class TrailPart {
 	}
 	
 	public boolean update() {
-		size -= 2;
+		size -= 3;
 		return size < 1;
 	}
 	
@@ -29,7 +30,7 @@ public class TrailPart {
 	public void reset(float x, float y) {
 		this.x = x;
 		this.y = y;
-		size = 60;
+		size = SIZE;
 	}
 
 	public float getSize() {
