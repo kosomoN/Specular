@@ -4,54 +4,90 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
-import com.tint.specular.Specular;
-import com.tint.specular.utils.Util;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class ShockWaveRenderer {
-	private static Texture[] rings = new Texture[6];
-	private static Texture waveMask;
-	private static Vector3 scissorVector = new Vector3();
+	private static Texture ring, waveMask;
+	private static ShaderProgram shader;
 	
 	public static void renderShockwave(SpriteBatch batch, float x, float y, float time) {
-		
-		Gdx.gl.glColorMask(false, false, false, true);
-		batch.setBlendFunction(GL20.GL_ONE, GL20.GL_ZERO);
-		int size = waveMask.getWidth() / 2;
-//		batch.draw(waveMask, x - size / 2, y - size / 2, size, size);
-		
-		batch.flush();
-		
-		Gdx.gl.glColorMask(true, true, true, true);
-		batch.setBlendFunction(GL20.GL_DST_ALPHA, GL20.GL_ONE_MINUS_DST_ALPHA);
-		
-		Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
-		scissorVector.x = 100;
-		scissorVector.y = 100;
-		Specular.camera.project(scissorVector);
-		Gdx.gl.glScissor((int) (Gdx.graphics.getWidth() / 2), (int) (Gdx.graphics.getHeight() / 2 - size / 2), 500, 500);
-		
-//		Util.drawCentered(batch, rings[0], x, y, time * 0);
-//		Util.drawCentered(batch, rings[1], x, y, time * -27);
-		Util.drawCentered(batch, rings[2], x, y, time * 0);
-//		Util.drawCentered(batch, rings[3], x, y, time * -15);
-//		Util.drawCentered(batch, rings[4], x, y, time * 0);
-//		Util.drawCentered(batch, rings[5], x, y, 0);
-		
-		batch.flush();
-		
-		Gdx.gl.glDisable(GL20.GL_SCISSOR_TEST);
-	}
-	
-	public static void renderRepulsor() {
-		
+		batch.setShader(shader);
+		shader.setUniformf("mask_size", time);
+		batch.draw(ring, x - ring.getWidth() * time / 2, y -ring.getHeight() * (1 - time / 2),  ring.getWidth() * time / 2, ring.getHeight() * (1 - time / 2), ring.getWidth(), ring.getHeight(), 1, 1, time * 180, 0, 0, (int) ring.getWidth(), (int) ring.getHeight(), false, false);
+//		batch.draw(ring, x - ring.getWidth() * time / 2, y -ring.getHeight() * (1 - time / 2));
+		batch.setShader(null);
 	}
 	
 	public static void init() {
-		for(int i = 0; i < 6; i++) {
-			rings[i] = new Texture(Gdx.files.internal("graphics/game/shockwave/Ring " + (i + 1) + ".png"));
-		}
+		ring = new Texture(Gdx.files.internal("graphics/game/effects/Shockwave.png"));
 		
-		waveMask = new Texture(Gdx.files.internal("graphics/game/shockwave/WaveMask.png"));
+		waveMask = new Texture(Gdx.files.internal("graphics/game/effects/ShockwaveMask.png"));
+		
+		ShaderProgram.pedantic = false;
+		 
+		shader = new ShaderProgram(VERT, FRAG);
+		if (!shader.isCompiled()) {
+			System.err.println(shader.getLog());
+			System.exit(0);
+		}
+		if (shader.getLog().length()!=0)
+			System.out.println(shader.getLog());
+		
+		shader.begin();
+		shader.setUniformi("u_mask", 2);
+		shader.end();
+		
+		//Bind the mask to index 1
+		waveMask.bind(2);
+		
+		//Reset bound texture
+		Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 	}
+	
+	public static void resetShader() {
+		ShaderProgram.pedantic = false;
+		 
+		shader = new ShaderProgram(VERT, FRAG);
+		if (!shader.isCompiled()) {
+			System.err.println(shader.getLog());
+			System.exit(0);
+		}
+		if (shader.getLog().length()!=0)
+			System.out.println(shader.getLog());
+		
+		shader.begin();
+		shader.setUniformi("u_mask", 2);
+		shader.end();
+	}
+	
+	private final static String VERT =  
+			"attribute vec4 "+ShaderProgram.POSITION_ATTRIBUTE+";\n" +
+			"attribute vec4 "+ShaderProgram.COLOR_ATTRIBUTE+";\n" +
+			"attribute vec2 "+ShaderProgram.TEXCOORD_ATTRIBUTE+"0;\n" +
+			
+			"uniform mat4 u_projTrans;\n" + 
+			" \n" + 
+			"varying vec2 vTexCoord;\n" +
+			
+			"void main() {\n" +  
+			"	vTexCoord = "+ShaderProgram.TEXCOORD_ATTRIBUTE+"0;\n" +
+			"	gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" +
+			"}";
+	
+	private final static String FRAG = 
+			  "#ifdef GL_ES\n"
+			+ "#define LOWP lowp\n"
+			+ "precision mediump float;\n"
+			+ "#else\n"
+			+ "#define LOWP \n"
+			+ "#endif\n" +
+			"varying vec2 vTexCoord;\n" + 
+			"uniform sampler2D u_mask;\n" +	
+			"uniform sampler2D u_texture;\n" +	
+			"uniform float mask_size;\n" +	
+			"void main(void) {\n" + 
+			"	vec4 texColor = texture2D(u_texture, vTexCoord + 0.5 - mask_size / 2);\n" + 
+			"	vec4 maskColor = texture2D(u_mask, vTexCoord / mask_size);\n" + 
+			"	gl_FragColor = texColor * maskColor;\n" + 
+			"}";
 }

@@ -2,7 +2,9 @@ package com.tint.specular.game.powerups;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
 
@@ -33,6 +35,14 @@ public class PushAway extends PowerUp {
 				e.setX((float) (e.getX() + Math.cos(angle) * 20 * (1 - distanceSquared / PUSHAWAY_RANGE)));
 				e.setY((float) (e.getY() + Math.sin(angle) * 20 * (1 - distanceSquared / PUSHAWAY_RANGE)));
 			}
+		}
+	}
+
+	@Override
+	public void render(SpriteBatch batch) {
+		super.render(batch);
+		if(isActivated()) {
+			ShockWaveRenderer.renderShockwave(batch, gs.getPlayer().getX(), gs.getPlayer().getY(), (activeTime / 50f) % 1);
 		}
 	}
 

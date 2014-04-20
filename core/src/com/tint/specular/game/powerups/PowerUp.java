@@ -3,6 +3,7 @@ package com.tint.specular.game.powerups;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
@@ -19,7 +20,7 @@ public abstract class PowerUp implements Entity {
 	protected GameState gs;
 	protected float x, y;
 	private float despawnTime = 900; // 15s
-	private float activeTime;
+	protected float activeTime;
 	private boolean activated, hasRemovedEffect;
 	private float maxActiveTime;
 	
@@ -81,7 +82,8 @@ public abstract class PowerUp implements Entity {
 		if(!isActivated() && despawnTime > 0)	
 			batch.draw(getTexture(), x - getTexture().getWidth() / 2, y - getTexture().getHeight() / 2);
 		
-		if(activated && activeTime < 40) {
+		if(activated && activeTime < 20) {
+			ShockWaveRenderer.renderShockwave(batch, x, y, activeTime / 20);
 		}
 	}
 

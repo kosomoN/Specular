@@ -198,7 +198,7 @@ public class GameState extends State {
 		Ricochet.init();
 		PushAway.init();
 		LaserPowerup.init();
-		
+		ShockWaveRenderer.init();
 		Laser.init(this);
 		
 		pss = new PlayerSpawnSystem(this);
@@ -388,7 +388,6 @@ public class GameState extends State {
 				ent.render(game.batch);
 		}
 		
-		
 		if(!gameMode.isGameOver())
 			player.render(game.batch);
 		
@@ -397,8 +396,6 @@ public class GameState extends State {
 		Specular.camera.zoom = 1;
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
-		
-		
 		
 		if(!gameMode.isGameOver()) {
 			//Drawing HUD
