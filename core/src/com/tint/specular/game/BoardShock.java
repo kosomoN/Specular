@@ -30,7 +30,7 @@ public class BoardShock {
 		if(activated) {
 			timeActivated += 1;
 			
-			if(timeActivated >= 100) {
+			if(timeActivated >= 120) {
 				activated = false;
 			} else if(timeActivated == 18) {
 				Camera.shake(2.5f, 0.1f);
@@ -53,7 +53,7 @@ public class BoardShock {
 	}
 	
 	public static float getShockWaveProgress() {
-		return (timeActivated - 18) / 82;
+		return (timeActivated - 18) / 102;
 	}
 	
 	public static void setZoom() {

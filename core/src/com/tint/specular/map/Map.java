@@ -166,23 +166,23 @@ public class Map {
 		shapeRenderer.begin(ShapeType.Filled);
 		
 		for(TrailPart tp : gs.getPlayer().getTrail())
-			shapeRenderer.circle(tp.getX(), tp.getY(), tp.getSize());
+			shapeRenderer.rect(tp.getX() - tp.getSize() / 2, tp.getY() - tp.getSize() / 2, tp.getSize(), tp.getSize());
 		
 		for(Bullet b : gs.getBullets()) {
-			shapeRenderer.circle(b.getX(), b.getY(), 160);
+			shapeRenderer.rect(b.getX() - 80, b.getY() - 80, 160, 160);
 		}
 		
 		if(BoardShock.isActivated()) {
 			float size = BoardShock.getShockWaveProgress() * 6144;
-			shapeRenderer.circle(BoardShock.getActivationX(), fbo.getHeight() - BoardShock.getActivationY(), size);
+			shapeRenderer.rect(BoardShock.getActivationX() - size / 2, BoardShock.getActivationY() - size / 2, size, size);
 		}
 		
 		for(Particle e : gs.getParticles()) {
-			shapeRenderer.circle(e.getX(), e.getY(), 160);
+			shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
 		}
 		
 		for(Enemy e : gs.getEnemies()) {
-			shapeRenderer.circle(e.getX(), e.getY(), 160);
+			shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
 		}
 		shapeRenderer.end();
 		
