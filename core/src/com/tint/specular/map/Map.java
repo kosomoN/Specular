@@ -13,8 +13,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.tint.specular.Specular;
 import com.tint.specular.effects.TrailPart;
+import com.tint.specular.game.BoardShock;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Bullet;
+import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
@@ -89,7 +92,7 @@ public class Map {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.setProjectionMatrix(matrix);
 		
-		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+//		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 		batch.begin();
 		batch.setColor(Color.RED);
 		for(TrailPart tp : gs.getPlayer().getTrail())
@@ -97,6 +100,42 @@ public class Map {
 		
 		for(Bullet b : gs.getBullets()) {
 			batch.draw(mask, b.getX() - 80, fbo.getHeight() - b.getY() - 80, 160, 160);
+		}
+		
+		if(BoardShock.isActivated()) {
+			float sizee = BoardShock.getShockWaveProgress() * 6144;
+			batch.draw(ShockWaveRenderer.getMaskTexture(), BoardShock.getActivationX() - sizee / 2, fbo.getHeight() - BoardShock.getActivationY() - sizee / 2, sizee, sizee);
+		}
+		
+		for(Particle e : gs.getParticles()) {
+			switch(e.getType()) {
+			case BULLET:
+				batch.setColor(1, 0, 0, 1);
+				break;
+			case ENEMY_BOOSTER:
+				break;
+			case ENEMY_DASHER:
+				batch.setColor(0, 1, 0, 1);
+				break;
+			case ENEMY_NORMAL:
+				batch.setColor(0.3f, 1f, 1f, 1);
+				break;
+			case ENEMY_SHIELDER:
+				batch.setColor(1, 1, 1, 1);
+				break;
+			case ENEMY_STRIVER:
+				batch.setColor(1, 0, 1, 1);
+				break;
+			case ENEMY_VIRUS:
+				batch.setColor(0, 1, 0, 1);
+				break;
+			case ENEMY_WANDERER:
+				batch.setColor(1, 0.9f, 0.5f, 1);
+				break;
+			}
+			
+			float size = e.getLifetimePercent() * 160 + 80;
+			batch.draw(mask, e.getX() - size / 2, fbo.getHeight() - e.getY() - size / 2, size, size);
 		}
 		
 		for(Enemy e : gs.getEnemies()) {
@@ -112,7 +151,6 @@ public class Map {
 				batch.setColor(0, 1, 0, 1);
 			batch.draw(mask, e.getX() - 80, fbo.getHeight() - e.getY() - 80, 160, 160);
 		}
-		
 		
 		batch.setColor(Color.WHITE);
 		batch.end();
@@ -132,6 +170,15 @@ public class Map {
 		
 		for(Bullet b : gs.getBullets()) {
 			shapeRenderer.circle(b.getX(), b.getY(), 160);
+		}
+		
+		if(BoardShock.isActivated()) {
+			float size = BoardShock.getShockWaveProgress() * 6144;
+			shapeRenderer.circle(BoardShock.getActivationX(), fbo.getHeight() - BoardShock.getActivationY(), size);
+		}
+		
+		for(Particle e : gs.getParticles()) {
+			shapeRenderer.circle(e.getX(), e.getY(), 160);
 		}
 		
 		for(Enemy e : gs.getEnemies()) {

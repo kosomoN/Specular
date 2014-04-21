@@ -2,7 +2,6 @@ package com.tint.specular.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.Specular;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
@@ -14,6 +13,7 @@ public class BoardShock {
 	private static boolean activated;
 	private static GameState gs;
 	private static float zoom = 0;
+	private static float activationX, activationY;
 	
 	public static void activate(GameState gs) {
 		activated = true;
@@ -21,21 +21,19 @@ public class BoardShock {
 		BoardShock.gs = gs;
 		
 		soundBs1.play();
+		
+		activationX = gs.getPlayer().getX();
+		activationY = gs.getPlayer().getY();
 	}
 
 	public static void update() {
 		if(activated) {
-			timeActivated += GameState.TICK_LENGTH_MILLIS;
-			zoom = 1;
-			if(timeActivated > 225) {
-				zoom = 1 - 1 - ((1 - ((timeActivated - 225) / 75)) * (1 - ((timeActivated - 225) / 75))) * 0.3f;
-			} else {
-				zoom = 1 - 1 - (1 - (1 - ((timeActivated) / 225)) * (1 - ((timeActivated) / 225))) * 0.3f;
-			}
+			timeActivated += 1;
 			
-			if(timeActivated >= 300) {
-				Camera.shake(2.5f, 0.1f);
+			if(timeActivated >= 100) {
 				activated = false;
+			} else if(timeActivated == 18) {
+				Camera.shake(2.5f, 0.1f);
 				zoom = 0;
 				for(Enemy e : gs.getEnemies()) {
 					if(!(e instanceof EnemyVirus) || Math.random() > 0.25) {
@@ -43,17 +41,20 @@ public class BoardShock {
 						gs.gameMode.enemyKilled(e);
 					}
 				}
+			} else if(timeActivated < 18) {
+				zoom = 1;
+				if(timeActivated > 13) {
+					zoom = 1 - 1 - ((1 - ((timeActivated - 13) / 5)) * (1 - ((timeActivated - 13) / 5))) * 0.3f;
+				} else {
+					zoom = 1 - 1 - (1 - (1 - ((timeActivated) / 13)) * (1 - ((timeActivated) / 13))) * 0.3f;
+				}
 			}
 		}
 	}
 	
-	public static void render(SpriteBatch batch) {
-		if(activated)
-			batch.setColor(0, 0, 0, 1);
-		else
-			batch.setColor(1, 1, 1, 1);
+	public static float getShockWaveProgress() {
+		return (timeActivated - 18) / 82;
 	}
-	
 	
 	public static void setZoom() {
 		Specular.camera.zoom += zoom;
@@ -61,5 +62,13 @@ public class BoardShock {
 
 	public static boolean isActivated() {
 		return activated;
+	}
+
+	public static float getActivationX() {
+		return activationX;
+	}
+
+	public static float getActivationY() {
+		return activationY;
 	}
 }

@@ -84,6 +84,7 @@ public class GameState extends State {
 	protected GameMode gameMode;
 	protected Player player;
 	private Stage stage;
+	private static final int PARTICLE_LIMIT = 100;
 	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
@@ -108,7 +109,7 @@ public class GameState extends State {
 	private Array<Entity> entities = new Array<Entity>(false, 128);
 	private Array<Enemy> enemies = new Array<Enemy>(false, 64);
 	private Array<Bullet> bullets = new Array<Bullet>(false, 64);
-	private Array<Particle> particles = new Array<Particle>(false, 64);
+	private Array<Particle> particles = new Array<Particle>(false, PARTICLE_LIMIT);
 	private Array<PowerUp> powerups = new Array<PowerUp>(false, 64);
 	
 	// Map control
@@ -224,6 +225,11 @@ public class GameState extends State {
 	
 	protected void update() {
 		if(!isPaused) {
+			
+			//Remove random particles if there are too many
+			while(particles.size >= PARTICLE_LIMIT)
+				particles.removeIndex(rand.nextInt(particles.size));
+			
 			// Adding played time
 			if(!gameMode.isGameOver())
 				ticks++;
@@ -745,5 +751,9 @@ public class GameState extends State {
 
 	public Wave getCurrentWave() {
 		return currentWave;
+	}
+
+	public Array<Particle> getParticles() {
+		return particles;
 	}
 }

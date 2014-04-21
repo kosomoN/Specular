@@ -83,7 +83,7 @@ public abstract class PowerUp implements Entity {
 			batch.draw(getTexture(), x - getTexture().getWidth() / 2, y - getTexture().getHeight() / 2);
 		
 		if(activated && activeTime < 20) {
-			ShockWaveRenderer.renderShockwave(batch, x, y, activeTime / 20);
+			ShockWaveRenderer.renderShockwave(batch, x, y, activeTime / 20, false);
 		}
 	}
 

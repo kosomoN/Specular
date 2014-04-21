@@ -121,4 +121,8 @@ public class Particle implements Entity, Poolable {
 	@Override
 	public void reset() {
 	}
+	
+	public float getLifetimePercent() {
+		return lifetime / 40f;
+	}
 }

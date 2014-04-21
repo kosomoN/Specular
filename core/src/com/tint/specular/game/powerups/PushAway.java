@@ -42,7 +42,7 @@ public class PushAway extends PowerUp {
 	public void render(SpriteBatch batch) {
 		super.render(batch);
 		if(isActivated()) {
-			ShockWaveRenderer.renderShockwave(batch, gs.getPlayer().getX(), gs.getPlayer().getY(), (activeTime / 50f) % 1);
+			ShockWaveRenderer.renderShockwave(batch, gs.getPlayer().getX(), gs.getPlayer().getY(), (activeTime / 50f) % 1, true);
 		}
 	}
 
