@@ -15,6 +15,7 @@ import com.tint.specular.effects.TrailPart;
 import com.tint.specular.game.BoardShock;
 import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.powerups.FireRateBoost;
@@ -31,6 +32,8 @@ public class Player implements Entity {
 	
 	public static final int MAX_DELTA_SPEED = 1;
 	public static final float FRICTION = 0.95f;
+	private static final float PUSHAWAY_RANGE_SQUARED = 500 * 500;
+	private static final int PUSHAWAY_TIME = 50;
 	
 	public static Animation anim, spawnAnim, deathAnim;
 	public static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture, barrelTexture[] = new Texture[7];
@@ -66,6 +69,7 @@ public class Player implements Entity {
 	Sound soundHit1 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit1.wav"));			
 	Sound soundHit2 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit2.wav"));	
 	Sound soundHit3 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit3.wav"));
+	private int shieldLoseRepelTimer;
 			
 //---------------SOUND FX END---------------------		
 
@@ -240,6 +244,11 @@ public class Player implements Entity {
 				Util.drawCentered(batch, shieldTexture, getX(), getY(), -animFrameTime * 360 + 360f * i / shields);
 			}
 			
+			if(shieldLoseRepelTimer > PUSHAWAY_TIME - 20) {
+				System.out.println(shieldLoseRepelTimer / 20f);
+				ShockWaveRenderer.renderShockwave(batch, centerx, centery, (PUSHAWAY_TIME - shieldLoseRepelTimer) / 20f, false);
+			}
+			
 		}
 	}
 	
@@ -267,6 +276,21 @@ public class Player implements Entity {
 					angle = Math.atan2(e.getY() - getY(), e.getX() - getX());
 					e.setX((float) (e.getX() + Math.cos(angle) * 20 * (1 - distanceSquared / 250000)));
 					e.setY((float) (e.getY() + Math.sin(angle) * 20 * (1 - distanceSquared / 250000)));
+				}
+			}
+		}
+		
+		if(shieldLoseRepelTimer > 0) {
+			shieldLoseRepelTimer--;
+			float distanceSquared;
+			double angle;
+			for(Enemy e : gs.getEnemies()) {
+				distanceSquared = (e.getX() - getX()) * (e.getX() - getX()) + (e.getY() - getY()) * (e.getY() - getY());
+				if(PUSHAWAY_RANGE_SQUARED > distanceSquared) {
+					angle = Math.atan2(e.getY() - getY(), e.getX() - getX());
+					//Math.cos(angle) * distance (0-1) to make it push less if the enemy is far away * time^2 to make it smoothly disappear
+					e.setX((float) (e.getX() + Math.cos(angle) * 10 * (1 - distanceSquared / PUSHAWAY_RANGE_SQUARED) * (1 - (shieldLoseRepelTimer / PUSHAWAY_TIME) * (shieldLoseRepelTimer / PUSHAWAY_TIME))));
+					e.setY((float) (e.getY() + Math.sin(angle) * 10 * (1 - distanceSquared / PUSHAWAY_RANGE_SQUARED) * (1 - (shieldLoseRepelTimer / PUSHAWAY_TIME) * (shieldLoseRepelTimer / PUSHAWAY_TIME))));
 				}
 			}
 		}
@@ -370,6 +394,7 @@ public class Player implements Entity {
 //	        			setSpeed(dx + e.getDx(), dy + e.getDy());
 	        			
 	        			shields--;
+	        			shieldLoseRepelTimer = PUSHAWAY_TIME;
         			} else {
         				Specular.nativeAndroid.sendAnalytics("Death", String.valueOf(gs.getCurrentWave().getID()), e.getClass().getSimpleName(), null);
         				
