@@ -13,7 +13,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.game.entities.Bullet;
@@ -134,6 +136,8 @@ public class GameState extends State {
 	private Music music;
 	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","03.ogg","05.ogg","06.ogg"};
 	private int currentMusic = -1;
+	private Rectangle scissors = new Rectangle();
+	private Rectangle clipBounds;
 	
 	public GameState(Specular game) {
 		super(game);
@@ -157,6 +161,8 @@ public class GameState extends State {
 		mapHandler = new MapHandler();
 		mapHandler.addMap("Map", mapTexture, shockLight, parallax, mapTexture.getWidth(), mapTexture.getHeight(), this);
 		currentMap = mapHandler.getMap("Map");
+		
+		clipBounds = new Rectangle(0, 0, currentMap.getWidth(), currentMap.getHeight());
 		
 		// Initializing font
 		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
@@ -381,6 +387,9 @@ public class GameState extends State {
 		
 		currentMap.render(game.batch);
 		
+		ScissorStack.calculateScissors(Specular.camera, game.batch.getTransformMatrix(), clipBounds, scissors);
+		ScissorStack.pushScissors(scissors);
+		
 		for(Entity ent : entities) {
 			if(!(ent instanceof Enemy))
 				ent.render(game.batch);
@@ -396,6 +405,9 @@ public class GameState extends State {
 		
 		if(!gameMode.isGameOver())
 			player.render(game.batch);
+		
+		game.batch.flush();
+		ScissorStack.popScissors();
 		
 		// Re-positioning camera for HUD
 		Specular.camera.position.set(0, 0, 0);
