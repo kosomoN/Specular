@@ -8,7 +8,6 @@ import com.tint.specular.game.entities.WaveManager.WaveModifier;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.Enemy.EnemyType;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
-
 import static com.tint.specular.game.entities.enemies.Enemy.EnemyType.*;
 
 
@@ -36,12 +35,12 @@ public class WaveLoader {
 		
 		wave = new Wave(gs, 2, 600);
 			wave.addEnemies(ENEMY_BOOSTER, 10, Formation.EDGES, 0, 50);
-		specialWaves.add(wave);
-		/*
+		specialWaves.add(wave);*/
+		
 		wave = new Wave(gs, 3, 600);
-			wave.addEnemies(ENEMY_EXPLODER, 10, Formation.RANDOM, 0, 60);
+			wave.addEnemies(new EnemyType[] {ENEMY_EXPLODER, ENEMY_STRIVER}, new int[] {10, 20}, Formation.RANDOM, 0, 60);
 		specialWaves.add(wave);
-		*/
+		
 		wave = new Wave(gs, 4, 400);
 			wave.addEnemies(ENEMY_DASHER, 2, Formation.RANDOM, 0, 20);
 		specialWaves.add(wave);

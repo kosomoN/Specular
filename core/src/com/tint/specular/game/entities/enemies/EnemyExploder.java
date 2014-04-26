@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
+import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.game.entities.Player;
@@ -31,8 +33,6 @@ public class EnemyExploder extends Enemy {
 	private static Animation spawnAnim, anim;
 	private static Texture warningTex, explosionTex;
 	private float alpha;
-	private int updatesExploded;
-	private int showExplotionTime;
 	
 	// Movement
 	private int timeSinceLastDirChange;
@@ -61,30 +61,26 @@ public class EnemyExploder extends Enemy {
 	
 	@Override
 	protected void renderEnemy(SpriteBatch batch) {
-		if(exploded) { // Explosion brightness
-			updatesExploded++;
-			alpha += 0.7f;
-		} else if(showExplotionTime > 120) { // Pause before fading in again
-			alpha += 0.005f;
-			if(alpha > 0.2f) {
-				showExplotionTime = 0;
-				alpha = 0;
-			}
+		// Updating alpha
+		if(!exploded) {
+			alpha = (float) Math.abs(Math.sin(rotation));
+			alpha = alpha < 0.5f ? 0f : alpha - 0.5f;
 		} else {
-			showExplotionTime++;
+			alpha -= 0.1f;
+			explosionDone = alpha <= 0;
 		}
-		
-		explosionDone = updatesExploded > 3;
 		
 		// Explosion
 		Color color = batch.getColor();
 		batch.setColor(color.r, color.g, color.b, alpha);
 		Util.drawCentered(batch, explosionTex, x, y, 0);
 		
-		// Normal animation
-		batch.setColor(color);
-		TextureRegion frame = anim.getKeyFrame(rotation, true);
-		Util.drawCentered(batch, frame, x, y, rotation * 10 % 360);
+		if(!exploded) {
+			// Normal animation
+			batch.setColor(color);
+			TextureRegion frame = anim.getKeyFrame(rotation, true);
+			Util.drawCentered(batch, frame, x, y, rotation * 10 % 360);
+		}
 	}
 	
 	@Override
@@ -155,6 +151,7 @@ public class EnemyExploder extends Enemy {
 					e.addDy((float) (Math.sin(angle) * explosionPower));
 					
 					damage = damage < 0 ? 0 : damage;
+					e.hit(damage);
 				}
 			}
 		}
@@ -167,10 +164,13 @@ public class EnemyExploder extends Enemy {
 		if(distanceSquared < EXPLODE_RANGE_SQUARED) {
 			player.setSpeed(player.getDeltaX() + (float) (Math.cos(angle) * 20 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED)),
 					player.getDeltaY() + (float) (Math.sin(angle) * 20 * (1 - distanceSquared / EXPLODE_RANGE_SQUARED)));
-			player.kill();
-		} else {
-			exploded = true;
+			Array<Enemy> list = new Array<Enemy>();
+			list.add(this);
+			player.kill(list);
 		}
+		alpha = 1f;
+		exploded = true;
+		Camera.shake(0.9f, 0.03f);
 	}
 
 	@Override

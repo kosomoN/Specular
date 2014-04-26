@@ -36,22 +36,17 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		float x = rand.nextInt(gs.getCurrentMap().getWidth() - 100) + 50;
 		float y = rand.nextInt(gs.getCurrentMap().getHeight() - 100) + 50;
 		
-		/* First it adds a random factor, affects 50% max, and it takes in to account the affecting powerups
-		 * Example:
-		 * Affecting powerups ~ (1f - player.getLife() / 4f) * 0.5f; to get importance in percentage (max 50%)
-		 * Random factor ~ rand.nextDouble();
-		 */
 		float importance = 0;
 		Player player = gs.getPlayer();
-		float life = (float) (rand.nextDouble() * 0.5f + (1 - player.getLife() / 4f) * 0.5f);
+		float life = (float) (rand.nextDouble() - player.getLife() / 4f * rand.nextDouble() * 0.5f);
 		if(life > importance)
 			importance = life;
 		
-		float fireRate = (float) (rand.nextDouble() * 0.5f + player.getFireRate() / 10f * 0.5f);
+		float fireRate = (float) (rand.nextDouble() - (1 - player.getFireRate() / 10f) * rand.nextDouble() * 0.5f);
 		if(fireRate > importance)
 			importance = fireRate;
 		
-		float burst = (float) (rand.nextDouble() * 0.5f + (1 - player.getBulletBurstLevel() / 3f) * 0.5f);
+		float burst = (float) (rand.nextDouble() - player.getBulletBurstLevel() / 3f * rand.nextDouble() * 0.55f);
 		if(burst > importance)
 			importance = burst;
 		
@@ -59,15 +54,15 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		if(score > importance)
 			importance = score;
 		
-		float slow = (float) (rand.nextDouble() * 0.5f + Enemy.getSlowdown() / 1f * 0.45f);
+		float slow = (float) (rand.nextDouble() - Enemy.getSlowdown() * rand.nextDouble() * 0.5f);
 		if(slow > importance)
 			importance = slow;
 		
-		float shield = (float) (rand.nextDouble() * 0.5f + (1 - player.getShields() / 3) * 0.3f);
+		float shield = (float) (rand.nextDouble() - player.getShields() / 3 * rand.nextDouble() * 0.45f);
 		if(shield > importance)
 			importance = shield;
 		
-		float board = (float) (rand.nextDouble() * 0.5f + (1 - gs.getBoardshockCharge()) * 0.5f); 
+		float board = (float) (rand.nextDouble() - gs.getBoardshockCharge()  * rand.nextDouble() * 0.5f); 
 		if(board > importance)
 			importance = board;
 		
@@ -79,7 +74,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		if(pushAway > importance)
 			importance = pushAway;
 		
-		float laser = (float) (rand.nextDouble() * 0.5f + (gs.getPlayer().getAmmoType().equals(AmmoType.LASER) ? 0 : rand.nextDouble()) * 0.5f);
+		float laser = (float) (rand.nextDouble() - (gs.getPlayer().getAmmoType().equals(AmmoType.LASER) ? rand.nextDouble() * 0.45f : 0));
 		if(laser > importance)
 			importance = laser;
 		

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.effects.TrailPart;
 import com.tint.specular.game.BoardShock;
@@ -416,7 +417,7 @@ public class Player implements Entity {
         }	
 		
         if(clearEnemies) {
-        	gs.clearEnemies();
+        	gs.clearEnemies(new Array<Enemy>());
         }
 	}
 	
@@ -464,7 +465,7 @@ public class Player implements Entity {
 	public void changeAmmo(AmmoType ammo) { this.ammo = ammo; }
 	
 	public void setLife(int life) { this.life = life; }
-	public void kill() {
+	public void kill(Array<Enemy> enemiesToSave) {
 		addLives(-1);
 		dying = true;
 		
@@ -472,7 +473,8 @@ public class Player implements Entity {
 //		int randomNum = rand.nextInt(3);
 //		if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
 		animFrameTime = 0;
-		gs.clearEnemies();
+		
+		gs.clearEnemies(enemiesToSave);
 	}
 	
 	

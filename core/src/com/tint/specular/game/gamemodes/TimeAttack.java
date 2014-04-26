@@ -2,6 +2,7 @@ package com.tint.specular.game.gamemodes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
@@ -27,7 +28,7 @@ public class TimeAttack extends GameMode {
 		time += delta;
 		
 		if(timeLeft <= 0) {
-			gs.getPlayer().kill();
+			gs.getPlayer().kill(new Array<Enemy>());
 			gameOver = true;
 			Gdx.input.setInputProcessor(gs.getStage());
 		}

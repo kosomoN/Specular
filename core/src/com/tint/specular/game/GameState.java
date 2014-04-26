@@ -281,7 +281,7 @@ public class GameState extends State {
 			if(powerUpSpawnTime < 0) {
 				if(enablePowerUps) {
 					puss.spawn();
-					powerUpSpawnTime = 200;
+					powerUpSpawnTime = 300;
 				}
 			}
 					
@@ -506,11 +506,11 @@ public class GameState extends State {
 		entities.add(entity);
 	}
 	
-	public void clearEnemies() {
+	public void clearEnemies(Array<Enemy> enemiesToSave) {
 		// Removing all enemies from lists
     	for(Iterator<Enemy> it = enemies.iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
-        	if(!(e instanceof EnemyVirus)) {
+        	if(!(e instanceof EnemyVirus) && !(enemiesToSave.contains(e, false))) {
             	e.hit(e.getLife());
             	entities.removeValue(e, true);
             	it.remove();
