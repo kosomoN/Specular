@@ -23,7 +23,7 @@ public class EnemyTanker extends Enemy {
 	private static TextureRegion[] tex = new TextureRegion[4];
 	private float rotation;
 	public int hits;
-	public boolean maxSpeed;
+	public int onetickpasses;
 
 	public EnemyTanker(float x, float y, GameState gs) {
 		super(x, y, gs, 20);	
@@ -34,38 +34,31 @@ public class EnemyTanker extends Enemy {
 	public void renderEnemy(SpriteBatch batch) {
 		//not rotating, going towards the player.
 		rotation = (float) (Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x));
-		Util.drawCentered(batch, tex[hits / 5]/* so genious :)*/, x, y, rotation);
+		Util.drawCentered(batch, tex[hits / 5]/* so genius :)*/, x, y, rotation * 90 % 360);
 		
 	}
 	
 	@Override
 	public void updateMovement() {
+		if(onetickpasses > 60){
 		//Calculating angle of movement based on closest player
-		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x) -  (Math.PI / 4);
+		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x);
 		
 		dx = (float) (Math.cos(angle) * speed);
 		dy = (float) (Math.sin(angle) * speed);
 		x += dx * slowdown;
 		y += dy * slowdown;
-		
-		if(speed > 15){
-			speed = 15;		
-			
-			if((gs.getPlayer().getY() - y) < 200 || (gs.getPlayer().getX()- x ) < 200) {
-			speed = 1.5f; } else {
-				speed = 15;
-			} 
-
 		}
-		
+		onetickpasses++;
+		if(onetickpasses == 240){
+			onetickpasses = 0;
+		}
 	}
 
 
 	@Override
 	public void hit(float damage) {	
-		if(speed < 15){
 		speed *= 1.3f;
-		} 
 		hits++;
 		super.hit(damage);
 	}
