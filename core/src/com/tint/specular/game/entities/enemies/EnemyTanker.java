@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -18,21 +19,23 @@ import com.tint.specular.utils.Util;
 public class EnemyTanker extends Enemy {
 
 	private static Animation anim;
-	private static Texture tex, warningTex;
+	private static Texture warningTex;
+	private static TextureRegion[] tex = new TextureRegion[4];
 	private float rotation;
+	public int hits;
+	public boolean maxSpeed;
 
 	public EnemyTanker(float x, float y, GameState gs) {
 		super(x, y, gs, 20);	
-		speed = (float) 0.1;
+		speed = (float) 1.5;
 	}
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		rotation += Gdx.graphics.getDeltaTime();
-		if(hasSpawned)
-			Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
-		else
-			Util.drawCentered(batch, tex, x, y, tex.getWidth() * (spawnTimer / 100f), tex.getHeight() * (spawnTimer / 100f), rotation * 90 % 360);
+		//not rotating, going towards the player.
+		rotation = (float) (Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x));
+		Util.drawCentered(batch, tex[hits / 5]/* so genious :)*/, x, y, rotation);
+		
 	}
 	
 	@Override
@@ -44,23 +47,39 @@ public class EnemyTanker extends Enemy {
 		dy = (float) (Math.sin(angle) * speed);
 		x += dx * slowdown;
 		y += dy * slowdown;
+		
+		if(speed > 15){
+			speed = 15;		
+			
+			if((gs.getPlayer().getY() - y) < 200 || (gs.getPlayer().getX()- x ) < 200) {
+			speed = 1.5f; } else {
+				speed = 15;
+			} 
+
+		}
+		
 	}
 
 
 	@Override
 	public void hit(float damage) {	
+		if(speed < 15){
 		speed *= 1.3f;
+		} 
+		hits++;
 		super.hit(damage);
 	}
 
 	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);		
-		
-		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Warning.png"));
+		Texture texture = new Texture(Gdx.files.internal("graphics/game/enemies/Tanker.png"));
+		tex[0] = new TextureRegion(texture, 0, 0, 128, 128);
+		tex[1] = new TextureRegion(texture, 128, 0, 128, 128);
+		tex[2] = new TextureRegion(texture, 256, 0, 128, 128);
+		tex[3] = new TextureRegion(texture, 378, 0, 128, 128);
+		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Tanker Warning.png"));
 		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
-		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Anim.png"));
+		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Tanker Anim.png"));
 		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
 	}
@@ -70,10 +89,6 @@ public class EnemyTanker extends Enemy {
 		return 3;
 	}
 	
-	@Override
-	public void dispose() {
-		tex.dispose();
-	}
 
 	@Override
 	public float getInnerRadius() { return 16; }
@@ -97,6 +112,9 @@ public class EnemyTanker extends Enemy {
 
 	@Override
 	protected float getRotationSpeed() {
+		// TODO Auto-generated method stub
 		return 0;
 	}
+
+
 }
