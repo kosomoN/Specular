@@ -21,9 +21,9 @@ public class EnemyTanker extends Enemy {
 	private static Animation anim;
 	private static Texture warningTex;
 	private static TextureRegion[] tex = new TextureRegion[4];
-	private float rotation;
 	public int hits;
 	public int onetickpasses;
+
 
 	public EnemyTanker(float x, float y, GameState gs) {
 		super(x, y, gs, 20);	
@@ -33,8 +33,8 @@ public class EnemyTanker extends Enemy {
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
 		//not rotating, going towards the player.
-		rotation = (float) (Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x));
-		Util.drawCentered(batch, tex[hits / 5]/* so genius :)*/, x, y, rotation * 90 % 360);
+		float angle = (float) (Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x));
+		Util.drawCentered(batch, tex[hits / 5]/* so genius :)*/, x, y, (float) Math.toDegrees(angle) - 90);
 		
 	}
 	
