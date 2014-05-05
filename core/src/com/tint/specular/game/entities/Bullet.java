@@ -20,7 +20,7 @@ public class Bullet implements Entity, Poolable {
 	
 	private static final float SPEED = 35;
 
-	public static int damage = 1;
+	public static float damage = 1;
 	
 	private static Texture bulletTex;
 	private static int size;
@@ -31,12 +31,16 @@ public class Bullet implements Entity, Poolable {
 	
 	public static int bulletsFired, bulletsMissed;
 	
+	private static boolean twist;
+	
 	private int bounces = 0;
 	private float x, y, dx, dy;
 	private boolean isHit;
+
+	
 	private GameState gs;
 
-	private float direction;
+	private float direction, turning;
 	
 	private Bullet(GameState gs) {
 		this.gs = gs;
@@ -49,6 +53,10 @@ public class Bullet implements Entity, Poolable {
 	
 	@Override
 	public boolean update() {
+		// Turning
+		if(isTwisting())
+			calculateDelta();
+		// Moving
 		x += dx;
 		y += dy;
 		
@@ -84,8 +92,11 @@ public class Bullet implements Entity, Poolable {
 	}
 	
 	private void calculateDelta() {
+		turning *= 0.9f;
+		direction += turning;
 		dx = (float) Math.cos(Math.toRadians(direction)) * SPEED;
 		dy = (float) Math.sin(Math.toRadians(direction)) * SPEED;
+		System.out.println(direction);
 	}
 
 	public static void init(final GameState gs) {
@@ -114,6 +125,9 @@ public class Bullet implements Entity, Poolable {
 	public float getY() { return y; }
 	public float getWidth() { return size; }
 	public float getHeight() { return size; }
+	public static void setTwist(boolean twist) { Bullet.twist = twist; }
+	public static void setDamage(float damage) { Bullet.damage = damage;}
+	public static boolean isTwisting() { return twist; }
 	
 	@Override
 	public void dispose() {
@@ -123,12 +137,13 @@ public class Bullet implements Entity, Poolable {
 	/**
 	 * This is called to re-use the particle to avoid garbage collection
 	 */
-	private Bullet reUse(float x, float y, float direction, float initialDx, float initialDy) {
+	private Bullet reUse(float x, float y, float direction, float turning, float initialDx, float initialDy) {
 		bulletsFired++;
 		
 		this.x = x;
 		this.y = y;
 		direction += Math.random() - 0.5f;
+		this.turning = turning;
 		float cos = (float) Math.cos(Math.toRadians(direction));
 		float sin = (float) Math.sin(Math.toRadians(direction));
 		this.dx = cos * SPEED;
@@ -148,8 +163,8 @@ public class Bullet implements Entity, Poolable {
 	@Override
 	public void reset() {}
 	
-	public static Bullet obtainBullet(float x, float y, float direction, float initialDx, float initialDy) {
-		return bulletPool.obtain().reUse(x, y, direction, initialDx, initialDy);
+	public static Bullet obtainBullet(float x, float y, float direction, float turning, float initialDx, float initialDy) {
+		return bulletPool.obtain().reUse(x, y, direction, turning, initialDx, initialDy);
 	}
 	
 	public static void free(Bullet bullet) {

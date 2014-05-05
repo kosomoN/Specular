@@ -22,7 +22,7 @@ public abstract class PowerUp implements Entity {
 	private float despawnTime = 900; // 15s
 	protected float activeTime;
 	private boolean activated, hasRemovedEffect;
-	private float maxActiveTime;
+	protected float maxActiveTime;
 	
 	public PowerUp(float x, float y, GameState gs, float maxActiveTime) {
 		this.x = x;

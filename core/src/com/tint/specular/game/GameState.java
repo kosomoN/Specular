@@ -43,12 +43,14 @@ import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.LaserPowerup;
+import com.tint.specular.game.powerups.PDSPowerUp;
 import com.tint.specular.game.powerups.PowerUp;
 import com.tint.specular.game.powerups.PushAway;
 import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
 import com.tint.specular.game.powerups.SlowdownEnemies;
+import com.tint.specular.game.powerups.Swarm;
 import com.tint.specular.game.spawnsystems.ParticleSpawnSystem;
 import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
 import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
@@ -207,6 +209,8 @@ public class GameState extends State {
 		LaserPowerup.init();
 		ShockWaveRenderer.init();
 		Laser.init(this);
+		Swarm.init();
+		PDSPowerUp.init();
 		
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
@@ -324,9 +328,6 @@ public class GameState extends State {
 				if(it.next().update())
 					it.remove();
 			}
-			// Resets a few things in bullet burst
-			BulletBurst.updateBulletBursts();
-			
 			// Enemy Slowdown
 			SlowdownEnemies.setUpdatedSlowdown(false);
 			
@@ -644,6 +645,7 @@ public class GameState extends State {
 		
 		boardshockCharge = 0;
 		Bullet.maxBounces = 0;
+		Bullet.setTwist(false);
 		FireRateBoost.stacks = 0;
 		
 		waveNumber = 0;

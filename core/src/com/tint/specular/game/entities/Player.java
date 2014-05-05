@@ -42,6 +42,7 @@ public class Player implements Entity {
 	
 	private GameState gs;
 	private AmmoType ammo = AmmoType.BULLET;
+	private PDS pds;
 	private List<TrailPart> playerTrail = new ArrayList<TrailPart>();
 	
 	private float animFrameTime;
@@ -82,6 +83,7 @@ public class Player implements Entity {
 		this.gs = gs;
 		centerx = x;
 		centery = y;
+		pds = new PDS(gs, this);
 		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
 		setLife(lives);
 		
@@ -93,31 +95,31 @@ public class Player implements Entity {
 		}
 	}
 
-	public void shootBullet(float direction, int offset, int spaces) {
+	private void shootBullet(float direction, int offset, int spaces) {
 		//If the amount of bullet "lines" are even
 		if(bulletBurst % 2 == 0) {
 			for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
 				if(j == 0) {
-					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2, dx, dy));
-					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2, dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2, getTwist(), dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2, getTwist(), dx, dy));
 				} else {
-					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2 + j * offset, dx, dy));
-					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2 - j * offset, dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2 + j * offset, getTwist(), dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2 - j * offset, getTwist(), dx, dy));
 				}
 			}
 			
 		//If the number of bullet "lines" are odd
 		} else {
-			gs.addEntity(Bullet.obtainBullet(centerx, centery, direction, dx, dy));
+			gs.addEntity(Bullet.obtainBullet(centerx, centery, direction, getTwist(), dx, dy));
 
 			for(int i = 0; i < spaces / 2; i++) {
-				gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + (i + 1) * offset, dx, dy));
-				gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - (i + 1) * offset, dx, dy));
+				gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + (i + 1) * offset, getTwist(), dx, dy));
+				gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - (i + 1) * offset, getTwist(), dx, dy));
 			}
 		}
 	}
 	
-	private void shootLaser(float direction) {
+	private void shootLaser(float direction, boolean fromBarrels) {
 		float dist1 = Integer.MAX_VALUE, dist2 = Integer.MAX_VALUE, dist3 = Integer.MAX_VALUE;
 		Enemy e1 = null, e2 = null, e3 = null;
 		for(Enemy e : gs.getEnemies()) {
@@ -159,31 +161,31 @@ public class Player implements Entity {
 			e1.hit(1);
 			Camera.shake(0.1f, 0.05f);
 			gs.enemyHit(e1);
-			gs.addEntity(Laser.obtainLaser(centerx, centery, e1.getX(), e1.getY(), 0));
+			gs.addEntity(Laser.obtainLaser(centerx, centery, e1.getX(), e1.getY(), 0, fromBarrels));
 		} else {
-			shootLaserInDir(direction, 0);
+			shootLaserInDir(direction, 0, fromBarrels);
 		}
 		
 		if(e2 != null) {
 			e2.hit(1);
 			Camera.shake(0.1f, 0.05f);
 			gs.enemyHit(e2);
-			gs.addEntity(Laser.obtainLaser(centerx, centery, e2.getX(), e2.getY(), -1));
+			gs.addEntity(Laser.obtainLaser(centerx, centery, e2.getX(), e2.getY(), -1, fromBarrels));
 		} else {
-			shootLaserInDir(direction - 8, -1);
+			shootLaserInDir(direction - 8, -1, fromBarrels);
 		}
 		
 		if(e3 != null) {
 			e3.hit(1);
 			Camera.shake(0.1f, 0.05f);
 			gs.enemyHit(e3);
-			gs.addEntity(Laser.obtainLaser(centerx, centery, e3.getX(), e3.getY(), 1));
+			gs.addEntity(Laser.obtainLaser(centerx, centery, e3.getX(), e3.getY(), 1, fromBarrels));
 		} else {
-			shootLaserInDir(direction + 8, 1);
+			shootLaserInDir(direction + 8, 1, fromBarrels);
 		}
 	}
 	
-	private void shootLaserInDir(float dir, int barrelIndex) {
+	public void shootLaserInDir(float dir, int barrelIndex, boolean fromBarrels) {
 		float sin = (float) Math.sin(Math.toRadians(dir));
 		float cos = (float) Math.cos(Math.toRadians(dir));
 		float x2 = 0, y2 = 0;
@@ -203,11 +205,12 @@ public class Player implements Entity {
 			x2 = centerx + cos * (gs.getCurrentMap().getHeight() - centery) / sin;
 		}
 		
-		gs.addEntity(Laser.obtainLaser(centerx, centery, x2, y2, barrelIndex));
+		gs.addEntity(Laser.obtainLaser(centerx, centery, x2, y2, barrelIndex, fromBarrels));
 	}
 	
 	@Override
 	public void render(SpriteBatch batch) {
+		getPDS().render(batch);
 		
 		if(spawning) {
 			// Spawn animation
@@ -246,7 +249,6 @@ public class Player implements Entity {
 			}
 			
 			if(shieldLoseRepelTimer > PUSHAWAY_TIME - 20) {
-				System.out.println(shieldLoseRepelTimer / 20f);
 				ShockWaveRenderer.renderShockwave(batch, centerx, centery, (PUSHAWAY_TIME - shieldLoseRepelTimer) / 20f, false);
 			}
 			
@@ -353,19 +355,40 @@ public class Player implements Entity {
 		timeSinceLastFire += 1;
 		AnalogStick shootStick = gs.getGameProcessor().getShootStick();
 		direction = (float) (Math.toDegrees(Math.atan2(shootStick.getYHead() - shootStick.getYBase(), shootStick.getXHead() - shootStick.getXBase())));
+		
+		if(PDS.isActive())
+			getPDS().update();
+		
 		if(shootStick.isActive()) {
 			if(timeSinceLastFire >= fireRate) {
 				switch(ammo) {
 				case BULLET:
-					int spaces = bulletBurst - 1;
+					int spaces = getBulletBurst() - 1;
 					int offset = 8;
 					
 					shootBullet(direction, offset, spaces);
+					
+					if(getBulletBurstLevel() > 1) {
+						direction += 90;
+						direction = direction % 360;
+						shootBullet(direction, offset, spaces - 2);
+						
+						direction -= 180;
+						direction = direction % 360;
+						shootBullet(direction, offset, spaces - 2);
+					}
+					
+					if(getBulletBurstLevel() > 2) {
+						direction -= 90;
+						direction = direction % 360;
+						shootBullet(direction, offset, spaces - 2);
+					}
+						
 					if(soundEffects)
 						soundShoot1.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
 					break;
 				case LASER:
-					shootLaser(direction);
+					shootLaser(direction, true);
 					break;
 				}
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
@@ -459,11 +482,22 @@ public class Player implements Entity {
 	 */
 	public void setFireRate(float fireRate) { this.fireRate = fireRate; }
 	public void setBulletBurst(int burst) { bulletBurst = burst; }
-	public void setBulletBurstLevel(int level) { bulletBurstLevel = level; }
-	public void addBulletBurstLevel(int level) { bulletBurstLevel += level; }
+	public void setBulletBurstLevel(int level) { 
+		bulletBurstLevel = level;
+		if(bulletBurstLevel > 0)
+			setBulletBurst(5);
+		else
+			setBulletBurst(3);
+	}
+	public void addBulletBurstLevel(int level) {
+		bulletBurstLevel += (bulletBurstLevel + level < 0 ? 0 : level);
+		if(bulletBurstLevel > 0)
+			setBulletBurst(5);
+		else
+			setBulletBurst(3);
+	}
 	
 	public void changeAmmo(AmmoType ammo) { this.ammo = ammo; }
-	
 	public void setLife(int life) { this.life = life; }
 	public void kill(Array<Enemy> enemiesToSave) {
 		addLives(-1);
@@ -482,6 +516,7 @@ public class Player implements Entity {
 	@Override public float getY() { return centery;	}
 	public float getDeltaX() { return dx; }
 	public float getDeltaY() { return dy; }
+	public float getTwist() { return (float) (Math.random() * 10 - 5f); }
 	public float getDirection() { return direction; }
 	public float getFireRate() { return fireRate; }
 	public float getTimeSinceLastFire() { return timeSinceLastFire; }
@@ -498,6 +533,7 @@ public class Player implements Entity {
 	public boolean isDead() { return dead; }
 	public GameState getGameState() { return gs; }
 	public AmmoType getAmmoType() { return ammo; }
+	public PDS getPDS() { return pds; }
 	
 	public void respawn() {
 		animFrameTime = 0;

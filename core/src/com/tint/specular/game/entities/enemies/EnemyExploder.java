@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.utils.Util;
@@ -31,8 +32,10 @@ public class EnemyExploder extends Enemy {
 	
 	// Animation and graphics
 	private static Animation spawnAnim, anim;
-	private static Texture warningTex, explosionTex;
+	private static Texture warningTex, explosionWarningTex;
+	private static Texture explosionTex1, explosionWarningTex2;
 	private float alpha;
+	private int shockWaveTime;
 	
 	// Movement
 	private int timeSinceLastDirChange;
@@ -42,6 +45,8 @@ public class EnemyExploder extends Enemy {
 	public EnemyExploder(float x, float y, GameState gs) {
 		super(x, y, gs, 2);
 		speed = 0.5f;
+		rotation = 0;
+		shockWaveTime = 0;
 	}
 
 	public static void init() {
@@ -52,8 +57,14 @@ public class EnemyExploder extends Enemy {
 		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(animTex, 128, 128, 1 / 16f, 0, 0, 3, 1);
 		
-		explosionTex = new Texture(Gdx.files.internal("graphics/game/effects/ExploderEffect.png"));
-		explosionTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		explosionTex1 = new Texture(Gdx.files.internal("graphics/game/effects/ExploderEffectAlternate.png"));
+		explosionTex1.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		explosionWarningTex2 = new Texture(Gdx.files.internal("graphics/game/effects/ExploderEffectInner.png"));
+		explosionWarningTex2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		
+		explosionWarningTex = new Texture(Gdx.files.internal("graphics/game/effects/ExploderEffectWarning.png"));
+		explosionWarningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		
 		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Exploder Warning.png"));
 		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -61,25 +72,30 @@ public class EnemyExploder extends Enemy {
 	
 	@Override
 	protected void renderEnemy(SpriteBatch batch) {
-		// Updating alpha
 		if(!exploded) {
-			alpha = (float) Math.abs(Math.sin(rotation));
-			alpha = alpha < 0.5f ? 0f : alpha - 0.5f;
-		} else {
-			alpha -= 0.1f;
-			explosionDone = alpha <= 0;
-		}
-		
-		// Explosion
-		Color color = batch.getColor();
-		batch.setColor(color.r, color.g, color.b, alpha);
-		Util.drawCentered(batch, explosionTex, x, y, 0);
-		
-		if(!exploded) {
+			batch.setColor(1, 1, 1, 1);
+			// Explosion Warning
+			Util.drawCentered(batch, explosionWarningTex, x, y, rotation * 1.2f);
+			Util.drawCentered(batch, explosionWarningTex2, x, y,  rotation * -1.2f);
+			
 			// Normal animation
-			batch.setColor(color);
 			TextureRegion frame = anim.getKeyFrame(rotation, true);
 			Util.drawCentered(batch, frame, x, y, rotation * 10 % 360);
+		} else {
+			// Updating alpha
+			alpha -= 0.05f;
+			explosionDone = alpha <= 0;
+			
+			shockWaveTime++;
+			if(shockWaveTime < 20) {
+				batch.setColor(1, 1, 1, 1);
+				ShockWaveRenderer.renderShockwave(batch, x, y, shockWaveTime / 20f, false);
+			}
+			
+			// Explosion
+			Color color = batch.getColor();
+			batch.setColor(color.r, color.g, color.b, alpha);
+			Util.drawCentered(batch, explosionTex1, x, y, 0);
 		}
 	}
 	
@@ -168,9 +184,9 @@ public class EnemyExploder extends Enemy {
 			list.add(this);
 			player.kill(list);
 		}
+		Camera.shake(0.9f, 0.03f);
 		alpha = 1f;
 		exploded = true;
-		Camera.shake(0.9f, 0.03f);
 	}
 
 	@Override

@@ -9,12 +9,14 @@ import com.tint.specular.game.powerups.BoardshockPowerUp;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.LaserPowerup;
+import com.tint.specular.game.powerups.PDSPowerUp;
 import com.tint.specular.game.powerups.PowerUp;
 import com.tint.specular.game.powerups.PushAway;
 import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
 import com.tint.specular.game.powerups.SlowdownEnemies;
+import com.tint.specular.game.powerups.Swarm;
 
 /**
  * 
@@ -23,7 +25,6 @@ import com.tint.specular.game.powerups.SlowdownEnemies;
  */
 
 public class PowerUpSpawnSystem extends SpawnSystem {
-
 	
 	public PowerUpSpawnSystem(GameState gs) {
 		super(gs);
@@ -58,7 +59,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		if(slow > importance)
 			importance = slow;
 		
-		float shield = (float) (rand.nextDouble() - player.getShields() / 3 * rand.nextDouble() * 0.45f);
+		float shield = (float) (rand.nextDouble() - player.getShields() / 3 * rand.nextDouble() * 0.5f);
 		if(shield > importance)
 			importance = shield;
 		
@@ -77,6 +78,14 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		float laser = (float) (rand.nextDouble() - (gs.getPlayer().getAmmoType().equals(AmmoType.LASER) ? rand.nextDouble() * 0.45f : 0));
 		if(laser > importance)
 			importance = laser;
+		
+		float swarm = (float) (rand.nextDouble() * 0.8f);
+		if(swarm > importance)
+			importance = swarm;
+		
+		float pds = (float) (rand.nextDouble() * 0.8f);
+		if(pds > importance)
+			importance = pds;
 		
 		if(importance == life && player.getLife() < 4)
 			gs.addEntity(new AddLife(x, y, gs));
@@ -98,6 +107,10 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 			gs.addEntity(new PushAway(x, y, gs));
 		else if(importance == laser)
 			gs.addEntity(new LaserPowerup(x, y, gs));
+		else if(importance == swarm)
+			gs.addEntity(new Swarm(x, y, gs));
+		else if(importance == pds)
+			gs.addEntity(new PDSPowerUp(x, y, gs));
 	}
 	
 	/**

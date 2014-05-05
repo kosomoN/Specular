@@ -28,14 +28,14 @@ public class WaveLoader {
 			}
 		});
 		specialWaves.add(wave);
-		/*
+		
 		wave = new Wave(gs, 1, 400);
 			wave.addEnemies(ENEMY_WANDERER, 30, Formation.RANDOM, 0, 5);
 		specialWaves.add(wave);
 		
 		wave = new Wave(gs, 2, 600);
 			wave.addEnemies(ENEMY_BOOSTER, 10, Formation.EDGES, 0, 50);
-		specialWaves.add(wave);*/
+		specialWaves.add(wave);
 		
 		wave = new Wave(gs, 3, 600);
 			wave.addEnemies(new EnemyType[] {ENEMY_EXPLODER, ENEMY_STRIVER}, new int[] {10, 20}, Formation.RANDOM, 0, 60);
@@ -54,6 +54,10 @@ public class WaveLoader {
 			
 			f.setRadius(700);
 			wave.addEnemies(ENEMY_CIRCLER, 32, f, 30, 1, false);
+		specialWaves.add(wave);
+		
+		wave = new Wave(gs, 6, 800);
+			wave.addEnemies(ENEMY_TANKER, 5, Formation.RANDOM, 0, 20);
 		specialWaves.add(wave);
 
 		Gdx.app.log("Specular", "Loading Waves Complete");

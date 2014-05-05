@@ -24,6 +24,7 @@ public class Laser implements Entity, Poolable {
 	private GameState gs;
 	private float x2, y2;
 	private int barrelIndex;
+	private boolean laserFromBarrels;
 	
 	private Laser(GameState gs) {
 		this.gs = gs;
@@ -32,7 +33,14 @@ public class Laser implements Entity, Poolable {
 	@Override
 	public boolean update() {
 		timer += 1;
-		calculateVerticies(gs.getPlayer().getBarrelPosX(barrelIndex), gs.getPlayer().getBarrelPosY(barrelIndex), x2, y2);
+		
+		if(laserFromBarrels) {
+			calculateVerticies(gs.getPlayer().getBarrelPosX(barrelIndex), gs.getPlayer().getBarrelPosY(barrelIndex), x2, y2);
+		} else {
+			calculateVerticies(gs.getPlayer().getX(), gs.getPlayer().getY(), x2, y2);
+		}
+		
+		
 		return timer > FADE_DELAY;
 	}
 
@@ -77,8 +85,8 @@ public class Laser implements Entity, Poolable {
 		};
 	}
 	
-	public static Laser obtainLaser(float x, float y, float x2, float y2, int barrelIndex) {
-		return laserPool.obtain().reUse(x, y, x2, y2, barrelIndex);
+	public static Laser obtainLaser(float x, float y, float x2, float y2, int barrelIndex, boolean fromBarrels) {
+		return laserPool.obtain().reUse(x, y, x2, y2, barrelIndex, fromBarrels);
 	}
 	
 	private void calculateVerticies(float x, float y, float x2, float y2) {
@@ -101,12 +109,13 @@ public class Laser implements Entity, Poolable {
 		verticies[16] = y2 - normal.y;
 	}
 	
-	private Laser reUse(float x, float y, float x2, float y2, int barrelIndex) {
+	private Laser reUse(float x, float y, float x2, float y2, int barrelIndex, boolean fromBarrels) {
 //		x2 = MathUtils.clamp(x2, 18, gs.getCurrentMap().getWidth() - 18);
 //		y2 = MathUtils.clamp(y2, 18, gs.getCurrentMap().getHeight() - 18);
 		this.x2 = x2;
 		this.y2 = y2;
 		this.barrelIndex = barrelIndex;
+		laserFromBarrels = fromBarrels;
 		
 		normal = new Vector2(x2 - x, y2 - y);
 		normal.nor();
