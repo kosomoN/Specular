@@ -11,7 +11,7 @@ import com.tint.specular.utils.Util;
 public class SettingsInputProcessor extends InputAdapter { 
   
     private Specular game; 
-    private boolean soundsMuted = true, musicMuted = true, particlesEnabled = true, backBtnPressed, controlsPressed;
+    private boolean soundsMuted = true, musicMuted = true, particlesEnabled = true, backBtnPressed, controlsPressed, daeronPressed, warriyoPressed;
       
     public SettingsInputProcessor(Specular game) {
         this.game = game; 
@@ -35,6 +35,9 @@ public class SettingsInputProcessor extends InputAdapter {
         float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight; 
         backBtnPressed = Util.isTouching(touchpointx, touchpointy, 80, Specular.camera.viewportHeight - 160, 435, 105, false); 
         controlsPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 1030, Specular.camera.viewportHeight - 155, 905, 110, false);
+        
+        daeronPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 570, 500, 110, false);
+        warriyoPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 450, 500, 110, false);
           
         return false; 
     } 
@@ -76,12 +79,20 @@ public class SettingsInputProcessor extends InputAdapter {
         else if(Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 1030, Specular.camera.viewportHeight - 155, 905, 110, false))
         	game.enterState(States.CONTROLSETUPSTATE);
 
-        // Back 
+//         Back 
         else if(Util.isTouching(touchpointx, touchpointy, 80, Specular.camera.viewportHeight - 160, 435, 105, false))
             game.enterState(States.MAINMENUSTATE); 
         
+        else if(Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 570, 500, 110, false))
+        	Gdx.net.openURI("https://soundcloud.com/daerontrance");
+        
+        else if(Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 450, 500, 110, false))
+        	Gdx.net.openURI("https://soundcloud.com/warriyo");
+        
         backBtnPressed = false;
         controlsPressed = false;
+        daeronPressed = false;
+        warriyoPressed = false;
         
         return false;
     }
@@ -95,6 +106,9 @@ public class SettingsInputProcessor extends InputAdapter {
         backBtnPressed = Util.isTouching(touchpointx, touchpointy, 80, Specular.camera.viewportHeight - 160, 435, 105, false); 
         controlsPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 1030, Specular.camera.viewportHeight - 155, 905, 110, false);
         
+        daeronPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 570, 500, 110, false);
+        
+        warriyoPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 450, 500, 110, false);
         return false; 
     } 
       
@@ -116,5 +130,13 @@ public class SettingsInputProcessor extends InputAdapter {
       
     public boolean controlsPressed() { 
         return controlsPressed; 
-    } 
+    }
+
+	public boolean isDaeronPressed() {
+		return daeronPressed;
+	}
+
+	public boolean isWarriyoPressed() {
+		return warriyoPressed;
+	} 
 }

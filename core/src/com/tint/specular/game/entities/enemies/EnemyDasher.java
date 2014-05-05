@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -18,10 +19,12 @@ import com.tint.specular.utils.Util;
 public class EnemyDasher extends Enemy {
 	
 	private static Animation anim;
-	private static Texture tex, warningTex, dashWarningTex;
+	private static Texture tex, warningTex, dashWarningTex, boostTex;
 
 	private double direction;
 	private int boostingDelay = -1;
+	
+	private static ShaderProgram shader;
 
 	public EnemyDasher(float x, float y, GameState gs) {
 		super(x, y, gs, 10);
@@ -54,7 +57,14 @@ public class EnemyDasher extends Enemy {
 			batch.setColor(Color.WHITE);
 		}*/
 		
+		if(speed > 0) {
+			batch.setShader(shader);
+			shader.setUniformf("blurSize", speed / 300);
+		}
 		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction) - 90);
+		
+		if(speed > 0)
+			batch.setShader(null);
 	}
 	
 	@Override
@@ -90,7 +100,7 @@ public class EnemyDasher extends Enemy {
 					}
 				} else if (direction == Math.PI / 2 * 3) {
 					if(gs.getPlayer().getY() > y) {
-						boostingDelay = 0;	
+						boostingDelay = 0;
 						dx = 0;
 						dy = 0;
 					}
@@ -118,6 +128,7 @@ public class EnemyDasher extends Enemy {
 		
 		boostingDelay++;
 
+
 	}
 
 	@Override
@@ -138,6 +149,18 @@ public class EnemyDasher extends Enemy {
 		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Dasher Anim.png"));
 		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		anim = Util.getAnimation(animTex, 128, 128, 1 / 15f, 0, 0, 3, 3);
+		
+
+		ShaderProgram.pedantic = false;
+		 
+		shader = new ShaderProgram(VERT, FRAG);
+		if (!shader.isCompiled()) {
+			System.err.println(shader.getLog());
+			Gdx.app.exit();
+		}
+		if (shader.getLog().length()!=0)
+			System.out.println(shader.getLog());
+		
 	}
 	
 	@Override
@@ -169,4 +192,52 @@ public class EnemyDasher extends Enemy {
 	protected float getRotationSpeed() {
 		return 0;
 	}
+
+	public static Texture getBoostTex() {
+		return boostTex;
+	}
+
+	public static void setBoostTex(Texture boostTex) {
+		EnemyDasher.boostTex = boostTex;
+	}
+	
+	private final static String VERT =  
+			"attribute vec4 "+ShaderProgram.POSITION_ATTRIBUTE+";\n" +
+			"attribute vec4 "+ShaderProgram.COLOR_ATTRIBUTE+";\n" +
+			"attribute vec2 "+ShaderProgram.TEXCOORD_ATTRIBUTE+"0;\n" +
+			
+			"uniform mat4 u_projTrans;\n" + 
+			" \n" + 
+			"varying vec2 vTexCoord;\n" +
+			
+			"void main() {\n" +  
+			"	vTexCoord = "+ShaderProgram.TEXCOORD_ATTRIBUTE+"0;\n" +
+			"	gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" +
+			"}";
+	
+	private final static String FRAG = 
+			  "#ifdef GL_ES\n"
+			+ "#define LOWP lowp\n"
+			+ "precision mediump float;\n"
+			+ "#else\n"
+			+ "#define LOWP \n"
+			+ "#endif\n" +
+			"varying vec2 vTexCoord;\n" + 
+			"uniform sampler2D u_texture;\n"+
+			"uniform float blurSize;\n"+
+			"void main(void) {\n" + 
+			"   vec4 sum = vec4(0.0);\n"+
+			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y - 4.0*blurSize)) * 0.05;\n"+
+			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y - 3.0*blurSize)) * 0.09;\n"+
+			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y - 2.0*blurSize)) * 0.12;\n"+
+			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y - blurSize)) * 0.15;\n"+
+			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y)) * 0.16;\n"+
+			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y + blurSize)) * 0.15;\n"+
+			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y + 2.0*blurSize)) * 0.12;\n"+
+			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y + 3.0*blurSize)) * 0.09;\n"+
+			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y + 4.0*blurSize)) * 0.05;\n"+
+ 
+   			"gl_FragColor = sum;\n" + 
+			"}";
+
 }

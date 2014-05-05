@@ -48,7 +48,7 @@ public abstract class Enemy implements Entity {
 			updateMovement();
 		else {
 			spawnTimer++;
-			//16 frames, 1 / 15s per frame and 3 seconds for the warning. Multiply with 60 to get ticks
+			//16 frames, 1 / 15s per frame and 2 seconds for the warning. Multiply with 60 to get ticks
 			if(spawnTimer >= (1 / 15f * 16 + 2) * 60)
 				hasSpawned = true;
 		}

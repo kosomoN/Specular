@@ -119,16 +119,16 @@ public class Player implements Entity {
 		}
 	}
 	
-	private void shootLaser(float direction, boolean fromBarrels) {
-		float dist1 = Integer.MAX_VALUE, dist2 = Integer.MAX_VALUE, dist3 = Integer.MAX_VALUE;
-		Enemy e1 = null, e2 = null, e3 = null;
+	private void shootLaser(float direction) {
+		float dist1 = Integer.MAX_VALUE, dist2 = Integer.MAX_VALUE, dist3 = Integer.MAX_VALUE, dist4 = Integer.MAX_VALUE, dist5 = Integer.MAX_VALUE;
+		Enemy e1 = null, e2 = null, e3 = null, e4 = null, e5 = null;
 		for(Enemy e : gs.getEnemies()) {
 			if(!e.hasSpawned())
 				continue;
 			
 			float distance = Util.getDistanceSquared(centerx, centery, e.getX(), e.getY());
 			
-			if(dist3 > distance) {
+			if(dist5 > distance) {
 				double angleToEnemy = Math.toDegrees(Math.atan2(e.getY() - centery, e.getX() - centerx));
 				double deltaAngle = (angleToEnemy - direction + 360) % 360;
 				if(deltaAngle > 180) 
@@ -136,22 +136,45 @@ public class Player implements Entity {
 				
 				if(deltaAngle < 30) {
 					if(dist1 > distance) {
+						dist5 = dist4;
+						dist4 = dist3;
 						dist3 = dist2;
 						dist2 = dist1;
 						dist1 = distance;
 						
+						e5 = e4;
+						e4 = e3;
 						e3 = e2;
 						e2 = e1;
 						e1 = e;
 					} else if(dist2 > distance) {
+						dist5 = dist4;
+						dist4 = dist3;
 						dist3 = dist2;
 						dist2 = distance;
 						
+						e5 = e4;
+						e4 = e3;
 						e3 = e2;
 						e2 = e;
-					} else if(dist1 > distance) {
+					} else if(dist3 > distance) {
+						dist5 = dist4;
+						dist4 = dist3;
 						dist3 = distance;
+						
+						e5 = e4;
+						e4 = e3;
 						e3 = e;
+					} else if(dist4 > distance) {
+						dist5 = dist4;
+						dist4 = distance;
+						
+						e5 = e4;
+						e4 = e;
+					} else if(dist5 > distance) {
+						dist5 = distance;
+						
+						e5 = e;
 					}
 				}
 			}
@@ -161,31 +184,51 @@ public class Player implements Entity {
 			e1.hit(1);
 			Camera.shake(0.1f, 0.05f);
 			gs.enemyHit(e1);
-			gs.addEntity(Laser.obtainLaser(centerx, centery, e1.getX(), e1.getY(), 0, fromBarrels));
+			gs.addEntity(Laser.obtainLaser(centerx, centery, e1.getX(), e1.getY(), 0, true));
 		} else {
-			shootLaserInDir(direction, 0, fromBarrels);
+			shootLaserInDir(direction, 0);
 		}
 		
 		if(e2 != null) {
 			e2.hit(1);
 			Camera.shake(0.1f, 0.05f);
 			gs.enemyHit(e2);
-			gs.addEntity(Laser.obtainLaser(centerx, centery, e2.getX(), e2.getY(), -1, fromBarrels));
+			gs.addEntity(Laser.obtainLaser(centerx, centery, e2.getX(), e2.getY(), -1, true));
 		} else {
-			shootLaserInDir(direction - 8, -1, fromBarrels);
+			shootLaserInDir(direction - 8, -1);
 		}
 		
 		if(e3 != null) {
 			e3.hit(1);
 			Camera.shake(0.1f, 0.05f);
 			gs.enemyHit(e3);
-			gs.addEntity(Laser.obtainLaser(centerx, centery, e3.getX(), e3.getY(), 1, fromBarrels));
+			gs.addEntity(Laser.obtainLaser(centerx, centery, e3.getX(), e3.getY(), 1, true));
 		} else {
-			shootLaserInDir(direction + 8, 1, fromBarrels);
+			shootLaserInDir(direction + 8, 1);
+		}
+		
+		if(bulletBurst == 5) {
+			if(e4 != null) {
+				e4.hit(1);
+				Camera.shake(0.1f, 0.05f);
+				gs.enemyHit(e4);
+				gs.addEntity(Laser.obtainLaser(centerx, centery, e4.getX(), e4.getY(), 1, true));
+			} else {
+				shootLaserInDir(direction + 16, 2);
+			}
+			
+			if(e5 != null) {
+				e5.hit(1);
+				Camera.shake(0.1f, 0.05f);
+				gs.enemyHit(e5);
+				gs.addEntity(Laser.obtainLaser(centerx, centery, e5.getX(), e5.getY(), 1, true));
+			} else {
+				shootLaserInDir(direction - 16, -2);
+			}
 		}
 	}
 	
-	public void shootLaserInDir(float dir, int barrelIndex, boolean fromBarrels) {
+	private void shootLaserInDir(float dir, int barrelIndex) {
 		float sin = (float) Math.sin(Math.toRadians(dir));
 		float cos = (float) Math.cos(Math.toRadians(dir));
 		float x2 = 0, y2 = 0;
@@ -205,12 +248,11 @@ public class Player implements Entity {
 			x2 = centerx + cos * (gs.getCurrentMap().getHeight() - centery) / sin;
 		}
 		
-		gs.addEntity(Laser.obtainLaser(centerx, centery, x2, y2, barrelIndex, fromBarrels));
+		gs.addEntity(Laser.obtainLaser(centerx, centery, x2, y2, barrelIndex, true));
 	}
 	
 	@Override
 	public void render(SpriteBatch batch) {
-		getPDS().render(batch);
 		
 		if(spawning) {
 			// Spawn animation
@@ -388,7 +430,7 @@ public class Player implements Entity {
 						soundShoot1.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
 					break;
 				case LASER:
-					shootLaser(direction, true);
+					shootLaser(direction);
 					break;
 				}
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
