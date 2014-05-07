@@ -38,7 +38,7 @@ public class WaveLoader {
 		specialWaves.add(wave);
 		
 		wave = new Wave(gs, 3, 600);
-			wave.addEnemies(new EnemyType[] {ENEMY_EXPLODER, ENEMY_STRIVER}, new int[] {10, 20}, Formation.RANDOM, 0, 60);
+			wave.addEnemies(new EnemyType[] {ENEMY_EXPLODER, ENEMY_DASHER, ENEMY_TANKER}, new int[] {10, 20, 5}, Formation.RANDOM, 0, 60);
 		specialWaves.add(wave);
 		
 		wave = new Wave(gs, 4, 400);
