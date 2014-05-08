@@ -192,7 +192,7 @@ public class ControlSetupState extends State {
 		game.batch.draw(map.getParallax(), -1024 + player.x / 2, -1024 +  player.y / 2, 4096, 4096);
 		game.batch.setColor(1, 1, 1, 1);
 		
-		map.render(game.batch);
+		map.render(game.batch, false);
 		
 		player.render(game.batch);
 		

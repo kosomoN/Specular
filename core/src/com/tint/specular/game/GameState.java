@@ -386,7 +386,7 @@ public class GameState extends State {
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
-		currentMap.render(game.batch);
+		currentMap.render(game.batch, true);
 		
 		ScissorStack.calculateScissors(Specular.camera, game.batch.getTransformMatrix(), clipBounds, scissors);
 		ScissorStack.pushScissors(scissors);

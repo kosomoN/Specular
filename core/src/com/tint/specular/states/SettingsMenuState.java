@@ -25,8 +25,8 @@ public class SettingsMenuState extends State {
 		daeron = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Daeron.png"));
 		daeronPressed = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Daeron Pressed.png"));
 		
-		warriyo = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Warriyo.png"));
-		warriyoPressed = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Warriyo Pressed.png"));
+		warriyo = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/WarriYo.png"));
+		warriyoPressed = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/WarriYo Pressed.png"));
 		
 		artists = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Artists.png"));
 	}

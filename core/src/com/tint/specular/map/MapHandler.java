@@ -43,16 +43,6 @@ public class MapHandler {
 	//RENDER
 	
 	/**
-	 * Renders a specific map by it's name
-	 * @param batch - A Spritebatch
-	 * @param name - Name of the map
-	 */
-	public void renderMap(SpriteBatch batch, String name) {
-		if(maps.containsKey(name))
-			maps.get(name).render(batch);
-	}
-	
-	/**
 	 * Renders a smaller version
 	 * @param batch - A SpriteBatch
 	 * @param name - Name of the map to be drawn
