@@ -29,21 +29,21 @@ public class WaveLoader {
 		});
 		specialWaves.add(wave);
 		
-//	wave = new Wave(gs, 1, 400);
-//			wave.addEnemies(ENEMY_WANDERER, 30, Formation.RANDOM, 0, 5);
-//		specialWaves.add(wave);
-//		
-//		wave = new Wave(gs, 2, 600);
-//			wave.addEnemies(ENEMY_BOOSTER, 10, Formation.EDGES, 0, 50);
-//		specialWaves.add(wave);
-//		
-//		wave = new Wave(gs, 3, 600);
-//			wave.addEnemies(new EnemyType[] {ENEMY_EXPLODER, ENEMY_DASHER}, new int[] {10, 20, 5}, Formation.RANDOM, 0, 60);
-//		specialWaves.add(wave);
-//		
-//		wave = new Wave(gs, 4, 400);
-//			wave.addEnemies(ENEMY_DASHER, 2, Formation.RANDOM, 0, 20);
-//		specialWaves.add(wave);
+	wave = new Wave(gs, 1, 400);
+			wave.addEnemies(ENEMY_WANDERER, 30, Formation.RANDOM, 0, 5);
+		specialWaves.add(wave);
+		
+		wave = new Wave(gs, 2, 600);
+			wave.addEnemies(ENEMY_BOOSTER, 10, Formation.EDGES, 0, 50);
+		specialWaves.add(wave);
+		
+		wave = new Wave(gs, 3, 600);
+			wave.addEnemies(new EnemyType[] {ENEMY_EXPLODER, ENEMY_DASHER}, new int[] {10, 20, 5}, Formation.RANDOM, 0, 60);
+		specialWaves.add(wave);
+		
+		wave = new Wave(gs, 4, 400);
+			wave.addEnemies(ENEMY_DASHER, 2, Formation.RANDOM, 0, 20);
+		specialWaves.add(wave);
 		
 		wave = new Wave(gs, 5, 600);
 			wave.addEnemies(new EnemyType[] {ENEMY_TANKER}, new int[] {5}, Formation.RANDOM, 0, 60);
