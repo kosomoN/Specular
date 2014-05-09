@@ -23,6 +23,7 @@ public class EnemyTanker extends Enemy {
 	private static TextureRegion[] tex = new TextureRegion[4];
 	public int hits;
 	public int onetickpasses;
+	
 
 
 	public EnemyTanker(float x, float y, GameState gs) {
@@ -34,13 +35,12 @@ public class EnemyTanker extends Enemy {
 	public void renderEnemy(SpriteBatch batch) {
 		//not rotating, going towards the player.
 		float angle = (float) (Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x));
-		Util.drawCentered(batch, tex[hits / 5]/* so genius :)*/, x, y, (float) Math.toDegrees(angle) - 90);
-		
+		Util.drawCentered(batch, tex[hits / 5]/* so genius :)*/, x, y, (float) Math.toDegrees(angle) - 90);	
 	}
 	
 	@Override
 	public void updateMovement() {
-		if(onetickpasses > 60){
+		if(onetickpasses > 60) {
 		//Calculating angle of movement based on closest player
 		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x);
 		
@@ -58,7 +58,7 @@ public class EnemyTanker extends Enemy {
 
 	@Override
 	public void hit(float damage) {	
-		speed *= 1.3f;
+		speed += 1f;
 		hits++;
 		super.hit(damage);
 	}
@@ -74,7 +74,7 @@ public class EnemyTanker extends Enemy {
 		
 		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Tanker Anim.png"));
 		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
+		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);	
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class EnemyTanker extends Enemy {
 
 	@Override
 	public Type getParticleType() {
-		return Type.ENEMY_STRIVER;
+		return Type.ENEMY_SHIELDER;
 	}	
 	
 	@Override
@@ -109,5 +109,5 @@ public class EnemyTanker extends Enemy {
 		return 0;
 	}
 
-
+	
 }
