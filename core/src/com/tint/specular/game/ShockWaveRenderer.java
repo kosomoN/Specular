@@ -46,22 +46,6 @@ public class ShockWaveRenderer {
 		Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 	}
 	
-	public static void resetShader() {
-		ShaderProgram.pedantic = false;
-		 
-		shader = new ShaderProgram(VERT, FRAG);
-		if (!shader.isCompiled()) {
-			System.err.println(shader.getLog());
-			System.exit(0);
-		}
-		if (shader.getLog().length()!=0)
-			System.out.println(shader.getLog());
-		
-		shader.begin();
-		shader.setUniformi("u_mask", 2);
-		shader.end();
-	}
-	
 	private final static String VERT =  
 			"attribute vec4 "+ShaderProgram.POSITION_ATTRIBUTE+";\n" +
 			"attribute vec4 "+ShaderProgram.COLOR_ATTRIBUTE+";\n" +

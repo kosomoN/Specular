@@ -43,7 +43,7 @@ public class EnemyWanderer extends Enemy {
 		
 		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Wanderer Anim.png"));
 		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
+		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 1);
 	}
 	
 	@Override
