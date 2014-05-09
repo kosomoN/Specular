@@ -118,7 +118,7 @@ public class Map {
 				case ENEMY_DASHER:
 					batch.setColor(0, 1, 0, 1);
 					break;
-				case ENEMY_NORMAL:
+				case ENEMY_CIRCLER:
 					batch.setColor(0.3f, 1f, 1f, 1);
 					break;
 				case ENEMY_SHIELDER:
@@ -132,6 +132,14 @@ public class Map {
 					break;
 				case ENEMY_WANDERER:
 					batch.setColor(1, 0.9f, 0.5f, 1);
+					break;
+				case ENEMY_EXPLODER:
+					batch.setColor(0.8f, 0.2f, 0, 1);
+					break;
+				case ENEMY_TANKER:
+					batch.setColor(0.8f, 0.5f, 0, 1);
+					break;
+				default:
 					break;
 				}
 				

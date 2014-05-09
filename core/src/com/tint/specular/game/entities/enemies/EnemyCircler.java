@@ -93,7 +93,7 @@ public class EnemyCircler extends Enemy {
 
 	@Override
 	public Type getParticleType() {
-		return Type.ENEMY_NORMAL;
+		return Type.ENEMY_CIRCLER;
 	}	
 
 	@Override
