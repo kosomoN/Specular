@@ -1,6 +1,7 @@
 package com.tint.specular.game.entities.enemies;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -31,31 +32,41 @@ public class EnemyDasher extends Enemy {
 	}
 
 	@Override
-	public void renderEnemy(SpriteBatch batch) {/*
+	public void renderEnemy(SpriteBatch batch) {
 		if(boostingDelay < 120) {
-			batch.setColor(1, 1, 1, ((float) Math.cos(boostingDelay / 60f * Math.PI * 2 + Math.PI) + 1) / 2);
+			
+			//Render warning line
+			batch.setColor(1, 1, 1, ((float) Math.cos(boostingDelay / 60f * Math.PI * 2 + Math.PI) + 1) / 4);
 			
 			if(direction == 0 || direction == Math.PI) {
 				float width = 0;
 				if(direction == 0) {
 					width = gs.getCurrentMap().getWidth() - x;
+					for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getWidth()); i < n; i++)
+						batch.draw(dashWarningTex, x + i * dashWarningTex.getWidth(), y - dashWarningTex.getHeight() / 2);
 				} else {
-					width = -x;
+					width = x;
+					for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getWidth()); i < n; i++)
+						batch.draw(dashWarningTex, x - (i + 1) * dashWarningTex.getWidth(), y - dashWarningTex.getHeight() / 2);
 				}
-				
-				batch.draw(dashWarningTex, x, y - dashWarningTex.getHeight() / 2, width, dashWarningTex.getHeight(), 0, 0, dashWarningTex.getWidth(), dashWarningTex.getHeight(), false, false);
+
 			} else {
+				float height = y;
 				if(direction == Math.PI / 2) {
-					float height = gs.getCurrentMap().getHeight() - y;
-					Util.drawCentered(batch, dashWarningTex, x, y + height / 2, height, dashWarningTex.getHeight(), 90);
+					height = gs.getCurrentMap().getHeight() - y;
+					
+					for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getHeight()); i < n; i++)
+						Util.drawCentered(batch, dashWarningTex, x - dashWarningTex.getWidth() / 2, y + i * dashWarningTex.getWidth(), 90);
 				} else {
-					Util.drawCentered(batch, dashWarningTex, x, y - y / 2, y, dashWarningTex.getHeight(), 90);
+					
+					for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getHeight()); i < n; i++)
+						Util.drawCentered(batch, dashWarningTex, x - dashWarningTex.getWidth() / 2, y - (i + 1) * dashWarningTex.getWidth(), 90);
+					
 				}
-				
 			}
 			
 			batch.setColor(Color.WHITE);
-		}*/
+		}
 		
 		if(speed > 0) {
 			batch.setShader(shader);
