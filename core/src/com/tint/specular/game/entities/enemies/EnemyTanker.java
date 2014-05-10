@@ -58,7 +58,7 @@ public class EnemyTanker extends Enemy {
 
 	@Override
 	public void hit(float damage) {	
-		speed += 1f;
+		speed += 0.7f;
 		hits++;
 		super.hit(damage);
 	}
@@ -90,7 +90,7 @@ public class EnemyTanker extends Enemy {
 
 	@Override
 	public Type getParticleType() {
-		return Type.ENEMY_SHIELDER;
+		return Type.ENEMY_TANKER;
 	}	
 	
 	@Override
