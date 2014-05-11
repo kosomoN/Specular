@@ -1,5 +1,7 @@
 package com.tint.specular.game.entities.enemies;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -7,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
+import com.tint.specular.utils.Util;
 
 /**
  * 
@@ -16,6 +19,8 @@ import com.tint.specular.game.entities.Particle.Type;
 
 public class EnemyWorm extends Enemy {
 	
+	private static final int DIST_BETWEEN_PARTS = 50, LENGTH = 6;
+	
 	private static Texture body1Tex, body2Tex, headTex, tailTex;
 	
 	private Array<Part> parts = new Array<Part>();
@@ -24,30 +29,101 @@ public class EnemyWorm extends Enemy {
 	private float speed;
 	private int ticks;
 	private double angle;
+
+	public boolean derp;
 	
 	public EnemyWorm(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
-		head = new Part(0, 100, 0, false, null);
-		for(int i = 0; i < 6; i++) {
-			Part p = i > 0 ? parts.get(i - 1) : head;
-			parts.add(new Part(i * 100, 100, i + 1, i == 5, p));
+		head = new Part(0, 0, 0, false, null);
+		parts.add(head);
+		for(int i = 0; i < LENGTH; i++) {
+			Part p = parts.get(i);
+			parts.add(new Part(0, 0, i + 1, i == LENGTH - 1, p));
 		}
 		
 		setWormSpeed(5);
+		hasSpawned = true;
 	}
 	
+	private EnemyWorm(Array<Part> parts, GameState gs) {
+		super(parts.get(0).x, parts.get(0).y, gs, 1);
+		head = parts.get(0);
+		this.parts = parts;
+		
+		setWormSpeed(5);
+		hasSpawned = true;
+	}
+	
+	@Override
+	public void hit(float damage) {
+		for(Part p : parts)
+			p.hit(damage);
+	}
+
 	private void setWormSpeed(float speed) {
 		this.speed = speed;
-		ticks = (int) (150 / speed);
+		ticks = (int) (DIST_BETWEEN_PARTS / speed);
 	}
 
 	@Override
 	public boolean update() {
 		time += 1;
-		head.update((int) (time % ticks));
-		for(Part p : parts)
-			p.update((int) (time % ticks));
-		return false;
+		this.x = head.x;
+		this.y = head.y;
+		int i = -1;
+		for(Iterator<Part> it = parts.iterator(); it.hasNext();) {
+			i++;
+			Part p = it.next();
+			
+			//If its just one part, remove it
+			if(parts.size <= 1) {
+				p.hit(p.getLife());
+				it.remove();
+				continue;
+			}
+			if(p.update((int) (time % ticks))) {
+				//If a part is destroyed
+				if(p == head) {
+					//If its the head just remove it and update the others
+					head = parts.get(1);
+					it.remove();
+					for(int j = 0; j < parts.size; j++)
+						parts.get(j).partIndex--;
+				} else if(p.isLast) {
+					//Even easier if its the last one, just remove it
+					parts.get(i - 1).isLast = true;
+					it.remove();
+				} else {
+					//If its in the middle
+					Array<Part> newWormParts = new Array<Part>();
+					
+					//If its the second last just remove it and the one after it
+					if(i == parts.size - 2) {
+						it.remove();
+						it.next();
+						it.remove();
+						parts.get(i - 1).isLast = true;
+					} else {
+						//Construct a new worm with the parts behind the destroyed one
+						for(int j = i + 1; j < parts.size; j++) {
+							Part pp = parts.get(j);
+							pp.partIndex = newWormParts.size;
+							newWormParts.add(pp);
+						}
+						
+						for(Part pp : newWormParts) {
+							parts.removeValue(pp, true);
+						}
+						
+						parts.get(parts.size - 1).isLast = true;
+						
+						gs.addEntity(new EnemyWorm(newWormParts, gs));
+					}
+				}
+			}
+		}
+
+		return parts.size <= 0;
 	}
 
 	@Override
@@ -57,9 +133,7 @@ public class EnemyWorm extends Enemy {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		head.render(batch);
-		for(Part p : parts)
-			p.render(batch);
+		renderEnemy(batch);
 	}
 	
 	public static void init() {
@@ -74,6 +148,8 @@ public class EnemyWorm extends Enemy {
 		private Part nextPart;
 		private int partIndex;
 		private boolean isLast;
+		private float rotation;
+		private float partLife = 6;
 		
 		public Part(float x, float y, int partIndex, boolean isLast, Part nextPart) {
 			this.nextPart = nextPart;
@@ -87,19 +163,23 @@ public class EnemyWorm extends Enemy {
 			}
 		}
 		
+		public float getLife() {
+			return partLife;
+		}
+
 		public void render(SpriteBatch batch) {
 			if(partIndex == 0)
-				batch.draw(headTex, x - headTex.getWidth() / 2, y - headTex.getHeight() / 2);
+				Util.drawCentered(batch, headTex, x, y, (float) Math.toDegrees(angle) - 90);
 			else if(isLast)
-				batch.draw(tailTex, x - tailTex.getWidth() / 2, y - tailTex.getHeight() / 2);
+				Util.drawCentered(batch, tailTex, x, y, this.rotation);
 			else if(partIndex % 2 == 0) {
-				batch.draw(body1Tex, x - body1Tex.getWidth() / 2, y - body1Tex.getHeight() / 2);
+				Util.drawCentered(batch, body1Tex, x, y, this.rotation);
 			} else {
-				batch.draw(body2Tex, x - body2Tex.getWidth() / 2, y - body2Tex.getHeight() / 2);
+				Util.drawCentered(batch, body2Tex, x, y, this.rotation);
 			}
 		}
 
-		private void update(int tick) {
+		private boolean update(int tick) {
 			if(partIndex != 0) {
 				x = linearInterpolate(oldX, goingToX, (float) tick / ticks);
 				y = linearInterpolate(oldY, goingToY, (float) tick / ticks);
@@ -109,8 +189,11 @@ public class EnemyWorm extends Enemy {
 					goingToX = nextPart.oldX;
 					goingToY = nextPart.oldY;
 				}
+				
+				this.rotation = (float) Math.toDegrees(Math.atan2(y - nextPart.y, x - nextPart.x)) + 90;
 			} else {
-				angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);/*
+				angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
+				/*
 				if(deltaAngle > Math.PI)
 					deltaAngle += deltaAngle > 0 ? -Math.PI * 2 : Math.PI * 2;
 				
@@ -118,17 +201,41 @@ public class EnemyWorm extends Enemy {
 					angle += TURN_RATE;
 				else
 					angle -= TURN_RATE;*/
-				
-				x += Math.cos(angle) * speed;
-				y += Math.sin(angle) * speed;
-				
+				x += Math.cos(angle) * speed * slowdown;
+				y += Math.sin(angle) * speed * slowdown;
 				oldX = x;
 				oldY = y;
 			}
+			return partLife <= 0;
 		}
 
 		private float linearInterpolate(float y1, float y2, float mu) {
 		   return (y1 * (1 - mu) + y2 * mu);
+		}
+
+		public float getX() {
+			return x;
+		}
+		
+		public float getY() {
+			return y;
+		}
+
+		public int getOuterRadius() {
+			return 30;
+		}
+
+		public void hit(float damage) {
+			partLife -= damage;
+			
+			if(life <= 0)
+				gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx * slowdown, dy * slowdown, 15, true);
+			else
+				gs.getParticleSpawnSystem().spawn(getParticleType(), x, y, dx * slowdown, dy * slowdown, 6, false);
+		}
+
+		public float getInnerRadius() {
+			return 16;
 		}
 	}
 	
@@ -153,25 +260,27 @@ public class EnemyWorm extends Enemy {
 
 	@Override
 	protected void renderEnemy(SpriteBatch batch) {
-		// TODO Auto-generated method stub
-		
+		head.render(batch);
+		for(Part p : parts)
+			p.render(batch);
 	}
 
 	@Override
 	protected Animation getSpawnAnim() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected Texture getWarningTex() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected float getRotationSpeed() {
-		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	public Array<Part> getParts() {
+		return parts;
 	}
 }

@@ -19,11 +19,16 @@ import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
+import com.tint.specular.game.entities.enemies.EnemyExploder;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
+import com.tint.specular.game.entities.enemies.EnemyTanker;
+import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
+import com.tint.specular.game.entities.enemies.EnemyWorm;
 
 public class Map {
 	private static ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -93,7 +98,7 @@ public class Map {
 			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 			batch.setProjectionMatrix(matrix);
 			
-	//		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+//			batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 			batch.begin();
 			batch.setColor(Color.RED);
 			for(TrailPart tp : gs.getPlayer().getTrail())
@@ -114,6 +119,7 @@ public class Map {
 					batch.setColor(1, 0, 0, 1);
 					break;
 				case ENEMY_BOOSTER:
+					batch.setColor(1, 1, 0, 1);
 					break;
 				case ENEMY_DASHER:
 					batch.setColor(0, 1, 0, 1);
@@ -128,7 +134,7 @@ public class Map {
 					batch.setColor(1, 0, 1, 1);
 					break;
 				case ENEMY_VIRUS:
-					batch.setColor(0, 1, 0, 1);
+					batch.setColor(1, 0, 1, 1);
 					break;
 				case ENEMY_WANDERER:
 					batch.setColor(1, 0.9f, 0.5f, 1);
@@ -152,12 +158,26 @@ public class Map {
 					batch.setColor(1, 0.9f, 0.5f, 1);
 				else if(e instanceof EnemyCircler)
 					batch.setColor(0.3f, 1f, 1f, 1);
-				if(e instanceof EnemyStriver)
+				else if(e instanceof EnemyStriver)
 					batch.setColor(1, 0, 1, 1);
-				if(e instanceof EnemyShielder)
+				else if(e instanceof EnemyShielder)
 					batch.setColor(1, 1, 1, 1);
-				if(e instanceof EnemyDasher)
+				else if(e instanceof EnemyDasher)
 					batch.setColor(0, 1, 0, 1);
+				else if(e instanceof EnemyTanker)
+					batch.setColor(0.8f, 0.5f, 0, 1);
+				else if(e instanceof EnemyBooster)
+					batch.setColor(1, 1, 0, 1);
+				else if(e instanceof EnemyExploder)
+					batch.setColor(0.8f, 0.2f, 0, 1);
+				else if(e instanceof EnemyVirus)
+					batch.setColor(1, 0, 1, 1);
+				else if(e instanceof EnemyWorm) {
+					batch.setColor(0.7f, 1, 0, 1);
+					for(EnemyWorm.Part p : ((EnemyWorm) e).getParts())
+						batch.draw(mask, p.getX() - 80, fbo.getHeight() - p.getY() - 80, 160, 160);
+				}
+				
 				batch.draw(mask, e.getX() - 80, fbo.getHeight() - e.getY() - 80, 160, 160);
 			}
 			
@@ -191,6 +211,10 @@ public class Map {
 			}
 			
 			for(Enemy e : gs.getEnemies()) {
+				if(e instanceof EnemyWorm) {
+					for(EnemyWorm.Part p : ((EnemyWorm) e).getParts())
+						shapeRenderer.rect(p.getX() - 80, p.getY() - 80, 160, 160);
+				}
 				shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
 			}
 			shapeRenderer.end();

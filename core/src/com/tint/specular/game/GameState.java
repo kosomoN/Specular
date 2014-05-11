@@ -88,7 +88,7 @@ public class GameState extends State {
 	protected GameMode gameMode;
 	protected Player player;
 	private Stage stage;
-	private static final int PARTICLE_LIMIT = 100;
+	private static final int PARTICLE_LIMIT = 300;
 	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
@@ -458,18 +458,35 @@ public class GameState extends State {
 		// Checking if any bullet hit an enemy
 		for(Bullet b : bullets) {
 			for(Enemy e : enemies) {
-				if(e.hasSpawned() && e.getLife() > 0 && (b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
-						e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
-					
-					e.hit(Bullet.damage);
-					b.hit();
-					
-					//Adding a small camerashake
-					Camera.shake(0.1f, 0.05f);
-					
-					// Rewarding player depending on game mode
-					enemyHit(e);
-					if(e.getLife() <= 0) {
+				if(e.hasSpawned() && e.getLife() > 0) {
+					//Custom hitdetection for the worm
+					//It just uses the parts as they were enemies
+					if(e instanceof EnemyWorm) {
+						for(EnemyWorm.Part p : ((EnemyWorm) e).getParts()) {
+							if((b.getX() - p.getX()) * (b.getX() - p.getX()) + (b.getY() - p.getY()) * (b.getY() - p.getY()) <
+									p.getOuterRadius() * p.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
+								p.hit(Bullet.damage);
+								b.hit();
+								
+								//Adding a small camerashake
+								Camera.shake(0.1f, 0.05f);
+								
+								// Rewarding player depending on game mode
+								enemyHit(e);
+								break;
+							}
+						}
+					} else if((b.getX() - e.getX()) * (b.getX() - e.getX()) + (b.getY() - e.getY()) * (b.getY() - e.getY()) <
+							e.getOuterRadius() * e.getOuterRadius() + b.getWidth() * b.getWidth() * 4) {
+						
+						e.hit(Bullet.damage);
+						b.hit();
+						
+						//Adding a small camerashake
+						Camera.shake(0.1f, 0.05f);
+						
+						// Rewarding player depending on game mode
+						enemyHit(e);
 						break;
 					}
 				}

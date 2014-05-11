@@ -18,9 +18,11 @@ import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemyTanker;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
+import com.tint.specular.game.entities.enemies.EnemyWorm;
 
 public class Wave {
 	private static final Random rand = new Random();
+	private static final List<Long> usedIDs = new ArrayList<Long>();
 	
 	private long ID;
 	private GameState gs;
@@ -39,6 +41,11 @@ public class Wave {
 	public Wave(GameState gs, long ID, int totalLengthTicks) {
 		this.gs = gs;
 		this.ID = ID;
+		if(usedIDs.contains(ID)) {
+			throw new IllegalArgumentException("ID: " + ID + " is used twice!");
+		}
+		usedIDs.add(ID);
+			
 		this.totalLength = totalLengthTicks;
 	}
 	
@@ -227,6 +234,9 @@ public class Wave {
 			break;
 		case ENEMY_EXPLODER:
 			e = new EnemyExploder(x, y, gs);
+			break;
+		case ENEMY_WORM:
+			e = new EnemyWorm(x, y, gs);
 			break;
 		}
 		

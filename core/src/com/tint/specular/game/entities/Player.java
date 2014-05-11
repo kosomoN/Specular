@@ -19,6 +19,8 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.game.entities.enemies.EnemyWorm;
+import com.tint.specular.game.entities.enemies.EnemyWorm.Part;
 import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
@@ -445,39 +447,66 @@ public class Player implements Entity {
 		for(Iterator<Enemy> it = gs.getEnemies().iterator(); it.hasNext(); ) {
         	Enemy e = it.next();
     		if(e.hasSpawned() && e.getLife() > 0) {
-    			float distX = centerx - e.getX();
-    			float distY = centery - e.getY();
-        		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
-                	e.hit(e.getLife());
-    				gs.getEntities().removeValue(e, true);
-    				it.remove();
-    				
-        			//Make the player invincible when the boardshock is activated to avoid wasting and annoying moments
-        			if(BoardShock.isActivated()) {
-        				break;
-        			} else if(shields > 0) {
-	        			//Repel effect after collision with shield
-//	        			setSpeed(dx + e.getDx(), dy + e.getDy());
-	        			
-	        			shields--;
-	        			shieldLoseRepelTimer = PUSHAWAY_TIME;
-        			} else {
-        				Specular.nativeAndroid.sendAnalytics("Death", String.valueOf(gs.getCurrentWave().getID()), e.getClass().getSimpleName(), null);
-        				
-    					addLives(-1);
-    					dying = true;
-    					
-    					//Hit sound (randomize)
-//    					int randomNum = rand.nextInt(3);
-//    					if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
-    					animFrameTime = 0;
-    					clearEnemies = true;
-    					
-    					gs.getParticleSpawnSystem().spawn(Type.BULLET, getX(), getY(), getDeltaX(), getDeltaY(), 20, false);
-    					
-    					break;
-        			}	
-        		}	
+    			if(!(e instanceof EnemyWorm)) {
+	    			float distX = centerx - e.getX();
+	    			float distY = centery - e.getY();
+	        		if(distX * distX + distY * distY < (getRadius() + e.getInnerRadius()) * (getRadius() + e.getInnerRadius())) {
+	                	e.hit(e.getLife());
+	    				gs.getEntities().removeValue(e, true);
+	    				it.remove();
+	    				
+	        			//Make the player invincible when the boardshock is activated to avoid wasting and annoying moments
+	        			if(BoardShock.isActivated()) {
+	        				break;
+	        			} else if(shields > 0) {
+		        			//Repel effect after collision with shield
+	//	        			setSpeed(dx + e.getDx(), dy + e.getDy());
+		        			
+		        			shields--;
+		        			shieldLoseRepelTimer = PUSHAWAY_TIME;
+	        			} else {
+	        				Specular.nativeAndroid.sendAnalytics("Death", String.valueOf(gs.getCurrentWave().getID()), e.getClass().getSimpleName(), null);
+	        				
+	    					addLives(-1);
+	    					dying = true;
+	    					
+	    					//Hit sound (randomize)
+	//    					int randomNum = rand.nextInt(3);
+	//    					if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
+	    					animFrameTime = 0;
+	    					clearEnemies = true;
+	    					
+	    					gs.getParticleSpawnSystem().spawn(Type.BULLET, getX(), getY(), getDeltaX(), getDeltaY(), 20, false);
+	    					
+	    					break;
+	        			}	
+	        		}
+    			} else {//Custom code for worm
+    				for(Part p : ((EnemyWorm) e).getParts()) {
+	    				float distX = centerx - p.getX();
+		    			float distY = centery - p.getY();
+		        		if(distX * distX + distY * distY < (getRadius() + p.getInnerRadius()) * (getRadius() + p.getInnerRadius())) {
+		                	p.hit(p.getLife());
+		    				
+		        			//Make the player invincible when the boardshock is activated to avoid wasting and annoying moments
+		        			if(BoardShock.isActivated()) {
+		        				break;
+		        			} else if(shields > 0) {
+			        			shields--;
+			        			shieldLoseRepelTimer = PUSHAWAY_TIME;
+		        			} else {
+		        				Specular.nativeAndroid.sendAnalytics("Death", String.valueOf(gs.getCurrentWave().getID()), e.getClass().getSimpleName(), null);
+		        				
+		    					addLives(-1);
+		    					dying = true;
+		    					animFrameTime = 0;
+		    					clearEnemies = true;
+		    					gs.getParticleSpawnSystem().spawn(Type.BULLET, getX(), getY(), getDeltaX(), getDeltaY(), 20, false);
+		    					break;
+		        			}	
+		        		}
+    				}
+    			}
     		}
         }	
 		
