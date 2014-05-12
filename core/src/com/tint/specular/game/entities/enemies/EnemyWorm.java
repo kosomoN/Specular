@@ -29,8 +29,6 @@ public class EnemyWorm extends Enemy {
 	private float speed;
 	private int ticks;
 	private double angle;
-
-	public boolean derp;
 	
 	public EnemyWorm(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
@@ -56,8 +54,7 @@ public class EnemyWorm extends Enemy {
 	
 	@Override
 	public void hit(float damage) {
-		for(Part p : parts)
-			p.hit(damage);
+		head.hit(damage);
 	}
 
 	private void setWormSpeed(float speed) {

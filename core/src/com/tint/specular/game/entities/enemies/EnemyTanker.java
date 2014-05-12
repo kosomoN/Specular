@@ -59,7 +59,8 @@ public class EnemyTanker extends Enemy {
 	@Override
 	public void hit(float damage) {	
 		speed += 0.7f;
-		hits++;
+		if(hits < 19)
+			hits++;
 		super.hit(damage);
 	}
 
