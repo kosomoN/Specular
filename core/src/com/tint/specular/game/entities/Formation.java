@@ -89,11 +89,78 @@ public enum Formation {
 				es.setY((float) (y + Math.sin(angle) * radius));
 			}
 		}
+	},
+	
+	SIDE(false) {
+		@Override
+		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
+			for(int i = 0; i < enemies.size(); i++) {
+				EnemySpawn es = enemies.get(i);
+				
+				if(side == Sides.LEFT) {
+					es.setX(100);
+					es.setY(gs.getCurrentMap().getHeight() / (enemies.size() + 1) * (i + 1));
+				} else if(side == Sides.RIGHT) {
+					es.setX(gs.getCurrentMap().getWidth() - 100);
+					es.setY(gs.getCurrentMap().getHeight() / (enemies.size() + 1) * (i + 1));
+				} else if(side == Sides.UP) {
+					es.setX(gs.getCurrentMap().getWidth() / (enemies.size() + 1) * (i + 1));
+					es.setY(100);
+				} else if(side == Sides.DOWN) {
+					es.setX(gs.getCurrentMap().getWidth() / (enemies.size() + 1) * (i + 1));
+					es.setY(gs.getCurrentMap().getHeight() - 100);
+				}
+			}
+		}
+	},
+	
+	CORNERS(false) {
+		private static final int UP_LEFT = 0, UP_RIGHT = 1, LOW_RIGHT = 2, LOW_LEFT = 3;
+		@Override
+		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
+			float corner = 0;
+			for(EnemySpawn es : enemies) {
+				if(corner == UP_LEFT) {	// Upper-left corner
+					es.setX(100);
+					es.setY(100);
+				} else if(corner == UP_RIGHT) {	// Upper-right corner
+					es.setX(gs.getCurrentMap().getWidth() - 100);
+					es.setY(100);
+				} else if(corner == LOW_RIGHT) {	// Lower-right corner
+					es.setX(gs.getCurrentMap().getWidth() - 100);
+					es.setY(gs.getCurrentMap().getHeight() - 100);
+				} else if(corner == LOW_LEFT) {	// Lower-left corner
+					es.setX(100);
+					es.setY(gs.getCurrentMap().getHeight() - 100);
+				}
+				
+				corner++;
+				corner = corner % 4;
+			}
+		}
+	}, 
+	
+	CENTER(false) {
+
+		@Override
+		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
+			for(EnemySpawn es: enemies) {
+				es.setX(gs.getCurrentMap().getWidth() / 2);
+				es.setY(gs.getCurrentMap().getHeight() / 2);
+			}
+		}
+		
 	};
 	
+	public enum Sides {
+		LEFT, RIGHT, UP, DOWN;
+	};
 	public final boolean needsRecalculation;
 	public float radius = 100;
+	public Sides side;
 	public abstract void setFormation(List<EnemySpawn> enemies, GameState gs);
+	public void setSide(Sides side) { this.side = side; }
+	
 	public void setRadius(float radius) { this.radius = radius; }
 	
 	private Formation(boolean needsRecalculation) {
