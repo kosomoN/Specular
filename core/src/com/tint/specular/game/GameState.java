@@ -30,6 +30,7 @@ import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyExploder;
+import com.tint.specular.game.entities.enemies.EnemyFront;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemyTanker;
@@ -194,6 +195,7 @@ public class GameState extends State {
 		EnemyExploder.init();
 		EnemyDasher.init();
 		EnemyTanker.init();
+		EnemyFront.init();
 		AnalogStick.init();
 		
 		// Initializing power-ups

@@ -13,6 +13,7 @@ import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyExploder;
+import com.tint.specular.game.entities.enemies.EnemyFront;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemyTanker;
@@ -28,6 +29,7 @@ public class Wave {
 	private GameState gs;
 	private WaveModifier modifier, permanentModifier;
 	private int timer, totalLength;
+	
 	//This list is used to recalculate the formation
 	private List<EnemySpawnFormation> formationList = new ArrayList<EnemySpawnFormation>();
 	
@@ -153,6 +155,7 @@ public class Wave {
 		
 		Formation.RANDOM.setFormation(baseEnemies, gs);
 	}
+	
 	/**
 	 * @param enemyTypes
 	 * @param amounts
@@ -234,6 +237,9 @@ public class Wave {
 			break;
 		case ENEMY_EXPLODER:
 			e = new EnemyExploder(x, y, gs);
+			break;
+		case ENEMY_FRONT:
+			e = new EnemyFront(x, y, gs);
 			break;
 		case ENEMY_WORM:
 			e = new EnemyWorm(x, y, gs);

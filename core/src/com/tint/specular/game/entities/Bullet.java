@@ -96,7 +96,6 @@ public class Bullet implements Entity, Poolable {
 		direction += turning;
 		dx = (float) Math.cos(Math.toRadians(direction)) * SPEED;
 		dy = (float) Math.sin(Math.toRadians(direction)) * SPEED;
-		System.out.println(direction);
 	}
 
 	public static void init(final GameState gs) {

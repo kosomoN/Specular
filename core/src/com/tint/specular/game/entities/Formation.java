@@ -79,8 +79,6 @@ public enum Formation {
 	RINGS(false) {
 		@Override
 		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
-			float x = gs.getCurrentMap().getWidth() / 2;
-			float y = gs.getCurrentMap().getHeight() / 2;
 			EnemySpawn es;
 			for(int i = 0; i < enemies.size(); i++) {
 				double angle = i / (double) enemies.size() * Math.PI * 2;
@@ -141,7 +139,6 @@ public enum Formation {
 	}, 
 	
 	CENTER(false) {
-
 		@Override
 		public void setFormation(List<EnemySpawn> enemies, GameState gs) {
 			for(EnemySpawn es: enemies) {
@@ -149,19 +146,19 @@ public enum Formation {
 				es.setY(gs.getCurrentMap().getHeight() / 2);
 			}
 		}
-		
 	};
 	
 	public enum Sides {
 		LEFT, RIGHT, UP, DOWN;
 	};
 	public final boolean needsRecalculation;
-	public float radius = 100;
+	public float radius = 100, x, y;
 	public Sides side;
 	public abstract void setFormation(List<EnemySpawn> enemies, GameState gs);
 	public void setSide(Sides side) { this.side = side; }
 	
 	public void setRadius(float radius) { this.radius = radius; }
+	public void setCenterRingPoint(float x, float y) { this.x = x; this.y = y; }
 	
 	private Formation(boolean needsRecalculation) {
 		this.needsRecalculation = needsRecalculation;

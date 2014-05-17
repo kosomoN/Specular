@@ -447,7 +447,7 @@ public class Player implements Entity {
     				}
     			}
     		}
-        }	
+        }
 		
         if(clearEnemies) {
         	gs.clearEnemies(new Array<Enemy>());
