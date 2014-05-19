@@ -33,40 +33,38 @@ public class EnemyDasher extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		if(boostingDelay < 120) {
 			
-			//Render warning line
-			batch.setColor(1, 1, 1, ((float) Math.cos(boostingDelay / 60f * Math.PI * 2 + Math.PI) + 1) / 4);
-			
-			if(direction == 0 || direction == Math.PI) {
-				float width = 0;
-				if(direction == 0) {
-					width = gs.getCurrentMap().getWidth() - x;
-					for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getWidth()); i < n; i++)
-						batch.draw(dashWarningTex, x + i * dashWarningTex.getWidth(), y - dashWarningTex.getHeight() / 2);
-				} else {
-					width = x;
-					for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getWidth()); i < n; i++)
-						batch.draw(dashWarningTex, x - (i + 1) * dashWarningTex.getWidth(), y - dashWarningTex.getHeight() / 2);
-				}
-
+		//Render warning line
+		batch.setColor(1, 1, 1, ((float) Math.cos(boostingDelay / 60f * Math.PI * 2 + Math.PI) + 1) / 4);
+		
+		if(direction == 0 || direction == Math.PI) {
+			float width = 0;
+			if(direction == 0) {
+				width = gs.getCurrentMap().getWidth() - x;
+				for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getWidth()); i < n; i++)
+					batch.draw(dashWarningTex, x + i * dashWarningTex.getWidth(), y - dashWarningTex.getHeight() / 2);
 			} else {
-				float height = y;
-				if(direction == Math.PI / 2) {
-					height = gs.getCurrentMap().getHeight() - y;
-					
-					for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getHeight()); i < n; i++)
-						Util.drawCentered(batch, dashWarningTex, x - dashWarningTex.getWidth() / 2, y + i * dashWarningTex.getWidth(), 90);
-				} else {
-					
-					for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getHeight()); i < n; i++)
-						Util.drawCentered(batch, dashWarningTex, x - dashWarningTex.getWidth() / 2, y - (i + 1) * dashWarningTex.getWidth(), 90);
-					
-				}
+				width = x;
+				for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getWidth()); i < n; i++)
+					batch.draw(dashWarningTex, x - (i + 1) * dashWarningTex.getWidth(), y - dashWarningTex.getHeight() / 2);
 			}
-			
-			batch.setColor(Color.WHITE);
+
+		} else {
+			float height = y;
+			if(direction == Math.PI / 2) {
+				//Upwards
+				height = gs.getCurrentMap().getHeight() - y;
+				for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getHeight()); i < n; i++)
+					Util.drawCentered(batch, dashWarningTex, x, y + i * dashWarningTex.getWidth(), 90);
+			} else {
+				//Downwards
+				for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getHeight()); i < n; i++)
+					Util.drawCentered(batch, dashWarningTex, x, y - (i + 1) * dashWarningTex.getWidth(), 90);
+				
+			}
 		}
+		
+		batch.setColor(Color.WHITE);
 		
 		if(speed > 0) {
 			batch.setShader(shader);

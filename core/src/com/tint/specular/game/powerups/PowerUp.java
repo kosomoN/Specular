@@ -105,4 +105,8 @@ public abstract class PowerUp implements Entity {
 	public float getRadius() {
 		return getTexture().getWidth() / 2;
 	}
+
+	public float getDespawnTime() {
+		return despawnTime;
+	}
 }

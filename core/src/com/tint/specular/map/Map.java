@@ -29,6 +29,7 @@ import com.tint.specular.game.entities.enemies.EnemyTanker;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
+import com.tint.specular.game.powerups.PowerUp;
 
 public class Map {
 	private static ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -40,7 +41,6 @@ public class Map {
 	private String name;
 	private GameState gs;
 	private Matrix4 matrix = new Matrix4();
-	
 	
 	public Map(Texture texture, Texture shockLight, Texture parallax, String name, int width, int height, GameState gs) {
 		this.name = name;
@@ -106,6 +106,15 @@ public class Map {
 			
 			for(Bullet b : gs.getBullets()) {
 				batch.draw(mask, b.getX() - 80, fbo.getHeight() - b.getY() - 80, 160, 160);
+			}
+			
+			for(PowerUp p : gs.getPowerUps()) {
+				if(!p.isActivated()) {
+					float alpha = p.getDespawnTime() % 100 / 100f;
+					float size = (float) (500 * (1 - alpha));
+					batch.setColor(1, 0, 0, alpha * 2 > 1 ? 1 : alpha * 2);
+					batch.draw(mask, p.getX() - size / 2, fbo.getHeight() - p.getY() - size / 2, size, size);
+				}
 			}
 			
 			if(BoardShock.isActivated()) {
@@ -197,10 +206,6 @@ public class Map {
 			for(TrailPart tp : gs.getPlayer().getTrail())
 				shapeRenderer.rect(tp.getX() - tp.getSize() / 2, tp.getY() - tp.getSize() / 2, tp.getSize(), tp.getSize());
 			
-			for(Bullet b : gs.getBullets()) {
-				shapeRenderer.rect(b.getX() - 80, b.getY() - 80, 160, 160);
-			}
-			
 			if(BoardShock.isActivated()) {
 				float size = BoardShock.getShockWaveProgress() * 6144;
 				shapeRenderer.rect(BoardShock.getActivationX() - size / 2, BoardShock.getActivationY() - size / 2, size, size);
@@ -208,6 +213,15 @@ public class Map {
 			
 			for(Particle e : gs.getParticles()) {
 				shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
+			}
+			
+			for(Bullet b : gs.getBullets()) {
+				shapeRenderer.rect(b.getX() - 80, b.getY() - 80, 160, 160);
+			}
+			
+			for(PowerUp p : gs.getPowerUps()) {
+				if(!p.isActivated())
+					shapeRenderer.rect(p.getX() - 250, p.getY() - 250, 500, 500);
 			}
 			
 			for(Enemy e : gs.getEnemies()) {
