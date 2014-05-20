@@ -91,4 +91,9 @@ public class EnemyStriver extends Enemy {
 	protected float getRotationSpeed() {
 		return 90;
 	}
+	
+	@Override
+	public Enemy copy() {
+		return new EnemyStriver(0, 0, gs);
+	}
 }

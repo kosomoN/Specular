@@ -79,6 +79,7 @@ public abstract class Enemy implements Entity {
 	protected abstract float getRotationSpeed();
 	protected abstract Texture getWarningTex();
 	
+	public abstract Enemy copy();
 	public abstract void updateMovement();
 
 	/**

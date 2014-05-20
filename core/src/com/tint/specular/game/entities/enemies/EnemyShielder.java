@@ -94,4 +94,9 @@ public class EnemyShielder extends Enemy {
 	protected float getRotationSpeed() {
 		return 70;
 	}
+	
+	@Override
+	public Enemy copy() {
+		return new EnemyShielder(0, 0, gs);
+	}
 }

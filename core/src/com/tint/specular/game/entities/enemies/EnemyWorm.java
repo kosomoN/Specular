@@ -280,4 +280,9 @@ public class EnemyWorm extends Enemy {
 	public Array<Part> getParts() {
 		return parts;
 	}
+
+	@Override
+	public Enemy copy() {
+		return new EnemyWorm(0, 0, gs);
+	}
 }

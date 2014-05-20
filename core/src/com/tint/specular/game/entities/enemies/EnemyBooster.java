@@ -163,4 +163,9 @@ public class EnemyBooster extends Enemy {
 	protected float getRotationSpeed() {
 		return 0;
 	}
+	
+	@Override
+	public Enemy copy() {
+		return new EnemyBooster(0, 0, gs);
+	}
 }

@@ -202,6 +202,11 @@ public class EnemyDasher extends Enemy {
 		return 0;
 	}
 
+	@Override
+	public Enemy copy() {
+		return new EnemyDasher(0, 0, gs);
+	}
+	
 	public static Texture getBoostTex() {
 		return boostTex;
 	}

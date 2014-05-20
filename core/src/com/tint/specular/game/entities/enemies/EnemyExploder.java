@@ -73,11 +73,16 @@ public class EnemyExploder extends Enemy {
 	@Override
 	protected void renderEnemy(SpriteBatch batch) {
 		if(!exploded) {
-			batch.setColor(1, 1, 1, 1);
+			alpha = 0.3f * (rotation - 8 / 15f - 2);
+			alpha = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha;
+			
+			batch.setColor(1, 1, 1, alpha);
+			
 			// Explosion Warning
 			Util.drawCentered(batch, explosionWarningTex, x, y, rotation * 1.2f);
 			Util.drawCentered(batch, explosionWarningTex2, x, y,  rotation * -1.2f);
 			
+			batch.setColor(1, 1, 1, 1);
 			// Normal animation
 			TextureRegion frame = anim.getKeyFrame(rotation, true);
 			Util.drawCentered(batch, frame, x, y, rotation * 10 % 360);
@@ -220,4 +225,8 @@ public class EnemyExploder extends Enemy {
 		return 10;
 	}
 
+	@Override
+	public Enemy copy() {
+		return new EnemyExploder(0, 0, gs);
+	}
 }

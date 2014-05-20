@@ -665,6 +665,7 @@ public class GameState extends State {
 		boardshockCharge = 0;
 		Bullet.maxBounces = 0;
 		Bullet.setTwist(false);
+		Bullet.setDamage(1);
 		FireRateBoost.stacks = 0;
 		
 		waveNumber = 0;

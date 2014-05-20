@@ -142,5 +142,8 @@ public class EnemyFront extends Enemy {
 		return 0;
 	}
 	
-	
+	@Override
+	public Enemy copy() {
+		return new EnemyFront(0, 0, gs);
+	}
 }

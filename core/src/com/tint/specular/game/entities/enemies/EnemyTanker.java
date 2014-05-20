@@ -118,4 +118,9 @@ public class EnemyTanker extends Enemy {
 	protected float getRotationSpeed() {
 		return 0;
 	}
+	
+	@Override
+	public Enemy copy() {
+		return new EnemyTanker(0, 0, gs);
+	}
 }

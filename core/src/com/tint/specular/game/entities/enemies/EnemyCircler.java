@@ -110,4 +110,9 @@ public class EnemyCircler extends Enemy {
 	protected float getRotationSpeed() {
 		return 100;
 	}
+	
+	@Override
+	public Enemy copy() {
+		return new EnemyCircler(0, 0, gs);
+	}
 }

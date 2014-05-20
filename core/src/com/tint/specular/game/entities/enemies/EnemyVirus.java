@@ -159,4 +159,9 @@ public class EnemyVirus extends Enemy {
 	protected float getRotationSpeed() {
 		return 80;
 	}
+	
+	@Override
+	public Enemy copy() {
+		return new EnemyVirus(0, 0, gs, false);
+	}
 }

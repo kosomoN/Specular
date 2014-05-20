@@ -64,7 +64,7 @@ public class WaveLoader {
 			wave.setPermanentModifer(new WaveModifier() {
 				@Override
 				public void affectBase(GameState gs, Enemy justSpawnedEnemy) {
-					Enemy e = justSpawnedEnemy;
+					Enemy e = justSpawnedEnemy.copy();
 					e.setX(50 + rand.nextInt(gs.getCurrentMap().getWidth() - 100));
 					e.setY(50 + rand.nextInt(gs.getCurrentMap().getHeight() - 100));
 					gs.addEntity(e);

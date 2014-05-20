@@ -127,4 +127,9 @@ public class EnemyWanderer extends Enemy {
 	protected float getRotationSpeed() {
 		return 70;
 	}
+	
+	@Override
+	public Enemy copy() {
+		return new EnemyWanderer(0, 0, gs);
+	}
 }
