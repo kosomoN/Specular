@@ -10,7 +10,6 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
 
-
 /**
  * 
  * @author Hugo Holmqvist
@@ -26,7 +25,7 @@ public class EnemyTanker extends Enemy {
 	public int onetickpasses;
 
 	public EnemyTanker(float x, float y, GameState gs) {
-		super(x, y, gs, 20);
+		super(x, y, gs, 20);	
 		speed = (float) 1.5;
 	}
 
@@ -58,7 +57,6 @@ public class EnemyTanker extends Enemy {
 	
 	@Override
 	public void updateMovement() {
-		if(onetickpasses > 60) {
 		//Calculating angle of movement based on closest player
 		double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX()- x);
 		
@@ -66,14 +64,7 @@ public class EnemyTanker extends Enemy {
 		dy = (float) (Math.sin(angle) * speed);
 		x += dx * slowdown;
 		y += dy * slowdown;
-		}
-		
-		onetickpasses++;
-	 		if(onetickpasses == 240){
-	 			onetickpasses = 0;
-	 		}
-	}	
-	
+	}
 
 
 	@Override
