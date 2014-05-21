@@ -108,7 +108,6 @@ public class GameState extends State {
 	private boolean enablePowerUps = true;
 	private boolean particlesEnabled;
 	private boolean soundsEnabled;
-//	private int comboToNextScoreMult = 2;
 	
 	// Lists for keeping track of entities in the world
 	private Array<Entity> entities = new Array<Entity>(false, 128);

@@ -46,6 +46,12 @@ public class ShockWaveRenderer {
 		Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 	}
 	
+	public static void setShockwaveTexture(Texture texture) {
+		shockWave = texture;
+	}
+	
+	public static Texture getShockwaveTexture() { return shockWave; }
+	
 	private final static String VERT =  
 			"attribute vec4 "+ShaderProgram.POSITION_ATTRIBUTE+";\n" +
 			"attribute vec4 "+ShaderProgram.COLOR_ATTRIBUTE+";\n" +

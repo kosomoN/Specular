@@ -42,6 +42,10 @@ public class Swarm extends PowerUp {
 
 	@Override
 	protected void removeEffect(Player player) {
+		for(PowerUp pu : gs.getPowerUps())
+			if(pu instanceof LaserPowerup)
+				pu.resume();
+		
 		if(stacks <= 1) {
 			player.setFireRate(10f);
 			player.setBulletBurstLevel(0);

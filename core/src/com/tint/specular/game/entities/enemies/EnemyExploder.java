@@ -3,7 +3,6 @@ package com.tint.specular.game.entities.enemies;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -34,7 +33,6 @@ public class EnemyExploder extends Enemy {
 	private static Animation spawnAnim, anim;
 	private static Texture warningTex, explosionWarningTex;
 	private static Texture explosionTex1, explosionWarningTex2;
-	private float alpha;
 	private int shockWaveTime;
 	
 	// Movement
@@ -73,10 +71,7 @@ public class EnemyExploder extends Enemy {
 	@Override
 	protected void renderEnemy(SpriteBatch batch) {
 		if(!exploded) {
-			alpha = 0.3f * (rotation - 8 / 15f - 2);
-			alpha = alpha < 0 ? 0 : alpha > 1 ? 1 : alpha;
-			
-			batch.setColor(1, 1, 1, alpha);
+			batch.setColor(1, 1, 1, 0.3f * (rotation - 8 / 15f - 2) < 0 ? 0 : 0.3f * (rotation - 8 / 15f - 2) > 1 ? 1 : 0.3f * (rotation - 8 / 15f - 2));
 			
 			// Explosion Warning
 			Util.drawCentered(batch, explosionWarningTex, x, y, rotation * 1.2f);
@@ -87,20 +82,18 @@ public class EnemyExploder extends Enemy {
 			TextureRegion frame = anim.getKeyFrame(rotation, true);
 			Util.drawCentered(batch, frame, x, y, rotation * 10 % 360);
 		} else {
-			// Updating alpha
-			alpha -= 0.05f;
-			explosionDone = alpha <= 0;
-			
 			shockWaveTime++;
-			if(shockWaveTime < 20) {
-				batch.setColor(1, 1, 1, 1);
-				ShockWaveRenderer.renderShockwave(batch, x, y, shockWaveTime / 20f, false);
-			}
 			
 			// Explosion
-			Color color = batch.getColor();
-			batch.setColor(color.r, color.g, color.b, alpha);
-			Util.drawCentered(batch, explosionTex1, x, y, 0);
+			if(shockWaveTime < 25) {
+				batch.setColor(1, 1, 1, 1);
+				Texture origTex = ShockWaveRenderer.getShockwaveTexture();
+				ShockWaveRenderer.setShockwaveTexture(explosionTex1);
+				ShockWaveRenderer.renderShockwave(batch, x, y, shockWaveTime / 25f, false);
+				ShockWaveRenderer.setShockwaveTexture(origTex);
+			} else {
+				explosionDone = true;
+			}
 		}
 	}
 	
@@ -190,7 +183,6 @@ public class EnemyExploder extends Enemy {
 			player.kill(list);
 		}
 		Camera.shake(0.9f, 0.03f);
-		alpha = 1f;
 		exploded = true;
 	}
 

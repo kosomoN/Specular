@@ -29,6 +29,18 @@ public class LaserPowerup extends PowerUp {
 	protected void removeEffect(Player player) {
 		player.changeAmmo(AmmoType.BULLET);
 	}
+	
+	@Override
+	public void pause() {
+		super.pause();
+		gs.getPlayer().changeAmmo(AmmoType.BULLET);
+	}
+
+	@Override
+	public void resume() {
+		super.resume();
+		gs.getPlayer().changeAmmo(AmmoType.LASER);
+	}
 
 	@Override
 	public Texture getTexture() {
