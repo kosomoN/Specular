@@ -28,6 +28,10 @@ public class Swarm extends PowerUp {
 		Bullet.setTwist(true);
 		Bullet.setDamage(0.4f);
 		
+		for(PowerUp pu : gs.getPowerUps())
+			if(pu instanceof LaserPowerup)
+				pu.pause();
+		
 		if(stacks > 0) {
 			activeTime -= timeToStack;
 		}

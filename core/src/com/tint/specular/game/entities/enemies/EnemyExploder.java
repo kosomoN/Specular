@@ -85,11 +85,11 @@ public class EnemyExploder extends Enemy {
 			shockWaveTime++;
 			
 			// Explosion
-			if(shockWaveTime < 25) {
+			if(shockWaveTime < 10) {
 				batch.setColor(1, 1, 1, 1);
 				Texture origTex = ShockWaveRenderer.getShockwaveTexture();
 				ShockWaveRenderer.setShockwaveTexture(explosionTex1);
-				ShockWaveRenderer.renderShockwave(batch, x, y, shockWaveTime / 25f, false);
+				ShockWaveRenderer.renderShockwave(batch, x, y, shockWaveTime / 10f, false);
 				ShockWaveRenderer.setShockwaveTexture(origTex);
 			} else {
 				explosionDone = true;
