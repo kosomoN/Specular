@@ -60,19 +60,9 @@ public class SettingsInputProcessor extends InputAdapter {
         float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth; 
         float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight; 
           
-        // Low-Graphics
-        if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 630 + Specular.camera.viewportHeight - 1080, 225, 128, false)) { 
-        	graphics = 0;
-        }
-        
-        // Medium-Graphics
-        else if(Util.isTouching(touchpointx, touchpointy, 385, 1080 - 630 + Specular.camera.viewportHeight - 1080, 250, 128, false)) {
-        	graphics = 1;
-        }
-        
-        // High-Graphics
-        else if(Util.isTouching(touchpointx, touchpointy, 635, 1080 - 630 + Specular.camera.viewportHeight - 1080, 205, 128, false)) {
-        	graphics = 2;
+        // Graphics
+        if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 725 + Specular.camera.viewportHeight - 1080, 680, 220, false)) { 
+        	graphics = graphics == 2 ? 0 : ++graphics;
         }
         
         // Music 
