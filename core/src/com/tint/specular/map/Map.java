@@ -30,6 +30,7 @@ import com.tint.specular.game.entities.enemies.EnemyVirus;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.powerups.PowerUp;
+import com.tint.specular.game.GfxSettings;
 
 public class Map {
 	private static ShapeRenderer shapeRenderer = new ShapeRenderer();
@@ -50,6 +51,7 @@ public class Map {
 		this.width = width;
 		this.height = height;
 		this.gs = gs;
+		
 		
 		matrix.setToOrtho2D(0, 0, texture.getWidth(), texture.getHeight());
 		
@@ -203,20 +205,27 @@ public class Map {
 			shapeRenderer.setProjectionMatrix(Specular.camera.combined);
 			shapeRenderer.begin(ShapeType.Filled);
 			
+			if(GfxSettings.ReturnPt()){
 			for(TrailPart tp : gs.getPlayer().getTrail())
 				shapeRenderer.rect(tp.getX() - tp.getSize() / 2, tp.getY() - tp.getSize() / 2, tp.getSize(), tp.getSize());
 			
-			if(BoardShock.isActivated()) {
+			}
+			
+			if(BoardShock.isActivated() && GfxSettings.ReturnBs()) {
 				float size = BoardShock.getShockWaveProgress() * 6144;
 				shapeRenderer.rect(BoardShock.getActivationX() - size / 2, BoardShock.getActivationY() - size / 2, size, size);
 			}
 			
+			if(GfxSettings.ReturnPtr()){
 			for(Particle e : gs.getParticles()) {
 				shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
+				}
 			}
 			
+			if(GfxSettings.ReturnBt()){
 			for(Bullet b : gs.getBullets()) {
 				shapeRenderer.rect(b.getX() - 80, b.getY() - 80, 160, 160);
+				}
 			}
 			
 			for(PowerUp p : gs.getPowerUps()) {
@@ -224,6 +233,7 @@ public class Map {
 					shapeRenderer.rect(p.getX() - 250, p.getY() - 250, 500, 500);
 			}
 			
+			if(GfxSettings.ReturnEt()){
 			for(Enemy e : gs.getEnemies()) {
 				if(e instanceof EnemyWorm) {
 					for(EnemyWorm.Part p : ((EnemyWorm) e).getParts())
@@ -231,6 +241,7 @@ public class Map {
 				}
 				shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
 			}
+		}
 			shapeRenderer.end();
 			
 			

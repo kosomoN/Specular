@@ -170,6 +170,11 @@ public class Specular extends Game {
 						throw new NoPreferenceKeyException("Enemies Killed missing");
 				prefsFailureIndex++;
 				
+				if(!ints.contains(prefsFailureIndex))
+					if(!prefs.contains("Graphics"))
+						throw new NoPreferenceKeyException("Enemies Killed missing");
+				prefsFailureIndex++;
+				
 				// Create new ones if there was any errors, error means List<Integer> ints != null
 				createPreferences(ints);
 			} else {
@@ -264,6 +269,12 @@ public class Specular extends Game {
 		
 		if(indexInts.contains(i))
 			prefs.putBoolean("FirstTime", true);
+		i++;
+	
+		//Graphics settings (High on by default) 0 = low, 1 = medium, 2 = high
+		
+		if(indexInts.contains(i))
+			prefs.putInteger("Graphics", 2);
 		i++;
 		
 		//Needed for android to save the settings

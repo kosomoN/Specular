@@ -96,7 +96,7 @@ public class SettingsMenuState extends State {
 	@Override
 	public void hide() {
 		super.hide();
-		Specular.prefs.putBoolean("SoundsMuted", processor.soundsMuted()); 
+		Specular.prefs.putBoolean("SoundMuted", processor.soundsMuted()); 
         Specular.prefs.putBoolean("MusicMuted", processor.musicMuted()); 
         Specular.prefs.putBoolean("Particles", processor.particlesEnabled()); 
         Specular.prefs.flush(); 

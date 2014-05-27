@@ -180,6 +180,9 @@ public class GameState extends State {
 		
 		fontGen.dispose();
 		
+		//Graphics Settings
+		GfxSettings.init();
+		
 		// Initializing entities and analogstick statically
 		Player.init();
 		Bullet.init(this);
@@ -212,6 +215,8 @@ public class GameState extends State {
 		Laser.init(this);
 		Swarm.init();
 		PDSPowerUp.init();
+		
+
 		
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
