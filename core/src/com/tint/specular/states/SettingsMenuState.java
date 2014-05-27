@@ -10,13 +10,14 @@ public class SettingsMenuState extends State {
 
 //	private Texture background;
 	private boolean rendered;
-	private Texture background, selected, back, backPressed, controls, controlsPressed, daeron, daeronPressed, warriyo, warriyoPressed, artists;
+	private Texture background, selected, selectedGraphics, back, backPressed, controls, controlsPressed, daeron, daeronPressed, warriyo, warriyoPressed, artists;
 	private SettingsInputProcessor processor;
 	
 	public SettingsMenuState(Specular game) {
 		super(game);
 		background = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Options.png"));
 		selected = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Selected.png"));
+		selectedGraphics = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Graphics Select.png"));
 		back = new Texture(Gdx.files.internal("graphics/menu/highscore/Back.png"));
 		backPressed = new Texture(Gdx.files.internal("graphics/menu/highscore/Back Pressed.png"));
 		controls = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Controls.png"));
@@ -47,12 +48,17 @@ public class SettingsMenuState extends State {
 		
 		game.batch.draw(artists, 1050, 570);
 		
-		if(processor.particlesEnabled())
-			game.batch.draw(selected, 142, 600);
+		if(processor.getGraphicsSettings() == 0)
+			game.batch.draw(selectedGraphics, 145, 510);
+		else if(processor.getGraphicsSettings() == 1)
+			game.batch.draw(selectedGraphics, 375, 510);
+		else if(processor.getGraphicsSettings() == 2)
+			game.batch.draw(selectedGraphics, 600, 510);
+		
 		if(!processor.musicMuted())
-			game.batch.draw(selected, 142, 460);
+			game.batch.draw(selected, 142, 375);
 		if(!processor.soundsMuted())
-			game.batch.draw(selected, 142, 323);
+			game.batch.draw(selected, 142, 236);
 		
 		// Back button
 		if(!processor.backPressed())
@@ -98,7 +104,7 @@ public class SettingsMenuState extends State {
 		super.hide();
 		Specular.prefs.putBoolean("SoundsMuted", processor.soundsMuted()); 
         Specular.prefs.putBoolean("MusicMuted", processor.musicMuted()); 
-        Specular.prefs.putBoolean("Particles", processor.particlesEnabled()); 
+        Specular.prefs.putInteger("Graphics", processor.getGraphicsSettings()); 
         Specular.prefs.flush(); 
 	}
 }

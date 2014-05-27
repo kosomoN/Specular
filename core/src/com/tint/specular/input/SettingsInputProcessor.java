@@ -11,13 +11,14 @@ import com.tint.specular.utils.Util;
 public class SettingsInputProcessor extends InputAdapter { 
   
     private Specular game; 
-    private boolean soundsMuted = true, musicMuted = true, particlesEnabled = true, backBtnPressed, controlsPressed, daeronPressed, warriyoPressed;
+    private boolean soundsMuted = true, musicMuted = true, backBtnPressed, controlsPressed, daeronPressed, warriyoPressed;
+    private int graphics;
       
     public SettingsInputProcessor(Specular game) {
         this.game = game; 
         soundsMuted = Specular.prefs.getBoolean("SoundsMuted");
         musicMuted = Specular.prefs.getBoolean("MusicMuted");
-        particlesEnabled = Specular.prefs.getBoolean("Particles");
+        graphics = Specular.prefs.getInteger("Graphics");
     }
     
     @Override
@@ -59,12 +60,23 @@ public class SettingsInputProcessor extends InputAdapter {
         float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth; 
         float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight; 
           
-        // Particles 
-        if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 720 + Specular.camera.viewportHeight - 1080, 880, 128, false)) { 
-            particlesEnabled = !particlesEnabled; 
-        } 
+        // Low-Graphics
+        if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 630 + Specular.camera.viewportHeight - 1080, 225, 128, false)) { 
+        	graphics = 0;
+        }
+        
+        // Medium-Graphics
+        else if(Util.isTouching(touchpointx, touchpointy, 385, 1080 - 630 + Specular.camera.viewportHeight - 1080, 250, 128, false)) {
+        	graphics = 1;
+        }
+        
+        // High-Graphics
+        else if(Util.isTouching(touchpointx, touchpointy, 635, 1080 - 630 + Specular.camera.viewportHeight - 1080, 205, 128, false)) {
+        	graphics = 2;
+        }
+        
         // Music 
-        else if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 575 + Specular.camera.viewportHeight - 1080, 550, 128, false)) {
+        else if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 490 + Specular.camera.viewportHeight - 1080, 550, 128, false)) {
             musicMuted = !musicMuted;
             if(musicMuted)
             	((MainmenuState) game.getState(States.MAINMENUSTATE)).stopMusic();
@@ -72,7 +84,7 @@ public class SettingsInputProcessor extends InputAdapter {
             	((MainmenuState) game.getState(States.MAINMENUSTATE)).startMusic();
         } 
         // Sound 
-        else if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 440 + Specular.camera.viewportHeight - 1080, 410, 128, false))
+        else if(Util.isTouching(touchpointx, touchpointy, 160, 1080 - 350 + Specular.camera.viewportHeight - 1080, 410, 128, false))
             soundsMuted = !soundsMuted; 
 
         // Controls
@@ -110,23 +122,23 @@ public class SettingsInputProcessor extends InputAdapter {
         
         warriyoPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 450, 500, 110, false);
         return false; 
-    } 
+    }
+    
+    public int getGraphicsSettings() {
+    	return graphics;
+    }
       
     public boolean musicMuted() { 
         return musicMuted; 
-    } 
+    }
       
     public boolean soundsMuted() { 
         return soundsMuted; 
-    } 
-      
-    public boolean particlesEnabled() { 
-        return particlesEnabled; 
-    } 
+    }
       
     public boolean backPressed() { 
         return backBtnPressed; 
-    } 
+    }
       
     public boolean controlsPressed() { 
         return controlsPressed; 
@@ -138,5 +150,5 @@ public class SettingsInputProcessor extends InputAdapter {
 
 	public boolean isWarriyoPressed() {
 		return warriyoPressed;
-	} 
+	}
 }
