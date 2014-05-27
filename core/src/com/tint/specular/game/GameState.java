@@ -64,6 +64,9 @@ import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.NativeAndroid.RequestCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.HUD;
+import com.tint.specular.upgrades.FirerateUpgrade;
+import com.tint.specular.upgrades.LifeUpgrade;
+import com.tint.specular.upgrades.Upgrade;
 import com.tint.specular.utils.Util;
 
 /**
@@ -115,6 +118,9 @@ public class GameState extends State {
 	private Array<Bullet> bullets = new Array<Bullet>(false, 64);
 	private Array<Particle> particles = new Array<Particle>(false, PARTICLE_LIMIT);
 	private Array<PowerUp> powerups = new Array<PowerUp>(false, 64);
+	
+	// Upgrades
+	private Upgrade[] upgrades = {new FirerateUpgrade(this, 1), new LifeUpgrade(this, 1)};
 	
 	// Map control
 	private Map currentMap;
@@ -216,8 +222,6 @@ public class GameState extends State {
 		Swarm.init();
 		PDSPowerUp.init();
 		
-
-		
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
 		pass = new ParticleSpawnSystem(this);
@@ -274,7 +278,6 @@ public class GameState extends State {
 			if(!gameMode.isGameOver()) {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
-				
 				
 				// So that they don't spawn while death animation is playing
 				if(!player.isSpawning() && !player.isDying() && !player.isDead()) {
@@ -614,6 +617,12 @@ public class GameState extends State {
 	public ComboSystem getComboSystem() {
 		return cs;
 	}
+	
+	public void refreshUpgrades() {
+		for(Upgrade u : upgrades) {
+			u.refresh();
+		}
+	}
 
 	// Reset stuff
 	/**
@@ -671,6 +680,9 @@ public class GameState extends State {
 		Bullet.setTwist(false);
 		Bullet.setDamage(1);
 		FireRateBoost.stacks = 0;
+		
+		// Refreshing upgrades
+		refreshUpgrades();
 		
 		waveNumber = 0;
 		currentWave = waveManager.getWave(waveNumber);
