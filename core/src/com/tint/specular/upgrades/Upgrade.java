@@ -1,5 +1,6 @@
 package com.tint.specular.upgrades;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.game.GameState;
 
 public abstract class Upgrade {
@@ -11,6 +12,11 @@ public abstract class Upgrade {
 	
 	public Upgrade(GameState gs, int cost) {
 		this.gs = gs;
+		this.cost = cost;
+	}
+	
+	public Upgrade(int grade, int cost) {
+		this.grade = grade;
 		this.cost = cost;
 	}
 	
@@ -42,4 +48,5 @@ public abstract class Upgrade {
 	}
 	
 	public abstract void refresh();
+	public abstract Texture getTexture();
 }
