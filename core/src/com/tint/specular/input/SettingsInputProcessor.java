@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Input.Keys;
 import com.tint.specular.Specular; 
 import com.tint.specular.Specular.States; 
+import com.tint.specular.game.GfxSettings;
 import com.tint.specular.states.MainmenuState;
 import com.tint.specular.utils.Util; 
   
@@ -25,6 +26,7 @@ public class SettingsInputProcessor extends InputAdapter {
 	public boolean keyUp(int keycode) {
     	if(keycode == Keys.BACK)
 			game.enterState(States.MAINMENUSTATE);
+    		GfxSettings.init();
     	
     	return false;
 	}
@@ -80,11 +82,15 @@ public class SettingsInputProcessor extends InputAdapter {
         // Controls
         else if(Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 1030, Specular.camera.viewportHeight - 155, 905, 110, false))
         	game.enterState(States.CONTROLSETUPSTATE);
+        
 
 //         Back 
         else if(Util.isTouching(touchpointx, touchpointy, 80, Specular.camera.viewportHeight - 160, 435, 105, false))
-            game.enterState(States.MAINMENUSTATE); 
+            game.enterState(States.MAINMENUSTATE);
         
+        if(Util.isTouching(touchpointx, touchpointy, 80, Specular.camera.viewportHeight - 160, 435, 105, false))
+           GfxSettings.init();
+
         else if(Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 570, 500, 110, false))
         	Gdx.net.openURI("https://soundcloud.com/daerontrance");
         
