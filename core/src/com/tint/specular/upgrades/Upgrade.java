@@ -10,18 +10,14 @@ public abstract class Upgrade {
 	private int maxGrade;
 	private int cost;
 	
-	public Upgrade(GameState gs, int cost) {
-		this.gs = gs;
-		this.cost = cost;
-	}
-	
-	public Upgrade(int grade, int cost) {
+	public Upgrade(int grade, int maxGrade) {
 		this.grade = grade;
-		this.cost = cost;
+		// TODO Debug code
+		this.maxGrade = -1; //maxGrade
 	}
 	
 	public void upgrade() {
-		grade = grade == maxGrade ? grade : ++grade;
+		grade = (grade == maxGrade ? grade : ++grade);
 	}
 
 	public void degrade() {

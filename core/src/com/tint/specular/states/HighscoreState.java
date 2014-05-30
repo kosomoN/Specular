@@ -198,6 +198,9 @@ public class HighscoreState extends State {
 			public boolean keyUp(int keycode) {
 				if(keycode == Keys.BACK)
 					game.enterState(Specular.States.MAINMENUSTATE);
+				//TODO debug code
+				if(keycode == Keys.SPACE && isLoggedIn)
+					game.enterState(Specular.States.UPGRADESTATE);
 				return super.keyUp(keycode);
 			}
 		}));

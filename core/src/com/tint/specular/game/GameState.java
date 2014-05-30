@@ -64,9 +64,6 @@ import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.NativeAndroid.RequestCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.HUD;
-import com.tint.specular.upgrades.FirerateUpgrade;
-import com.tint.specular.upgrades.LifeUpgrade;
-import com.tint.specular.upgrades.Upgrade;
 import com.tint.specular.utils.Util;
 
 /**
@@ -120,7 +117,7 @@ public class GameState extends State {
 	private Array<PowerUp> powerups = new Array<PowerUp>(false, 64);
 	
 	// Upgrades
-	private Upgrade[] upgrades = {new FirerateUpgrade(this, 1), new LifeUpgrade(this, 1)};
+//	private Upgrade[] upgrades = {new FirerateUpgrade(this, 1), new LifeUpgrade(this, 1)};
 	
 	// Map control
 	private Map currentMap;
@@ -619,9 +616,9 @@ public class GameState extends State {
 	}
 	
 	public void refreshUpgrades() {
-		for(Upgrade u : upgrades) {
-			u.refresh();
-		}
+//		for(Upgrade u : upgrades) {
+//			u.refresh();
+//		}
 	}
 
 	// Reset stuff
