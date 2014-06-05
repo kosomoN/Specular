@@ -2,6 +2,7 @@ package com.tint.specular.upgrades;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.tint.specular.game.powerups.SlowdownEnemies;
 
 public class SlowdownUpgrade extends Upgrade {
 
@@ -15,6 +16,7 @@ public class SlowdownUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
+		SlowdownEnemies.setFreezeTime((float) (Math.sqrt(getGrade()) * 500));
 	}
 	
 	public Texture getTexture() {

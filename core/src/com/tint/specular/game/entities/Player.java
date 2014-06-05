@@ -41,6 +41,7 @@ public class Player implements Entity {
 	public static Animation anim, spawnAnim, deathAnim;
 	public static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture, barrelTexture[] = new Texture[7];
 	public static int radius;
+	private static int startingLives = 3;//Specular.prefs.getInteger("Player Starting Lives");
 	
 	private GameState gs;
 	private AmmoType ammo = AmmoType.BULLET;
@@ -81,13 +82,13 @@ public class Player implements Entity {
 		BULLET, LASER
 	}
 
-	public Player(GameState gs, float x, float y, int lives) {
+	public Player(GameState gs, float x, float y) {
 		this.gs = gs;
 		centerx = x;
 		centery = y;
 		pds = new PDS(gs, this);
 		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
-		setLife(lives);
+		setLife(startingLives);
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
@@ -509,6 +510,7 @@ public class Player implements Entity {
 	
 	public void changeAmmo(AmmoType ammo) { this.ammo = ammo; }
 	public void setLife(int life) { this.life = life; }
+	public static void setStartingLife(int startLife) { startingLives = startLife; }
 	public void kill(Array<Enemy> enemiesToSave) {
 		addLives(-1);
 		dying = true;
@@ -531,6 +533,7 @@ public class Player implements Entity {
 	public float getFireRate() { return fireRate; }
 	public float getTimeSinceLastFire() { return timeSinceLastFire; }
 	public static float getRadius() { return radius; }
+	public static int getStartingLives() { return startingLives; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
 	public int getBulletBurstLevel() { return bulletBurstLevel; }

@@ -2,6 +2,7 @@ package com.tint.specular.upgrades;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.tint.specular.game.entities.Player;
 
 public class LifeUpgrade extends Upgrade {
 
@@ -15,6 +16,8 @@ public class LifeUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
+		if(getGrade() == getMaxGrade())
+			Player.setStartingLife(4);
 	}
 	
 	public Texture getTexture() {

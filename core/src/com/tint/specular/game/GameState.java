@@ -94,6 +94,7 @@ public class GameState extends State {
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	public static float TICK_LENGTH_MILLIS = 1000 / 60f;
+	public static int MULTIPLIER_COOLDOWN_TIME = 360; // ticks
 	private float unprocessed;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
@@ -257,7 +258,7 @@ public class GameState extends State {
 			BoardShock.update();
 			
 			if(scoreMultiplier > 1) {
-				if(scoreMultiplierTimer < 360) {
+				if(scoreMultiplierTimer < MULTIPLIER_COOLDOWN_TIME) {
 					float enemySizeDecrease = (float) scoreMultiplier / 2;
 					
 					scoreMultiplierTimer += enemySizeDecrease;
@@ -298,7 +299,7 @@ public class GameState extends State {
 			if(!gameMode.isGameOver()) {
 				updateHitDetections();
 				if(!player.isDying() && player.isDead() && player.getLife() > 0) {
-		        	pss.spawn(player.getLife(), true);
+		        	pss.spawn(true);
 		        	waveNumber++;
 					currentWave = waveManager.getWave(waveNumber);
 		        }
@@ -341,7 +342,7 @@ public class GameState extends State {
 				if(!gameMode.isGameOver()) {
 					clearLists();
 					resetGameTime();
-					pss.spawn(3, false);
+					pss.spawn(false);
 				}
 				else {
 					saveStats();
@@ -655,7 +656,7 @@ public class GameState extends State {
 		gameMode = new Ranked(this);
 		enemiesKilled = 0;
 		// Adding player and setting up input processor
-		pss.spawn(3, false);
+		pss.spawn(false);
 		
 		gameInputProcessor = new GameInputProcessor(this);
 		gameInputProcessor.reset();
@@ -664,6 +665,8 @@ public class GameState extends State {
 		pauseInputProcessor = new PauseInputProcessor(game, this);
 
 		resetGameTime();
+		
+//		MULTIPLIER_COOLDOWN_TIME = Specular.prefs.getInteger("Multiplier Cooldown");
 		
 		// Disable or enable virus spawn in start, > 0 = enable & < 0 = disable
 		EnemyVirus.virusAmount = 0;
@@ -794,6 +797,12 @@ public class GameState extends State {
 		Specular.prefs.putInteger("Enemies Killed", Specular.prefs.getInteger("Enemies Killed") + enemiesKilled);
 		Specular.prefs.putInteger("Games Played", Specular.prefs.getInteger("Games Played") + 1);
 		
+		/*Specular.prefs.putInteger("Player Starting Lives", Player.getStartingLives());
+		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
+		Specular.prefs.putFloat("Boardshock Efficiency", BoardShock.getEfficiency());
+		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
+		Specular.prefs.putInteger("Multiplier Cooldown", MULTIPLIER_COOLDOWN_TIME);
+		*/
 		Specular.prefs.flush();
 	}
 

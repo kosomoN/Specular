@@ -15,7 +15,7 @@ public class PlayerSpawnSystem extends SpawnSystem {
 		super(gs);
 	}
 	
-	public void spawn(int lives, boolean respawn) {
+	public void spawn(boolean respawn) {
 		int x = gs.getCurrentMap().getWidth() / 2;
 		int y = gs.getCurrentMap().getHeight() / 2;
 		
@@ -23,7 +23,7 @@ public class PlayerSpawnSystem extends SpawnSystem {
 			gs.getPlayer().setCenterPosition(x, y);
 			gs.getPlayer().respawn();
 		} else {
-			gs.addEntity(new Player(gs, x, y, lives));
+			gs.addEntity(new Player(gs, x, y));
 			gs.getPlayer().respawn();
 		}
 	}

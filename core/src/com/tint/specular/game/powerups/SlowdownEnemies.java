@@ -15,6 +15,8 @@ import com.tint.specular.game.entities.enemies.Enemy;
 public class SlowdownEnemies extends PowerUp {
 	private static Texture texture;
 	private static boolean hasUpdatedSlowdown = false;
+	private static float freezeTime; // Ms
+	private float ticksFrozen; // Only handled in one slowdown
 	
 	public SlowdownEnemies(float x, float y, GameState gs) {
 		super(x, y, gs, 300);
@@ -22,18 +24,23 @@ public class SlowdownEnemies extends PowerUp {
 	
 	public static void init() {
 		texture = new Texture(Gdx.files.internal("graphics/game/powerups/Slowdown.png"));
+//		freezeTime = Specular.prefs.getFloat("Freeze Time");
 	}
 	
 	@Override
 	protected void affect(Player player) {
 		Enemy.setSlowdown(0.25f);
+		ticksFrozen = 0;
 	}
 
 	@Override
 	protected void updatePowerup(Player player) {
 		if(!hasUpdatedSlowdown) {
 			hasUpdatedSlowdown = true;
-			Enemy.setSlowdown(Enemy.getSlowdown() + 0.75f / 300);
+			
+			if(ticksFrozen >= freezeTime / 60f)
+				Enemy.setSlowdown(Enemy.getSlowdown() + 0.75f / 300);
+			ticksFrozen++;
 		}
 	}
 
@@ -45,4 +52,7 @@ public class SlowdownEnemies extends PowerUp {
 	public static void setUpdatedSlowdown(boolean slow) {
 		hasUpdatedSlowdown = slow;
 	}
+	
+	public static void setFreezeTime(float freezeTime) { SlowdownEnemies.freezeTime = freezeTime; }
+	public static float getFreezeTime() { return freezeTime; }
 }

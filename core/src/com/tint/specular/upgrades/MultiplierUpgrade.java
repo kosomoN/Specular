@@ -2,6 +2,7 @@ package com.tint.specular.upgrades;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.tint.specular.game.GameState;
 
 public class MultiplierUpgrade extends Upgrade {
 
@@ -15,6 +16,7 @@ public class MultiplierUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every update
+		GameState.MULTIPLIER_COOLDOWN_TIME = (int) (360 * (1 + Math.sqrt(getGrade()) / getMaxGrade() * 0.1f)) ;
 	}
 	
 	public Texture getTexture() {

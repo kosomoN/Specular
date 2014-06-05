@@ -30,7 +30,7 @@ public class HUD {
 	}
 
 	public void render(SpriteBatch batch, float multiplierTimer) {
-		float multiplierPercent = 1 - multiplierTimer / 360;
+		float multiplierPercent = 1 - multiplierTimer / GameState.MULTIPLIER_COOLDOWN_TIME;
 
 		int textureWidth = (int) (multiplierBar.getWidth() * multiplierPercent);
 		int x = -textureWidth / 2;

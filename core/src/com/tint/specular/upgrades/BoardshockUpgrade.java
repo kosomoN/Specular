@@ -2,6 +2,7 @@ package com.tint.specular.upgrades;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.tint.specular.game.BoardShock;
 
 public class BoardshockUpgrade extends Upgrade {
 
@@ -15,6 +16,7 @@ public class BoardshockUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specfic to every upgrade
+		BoardShock.setEfficiency((float) (0.25 - Math.sqrt(getGrade()) / getMaxGrade() * 0.25 / 2));
 	}
 	
 	public Texture getTexture() {
