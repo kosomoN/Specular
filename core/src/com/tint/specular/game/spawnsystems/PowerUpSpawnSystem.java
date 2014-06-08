@@ -11,7 +11,7 @@ import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.LaserPowerup;
 import com.tint.specular.game.powerups.PDSPowerUp;
 import com.tint.specular.game.powerups.PowerUp;
-import com.tint.specular.game.powerups.PushAway;
+import com.tint.specular.game.powerups.Repulsor;
 import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
@@ -104,7 +104,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		else if(importance == ricochet)
 			gs.addEntity(new Ricochet(x, y, gs));
 		else if(importance == pushAway)
-			gs.addEntity(new PushAway(x, y, gs));
+			gs.addEntity(new Repulsor(x, y, gs));
 		else if(importance == laser)
 			gs.addEntity(new LaserPowerup(x, y, gs));
 		else if(importance == swarm)

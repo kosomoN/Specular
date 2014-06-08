@@ -8,6 +8,7 @@ public class PDS implements Entity {
 
 	private static int ammo;
 	private static float range;
+	private static float damage = 2;
 	private GameState gs;
 	private Player player;
 	
@@ -15,6 +16,7 @@ public class PDS implements Entity {
 		this.gs = gs;
 		this.player = player;
 		range = 200;
+//		damage = Specular.prefs.getFloat("PDS Damage");
 	}
 	
 	@Override
@@ -36,7 +38,7 @@ public class PDS implements Entity {
 				distSqrd = dx * dx + dy * dy;
 				
 				if(distSqrd < range * range) {
-					e.hit(2);
+					e.hit(damage);
 					gs.addEntity(Laser.obtainLaser(player.getX(), player.getY(), e.getX(), e.getY(), 0, false));;
 					ammo--;
 				}
@@ -57,6 +59,9 @@ public class PDS implements Entity {
 	public static boolean isActive() {
 		 return ammo > 0;
 	}
+	
+	public static void setDamage(float damage) { PDS.damage = damage; }
+	public static float getDamage() { return damage; }
 
 	@Override
 	public float getX() {

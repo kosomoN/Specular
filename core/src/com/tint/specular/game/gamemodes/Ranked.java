@@ -29,6 +29,7 @@ public class Ranked extends GameMode {
 	@Override
 	public void playerKilled() {
 		gameOver = true;
+		gs.getPlayer().addUpgradePoints(gs.getPlayer().getScore() / 100000f); // TODO Might change upon balancing
 		Gdx.input.setInputProcessor(gs.getStage());
 	}
 

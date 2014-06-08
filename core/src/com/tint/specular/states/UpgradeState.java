@@ -38,11 +38,11 @@ public class UpgradeState extends State {
 	private Stage stage;
 	private UpgradeList list;
 	private Upgrade[] upgrades = new Upgrade[10];
-	private Preferences savedUpgrades;
+	private Preferences prefs;
 	private Button confirmBtn, resetBtn;
 	private com.tint.specular.ui.Button okBtn, cancelBtn;
 	private Texture promtTex, darkenTex;
-	private int upgradePoints;
+	private float upgradePoints;
 	private boolean promtVisible;
 	
 	public UpgradeState(Specular game) {
@@ -75,7 +75,8 @@ public class UpgradeState extends State {
 	@Override
 	public void show() {
 		super.show();
-		savedUpgrades = Specular.prefs;
+		prefs = Specular.prefs;
+		upgradePoints = 0; //(int) Math.floor(prefs.getFloat("Upgrade Points")); TODO Enable upgradesystem
 		resetUpgrades();
 		createUpgradeList();
 		
@@ -104,8 +105,9 @@ public class UpgradeState extends State {
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
 				int upgradeNum = (int) Math.floor(y / UpgradeList.rowHeight());
-				if(upgrades[9 - upgradeNum].getCost() <= getUpgradePoints()) {
+				if(upgrades[9 - upgradeNum].getCost() <= (int) Math.floor(getUpgradePoints())) {
 					upgrades[9 - upgradeNum].upgrade();
+//					upgradePoints -= upgrades[9 - upgradeNum].getCost(); TODO Enable upgradesystem
 					confirmBtn.setVisible(true);
 					resetBtn.setVisible(true);
 				}
@@ -147,7 +149,7 @@ public class UpgradeState extends State {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
-				// TODO Not enabled yet
+				// TODO Enable upgradesystem
 				/*saveUpgrades();
 				confirmBtn.setVisible(false);
 				resetBtn.setVisible(false);*/
@@ -181,40 +183,42 @@ public class UpgradeState extends State {
 	}
 
 	public void saveUpgrades() {
-		Specular.prefs.putInteger("Life Upgrade Grade", upgrades[0].getGrade());
-		Specular.prefs.putInteger("Firerate Upgrade Grade", upgrades[1].getGrade());
-		Specular.prefs.putInteger("Burst Upgrade Grade", upgrades[2].getGrade());
-		Specular.prefs.putInteger("Beam Upgrade Grade", upgrades[3].getGrade());
-		Specular.prefs.putInteger("Multiplier Upgrade Grade", upgrades[4].getGrade());
-		Specular.prefs.putInteger("PDS Upgrade Grade", upgrades[5].getGrade());
-		Specular.prefs.putInteger("Swarm Upgrade Grade", upgrades[6].getGrade());
-		Specular.prefs.putInteger("Repulsor Upgrade Grade", upgrades[7].getGrade());
-		Specular.prefs.putInteger("Slowdown Upgrade Grade", upgrades[8].getGrade());
-		Specular.prefs.putInteger("Boardshock Upgrade Grade", upgrades[9].getGrade());
+		prefs.putInteger("Life Upgrade Grade", upgrades[0].getGrade());
+		prefs.putInteger("Firerate Upgrade Grade", upgrades[1].getGrade());
+		prefs.putInteger("Burst Upgrade Grade", upgrades[2].getGrade());
+		prefs.putInteger("Beam Upgrade Grade", upgrades[3].getGrade());
+		prefs.putInteger("Multiplier Upgrade Grade", upgrades[4].getGrade());
+		prefs.putInteger("PDS Upgrade Grade", upgrades[5].getGrade());
+		prefs.putInteger("Swarm Upgrade Grade", upgrades[6].getGrade());
+		prefs.putInteger("Repulsor Upgrade Grade", upgrades[7].getGrade());
+		prefs.putInteger("Slowdown Upgrade Grade", upgrades[8].getGrade());
+		prefs.putInteger("Boardshock Upgrade Grade", upgrades[9].getGrade());
+		prefs.putFloat("Upgrade Points", upgradePoints);
 		
-		Specular.prefs.flush();
-		savedUpgrades = Specular.prefs;
+		prefs.flush();
 	}
 	
 	public void resetUpgrades() {
 		// -1 means no max grade (dev stage)
-		upgrades[0] = new LifeUpgrade(savedUpgrades.getInteger("Life Upgrade Grade"), -1);
-		upgrades[1] = new FirerateUpgrade(savedUpgrades.getInteger("Firerate Upgrade Grade"), -1);
-		upgrades[2] = new BurstUpgrade(savedUpgrades.getInteger("Burst Upgrade Grade"), -1);
-		upgrades[3] = new BeamUpgrade(savedUpgrades.getInteger("Beam Upgrade Grade"), -1);
-		upgrades[4] = new MultiplierUpgrade(savedUpgrades.getInteger("Multiplier Upgrade Grade"), -1);
-		upgrades[5] = new PDSUpgrade(savedUpgrades.getInteger("PDS Upgrade Grade"), -1);
-		upgrades[6] = new SwarmUpgrade(savedUpgrades.getInteger("Swarm Upgrade Grade"), -1);
-		upgrades[7] = new RepulsorUpgrade(savedUpgrades.getInteger("Repulsor Upgrade Grade"), -1);
-		upgrades[8] = new SlowdownUpgrade(savedUpgrades.getInteger("Slowdown Upgrade Grade"), -1);
-		upgrades[9] = new BoardshockUpgrade(savedUpgrades.getInteger("Boardshock Upgrade Grade"), -1);
+		upgrades[0] = new LifeUpgrade(prefs.getInteger("Life Upgrade Grade"), -1);
+		upgrades[1] = new FirerateUpgrade(prefs.getInteger("Firerate Upgrade Grade"), -1);
+		upgrades[2] = new BurstUpgrade(prefs.getInteger("Burst Upgrade Grade"), -1);
+		upgrades[3] = new BeamUpgrade(prefs.getInteger("Beam Upgrade Grade"), -1);
+		upgrades[4] = new MultiplierUpgrade(prefs.getInteger("Multiplier Upgrade Grade"), -1);
+		upgrades[5] = new PDSUpgrade(prefs.getInteger("PDS Upgrade Grade"), -1);
+		upgrades[6] = new SwarmUpgrade(prefs.getInteger("Swarm Upgrade Grade"), -1);
+		upgrades[7] = new RepulsorUpgrade(prefs.getInteger("Repulsor Upgrade Grade"), -1);
+		upgrades[8] = new SlowdownUpgrade(prefs.getInteger("Slowdown Upgrade Grade"), -1);
+		upgrades[9] = new BoardshockUpgrade(prefs.getInteger("Boardshock Upgrade Grade"), -1);
+		
+		upgradePoints = prefs.getFloat("Upgrade Points");
 	}
 	
 	public Upgrade[] getUpgrades() {
 		return upgrades;
 	}
 
-	public int getUpgradePoints() {
+	public float getUpgradePoints() {
 		return upgradePoints;
 	}
 	

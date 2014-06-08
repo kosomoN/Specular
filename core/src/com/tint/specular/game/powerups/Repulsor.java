@@ -9,16 +9,18 @@ import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
 
 
-public class PushAway extends PowerUp {
+public class Repulsor extends PowerUp {
 	private static final float PUSHAWAY_RANGE = 500 * 500;
+	private static float maxActiveTime = 800;
 	private static Texture texture;
 	
-	public PushAway(float x, float y, GameState gs) {
-		super(x, y, gs, 800);
+	public Repulsor(float x, float y, GameState gs) {
+		super(x, y, gs, maxActiveTime);
 	}
 	
 	public static void init() {
 		texture = new Texture(Gdx.files.internal("graphics/game/powerups/Repulsor.png"));
+//		maxActiveTime = Specular.prefs.getFloat("Repulsor Max Time");
 	}
 	
 	@Override
@@ -46,6 +48,9 @@ public class PushAway extends PowerUp {
 		}
 	}
 
+	public static void setMaxActiveTime(float maxActiveTime) { Repulsor.maxActiveTime = maxActiveTime; }
+	public static float getMaxActiveTime() { return maxActiveTime; }
+	
 	@Override
 	public Texture getTexture() {
 		return texture;

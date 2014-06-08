@@ -48,11 +48,13 @@ public class Player implements Entity {
 	private PDS pds;
 	private List<TrailPart> playerTrail = new ArrayList<TrailPart>();
 	
+	private float upgradePoints = 0;//Specular.prefs.getFloat("Upgrade Points");
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
 	private float sensitivity = 1f;
 	private float direction;
+	private float laserArc = 30; // Degrees
 	private float maxSpeedAreaSquared;
 	
 	private int life = 3;
@@ -92,6 +94,7 @@ public class Player implements Entity {
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
+//		laserArc = Specular.prefs.getFloat("Laser Aiming Arc");
 		
 		for(int i = 0; i < TrailPart.AMOUNT; i++) {
 			playerTrail.add(new TrailPart(centerx, centery, (int) (i / (float) TrailPart.AMOUNT * TrailPart.SIZE)));
@@ -139,7 +142,7 @@ public class Player implements Entity {
 				if(deltaAngle > 180) 
 					deltaAngle = 360 - deltaAngle;
 				
-				if(deltaAngle < 30) {
+				if(deltaAngle < laserArc) {
 					for(int i = 0; i < bulletBurst; i++) {
 						if(distances[i] > distance) {
 							for(int j = bulletBurst - 1; j >= i + 1; j--) {
@@ -487,6 +490,10 @@ public class Player implements Entity {
 		centery = y;
 	}
 	
+	public void setLaserArc(float laserArc) {
+		this.laserArc = laserArc;
+	}
+	
 	/**
 	 * Takes the amount of updates as rate of fire, not any specific "time"
 	 * @param fireRate
@@ -500,6 +507,7 @@ public class Player implements Entity {
 		else
 			setBulletBurst(3);
 	}
+	
 	public void addBulletBurstLevel(int level) {
 		bulletBurstLevel += (bulletBurstLevel + level < 0 ? 0 : level);
 		if(bulletBurstLevel > 0)
@@ -511,6 +519,7 @@ public class Player implements Entity {
 	public void changeAmmo(AmmoType ammo) { this.ammo = ammo; }
 	public void setLife(int life) { this.life = life; }
 	public static void setStartingLife(int startLife) { startingLives = startLife; }
+	public void addUpgradePoints(float upgradePoints) { this.upgradePoints += upgradePoints; }
 	public void kill(Array<Enemy> enemiesToSave) {
 		addLives(-1);
 		dying = true;
@@ -532,6 +541,8 @@ public class Player implements Entity {
 	public float getDirection() { return direction; }
 	public float getFireRate() { return fireRate; }
 	public float getTimeSinceLastFire() { return timeSinceLastFire; }
+	public float getLaserArc() { return laserArc; }
+	public float getUpgradePoints() { return upgradePoints; }
 	public static float getRadius() { return radius; }
 	public static int getStartingLives() { return startingLives; }
 	public int getLife() { return life;	}

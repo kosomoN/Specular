@@ -46,7 +46,7 @@ import com.tint.specular.game.powerups.FireRateBoost;
 import com.tint.specular.game.powerups.LaserPowerup;
 import com.tint.specular.game.powerups.PDSPowerUp;
 import com.tint.specular.game.powerups.PowerUp;
-import com.tint.specular.game.powerups.PushAway;
+import com.tint.specular.game.powerups.Repulsor;
 import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldUpgrade;
@@ -213,7 +213,7 @@ public class GameState extends State {
 		SlowdownEnemies.init();
 		BoardshockPowerUp.init();
 		Ricochet.init();
-		PushAway.init();
+		Repulsor.init();
 		LaserPowerup.init();
 		ShockWaveRenderer.init();
 		Laser.init(this);
@@ -802,6 +802,14 @@ public class GameState extends State {
 		Specular.prefs.putFloat("Boardshock Efficiency", BoardShock.getEfficiency());
 		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
 		Specular.prefs.putInteger("Multiplier Cooldown", MULTIPLIER_COOLDOWN_TIME);
+		Specular.prefs.putFloat("Burst Max Time", BulletBurst.getMaxActiveTime());
+		Specular.prefs.putFloat("Firerate Boost", FireRateBoost.getBoost());
+		Specular.prefs.putFloat("Swarm Effect", Swarm.getEffect());
+		Specular.prefs.putFloat("Repulsor Max Time", Repulsor.getMaxActiveTime());
+		Specular.prefs.putFloat("PDS Damage", PDS.getDamage());
+		Specular.prefs.putFloat("Laser Aiming Arc", getPlayer().getLaserArc());
+		
+		Speuclar.prefs.putFloat("Upgrade Points", getPlayer().getUpgradePoints());
 		*/
 		Specular.prefs.flush();
 	}

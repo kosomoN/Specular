@@ -16,7 +16,7 @@ public class MultiplierUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every update
-		GameState.MULTIPLIER_COOLDOWN_TIME = (int) (360 * (1 + Math.sqrt(getGrade()) / getMaxGrade() * 0.1f)) ;
+		GameState.MULTIPLIER_COOLDOWN_TIME = (int) (360 * (1 + Math.sqrt(getGrade()) / getMaxGrade() * 0.2f));
 	}
 	
 	public Texture getTexture() {

@@ -2,6 +2,7 @@ package com.tint.specular.upgrades;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.tint.specular.game.powerups.FireRateBoost;
 
 
 public class FirerateUpgrade extends Upgrade {
@@ -16,6 +17,7 @@ public class FirerateUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
+		FireRateBoost.setBoost((float) ((2 / 3f) / (1 + Math.sqrt(getGrade() / getMaxGrade()))));
 	}
 	
 	public Texture getTexture() {

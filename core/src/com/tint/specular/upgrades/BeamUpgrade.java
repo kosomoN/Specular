@@ -15,6 +15,7 @@ public class BeamUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
+		gs.getPlayer().setLaserArc((float) (30 + Math.sqrt(getGrade()) * 5));
 	}
 	
 	public Texture getTexture() {

@@ -10,6 +10,7 @@ public class Swarm extends PowerUp {
 
 	private static Texture tex;
 	private static float timeToStack;
+	private static float effect = 2;
 	private int stacks;
 	
 	public Swarm(float x, float y, GameState gs) {
@@ -18,11 +19,12 @@ public class Swarm extends PowerUp {
 	
 	public static void init() {
 		tex = new Texture(Gdx.files.internal("graphics/game/powerups/Swarm.png"));
+//		effect = Specular.prefs.getFloat("Swarm Effect");
 	}
 	
 	@Override
 	protected void affect(Player player) {
-		player.setFireRate((float) (10 * Math.pow(2 / 3f, 2)));
+		player.setFireRate((float) (10 * Math.pow(2 / 3f, effect)));
 		player.setBulletBurst(5);
 		
 		Bullet.setTwist(true);
@@ -58,6 +60,9 @@ public class Swarm extends PowerUp {
 		}
 		stacks--;
 	}
+	
+	public static void setEffect(float effect) { Swarm.effect = effect; }
+	public static float getEffect() { return effect; }
 
 	@Override
 	public Texture getTexture() {

@@ -2,6 +2,7 @@ package com.tint.specular.upgrades;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.tint.specular.game.powerups.BulletBurst;
 
 public class BurstUpgrade extends Upgrade {
 
@@ -15,6 +16,7 @@ public class BurstUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
+		BulletBurst.setMaxActiveTime((float) (800 + Math.sqrt(getGrade()) * 50));
 	}
 	
 	public Texture getTexture() {
