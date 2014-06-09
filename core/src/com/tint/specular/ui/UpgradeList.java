@@ -12,7 +12,7 @@ import com.tint.specular.upgrades.Upgrade;
 
 public class UpgradeList extends Widget implements Cullable, Disposable {
 
-	private static float rowHeight = 160, pixelsPerGrade = 64;
+	private static float rowHeight = 160;
 	
 	private Texture progressBar, barFill;
 	private Rectangle cullingArea;
@@ -42,7 +42,7 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 					batch.draw(upgrades[i].getTexture(), getX() + 13, y);
 					batch.draw(progressBar, progressX, y);
 					
-					fill = new TextureRegion(barFill, (int) (pixelsPerGrade * upgrades[i].getGrade()), barFill.getHeight());
+					fill = new TextureRegion(barFill, (int) (upgrades[i].getGrade() / (float) upgrades[i].getMaxGrade() * progressBar.getWidth()), barFill.getHeight());
 					batch.draw(fill, progressX, y);
 				} else if (itemY < cullingArea.y) {
 					break;

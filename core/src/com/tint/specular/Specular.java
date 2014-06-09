@@ -2,8 +2,10 @@ package com.tint.specular;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -21,10 +23,9 @@ import com.tint.specular.states.State;
 import com.tint.specular.states.UpgradeState;
 
 
-
 /**
  * 
- * @author Onni Kosomaa
+ * @author Onni Kosomaa, Daniel Riissanen
  *
  */
 
@@ -43,6 +44,14 @@ public class Specular extends Game {
 	public static Preferences prefs;
 	public SpriteBatch batch;
 	
+	// Graphics has to be first, add new iPrefs last
+	private String[] iPrefs = {"Graphics", "Highscore", "Time Played Ticks", "Games Played", "Bullets Fired", "Bullets Missed", "Enemies Killed",
+			"Life Upgrade Grade", "Firerate Upgrade Grade", "Burst Upgrade Grade", "Beam Upgrade Grade", "Multiplier Upgrade Grade", "PDS Upgrade Grade", 
+			"Swarm Upgrade Grade", "Repulsor Upgrade Grade", "Slowdown Upgrade Grade", "Boardshock Upgrade Grade"};
+	// Add new fPrefs last
+	private String[] fPrefs = {"Move Stick Pos X", "Move Stick Pos Y", "Shoot Stick Pos X", "Shoot Stick Pos Y", "Sensitivity", "Upgrade Points"};
+	// The booleans which def value is true should be placed first
+	private String[] bPrefs = {"First Time", "Static", "Particles", "MusicMuted", "SoundsMuted", "Tilt"};
 	
 	public Specular(NativeAndroid facebook) {
 		Specular.nativeAndroid = facebook;
@@ -76,120 +85,50 @@ public class Specular extends Game {
 	}
 	
 	/**
-	 * Checks if everything is okay with the preferences and the program is good to go
+	 * Checks if everything is okay with the preferences and the program is good to go.
+	 * To reset a specific preference, use the list in the parameters to add the indexes for them.
 	 */
-	private void checkPreferences(List<Integer> ints) {
+	private void checkPreferences(List<Integer> failedIndexes) {
 		int prefsFailureIndex = 0;
+		
 		try {
-			/* Checking that the entries exists and are of valid type,
-			 * booleans doesn't need to be validated because in case of wrong type they return false
-			 * MUST BE KEPT IN SAME ORDER AS IN 'CREATEPREFERENCES(List<Integer> i)'!
+			/* Checking that the entries exists and are of valid type
+			 * Check order should stay same in both checkPreferences and createPreferences [int, float, boolean]
 			 */
-			if(ints != null) {
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Sensitivity"))
-						throw new NoPreferenceKeyException("Sensitivity missing");
-				prefsFailureIndex++;
+			
+			// Create new ones if there was any errors, error means List<Integer> ints == null or if an exception is thrown; it's handled below
+			if(failedIndexes != null) {
+				for(; prefsFailureIndex < iPrefs.length; prefsFailureIndex++) {
+					if(!failedIndexes.contains(prefsFailureIndex))
+						if(!prefs.contains(iPrefs[prefsFailureIndex]))
+							throw new NoPreferenceKeyException(iPrefs[prefsFailureIndex] + " missing");
+				}
 				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Move Stick Pos X"))
-						throw new NoPreferenceKeyException("Move Stick Pos X missing");
-				prefsFailureIndex++;
+				for(; prefsFailureIndex - iPrefs.length < fPrefs.length; prefsFailureIndex++) {
+					if(!failedIndexes.contains(prefsFailureIndex))
+						if(!prefs.contains(fPrefs[prefsFailureIndex - iPrefs.length]))
+							throw new NoPreferenceKeyException(fPrefs[prefsFailureIndex - iPrefs.length] + " missing");
+				}
 				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Move Stick Pos Y"))
-						throw new NoPreferenceKeyException("Move Stick Pos Y missing");
-				prefsFailureIndex++;
+				for(; prefsFailureIndex - fPrefs.length - iPrefs.length < bPrefs.length; prefsFailureIndex++) {
+					if(!failedIndexes.contains(prefsFailureIndex))
+						if(!prefs.contains(bPrefs[prefsFailureIndex - fPrefs.length - iPrefs.length]))
+							throw new NoPreferenceKeyException(bPrefs[prefsFailureIndex - fPrefs.length - iPrefs.length] + " missing");
+				}
 				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Shoot Stick Pos X"))
-						throw new NoPreferenceKeyException("Shoot Stick Pos X missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Shoot Stick Pos Y"))
-						throw new NoPreferenceKeyException("Shoot Stick Pos Y missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Highscore"))
-						throw new NoPreferenceKeyException("Highscore missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Time Played Ticks"))
-						throw new NoPreferenceKeyException("Time Played Ticks missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Games Played"))
-						throw new NoPreferenceKeyException("Games Played missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Bullets Fired"))
-						throw new NoPreferenceKeyException("Bullets Fired missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Bullets Missed"))
-						throw new NoPreferenceKeyException("Shots Missed missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Enemies Killed"))
-						throw new NoPreferenceKeyException("Enemies Killed missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Tilt"))
-						throw new NoPreferenceKeyException("Enemies Killed missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Static"))
-						throw new NoPreferenceKeyException("Enemies Killed missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Particles"))
-						throw new NoPreferenceKeyException("Enemies Killed missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("MusicMuted"))
-						throw new NoPreferenceKeyException("Enemies Killed missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("SoundsMuted"))
-						throw new NoPreferenceKeyException("Enemies Killed missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("FirstTime"))
-						throw new NoPreferenceKeyException("Enemies Killed missing");
-				prefsFailureIndex++;
-				
-				if(!ints.contains(prefsFailureIndex))
-					if(!prefs.contains("Graphics"))
-						throw new NoPreferenceKeyException("Enemies Killed missing");
-				prefsFailureIndex++;
-				
-				// Create new ones if there was any errors, error means List<Integer> ints != null
-				createPreferences(ints);
+				createPreferences(failedIndexes, prefsFailureIndex);
 			} else {
 				checkPreferences(new ArrayList<Integer>());
 			}
 		} catch(NumberFormatException nfe) {
 			List<Integer> tempInts = new ArrayList<Integer>();
-			tempInts.addAll(ints);
+			tempInts.addAll(failedIndexes);
 			tempInts.add(prefsFailureIndex);
 			checkPreferences(tempInts);
 			nfe.printStackTrace();
 		} catch (NoPreferenceKeyException e) {
 			List<Integer> tempInts = new ArrayList<Integer>();
-			tempInts.addAll(ints);
+			tempInts.addAll(failedIndexes);
 			tempInts.add(prefsFailureIndex);
 			checkPreferences(tempInts);
 			System.out.println(prefsFailureIndex);
@@ -198,85 +137,83 @@ public class Specular extends Game {
 	}
 	
 	/**
-	 * Creates default preferences
+	 * Creates default preferences for those who has errors
 	 */
-	private void createPreferences(List<Integer> indexInts) {
-		// MUST BE KEPT IN SAME ORDER AS IN 'CHECKPREFERENCES(List<Integer> i)'!
-		// Preferences that might have errors and if so, replace with default value
+	private void createPreferences(List<Integer> failedIndexes, int prefsSize) {
+		// Preferences that might have errors and if so, replace with default value. Else, don't do anything
 		int i = 0;
-		if(indexInts.contains(i))
-			prefs.putFloat("Sensitivity", 1f);
-		i++;
 		
-		if(indexInts.contains(i))
-			prefs.putFloat("Move Stick Pos X", -camera.viewportWidth / 6 * 2);
-		i++;
+		// Creating integer preferences
+		for(i = 0; i < iPrefs.length; i++) {
+			if(failedIndexes.contains(i)) {
+				// Graphics settings (High on by default) 0 = low, 1 = medium, 2 = high
+				prefs.putInteger(iPrefs[i], i == 0 ? 2 : 0); // First element in String array is graphics
+			}
+		}
 		
-		if(indexInts.contains(i))
-			prefs.putFloat("Move Stick Pos Y", -camera.viewportHeight / 6);
-		i++;
+		float x = -camera.viewportWidth / 6 * 2;
+		float y = -camera.viewportHeight / 6;
+		// Creating floating point preferences
+		for(int j = 0; j < fPrefs.length; j++) {
+			// Stick Position 						NOTE: THIS IS NOT VERY GOOD!
+			if(failedIndexes.contains(i)) {
+				if(j < 4) {
+					if(j % 2 == 1) {
+						prefs.putFloat(fPrefs[j], y);
+					} else {
+						if(j == 2)
+							prefs.putFloat(fPrefs[j], -x);
+						else
+							prefs.putFloat(fPrefs[j], x);
+					}
+				}
+			} 
+			// All the others
+			else if(j == 4) {
+				if(failedIndexes.contains(i)) {
+					prefs.putFloat(fPrefs[j], 1f);
+				}
+			} else  {
+				if(failedIndexes.contains(i)) {
+					prefs.putFloat(fPrefs[j], 0);
+				}
+			}
+			i++;
+		}
 		
-		if(indexInts.contains(i))
-			prefs.putFloat("Shoot Stick Pos X", camera.viewportWidth / 6 * 2);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putFloat("Shoot Stick Pos Y", -camera.viewportHeight / 6);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putInteger("Highscore", 0);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putInteger("Time Played Ticks", 0);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putInteger("Games Played", 0);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putInteger("Bullets Fired", 0);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putInteger("Bullets Missed", 0);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putInteger("Enemies Killed", 0);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putBoolean("Tilt", false);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putBoolean("Static", true);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putBoolean("Particles", true);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putBoolean("MusicMuted", false);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putBoolean("SoundsMuted", false);
-		i++;
-		
-		if(indexInts.contains(i))
-			prefs.putBoolean("FirstTime", true);
-		i++;
-	
-		//Graphics settings (High on by default) 0 = low, 1 = medium, 2 = high
-		
-		if(indexInts.contains(i))
-			prefs.putInteger("Graphics", 2);
-		i++;
+		int trueBooleans = 3;
+		// Creating boolean preferences
+		for(int k = 0; k < fPrefs.length; k++) {
+			if(failedIndexes.contains(i)) {
+				prefs.putBoolean(bPrefs[k], k < trueBooleans);
+			}
+			i++;
+		}
+
+		// Checking if there is too many preferences than there should and removes the unnecessary ones
+		Set<String> keys = prefs.get().keySet();
+		int a = 0;
+		if(keys.size() > prefsSize) {
+			iteration:
+			for(Iterator<String> it = keys.iterator(); it.hasNext();) {
+				String s = it.next();
+				for(a = 0; a < iPrefs.length; a++)
+					if(iPrefs[a].equals(s))
+						continue iteration;
+				
+				for(a = 0; a < fPrefs.length; a++)
+					if(fPrefs[a].equals(s))
+						continue iteration;
+				
+				for(a = 0; a < bPrefs.length; a++)
+					if(bPrefs[a].equals(s))
+						continue iteration;
+				
+				System.err.println("Key: " + s + " and its value removed");
+				it.remove();
+				prefs.remove(s);
+			}
+		}
 		
 		//Needed for android to save the settings
 		prefs.flush();
@@ -288,7 +225,6 @@ public class Specular extends Game {
 		states.put(States.SINGLEPLAYER_GAMESTATE, new SingleplayerGameState(this));
 		states.put(States.PROFILE_STATE, new HighscoreState(this));
 		states.put(States.CONTROLSETUPSTATE, new ControlSetupState(this));
-		//TODO not enabled completely
 		states.put(States.UPGRADESTATE, new UpgradeState(this));
 	}
 	

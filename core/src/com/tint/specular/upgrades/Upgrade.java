@@ -8,12 +8,12 @@ public abstract class Upgrade {
 	protected GameState gs;
 	private int grade;
 	private int maxGrade;
-	private int cost;
+	private int cost = 1;
 	
-	public Upgrade(int grade, int maxGrade) {
+	public Upgrade(GameState gs, int grade, int maxGrade) {
+		this.gs = gs;
 		this.grade = grade;
-		// TODO Debug code
-		this.maxGrade = -1; //maxGrade
+		this.maxGrade = maxGrade;
 	}
 	
 	public void upgrade() {

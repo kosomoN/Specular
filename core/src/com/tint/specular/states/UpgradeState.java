@@ -76,7 +76,7 @@ public class UpgradeState extends State {
 	public void show() {
 		super.show();
 		prefs = Specular.prefs;
-		upgradePoints = 0; //(int) Math.floor(prefs.getFloat("Upgrade Points")); TODO Enable upgradesystem
+		upgradePoints = (float) Math.floor(prefs.getFloat("Upgrade Points"));
 		resetUpgrades();
 		createUpgradeList();
 		
@@ -107,7 +107,7 @@ public class UpgradeState extends State {
 				int upgradeNum = (int) Math.floor(y / UpgradeList.rowHeight());
 				if(upgrades[9 - upgradeNum].getCost() <= (int) Math.floor(getUpgradePoints())) {
 					upgrades[9 - upgradeNum].upgrade();
-//					upgradePoints -= upgrades[9 - upgradeNum].getCost(); TODO Enable upgradesystem
+					upgradePoints -= upgrades[9 - upgradeNum].getCost();
 					confirmBtn.setVisible(true);
 					resetBtn.setVisible(true);
 				}
@@ -149,10 +149,9 @@ public class UpgradeState extends State {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
-				// TODO Enable upgradesystem
-				/*saveUpgrades();
+				saveUpgrades();
 				confirmBtn.setVisible(false);
-				resetBtn.setVisible(false);*/
+				resetBtn.setVisible(false);
 			}
 		});
 		stage.addActor(confirmBtn);
@@ -199,17 +198,16 @@ public class UpgradeState extends State {
 	}
 	
 	public void resetUpgrades() {
-		// -1 means no max grade (dev stage)
-		upgrades[0] = new LifeUpgrade(prefs.getInteger("Life Upgrade Grade"), -1);
-		upgrades[1] = new FirerateUpgrade(prefs.getInteger("Firerate Upgrade Grade"), -1);
-		upgrades[2] = new BurstUpgrade(prefs.getInteger("Burst Upgrade Grade"), -1);
-		upgrades[3] = new BeamUpgrade(prefs.getInteger("Beam Upgrade Grade"), -1);
-		upgrades[4] = new MultiplierUpgrade(prefs.getInteger("Multiplier Upgrade Grade"), -1);
-		upgrades[5] = new PDSUpgrade(prefs.getInteger("PDS Upgrade Grade"), -1);
-		upgrades[6] = new SwarmUpgrade(prefs.getInteger("Swarm Upgrade Grade"), -1);
-		upgrades[7] = new RepulsorUpgrade(prefs.getInteger("Repulsor Upgrade Grade"), -1);
-		upgrades[8] = new SlowdownUpgrade(prefs.getInteger("Slowdown Upgrade Grade"), -1);
-		upgrades[9] = new BoardshockUpgrade(prefs.getInteger("Boardshock Upgrade Grade"), -1);
+		upgrades[0] = new LifeUpgrade(prefs.getInteger("Life Upgrade Grade"), 10);
+		upgrades[1] = new FirerateUpgrade(prefs.getInteger("Firerate Upgrade Grade"), 10);
+		upgrades[2] = new BurstUpgrade(prefs.getInteger("Burst Upgrade Grade"), 10);
+		upgrades[3] = new BeamUpgrade(prefs.getInteger("Beam Upgrade Grade"), 10);
+		upgrades[4] = new MultiplierUpgrade(prefs.getInteger("Multiplier Upgrade Grade"), 10);
+		upgrades[5] = new PDSUpgrade(prefs.getInteger("PDS Upgrade Grade"), 10);
+		upgrades[6] = new SwarmUpgrade(prefs.getInteger("Swarm Upgrade Grade"), 10);
+		upgrades[7] = new RepulsorUpgrade(prefs.getInteger("Repulsor Upgrade Grade"), 10);
+		upgrades[8] = new SlowdownUpgrade(prefs.getInteger("Slowdown Upgrade Grade"), 10);
+		upgrades[9] = new BoardshockUpgrade(prefs.getInteger("Boardshock Upgrade Grade"), 10);
 		
 		upgradePoints = prefs.getFloat("Upgrade Points");
 	}

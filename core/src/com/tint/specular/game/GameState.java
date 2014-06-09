@@ -21,6 +21,7 @@ import com.tint.specular.Specular;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Laser;
+import com.tint.specular.game.entities.PDS;
 import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.Wave;
@@ -64,6 +65,7 @@ import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.NativeAndroid.RequestCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.HUD;
+import com.tint.specular.upgrades.*;
 import com.tint.specular.utils.Util;
 
 /**
@@ -118,7 +120,8 @@ public class GameState extends State {
 	private Array<PowerUp> powerups = new Array<PowerUp>(false, 64);
 	
 	// Upgrades
-//	private Upgrade[] upgrades = {new FirerateUpgrade(this, 1), new LifeUpgrade(this, 1)};
+	private Upgrade[] upgrades = {new BeamUpgrade(this), new BoardshockUpgrade(this), new BurstUpgrade(this), new FirerateUpgrade(this), new LifeUpgrade(this),
+			new MultiplierUpgrade(this), new PDSUpgrade(this), new RepulsorUpgrade(this), new SlowdownUpgrade(this), new SwarmUpgrade(this)};
 	
 	// Map control
 	private Map currentMap;
@@ -617,9 +620,9 @@ public class GameState extends State {
 	}
 	
 	public void refreshUpgrades() {
-//		for(Upgrade u : upgrades) {
-//			u.refresh();
-//		}
+		for(Upgrade u : upgrades) {
+			u.refresh();
+		}
 	}
 
 	// Reset stuff
@@ -797,7 +800,7 @@ public class GameState extends State {
 		Specular.prefs.putInteger("Enemies Killed", Specular.prefs.getInteger("Enemies Killed") + enemiesKilled);
 		Specular.prefs.putInteger("Games Played", Specular.prefs.getInteger("Games Played") + 1);
 		
-		/*Specular.prefs.putInteger("Player Starting Lives", Player.getStartingLives());
+		Specular.prefs.putInteger("Player Starting Lives", Player.getStartingLives());
 		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
 		Specular.prefs.putFloat("Boardshock Efficiency", BoardShock.getEfficiency());
 		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
@@ -808,9 +811,8 @@ public class GameState extends State {
 		Specular.prefs.putFloat("Repulsor Max Time", Repulsor.getMaxActiveTime());
 		Specular.prefs.putFloat("PDS Damage", PDS.getDamage());
 		Specular.prefs.putFloat("Laser Aiming Arc", getPlayer().getLaserArc());
+		Specular.prefs.putFloat("Upgrade Points", getPlayer().getUpgradePoints());
 		
-		Speuclar.prefs.putFloat("Upgrade Points", getPlayer().getUpgradePoints());
-		*/
 		Specular.prefs.flush();
 	}
 
