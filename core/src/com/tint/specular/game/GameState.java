@@ -65,7 +65,18 @@ import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.NativeAndroid.RequestCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.ui.HUD;
-import com.tint.specular.upgrades.*;
+import com.tint.specular.ui.ProgressBar;
+import com.tint.specular.upgrades.BeamUpgrade;
+import com.tint.specular.upgrades.BoardshockUpgrade;
+import com.tint.specular.upgrades.BurstUpgrade;
+import com.tint.specular.upgrades.FirerateUpgrade;
+import com.tint.specular.upgrades.LifeUpgrade;
+import com.tint.specular.upgrades.MultiplierUpgrade;
+import com.tint.specular.upgrades.PDSUpgrade;
+import com.tint.specular.upgrades.RepulsorUpgrade;
+import com.tint.specular.upgrades.SlowdownUpgrade;
+import com.tint.specular.upgrades.SwarmUpgrade;
+import com.tint.specular.upgrades.Upgrade;
 import com.tint.specular.utils.Util;
 
 /**
@@ -85,7 +96,7 @@ public class GameState extends State {
 	private int waveNumber;
 	
 	// Boolean fields for start and end of game
-	protected boolean ready;
+	protected boolean ready, shaken;
 	
 	// Other
 	protected GameMode gameMode;
@@ -100,6 +111,7 @@ public class GameState extends State {
 	private float unprocessed;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
+	private long scoreShownTime;
 	private boolean isPaused = false;
 	private int powerUpSpawnTime = 400;		// 10 sec in updates / ticks
 	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
@@ -135,7 +147,7 @@ public class GameState extends State {
 	
 	// Custom and default fonts
 	private BitmapFont arial15 = new BitmapFont();
-	private BitmapFont scoreFont, multiplierFont;
+	private BitmapFont scoreFont, multiplierFont, gameOverScoreFont;
 	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"�`'<>";
 	
 	// Art
@@ -147,6 +159,7 @@ public class GameState extends State {
 	private int currentMusic = -1;
 	private Rectangle scissors = new Rectangle();
 	private Rectangle clipBounds;
+	private ProgressBar upgradePointBar;
 	
 	public GameState(Specular game) {
 		super(game);
@@ -163,8 +176,13 @@ public class GameState extends State {
 		pauseTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Pause.png"));
 		greyPixel = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Grey Pixel.png"));
 		
-		//Loading HUD
+		// Loading HUD
 		hud = new HUD(this);
+		
+		// Loading progressbar
+		upgradePointBar = new ProgressBar((int) (Specular.camera.viewportWidth / 2 - 128), 128);
+		upgradePointBar.setPosition(-upgradePointBar.getWidth() / 2 + 12, -upgradePointBar.getHeight() / 2 - 100);
+		upgradePointBar.setMaxValue(100000);
 		
 		// Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
@@ -176,8 +194,12 @@ public class GameState extends State {
 		// Initializing font
 		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
 		FreeTypeFontParameter ftfp = new FreeTypeFontParameter();
-		ftfp.size = 64;
+		ftfp.size = 939; // MAX SIZE
 		ftfp.characters = FONT_CHARACTERS;
+		gameOverScoreFont = fontGen.generateFont(ftfp);
+		gameOverScoreFont.setColor(Color.RED);
+		
+		ftfp.size = 64;
 		scoreFont = fontGen.generateFont(ftfp);
 		scoreFont.setColor(Color.RED);
 		
@@ -276,43 +298,40 @@ public class GameState extends State {
 				cs.resetCombo();
 			}
 			
+			boolean playerKilled = false;		// A variable to keep track of player status
 			if(!gameMode.isGameOver()) {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
 				
-				// So that they don't spawn while death animation is playing
-				if(!player.isSpawning() && !player.isDying() && !player.isDead()) {
-					player.updateHitDetection();
-					if(currentWave.update()) {
-						waveNumber++;
-						currentWave = waveManager.getWave(waveNumber);
+				// Update power-ups
+				powerUpSpawnTime--;
+				if(powerUpSpawnTime < 0) {
+					if(enablePowerUps) {
+						puss.spawn();
+						powerUpSpawnTime = 300;
 					}
 				}
-			}
-			
-			// Update power-ups
-			powerUpSpawnTime--;
-			if(powerUpSpawnTime < 0) {
-				if(enablePowerUps) {
-					puss.spawn();
-					powerUpSpawnTime = 300;
-				}
-			}
-					
-			if(!gameMode.isGameOver()) {
+				
 				updateHitDetections();
-				if(!player.isDying() && player.isDead() && player.getLife() > 0) {
-		        	pss.spawn(true);
-		        	waveNumber++;
-					currentWave = waveManager.getWave(waveNumber);
-		        }
-			}
-			
-			boolean playerKilled = false;		// A variable to keep track of player status
-			
-			if(!gameMode.isGameOver() && player.update()) {
-				gameMode.playerKilled();
-				playerKilled = true;
+				// So that they don't spawn while death animation is playing
+				if(!player.isDying() && !player.isSpawning()) {
+					if(player.isDead()) {
+						pss.spawn(true);
+			        	waveNumber++;
+						currentWave = waveManager.getWave(waveNumber);
+					} else {
+						player.updateHitDetection();
+						if(currentWave.update()) {
+							waveNumber++;
+							currentWave = waveManager.getWave(waveNumber);
+						}
+					}
+				}
+				
+				if(player.update() && !player.isDying()) {
+					gameMode.playerKilled();
+					playerKilled = true;
+				}
 			}
 			
 			// Removing destroyed entities
@@ -350,6 +369,7 @@ public class GameState extends State {
 				else {
 					saveStats();
 					input.setInputProcessor(ggInputProcessor);
+					gameOverScoreFont.scale(7);
 					
 					if(!Specular.nativeAndroid.isLoggedIn()) {
 						Specular.nativeAndroid.login(new RequestCallback() {
@@ -426,39 +446,65 @@ public class GameState extends State {
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
-		if(!gameMode.isGameOver()) {
-			//Drawing HUD
-			hud.render(game.batch, scoreMultiplierTimer);
-			if(!isPaused) {
-				gameInputProcessor.getShootStick().render(game.batch);
-				gameInputProcessor.getMoveStick().render(game.batch);
-			}
-			// Drawing SCORE in the middle top of the screen
-			Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
-					Specular.camera.viewportHeight / 2 - 36);
-			// Drawing MULTIPLIER on screen
-			Util.writeCentered(game.batch, multiplierFont, "x" + Math.round(scoreMultiplier), 0,
-					Specular.camera.viewportHeight / 2 - 98);
-			
-			gameMode.render(game.batch);
-		}
-		
-		
-		// Game over screen
-		if(gameMode.isGameOver()) {
-			game.batch.setColor(Color.WHITE);
-			game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
-			game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
-			ggInputProcessor.getRetryBtn().render();
-			ggInputProcessor.getMenuBtn().render();
-			ggInputProcessor.getHighscoreBtn().render();
-		}
-		// Pause menu
-		else if(isPaused) {
+		if(isPaused) { // Pause menu
 			game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
 			game.batch.draw(pauseTex, -pauseTex.getWidth() / 2, 100);
 			pauseInputProcessor.getResumeButton().render();
 			pauseInputProcessor.getToMenuButton().render();
+		} else {	
+			if(!gameMode.isGameOver()) {
+				//Drawing HUD
+				hud.render(game.batch, scoreMultiplierTimer);
+				gameInputProcessor.getShootStick().render(game.batch);
+				gameInputProcessor.getMoveStick().render(game.batch);
+				
+				// Drawing SCORE in the middle top of the screen
+				Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
+						Specular.camera.viewportHeight / 2 - 36);
+				// Drawing MULTIPLIER on screen
+				Util.writeCentered(game.batch, multiplierFont, "x" + Math.round(scoreMultiplier), 0,
+						Specular.camera.viewportHeight / 2 - 98);
+				
+				gameMode.render(game.batch);
+			} else if(gameMode.isGameOver()) { // Game over screen
+				// Manual camera shake
+				Specular.camera.position.set(0, 0, 0);
+				Specular.camera.position.add(rand.nextFloat() * 100 * Camera.getShakeIntensity(), rand.nextFloat() * 100 * Camera.getShakeIntensity(), 0);
+				Specular.camera.update();
+				game.batch.setProjectionMatrix(Specular.camera.combined);
+				
+				game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
+				game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
+				
+				// Game Over effects [fade in, camera shake]
+				if(gameOverScoreFont.getScaleX() > 0.1f) {
+					gameOverScoreFont.scale(-0.07f);
+				} else {
+					if(!shaken) {
+						Camera.shake(0.5f, 0.02f);
+						shaken = true;
+						scoreShownTime = System.nanoTime() + 500000000; // + 0.5 sec
+					}
+					
+					long timeDelta = System.nanoTime() - scoreShownTime;
+					timeDelta = timeDelta < 0 ? 0 : timeDelta;
+					float alpha = (timeDelta) / (TICK_LENGTH * 120) > 1 ? 1 : (timeDelta) / (TICK_LENGTH * 120); // 2 sec
+					
+					if(alpha < 1)
+						game.batch.setColor(1, 1, 1, alpha);
+					
+					// Render upgrade point bar
+					upgradePointBar.setValue((getPlayer().getUpgradePoints() % 1) * 100000);
+					upgradePointBar.render(game.batch);
+					game.batch.setColor(Color.WHITE);
+				}
+				
+				// Drawing final score and buttons
+				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
+				ggInputProcessor.getRetryBtn().render();
+				ggInputProcessor.getMenuBtn().render();
+				ggInputProcessor.getHighscoreBtn().render();
+			}
 		}
 		
 		game.batch.end();
@@ -660,6 +706,8 @@ public class GameState extends State {
 		enemiesKilled = 0;
 		// Adding player and setting up input processor
 		pss.spawn(false);
+		
+		shaken = false;
 		
 		gameInputProcessor = new GameInputProcessor(this);
 		gameInputProcessor.reset();

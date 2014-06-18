@@ -103,8 +103,10 @@ public class Map {
 //			batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 			batch.begin();
 			batch.setColor(Color.RED);
-			for(TrailPart tp : gs.getPlayer().getTrail())
-				batch.draw(mask, tp.getX() - tp.getSize() / 2, fbo.getHeight() - tp.getY() - tp.getSize() / 2, tp.getSize(), tp.getSize());
+			if(gs.getPlayer().getLife() > 0) {
+				for(TrailPart tp : gs.getPlayer().getTrail())
+					batch.draw(mask, tp.getX() - tp.getSize() / 2, fbo.getHeight() - tp.getY() - tp.getSize() / 2, tp.getSize(), tp.getSize());
+			}
 			
 			for(Bullet b : gs.getBullets()) {
 				batch.draw(mask, b.getX() - 80, fbo.getHeight() - b.getY() - 80, 160, 160);

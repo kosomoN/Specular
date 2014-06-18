@@ -107,4 +107,8 @@ public class Camera {
 	public static float getCameraY() {
 		return cameraY;
 	}
+
+	public static float getShakeIntensity() {
+		return shakeIntensity;
+	}
 }

@@ -191,8 +191,10 @@ public class Specular extends Game {
 		}
 
 		// Checking if there is too many preferences than there should and removes the unnecessary ones
+		// BUG! Still some wierd things happening but that doesn't interfere with anyhting important
 		Set<String> keys = prefs.get().keySet();
 		int a = 0;
+		System.out.println(keys.size() + ", " + prefsSize);
 		if(keys.size() > prefsSize) {
 			iteration:
 			for(Iterator<String> it = keys.iterator(); it.hasNext();) {
@@ -210,7 +212,6 @@ public class Specular extends Game {
 						continue iteration;
 				
 				System.err.println("Key: " + s + " and its value removed");
-				it.remove();
 				prefs.remove(s);
 			}
 		}
