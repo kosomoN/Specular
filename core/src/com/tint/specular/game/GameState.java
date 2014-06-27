@@ -102,7 +102,7 @@ public class GameState extends State {
 	protected GameMode gameMode;
 	protected Player player;
 	private Stage stage;
-	private static final int PARTICLE_LIMIT = 300;
+	private static int PARTICLE_LIMIT;
 	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
@@ -116,6 +116,7 @@ public class GameState extends State {
 	private int powerUpSpawnTime = 400;		// 10 sec in updates / ticks
 	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
 	private float boardshockCharge = 0; //Value between 0 and 1
+	private int ticksforCamera;
 	
 	// Fields that affect score or gameplay
 	private int scoreMultiplier = 1;
@@ -256,6 +257,14 @@ public class GameState extends State {
 		
 	@Override
 	public void render(float delta) {
+		if(GfxSettings.ReturnPa() == 1){
+			PARTICLE_LIMIT = 50;
+		} else if(GfxSettings.ReturnPa() == 2){
+			PARTICLE_LIMIT = 150;
+		} else {
+			PARTICLE_LIMIT = 300;
+		}
+		
 		long currTime = System.nanoTime();
         unprocessed += (currTime - lastTickTime) / TICK_LENGTH;
         lastTickTime = currTime;
@@ -273,10 +282,12 @@ public class GameState extends State {
 			while(particles.size >= PARTICLE_LIMIT)
 				particles.removeIndex(rand.nextInt(particles.size));
 			
+			
+			
 			// Adding played time
 			if(!gameMode.isGameOver())
 				ticks++;
-			
+				ticksforCamera++;
 			// Updating combos
 			cs.update();
 			
@@ -525,8 +536,8 @@ public class GameState extends State {
 								b.hit();
 								
 								//Adding a small camerashake
-								Camera.shake(0.1f, 0.05f);
-								
+									Camera.shake(0.1f, 0.05f);
+
 								// Rewarding player depending on game mode
 								enemyHit(e);
 								break;
@@ -539,7 +550,14 @@ public class GameState extends State {
 						b.hit();
 						
 						//Adding a small camerashake
-						Camera.shake(0.1f, 0.05f);
+						if(GfxSettings.ReturnPa() == 1 && ticksforCamera == 30){
+							Camera.shake(0.1f, 0.05f);
+							if(ticksforCamera == 50){
+								
+							ticksforCamera = 0;
+							
+							}
+						}
 						
 						// Rewarding player depending on game mode
 						enemyHit(e);
@@ -835,6 +853,7 @@ public class GameState extends State {
 		}
 		
 		setPaused(false);
+		
 	}
 	
 	private void saveStats() {

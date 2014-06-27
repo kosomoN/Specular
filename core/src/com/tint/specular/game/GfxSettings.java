@@ -10,6 +10,7 @@ public static boolean EnemyTrail;
 public static boolean BulletTrail;
 public static boolean ParticleTrail;
 public static boolean BoardShockFx;
+public static int setting;
 
 
 	public static void init() {
@@ -20,6 +21,7 @@ public static boolean BoardShockFx;
 			BulletTrail = false;
 			ParticleTrail = false;
 			BoardShockFx = true;
+			setting = 1;
 		
 		}
 		
@@ -30,7 +32,7 @@ public static boolean BoardShockFx;
 			BulletTrail = false;
 			ParticleTrail = false;
 			BoardShockFx = true;
-		
+			setting = 2;
 		}
 		
 		if(Specular.prefs.getInteger("Graphics") == 2) {
@@ -40,7 +42,7 @@ public static boolean BoardShockFx;
 			BulletTrail = true;
 			ParticleTrail = true;
 			BoardShockFx = true;
-		
+			setting = 3;
 			
 		}
 		
@@ -52,5 +54,6 @@ public static boolean BoardShockFx;
 	public static boolean ReturnEt () {return EnemyTrail;}
 	public static boolean ReturnBt () {return BulletTrail;}
 	public static boolean ReturnPtr () {return ParticleTrail;}
+	public static int ReturnPa () {return setting;}
 }
 

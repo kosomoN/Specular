@@ -20,6 +20,7 @@ import com.tint.specular.states.MainmenuState;
 import com.tint.specular.states.NativeAndroid;
 import com.tint.specular.states.SettingsMenuState;
 import com.tint.specular.states.State;
+import com.tint.specular.states.TutorialState;
 import com.tint.specular.states.UpgradeState;
 
 
@@ -31,7 +32,7 @@ import com.tint.specular.states.UpgradeState;
 
 public class Specular extends Game {
 	public enum States {
-		LOADINGSTATE, MAINMENUSTATE, SETTINGSMENUSTATE, CONTROLSETUPSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE, PROFILE_STATE, UPGRADESTATE;
+		LOADINGSTATE, MAINMENUSTATE, SETTINGSMENUSTATE, CONTROLSETUPSTATE, SINGLEPLAYER_GAMESTATE, MULTIPLAYER_GAMESTATE, PROFILE_STATE, UPGRADESTATE, TUTORIALSTATE;
 	}
 	
 	private static final int WIDTH = 1920, HEIGHT = 1080;
@@ -227,6 +228,7 @@ public class Specular extends Game {
 		states.put(States.PROFILE_STATE, new HighscoreState(this));
 		states.put(States.CONTROLSETUPSTATE, new ControlSetupState(this));
 		states.put(States.UPGRADESTATE, new UpgradeState(this));
+		states.put(States.TUTORIALSTATE, new TutorialState(this));
 	}
 	
 	public void enterState(States state) {
