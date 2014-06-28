@@ -257,9 +257,9 @@ public class GameState extends State {
 		
 	@Override
 	public void render(float delta) {
-		if(GfxSettings.ReturnPa() == 1){
+		if(GfxSettings.ReturnSetting() == GfxSettings.LOW){
 			PARTICLE_LIMIT = 50;
-		} else if(GfxSettings.ReturnPa() == 2){
+		} else if(GfxSettings.ReturnSetting() == GfxSettings.MEDIUM){
 			PARTICLE_LIMIT = 150;
 		} else {
 			PARTICLE_LIMIT = 300;
@@ -550,7 +550,7 @@ public class GameState extends State {
 						b.hit();
 						
 						//Adding a small camerashake
-						if(GfxSettings.ReturnPa() == 1 && ticksforCamera == 30){
+						if(GfxSettings.ReturnSetting() > GfxSettings.LOW && ticksforCamera == 30){
 							Camera.shake(0.1f, 0.05f);
 							if(ticksforCamera == 50){
 								

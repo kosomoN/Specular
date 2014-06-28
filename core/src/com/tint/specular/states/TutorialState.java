@@ -33,7 +33,7 @@ import com.badlogic.gdx.audio.Music;
 
 public class TutorialState extends State {
 
-	private DummyPlayer player = new DummyPlayer();
+	private DummyPlayer player;
 	private Array<Bullet> bullets = new Array<Bullet>();
 	private GameState gs;
 	private Map map;
@@ -62,10 +62,7 @@ public class TutorialState extends State {
 		map = gs.getMapHandler().getMap("Map");
 		
 		//Player
-		player.x = map.getWidth() / 2;
-		player.y = map.getHeight() / 2;
-		player.anim = Player.anim;
-		player.barrelTexture = Player.barrelTexture[0];
+		player = new DummyPlayer(map.getWidth() / 2, map.getHeight() / 2, Player.anim, Player.barrelTexture[0]);
 		
 		//Input
 		stage = new Stage(new ExtendViewport(1920, 1080), game.batch);
@@ -148,6 +145,13 @@ public class TutorialState extends State {
 		private int timeSinceLastFire;
 		private int fireRate = 10;
 		
+		private DummyPlayer(float x, float y, Animation anim, Texture barrelTexture) {
+			this.x = x;
+			this.y = y;
+			this.anim = anim;
+			this.barrelTexture = barrelTexture;
+		}
+		
 		private void render(SpriteBatch batch) {
 			animFrameTime += Gdx.graphics.getDeltaTime();
 			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
@@ -224,11 +228,7 @@ public class TutorialState extends State {
 			if(staticSticks) {
 				move.setBasePos(Specular.prefs.getFloat("Move Stick Pos X"), Specular.prefs.getFloat("Move Stick Pos Y"));
 				shoot.setBasePos(Specular.prefs.getFloat("Shoot Stick Pos X"), Specular.prefs.getFloat("Shoot Stick Pos Y"));
-			} else {
-				//Just a hack to stop it from rendering before the user touches the screen
-				move.setBasePos(-3000, -3000);
 			}
-				
 		}
 		
 		@Override
@@ -246,49 +246,45 @@ public class TutorialState extends State {
 			// Sticks
 			
 			//If NOT tilt controls
-	
-					//If touching left half
-					if(viewportx <= Specular.camera.viewportWidth / 2) {
-						
-						//If sticks are static set it to the right position
-						if(!staticSticks)
-							move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-			
-						move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-						move.setPointer(pointer);
-						
-					} else {//Touching right half
-						
-						//If sticks are static set it to the right position
-						if(!staticSticks)
-							shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-						
-						
-						shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-						shoot.setPointer(pointer);
-					}
+
+			//If touching left half
+			if(viewportx <= Specular.camera.viewportWidth / 2) {
 				
-				if(viewportx > Specular.camera.viewportWidth / 2) {
-					if(!staticSticks)
-						shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-					
-					shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-					shoot.setPointer(pointer);
-				}
-			
+				//If sticks are static set it to the right position
+				if(!staticSticks)
+					move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+	
+				move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+				move.setPointer(pointer);
+				
+			} else {//Touching right half
+				
+				//If sticks are static set it to the right position
+				if(!staticSticks)
+					shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+				
+				
+				shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+				shoot.setPointer(pointer);
+			}
+		
+			if(viewportx > Specular.camera.viewportWidth / 2) {
+				if(!staticSticks)
+					shoot.setBasePos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+				
+				shoot.setHeadPos(viewportx- Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
+				shoot.setPointer(pointer);
+			}
 			return false;
 		}
 
 		@Override
 		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-
-				if(move.getPointer() == pointer) {
-					move.setPointer(-1);
-				} else if(shoot.getPointer() == pointer) {
-					shoot.setPointer(-1);
-				}
-			
-			
+			if(move.getPointer() == pointer) {
+				move.setPointer(-1);
+			} else if(shoot.getPointer() == pointer) {
+				shoot.setPointer(-1);
+			}
 			return false;
 		}
 
@@ -297,18 +293,13 @@ public class TutorialState extends State {
 			float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 			float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 
-				if(viewportx <= Specular.camera.viewportWidth / 2)
-					move.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-				else
-					shoot.setBasePos(viewportx - Specular.camera.viewportWidth / 2, - (viewporty - Specular.camera.viewportHeight / 2));
-			 
-				if(pointer == shoot.getPointer())
-					shoot.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
-						- (viewporty - Specular.camera.viewportHeight / 2));
-				
-				else if(pointer == move.getPointer())
-					move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
-						- (viewporty - Specular.camera.viewportHeight / 2));
+			if(pointer == shoot.getPointer())
+				shoot.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+					- (viewporty - Specular.camera.viewportHeight / 2));
+			
+			else if(pointer == move.getPointer())
+				move.setHeadPos(viewportx - Specular.camera.viewportWidth / 2,
+					- (viewporty - Specular.camera.viewportHeight / 2));
 			
 			return false;
 		}
