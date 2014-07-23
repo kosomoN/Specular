@@ -20,6 +20,10 @@ public class FireRateBoost extends PowerUp {
 		super(x, y, gs, 800);
 	}
 	
+	public FireRateBoost(float x, float y, GameState gs, float despawnTime) {
+		super(x, y, gs, despawnTime);
+	}
+	
 	public static void init(TextureAtlas ta) {
 		texture = ta.findRegion("game1/FireRate");
 //		boost = Specular.prefs.getFloat("Firerate Boost");

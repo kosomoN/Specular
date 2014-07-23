@@ -1,8 +1,6 @@
 package com.tint.specular.tutorial;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -16,6 +14,7 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
+import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.powerups.BulletBurst;
 import com.tint.specular.game.powerups.FireRateBoost;
@@ -35,14 +34,23 @@ public class Tutorial {
 	private BitmapFont tutorialFont;
 	private static AtlasRegion redPixel;
 	private int currentWaveIndex;
+	private float textX, textY;
+	
+	// Player movement
+	int ticksGone;
+	
+	// Player shot
 	private int bulletsFiredBefore;
+	
+	// Power-ups shown
 	private boolean enemiesSpawned;
+	private boolean allActivated;
 
 	public Tutorial(final GameState gs, FreeTypeFontGenerator fontGen) {
 		this.gs = gs;
 		// Initializing font
 		FreeTypeFontParameter ftfp = new FreeTypeFontParameter();
-		ftfp.size = 80; // MAX SIZE
+		ftfp.size = 50; // MAX SIZE
 		ftfp.characters = GameState.FONT_CHARACTERS;
 		tutorialFont = fontGen.generateFont(ftfp);
 		tutorialFont.setColor(Color.RED);
@@ -63,7 +71,12 @@ public class Tutorial {
 				super.start();
 				Player.distTraveledSqrd = 0;
 			}
-			
+
+			@Override
+			public void complete() {
+				super.complete();
+				ticksGone = 0;
+			}
 		});
 		tutorialWaves.add(new TutorialWave(TutorialEvent.PLAYER_SHOT) {
 
@@ -77,6 +90,8 @@ public class Tutorial {
 			public void complete() {
 				super.complete();
 				Bullet.bulletsFired = bulletsFiredBefore;
+				ticksGone = 0;
+				enemiesSpawned = false;
 			}
 			
 		});
@@ -87,26 +102,35 @@ public class Tutorial {
 				float x1 = gs.getPlayer().getX(), x2 = x1;
 				float y = gs.getPlayer().getY();
 
+				textX = x1;
+				textY = y + 300;
+				
 				if(x1 < 500) {
 					x1 += 400;
 					x2 += 800;
+					textX += 600;
 				} else if(x1 > gs.getCurrentMap().getWidth() - 500) {
 					x1 -= 400;
 					x2 -= 800;
+					textX -= 600;
 				} else {
 					x1 += 400;
 					x2 -= 400;
 				}
-					
+				
 				if(y > gs.getCurrentMap().getHeight() - 500) {
 					y -= 400;
+					textY -= 800;
 				} else {
 					y += 400;
 				}
 				
-				
 				gs.addEntity(new FireRateBoost(x1, y, gs));
 				gs.addEntity(new BulletBurst(x2, y, gs));
+				
+				tutorialFont.setColor(1, 0, 0, 0.4f);
+				
+				allActivated = false;
 			}
 
 			@Override
@@ -115,6 +139,8 @@ public class Tutorial {
 				for(PowerUp pu : gs.getPowerUps()) {
 					pu.removeEffect(gs.getPlayer());
 				}
+				
+				tutorialFont.setColor(Color.RED);
 			}
 		});
 	}
@@ -132,13 +158,17 @@ public class Tutorial {
 	public void render(SpriteBatch batch) {
 		switch(currentWave.getEvent()) {
 		case PLAYER_MOVED :
-			batch.draw(redPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
-			Util.writeCentered(batch, tutorialFont, "Slide Here", -Specular.camera.viewportWidth / 4, 0);
+			if(ticksGone < 32) {
+				batch.draw(redPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
+				Util.writeCentered(batch, tutorialFont, "Slide Here", -Specular.camera.viewportWidth / 4, 0);
+			}
 			break;
 			
 		case PLAYER_SHOT :
-			batch.draw(redPixel, 0, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
-			Util.writeCentered(batch, tutorialFont, "Slide Here", Specular.camera.viewportWidth / 4, 0);
+			if(ticksGone < 32) {
+				batch.draw(redPixel, 0, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
+				Util.writeCentered(batch, tutorialFont, "Slide Here", Specular.camera.viewportWidth / 4, 0);
+			}
 			break;
 				
 		case POWER_UPS_SHOWN :
@@ -151,21 +181,32 @@ public class Tutorial {
 			outer:
 			switch(currentWave.getEvent()) {
 			case PLAYER_MOVED :
-				if(Player.distTraveledSqrd > 16000) {
-					currentWave.complete();
-					next();
+				if(Player.distTraveledSqrd > 0) { // If player has moved
+					ticksGone++;
+					if(ticksGone >= 180) {
+						currentWave.complete();
+						next();
+					}
 				}
 				break;
 				
 			case PLAYER_SHOT :
-				if(Bullet.bulletsFired > 30) {
-					currentWave.complete();
-					next();
+				if(Bullet.bulletsFired > 0) {
+					ticksGone++;
+					
+					if(ticksGone >= 180 && !enemiesSpawned) {
+						for(int i = 0; i < 5; i++) {
+							gs.addEntity(new EnemyCircler((float) (Math.random() * Specular.camera.viewportWidth + 50 - 100), (float) (Math.random() * Specular.camera.viewportHeight + 50 - 100), gs));
+						}
+						enemiesSpawned = true;
+					} else if(gs.getEnemies().size == 0 && ticksGone >= 720) {
+						currentWave.complete();
+						next();
+					}
 				}
 				break;
 					
 			case POWER_UPS_SHOWN :
-				boolean allActivated = false;
 				for(PowerUp pu : gs.getPowerUps()) {
 					if(!pu.isActivated()) {
 						break outer;
@@ -174,11 +215,20 @@ public class Tutorial {
 				allActivated = true;
 				
 				if(allActivated) {
+					ticksGone++;
+					
+					if(ticksGone >= 90) {
+						float alpha = (90 + 96 - ticksGone) / 240f;
+						alpha = alpha < 0 ? 0 : alpha;
+					
+						tutorialFont.setColor(1, 0, 0, alpha);
+					}
+					
 					if(enemiesSpawned && gs.getEnemies().size == 0) {
 						currentWave.complete();
 						next();
 					} else {
-						if(!enemiesSpawned) {
+						if(ticksGone >= 240 && !enemiesSpawned) {
 							Enemy e = null;
 							for(int i = 0; i < 10; i++) {
 								e = new EnemyWanderer((float) (Math.random() * Specular.camera.viewportWidth + 50 - 100), (float) (Math.random() * Specular.camera.viewportHeight + 50 - 100), gs);
@@ -229,6 +279,30 @@ public class Tutorial {
 		
 		System.err.println("There is no wave with that event");
 		return null;
+	}
+	
+	public BitmapFont getFont() {
+		return tutorialFont;
+	}
+
+	public int getTicks() {
+		return ticksGone;
+	}
+	
+	public float getTextX() {
+		return textX;
+	}
+	
+	public float getTextY() {
+		return textY;
+	}
+	
+	public boolean enemiesHasSpawned() {
+		return enemiesSpawned;
+	}
+	
+	public boolean allPowerUpsActivated() {
+		return allActivated;
 	}
 }
 

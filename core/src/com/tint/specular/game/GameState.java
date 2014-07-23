@@ -67,6 +67,7 @@ import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.NativeAndroid.RequestCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.tutorial.Tutorial;
+import com.tint.specular.tutorial.Tutorial.TutorialEvent;
 import com.tint.specular.ui.HUD;
 import com.tint.specular.upgrades.BoardshockUpgrade;
 import com.tint.specular.upgrades.BurstUpgrade;
@@ -116,7 +117,7 @@ public class GameState extends State {
 	private float unprocessed;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
-	private long scoreShownTime;
+	private long gameOverTicks;
 	private boolean isPaused = false;
 	private int powerUpSpawnTime = 400;		// 10 sec in updates / ticks
 	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
@@ -448,6 +449,15 @@ public class GameState extends State {
 		ScissorStack.calculateScissors(Specular.camera, game.batch.getTransformMatrix(), clipBounds, scissors);
 		ScissorStack.pushScissors(scissors);
 		
+		if(tutorialOnGoing && tutorial.getCurrentWave().getEvent() == TutorialEvent.POWER_UPS_SHOWN) {
+			if(!tutorial.enemiesHasSpawned()) {
+				Util.writeCentered(game.batch, tutorial.getFont(), "These will help you", tutorial.getTextX(), tutorial.getTextY() + 200);
+
+				if(tutorial.allPowerUpsActivated())
+					Util.writeCentered(game.batch, tutorial.getFont(), "they're all different", tutorial.getTextX(), tutorial.getTextY());
+			}
+		}
+		
 		for(Entity ent : entities) {
 			if(!(ent instanceof Enemy))
 				ent.render(game.batch);
@@ -498,11 +508,13 @@ public class GameState extends State {
 				// Tutorial end
 				if(showTutorialEnd) {
 					game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
-					Util.writeCentered(game.batch, scoreFont, "Press to continue", 0, 0);			
+					Util.writeCentered(game.batch, scoreFont, "Press to continue", 0, -100);
+					Util.writeCentered(game.batch, scoreFont, "End of tutorial", 0, 100);
 				}
 					
 				gameMode.render(game.batch);
 			} else if(gameMode.isGameOver()) { // Game over screen
+				gameOverTicks++;
 				// Manual camera shake
 				Specular.camera.position.set(0, 0, 0);
 				Specular.camera.position.add(rand.nextFloat() * 100 * Camera.getShakeIntensity(), rand.nextFloat() * 100 * Camera.getShakeIntensity(), 0);
@@ -519,26 +531,23 @@ public class GameState extends State {
 					if(!shaken) {
 						Camera.shake(0.5f, 0.02f);
 						shaken = true;
-						scoreShownTime = System.nanoTime() + 500000000; // + 0.5 sec
 					}
-					
-					long timeDelta = System.nanoTime() - scoreShownTime;
-					timeDelta = timeDelta < 0 ? 0 : timeDelta;
-					float alpha = (timeDelta) / (TICK_LENGTH * 120) > 1 ? 1 : (timeDelta) / (TICK_LENGTH * 120); // 2 sec
-					
-					if(alpha < 1)
-						game.batch.setColor(1, 1, 1, alpha);
-					
-					game.batch.setColor(Color.WHITE);
 				}
+				
+				long timeDelta = System.nanoTime() - gameOverTicks;
+				timeDelta = timeDelta < 0 ? 0 : timeDelta;
+				float alpha = gameOverTicks / 120f;
+				alpha = alpha > 1 ? 1 : alpha;
+				
+				gameOverScoreFont.setColor(1, 0, 0, alpha);
 				
 				// Drawing final score and buttons
 				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
+				
+				game.batch.setColor(Color.WHITE);
 				ggInputProcessor.getRetryBtn().render();
 				ggInputProcessor.getMenuBtn().render();
-				ggInputProcessor.getMenuBtn().render();
 				ggInputProcessor.getHighscoreBtn().render();
-				ggInputProcessor.getUpgradeBtn().render();
 			}
 		}
 		

@@ -41,7 +41,7 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 				bars[i].setPosition((int) getX(), (int) y);
 				
 				if (cullingArea == null || (itemY - rowHeight <= cullingArea.y + cullingArea.height && itemY + rowHeight >= cullingArea.y)) {
-					batch.draw(upgrades[i].getTexture(), getX() + 40, y + 45);
+					batch.draw(upgrades[i].getTexture(), getX() + 40, y + 35, upgrades[i].getTexture().getRegionWidth() * 1.5f, upgrades[i].getTexture().getRegionHeight() * 1.5f);
 					bars[i].render(batch);
 				} else if (itemY < cullingArea.y) {
 					break;
