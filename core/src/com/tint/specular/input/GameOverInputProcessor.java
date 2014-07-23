@@ -45,7 +45,7 @@ public class GameOverInputProcessor extends InputAdapter {
 		Texture upgradesTex = new Texture(Gdx.files.internal("graphics/game/packed/Upgrades.png"));
 		Texture upgradesPressedTex = new Texture(Gdx.files.internal("graphics/game/packed/Upgrades Pressed.png"));
 		
-		upgrades = new Button(-upgradesTex.getWidth() / 2, -upgradesTex.getHeight(), upgradesTex.getWidth(), upgradesTex.getHeight(), game.batch, upgradesTex, upgradesPressedTex);
+		upgrades = new Button(-upgradesTex.getWidth() / 2, -upgradesTex.getHeight() - 60, upgradesTex.getWidth(), upgradesTex.getHeight(), game.batch, upgradesTex, upgradesPressedTex);
 	}
 	
 	@Override

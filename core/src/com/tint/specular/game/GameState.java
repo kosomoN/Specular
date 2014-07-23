@@ -548,6 +548,7 @@ public class GameState extends State {
 				ggInputProcessor.getRetryBtn().render();
 				ggInputProcessor.getMenuBtn().render();
 				ggInputProcessor.getHighscoreBtn().render();
+				ggInputProcessor.getUpgradeBtn().render();
 			}
 		}
 		
