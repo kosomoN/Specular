@@ -1,22 +1,22 @@
 package com.tint.specular.upgrades;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 
 public class LifeUpgrade extends Upgrade {
 
-	private Texture tex;
+	private AtlasRegion tex;
 
 	public LifeUpgrade(GameState gs) {
 		super(gs, Specular.prefs.getInteger("Life Upgrade Grade"), 10);
 	}
 	
-	public LifeUpgrade(int grade, int maxGrade) {
+	public LifeUpgrade(int grade, int maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
-		tex = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/UpgradeIcon.png"));
+		tex = ta.findRegion("game1/Life");
 	}
 	
 	@Override
@@ -26,7 +26,7 @@ public class LifeUpgrade extends Upgrade {
 			Player.setStartingLife(4);
 	}
 	
-	public Texture getTexture() {
+	public AtlasRegion getTexture() {
 		return tex;
 	}
 }

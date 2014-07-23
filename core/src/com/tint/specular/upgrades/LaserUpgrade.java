@@ -1,21 +1,21 @@
 package com.tint.specular.upgrades;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 
-public class BeamUpgrade extends Upgrade {
+public class LaserUpgrade extends Upgrade {
 
-	private Texture tex;
+	private AtlasRegion tex;
 	
-	public BeamUpgrade(GameState gs) {
+	public LaserUpgrade(GameState gs) {
 		super(gs, Specular.prefs.getInteger("Beam Upgrade Grade"), 10);
 	}
 	
-	public BeamUpgrade(int grade, int maxGrade) {
+	public LaserUpgrade(int grade, int maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
-		tex = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/UpgradeIcon.png"));
+		tex = ta.findRegion("game1/Laser Powerup");
 	}
 	
 	@Override
@@ -24,7 +24,7 @@ public class BeamUpgrade extends Upgrade {
 		gs.getPlayer().setLaserArc((float) (30 + Math.sqrt(getGrade()) * 5));
 	}
 	
-	public Texture getTexture() {
+	public AtlasRegion getTexture() {
 		return tex;
 	}
 }

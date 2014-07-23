@@ -24,7 +24,7 @@ public class Ricochet extends PowerUp {
 	}
 	
 	@Override
-	protected void removeEffect(Player p) {
+	public void removeEffect(Player p) {
 		Bullet.maxBounces -= 1;
 	}
 

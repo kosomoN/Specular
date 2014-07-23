@@ -3,7 +3,6 @@ package com.tint.specular.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class ProgressBar {
 
@@ -16,14 +15,13 @@ public class ProgressBar {
 		this.width = width;
 		this.height = height;
 		
-		progressBar = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/ProgressBar.png"));
-		barFill = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/BarFill.png"));
+		progressBar = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/Frame.png"));
+		barFill = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/ProgressBar.png"));
 	}
 
 	public void render(Batch batch) {
-		batch.draw(progressBar, x, y, width, height);
-		TextureRegion fill = new TextureRegion(barFill, (int) (value / maxValue * width), height);
-		batch.draw(fill, x, y);
+		batch.draw(progressBar, x - 80, y - 45, width + 160, 256);
+		batch.draw(barFill, x + 17, y + 16, (int) (value / maxValue * width) - 45, height);
 	}
 	
 	public void setPosition(int x, int y) {

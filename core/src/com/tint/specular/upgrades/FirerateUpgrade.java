@@ -1,22 +1,22 @@
 package com.tint.specular.upgrades;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.powerups.FireRateBoost;
 
 public class FirerateUpgrade extends Upgrade {
 
-	private Texture tex;
+	private AtlasRegion tex;
 	
 	public FirerateUpgrade(GameState gs) {
 		super(gs, Specular.prefs.getInteger("Firerate Upgrade Grade"), 10);
 	}
 	
-	public FirerateUpgrade(int grade, int maxGrade) {
+	public FirerateUpgrade(int grade, int maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
-		tex = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/UpgradeIcon.png"));
+		tex = ta.findRegion("game1/FireRate");
 	}
 	
 	@Override
@@ -25,7 +25,7 @@ public class FirerateUpgrade extends Upgrade {
 		FireRateBoost.setBoost((float) ((2 / 3f) / (1 + Math.sqrt(getGrade() / getMaxGrade()))));
 	}
 	
-	public Texture getTexture() {
+	public AtlasRegion getTexture() {
 		return tex;
 	}
 }

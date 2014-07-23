@@ -47,7 +47,7 @@ public class Swarm extends PowerUp {
 	}
 
 	@Override
-	protected void removeEffect(Player player) {
+	public void removeEffect(Player player) {
 		for(PowerUp pu : gs.getPowerUps())
 			if(pu instanceof LaserPowerup)
 				pu.resume();

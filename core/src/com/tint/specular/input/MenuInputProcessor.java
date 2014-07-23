@@ -1,11 +1,12 @@
 package com.tint.specular.input;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
+import com.tint.specular.game.GameState;
 import com.tint.specular.states.MainmenuState;
 import com.tint.specular.ui.Button;
 
@@ -13,6 +14,7 @@ public class MenuInputProcessor extends InputAdapter {
 	
 	private Button playBtn, profileBtn, optionsBtn, helpBtn;
 	private Specular game;
+	private States returnState = States.MAINMENUSTATE;
 	private boolean firstTime, howToPlay, helpPressed;
 	
 	private MainmenuState menuState;
@@ -39,17 +41,18 @@ public class MenuInputProcessor extends InputAdapter {
 		Texture helpTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Help.png"));
 		helpBtn = new Button(1620 , 470, 128, 128, game.batch, helpTex, helpTexPr);
 		
-		firstTime = Specular.prefs.getBoolean("FirstTime");
+		firstTime = Specular.prefs.getBoolean("First Time");
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
  		howToPlay = menuState.showHowToPlay();
 		if(keycode == Keys.BACK || keycode == Keys.ESCAPE) {
-			if(howToPlay)
+			if(howToPlay) {
 				menuState.setHowToPlay(false);
-			else
+			} else {
 				Gdx.app.exit();
+			}
 		}
 		return false;
 	}
@@ -82,6 +85,8 @@ public class MenuInputProcessor extends InputAdapter {
 		} else {
 			menuState.setHowToPlay(false);
 			helpPressed = false;
+			game.enterState(States.SINGLEPLAYER_GAMESTATE);
+			((GameState) game.getState(States.SINGLEPLAYER_GAMESTATE)).startTutorial(returnState);
 		}
 //		//Play button sound
 //		Sound soundButton1 = Gdx.audio.newSound(Gdx.files.internal("audio/Button.wav"));	
@@ -107,6 +112,7 @@ public class MenuInputProcessor extends InputAdapter {
 				playBtn.touchUp();
 				if(firstTime) {
 					menuState.setHowToPlay(true);
+					returnState = States.SINGLEPLAYER_GAMESTATE;
 				} else {
 					game.enterState(States.SINGLEPLAYER_GAMESTATE);
 					menuState.setHowToPlay(false);
@@ -122,6 +128,7 @@ public class MenuInputProcessor extends InputAdapter {
 				helpBtn.touchUp();
 				menuState.setHowToPlay(true);
 				helpPressed = true;
+				returnState = States.MAINMENUSTATE;
 			}
 		}
 		

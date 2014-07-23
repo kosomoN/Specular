@@ -1,27 +1,27 @@
 package com.tint.specular.upgrades;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 
 public abstract class Upgrade {
 
 	protected GameState gs;
-	private int grade;
+	private float grade;
 	private int maxGrade;
 	private int cost = 1;
 	
-	public Upgrade(GameState gs, int grade, int maxGrade) {
+	public Upgrade(GameState gs, float grade, int maxGrade) {
 		this.gs = gs;
 		this.grade = grade;
 		this.maxGrade = maxGrade;
 	}
 	
 	public void upgrade() {
-		grade = (grade == maxGrade ? grade : ++grade);
+		grade = (grade >= maxGrade ? maxGrade : grade + 0.1f);
 	}
 
 	public void degrade() {
-		grade = grade == 0 ? grade : --grade;
+		grade = grade <= 0 ? 0 : --grade;
 	}
 	
 	public void setMaxGrade(int maxGrade) {
@@ -31,7 +31,7 @@ public abstract class Upgrade {
 		}
 	}
 
-	public int getGrade() {
+	public float getGrade() {
 		return grade;
 	}
 	
@@ -44,5 +44,9 @@ public abstract class Upgrade {
 	}
 	
 	public abstract void refresh();
-	public abstract Texture getTexture();
+	public abstract AtlasRegion getTexture();
+
+	public void setGrade(int grade) {
+		this.grade = grade;
+	}
 }

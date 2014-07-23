@@ -4,11 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
@@ -17,10 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
+import com.tint.specular.game.GameState;
 import com.tint.specular.ui.UpgradeList;
-import com.tint.specular.upgrades.BeamUpgrade;
+import com.tint.specular.upgrades.LaserUpgrade;
 import com.tint.specular.upgrades.BoardshockUpgrade;
 import com.tint.specular.upgrades.BurstUpgrade;
 import com.tint.specular.upgrades.FirerateUpgrade;
@@ -31,52 +34,53 @@ import com.tint.specular.upgrades.RepulsorUpgrade;
 import com.tint.specular.upgrades.SlowdownUpgrade;
 import com.tint.specular.upgrades.SwarmUpgrade;
 import com.tint.specular.upgrades.Upgrade;
-import com.tint.specular.utils.Util;
 
 public class UpgradeState extends State {
 	
 	private Stage stage;
 	private UpgradeList list;
 	private Upgrade[] upgrades = new Upgrade[10];
-	private Preferences prefs;
-	private Button confirmBtn, resetBtn;
-	private com.tint.specular.ui.Button okBtn, cancelBtn;
-	private Texture promtTex, darkenTex;
 	private float upgradePoints;
-	private boolean promtVisible;
+	protected int currentlyPressing;
+	protected float waitForDragDelay;
 	
 	public UpgradeState(Specular game) {
 		super(game);
-		promtTex = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/Promt.png"));
-		darkenTex = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/Dark.png"));
-		okBtn = new com.tint.specular.ui.Button(640, 100, 192, 100, game.batch, new Texture(Gdx.files.internal("graphics/menu/upgrademenu/OkButton.png")),
-				new Texture(Gdx.files.internal("graphics/menu/upgrademenu/OkButton.png")));
-		cancelBtn = new com.tint.specular.ui.Button(1200, 100, 192, 100, game.batch, new Texture(Gdx.files.internal("graphics/menu/upgrademenu/CancelButton.png")),
-				new Texture(Gdx.files.internal("graphics/menu/upgrademenu/CancelButton.png")));
+		TextureAtlas ta = ((GameState) game.getState(States.SINGLEPLAYER_GAMESTATE)).getTextureAtlas();
+		
+		upgrades[0] = new LifeUpgrade(Specular.prefs.getInteger("Life Upgrade Grade"), 10, ta);
+		upgrades[1] = new FirerateUpgrade(Specular.prefs.getInteger("Firerate Upgrade Grade"), 10, ta);
+		upgrades[2] = new BurstUpgrade(Specular.prefs.getInteger("Burst Upgrade Grade"), 10, ta);
+		upgrades[3] = new LaserUpgrade(Specular.prefs.getInteger("Beam Upgrade Grade"), 10, ta);
+		upgrades[4] = new MultiplierUpgrade(Specular.prefs.getInteger("Multiplier Upgrade Grade"), 10, ta);
+		upgrades[5] = new PDSUpgrade(Specular.prefs.getInteger("PDS Upgrade Grade"), 10, ta);
+		upgrades[6] = new SwarmUpgrade(Specular.prefs.getInteger("Swarm Upgrade Grade"), 10, ta);
+		upgrades[7] = new RepulsorUpgrade(Specular.prefs.getInteger("Repulsor Upgrade Grade"), 10, ta);
+		upgrades[8] = new SlowdownUpgrade(Specular.prefs.getInteger("Slowdown Upgrade Grade"), 10, ta);
+		upgrades[9] = new BoardshockUpgrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"), 10, ta);
 	}
 
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		if(currentlyPressing != -1) {
+			if(waitForDragDelay > 0.1f) {
+				upgrades[currentlyPressing].upgrade();
+				list.getProgressBars()[currentlyPressing].setValue(upgrades[currentlyPressing].getGrade());
+			} else {
+				System.out.println(waitForDragDelay);
+				waitForDragDelay += delta;
+			}
+		}
+		
 		stage.act();
 		stage.draw();
-		
-		// Promt window
-		if(promtVisible) {
-			game.batch.begin();
-			game.batch.draw(darkenTex, 0, 0, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
-			Util.drawCentered(game.batch, promtTex, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight / 2, 0);
-			okBtn.render();
-			cancelBtn.render();
-			game.batch.end();
-		}
 	}
 	
 	@Override
 	public void show() {
 		super.show();
-		prefs = Specular.prefs;
-		upgradePoints = (float) Math.floor(prefs.getFloat("Upgrade Points"));
 		resetUpgrades();
 		createUpgradeList();
 		
@@ -84,13 +88,8 @@ public class UpgradeState extends State {
 			@Override
 			public boolean keyUp(int keycode) {
 				if(keycode == Keys.BACK || keycode == Keys.ESCAPE) {
-					if(confirmBtn.isVisible()) {
-						// Promt user
-						Gdx.input.setInputProcessor(new PromtInputAdapter());
-						promtVisible = true;
-					} else {
-						game.enterState(States.PROFILE_STATE);
-					}
+					saveUpgrades();
+					game.enterState(States.PROFILE_STATE);
 				}
 				return super.keyUp(keycode);
 			}
@@ -99,23 +98,39 @@ public class UpgradeState extends State {
 	
 	private void createUpgradeList() {
 		stage = new Stage(new ExtendViewport(1920, 1080), game.batch);
+		
+		Image title = new Image(new Texture(Gdx.files.internal("graphics/menu/upgrademenu/Upgrades.png")));
+		title.setPosition((Specular.camera.viewportWidth - title.getWidth()) / 2, Specular.camera.viewportHeight - title.getHeight());
+		stage.addActor(title);
+		
 		list = new UpgradeList(getUpgrades());
-		list.addListener(new ClickListener() {
+		list.addListener(new InputListener() {
+
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				super.clicked(event, x, y);
-				int upgradeNum = (int) Math.floor(y / UpgradeList.rowHeight());
-				if(upgrades[9 - upgradeNum].getCost() <= (int) Math.floor(getUpgradePoints())) {
-					upgrades[9 - upgradeNum].upgrade();
-					upgradePoints -= upgrades[9 - upgradeNum].getCost();
-					confirmBtn.setVisible(true);
-					resetBtn.setVisible(true);
-				}
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				waitForDragDelay = 0;
+				currentlyPressing = 9 - (int) Math.floor(y / UpgradeList.rowHeight());
+				return true;
 			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				currentlyPressing = -1;
+				System.out.println("up");
+				super.touchUp(event, x, y, pointer, button);
+			}
+
+			@Override
+			public void touchDragged(InputEvent event, float x, float y, int pointer) {
+				currentlyPressing = -1;
+				super.touchDragged(event, x, y, pointer);
+			}
+			
+			
 		});
 		
 		ScrollPane sp = new ScrollPane(list);
-		sp.setSize(Specular.camera.viewportWidth * (1240 / 1920f), Specular.camera.viewportHeight * 0.6f);
+		sp.setSize(Specular.camera.viewportWidth - 200, Specular.camera.viewportHeight * 0.6f);
 		sp.setPosition(100, Specular.camera.viewportHeight * 0.2f);
 		
 		stage.addActor(sp);
@@ -129,87 +144,44 @@ public class UpgradeState extends State {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
-				if(confirmBtn.isVisible()) {
-					// Promt user
-					Gdx.input.setInputProcessor(new PromtInputAdapter());
-					promtVisible = true;
-				} else {
-					game.enterState(States.PROFILE_STATE);
-				}
+				saveUpgrades();
+				game.enterState(States.PROFILE_STATE);
 			}
 		});
 		stage.addActor(backBtn);
-		
-		TextureRegionDrawable trd2 = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/upgrademenu/ConfirmButton.png"))));
-		style = new ButtonStyle(trd2, trd2, trd2);
-		confirmBtn = new Button(style);
-		confirmBtn.setVisible(false);
-		confirmBtn.setPosition(700, 100);
-		confirmBtn.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				super.clicked(event, x, y);
-				saveUpgrades();
-				confirmBtn.setVisible(false);
-				resetBtn.setVisible(false);
-			}
-		});
-		stage.addActor(confirmBtn);
-		
-		TextureRegionDrawable trd3 = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/upgrademenu/ResetButton.png"))));
-		style = new ButtonStyle(trd3, trd3, trd3);
-		resetBtn = new Button(style);
-		resetBtn.setVisible(false);
-		resetBtn.setPosition(1200, 100);
-		resetBtn.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				super.clicked(event, x, y);
-				resetUpgrades();
-				confirmBtn.setVisible(false);
-				resetBtn.setVisible(false);
-			}
-		});
-		stage.addActor(resetBtn);
-		
-		Image title = new Image(new Texture(Gdx.files.internal("graphics/menu/upgrademenu/Upgrades Title.png")));
-		title.setPosition(500, Specular.camera.viewportHeight - 150);
-		stage.addActor(title);
-		
-		Image info = new Image(new Texture(Gdx.files.internal("graphics/menu/upgrademenu/UpgradeInfo.png")));
-		info.setPosition(Specular.camera.viewportWidth - 550, 200);
-		stage.addActor(info);
 	}
 
 	public void saveUpgrades() {
-		prefs.putInteger("Life Upgrade Grade", upgrades[0].getGrade());
-		prefs.putInteger("Firerate Upgrade Grade", upgrades[1].getGrade());
-		prefs.putInteger("Burst Upgrade Grade", upgrades[2].getGrade());
-		prefs.putInteger("Beam Upgrade Grade", upgrades[3].getGrade());
-		prefs.putInteger("Multiplier Upgrade Grade", upgrades[4].getGrade());
-		prefs.putInteger("PDS Upgrade Grade", upgrades[5].getGrade());
-		prefs.putInteger("Swarm Upgrade Grade", upgrades[6].getGrade());
-		prefs.putInteger("Repulsor Upgrade Grade", upgrades[7].getGrade());
-		prefs.putInteger("Slowdown Upgrade Grade", upgrades[8].getGrade());
-		prefs.putInteger("Boardshock Upgrade Grade", upgrades[9].getGrade());
-		prefs.putFloat("Upgrade Points", upgradePoints);
+		//TODO CHANGE TO FLOAT!!!!!!!!!!!!!!
+		Specular.prefs.putInteger("Life Upgrade Grade", (int) upgrades[0].getGrade());
+		Specular.prefs.putInteger("Firerate Upgrade Grade", (int) upgrades[1].getGrade());
+		Specular.prefs.putInteger("Burst Upgrade Grade", (int) upgrades[2].getGrade());
+		Specular.prefs.putInteger("Beam Upgrade Grade", (int) upgrades[3].getGrade());
+		Specular.prefs.putInteger("Multiplier Upgrade Grade", (int) upgrades[4].getGrade());
+		Specular.prefs.putInteger("PDS Upgrade Grade", (int) upgrades[5].getGrade());
+		Specular.prefs.putInteger("Swarm Upgrade Grade", (int) upgrades[6].getGrade());
+		Specular.prefs.putInteger("Repulsor Upgrade Grade", (int) upgrades[7].getGrade());
+		Specular.prefs.putInteger("Slowdown Upgrade Grade", (int) upgrades[8].getGrade());
+		Specular.prefs.putInteger("Boardshock Upgrade Grade", (int) upgrades[9].getGrade());
+		Specular.prefs.putFloat("Upgrade Points", upgradePoints);
 		
-		prefs.flush();
+		Specular.prefs.flush();
 	}
 	
 	public void resetUpgrades() {
-		upgrades[0] = new LifeUpgrade(prefs.getInteger("Life Upgrade Grade"), 10);
-		upgrades[1] = new FirerateUpgrade(prefs.getInteger("Firerate Upgrade Grade"), 10);
-		upgrades[2] = new BurstUpgrade(prefs.getInteger("Burst Upgrade Grade"), 10);
-		upgrades[3] = new BeamUpgrade(prefs.getInteger("Beam Upgrade Grade"), 10);
-		upgrades[4] = new MultiplierUpgrade(prefs.getInteger("Multiplier Upgrade Grade"), 10);
-		upgrades[5] = new PDSUpgrade(prefs.getInteger("PDS Upgrade Grade"), 10);
-		upgrades[6] = new SwarmUpgrade(prefs.getInteger("Swarm Upgrade Grade"), 10);
-		upgrades[7] = new RepulsorUpgrade(prefs.getInteger("Repulsor Upgrade Grade"), 10);
-		upgrades[8] = new SlowdownUpgrade(prefs.getInteger("Slowdown Upgrade Grade"), 10);
-		upgrades[9] = new BoardshockUpgrade(prefs.getInteger("Boardshock Upgrade Grade"), 10);
+
+		upgrades[0].setGrade(Specular.prefs.getInteger("Life Upgrade Grade"));
+		upgrades[1].setGrade(Specular.prefs.getInteger("Firerate Upgrade Grade"));
+		upgrades[2].setGrade(Specular.prefs.getInteger("Burst Upgrade Grade"));
+		upgrades[3].setGrade(Specular.prefs.getInteger("Beam Upgrade Grade"));
+		upgrades[4].setGrade(Specular.prefs.getInteger("Multiplier Upgrade Grade"));
+		upgrades[5].setGrade(Specular.prefs.getInteger("PDS Upgrade Grade"));
+		upgrades[6].setGrade(Specular.prefs.getInteger("Swarm Upgrade Grade"));
+		upgrades[7].setGrade(Specular.prefs.getInteger("Repulsor Upgrade Grade"));
+		upgrades[8].setGrade(Specular.prefs.getInteger("Slowdown Upgrade Grade"));
+		upgrades[9].setGrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"));
 		
-		upgradePoints = prefs.getFloat("Upgrade Points");
+		upgradePoints = 1000;//Specular.prefs.getFloat("Upgrade Points");
 	}
 	
 	public Upgrade[] getUpgrades() {
@@ -218,45 +190,5 @@ public class UpgradeState extends State {
 
 	public float getUpgradePoints() {
 		return upgradePoints;
-	}
-	
-	private class PromtInputAdapter extends InputAdapter {
-
-		@Override
-		public boolean keyUp(int keycode) {
-			return super.keyUp(keycode);
-		}
-
-		@Override
-		public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-			// Translate screen coordinates to viewport coordinates
-			float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
-			float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
-			
-			if(okBtn.isOver(touchpointx, touchpointy, true)) {
-				okBtn.touchOver(touchpointx, touchpointy);
-			} else if(cancelBtn.isOver(touchpointx, touchpointy, true)) {
-				cancelBtn.touchOver(touchpointx, touchpointy);
-			}
-			return super.touchDown(screenX, screenY, pointer, button);
-		}
-
-		@Override
-		public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-			// Translate screen coordinates to viewport coordinates
-			float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
-			float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
-			
-			if(okBtn.isOver(touchpointx, touchpointy, true)) {
-				okBtn.touchUp();
-				promtVisible = false;
-				game.enterState(States.PROFILE_STATE);
-			} else if(cancelBtn.isOver(touchpointx, touchpointy, true)) {
-				cancelBtn.touchUp();
-				Gdx.input.setInputProcessor(stage);
-				promtVisible = false;
-			}
-			return super.touchUp(screenX, screenY, pointer, button);
-		}
 	}
 }

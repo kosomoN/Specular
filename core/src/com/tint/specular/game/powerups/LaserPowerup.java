@@ -24,7 +24,7 @@ public class LaserPowerup extends PowerUp {
 	}
 
 	@Override
-	protected void removeEffect(Player player) {
+	public void removeEffect(Player player) {
 		player.changeAmmo(AmmoType.BULLET);
 	}
 	
@@ -44,5 +44,4 @@ public class LaserPowerup extends PowerUp {
 	public AtlasRegion getTexture() {
 		return tex;
 	}
-
 }

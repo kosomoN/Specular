@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
+import com.tint.specular.Specular.States;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Laser;
@@ -65,12 +66,12 @@ import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
 import com.tint.specular.states.NativeAndroid.RequestCallback;
 import com.tint.specular.states.State;
+import com.tint.specular.tutorial.Tutorial;
 import com.tint.specular.ui.HUD;
-import com.tint.specular.ui.ProgressBar;
-import com.tint.specular.upgrades.BeamUpgrade;
 import com.tint.specular.upgrades.BoardshockUpgrade;
 import com.tint.specular.upgrades.BurstUpgrade;
 import com.tint.specular.upgrades.FirerateUpgrade;
+import com.tint.specular.upgrades.LaserUpgrade;
 import com.tint.specular.upgrades.LifeUpgrade;
 import com.tint.specular.upgrades.MultiplierUpgrade;
 import com.tint.specular.upgrades.PDSUpgrade;
@@ -105,6 +106,7 @@ public class GameState extends State {
 	protected GameMode gameMode;
 	protected Player player;
 	private Stage stage;
+	private Tutorial tutorial;
 	private static int PARTICLE_LIMIT;
 	
 	// Fields related to game time
@@ -127,6 +129,8 @@ public class GameState extends State {
 	private boolean enablePowerUps = true;
 	private boolean particlesEnabled;
 	private boolean soundsEnabled;
+	private boolean tutorialOnGoing;
+	private boolean showTutorialEnd;
 	
 	// Lists for keeping track of entities in the world
 	private Array<Entity> entities = new Array<Entity>(false, 128);
@@ -136,7 +140,7 @@ public class GameState extends State {
 	private Array<PowerUp> powerups = new Array<PowerUp>(false, 64);
 	
 	// Upgrades
-	private Upgrade[] upgrades = {new BeamUpgrade(this), new BoardshockUpgrade(this), new BurstUpgrade(this), new FirerateUpgrade(this), new LifeUpgrade(this),
+	private Upgrade[] upgrades = {new LaserUpgrade(this), new BoardshockUpgrade(this), new BurstUpgrade(this), new FirerateUpgrade(this), new LifeUpgrade(this),
 			new MultiplierUpgrade(this), new PDSUpgrade(this), new RepulsorUpgrade(this), new SlowdownUpgrade(this), new SwarmUpgrade(this)};
 	
 	// Map control
@@ -152,7 +156,7 @@ public class GameState extends State {
 	// Custom and default fonts
 	private BitmapFont arial15 = new BitmapFont();
 	private BitmapFont scoreFont, multiplierFont, gameOverScoreFont;
-	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"�`'<>";
+	public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"`'<>";
 	
 	// Art
 	private HUD hud;
@@ -163,7 +167,6 @@ public class GameState extends State {
 	private int currentMusic = -1;
 	private Rectangle scissors = new Rectangle();
 	private Rectangle clipBounds;
-	private ProgressBar upgradePointBar;
 	
 	public GameState(Specular game) {
 		super(game);
@@ -184,11 +187,6 @@ public class GameState extends State {
 		
 		// Loading HUD
 		hud = new HUD(this);
-		
-		// Loading progressbar
-		upgradePointBar = new ProgressBar((int) (Specular.camera.viewportWidth / 2 - 128), 128);
-		upgradePointBar.setPosition(-upgradePointBar.getWidth() / 2 + 12, -upgradePointBar.getHeight() / 2 - 100);
-		upgradePointBar.setMaxValue(100000);
 		
 		// Initializing map handler for handling many maps
 		mapHandler = new MapHandler();
@@ -213,10 +211,15 @@ public class GameState extends State {
 		multiplierFont = fontGen.generateFont(ftfp);
 		multiplierFont.setColor(Color.RED);
 		
-		fontGen.dispose();
+		// Tutorial (Must be initialized before fontGen.dispose())
+		tutorial = new Tutorial(this, fontGen);
 		
+		fontGen.dispose();
 		//Graphics Settings
 		GfxSettings.init();
+		
+		// Tutorial
+		Tutorial.init(textureAtlas);
 		
 		// Initializing entities and analogstick statically
 		Player.init(textureAtlas);
@@ -283,11 +286,12 @@ public class GameState extends State {
 	protected void update() {
 		if(!isPaused) {
 			
+			if(tutorialOnGoing)
+				tutorial.update();
+			
 			//Remove random particles if there are too many
 			while(particles.size >= PARTICLE_LIMIT)
 				particles.removeIndex(rand.nextInt(particles.size));
-			
-			
 			
 			// Adding played time
 			if(!gameMode.isGameOver())
@@ -319,34 +323,41 @@ public class GameState extends State {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
 				
-				// Update power-ups
-				powerUpSpawnTime--;
-				if(powerUpSpawnTime < 0) {
-					if(enablePowerUps) {
-						puss.spawn();
-						powerUpSpawnTime = 300;
+				if(!tutorialOnGoing) {// || (tutorial.getWave(TutorialEvent.POWER_UPS_SHOWN).isCompleted() || tutorial.getCurrentWave().equals(tutorial.getWave(TutorialEvent.POWER_UPS_SHOWN)))) {
+					// Update power-ups
+					powerUpSpawnTime--;
+					if(powerUpSpawnTime < 0) {
+						if(enablePowerUps) {
+							puss.spawn();
+							powerUpSpawnTime = 300;
+						}
 					}
 				}
 				
 				updateHitDetections();
+				
 				// So that they don't spawn while death animation is playing
 				if(!player.isDying() && !player.isSpawning()) {
-					if(player.isDead()) {
+					if(player.isDead() && !tutorialOnGoing) {
 						pss.spawn(true);
 			        	waveNumber++;
 						currentWave = waveManager.getWave(waveNumber);
 					} else {
 						player.updateHitDetection();
-						if(currentWave.update()) {
-							waveNumber++;
-							currentWave = waveManager.getWave(waveNumber);
+						if(!tutorialOnGoing) {
+							if(currentWave.update()) {
+								waveNumber++;
+								currentWave = waveManager.getWave(waveNumber);
+							}
 						}
 					}
 				}
-				
+			
 				if(player.update() && !player.isDying()) {
-					gameMode.playerKilled();
-					playerKilled = true;
+					if(!tutorialOnGoing) {
+						gameMode.playerKilled();
+						playerKilled = true;
+					}
 				}
 			}
 			
@@ -376,7 +387,7 @@ public class GameState extends State {
 			// Enemy Slowdown
 			SlowdownEnemies.setUpdatedSlowdown(false);
 			
-			if(playerKilled) {
+			if(playerKilled && tutorialHasEnded()) {
 				if(!gameMode.isGameOver()) {
 					clearLists();
 					resetGameTime();
@@ -413,7 +424,7 @@ public class GameState extends State {
 		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
 		
 		// Clearing screen, positioning camera, rendering map and entities
-		//Positioning camera to the player		
+		//Positioning camera to the player
 		Specular.camera.zoom = 1;
 		Camera.setPosition();
 		Specular.camera.update();
@@ -445,9 +456,8 @@ public class GameState extends State {
 		for(Particle p : particles)
 			p.render(game.batch);
 		
-		for(Entity ent : entities) {
-			if(ent instanceof Enemy)
-				ent.render(game.batch);
+		for(Entity ent : enemies) {
+			ent.render(game.batch);
 		}
 		
 		if(!gameMode.isGameOver())
@@ -467,8 +477,12 @@ public class GameState extends State {
 			game.batch.draw(pauseTex, -pauseTex.getWidth() / 2, 100);
 			pauseInputProcessor.getResumeButton().render();
 			pauseInputProcessor.getToMenuButton().render();
-		} else {	
+		} else {
 			if(!gameMode.isGameOver()) {
+				// Tutorial
+				if(tutorialOnGoing && !showTutorialEnd)
+					tutorial.render(game.batch);
+					
 				//Drawing HUD
 				hud.render(game.batch, scoreMultiplierTimer);
 				gameInputProcessor.getShootStick().render(game.batch);
@@ -481,6 +495,12 @@ public class GameState extends State {
 				Util.writeCentered(game.batch, multiplierFont, "x" + Math.round(scoreMultiplier), 0,
 						Specular.camera.viewportHeight / 2 - 98);
 				
+				// Tutorial end
+				if(showTutorialEnd) {
+					game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
+					Util.writeCentered(game.batch, scoreFont, "Press to continue", 0, 0);			
+				}
+					
 				gameMode.render(game.batch);
 			} else if(gameMode.isGameOver()) { // Game over screen
 				// Manual camera shake
@@ -509,9 +529,6 @@ public class GameState extends State {
 					if(alpha < 1)
 						game.batch.setColor(1, 1, 1, alpha);
 					
-					// Render upgrade point bar
-					upgradePointBar.setValue((getPlayer().getUpgradePoints() % 1) * 100000);
-					upgradePointBar.render(game.batch);
 					game.batch.setColor(Color.WHITE);
 				}
 				
@@ -631,7 +648,26 @@ public class GameState extends State {
 		}
 	}
 	
+	public void startTutorial(States returnState) {
+		tutorialOnGoing = true;
+		tutorial.start(returnState);
+	}
+	
+	public void endTutorial() {
+		tutorialOnGoing = false;
+		showTutorialEnd = false;
+		if(!(tutorial.getReturnState() == States.SINGLEPLAYER_GAMESTATE)) {
+			game.enterState(tutorial.getReturnState());
+		}
+	}
+	
+	public void showTutorialEnd() {
+		showTutorialEnd = true;
+	}
+	
 	public boolean isPaused() { return isPaused; }
+	public boolean tutorialHasEnded() { return !tutorialOnGoing; }
+	public boolean tutorialEndIsShowing() { return showTutorialEnd; }
 	
 	public Specular getGame() {	return game; }
 	public GameInputProcessor getGameProcessor() { return gameInputProcessor; }
@@ -669,13 +705,20 @@ public class GameState extends State {
 	
 	public int getScoreMultiplier() { return scoreMultiplier; }
 	
-	/** Get a custom BitmapFont based on its size. If there is no font with that size it returns default font.
-	 * @param size - The size of the wanted font
+	/** Get a custom BitmapFont based on its size. If there is no font with that index it returns default font.
+	 * - index 0 = scoreFont
+	 * - index 1 = multiplierFont
+	 * - index 2 = gameOverScoreFont
+	 * @param index - The index of the wanted font (See above)
 	 * @return The custom or default font
 	 */
-	public BitmapFont getCustomFont(int size) {
-		if(size == 50)
+	public BitmapFont getCustomFont(int index) {
+		if(index == 0)
 			return scoreFont;
+		if(index == 1)
+			return multiplierFont;
+		if(index == 2)
+			return gameOverScoreFont;
 		
 		return arial15;
 	}
@@ -766,8 +809,11 @@ public class GameState extends State {
 	public void show() {
 		super.show();
 		// Sets "first" time play to false
-		if(Specular.prefs.getBoolean("FirstTime")) {
-			Specular.prefs.putBoolean("FirstTime", false);
+		if(Specular.prefs.getBoolean("First Time")) {
+			// Start tutorial
+			startTutorial(States.SINGLEPLAYER_GAMESTATE);
+			
+			Specular.prefs.putBoolean("First Time", false);
 			Specular.prefs.flush();
 		}
 		
@@ -858,7 +904,6 @@ public class GameState extends State {
 		}
 		
 		setPaused(false);
-		
 	}
 	
 	private void saveStats() {
@@ -895,7 +940,7 @@ public class GameState extends State {
 	public Array<Particle> getParticles() {
 		return particles;
 	}
-
+	
 	public TextureAtlas getTextureAtlas() {
 		return textureAtlas;
 	}

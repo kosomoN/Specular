@@ -32,7 +32,7 @@ public class FireRateBoost extends PowerUp {
 	}
 	
 	@Override
-	protected void removeEffect(Player player) {
+	public void removeEffect(Player player) {
 		stacks--;
 		player.setFireRate((float) (10 * Math.pow(boost, stacks)));
 	}

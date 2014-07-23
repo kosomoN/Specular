@@ -42,6 +42,7 @@ public class Player implements Entity {
 	public static Animation anim, spawnAnim, deathAnim;
 	public static AtlasRegion playerTex, playerSpawnTex, playerDeathTex, pdsTex, shieldTexture, barrelTexture[] = new AtlasRegion[7];
 	public static int radius;
+	public static float distTraveledSqrd;
 	private static int startingLives = 3;//Specular.prefs.getInteger("Player Starting Lives");
 	
 	private GameState gs;
@@ -221,11 +222,6 @@ public class Player implements Entity {
 			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
 			batch.draw(baseAnimFrame, centerx - baseAnimFrame.getRegionWidth() / 2, centery - baseAnimFrame.getRegionHeight() / 2);
 			
-			if(PDS.isActive()) {
-				Util.drawCentered(batch, pdsTex, getX(), getY(), animFrameTime * 90);
-				Util.drawCentered(batch, pdsTex, getX(), getY(), -animFrameTime * 120);
-			}
-			
 			//Barrel
 			Util.drawCentered(batch, barrelTexture[bulletBurstLevel < 4 ? bulletBurstLevel : 3], getX(), getY(), direction);
 			
@@ -307,6 +303,7 @@ public class Player implements Entity {
         
         centerx += dx;
         centery += dy;
+        distTraveledSqrd += dx * dx + dy * dy;
         
         return life <= 0;
 	}
@@ -386,7 +383,7 @@ public class Player implements Entity {
 				}
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
 				
-				timeSinceLastFire = 0;
+				timeSinceLastFire -= fireRate;
 			}
 		}
 	}
@@ -598,6 +595,11 @@ public class Player implements Entity {
 		barrelTexture[6] = ta.findRegion("game2/Rate 3");
 	}
 	
+	@Override
+	public void dispose() {
+
+	}
+	
 	public float getBarrelPosX(int barrelIndex) {
 		return (float) (centerx + Math.cos(Math.toRadians(direction + barrelIndex * 8)) * 60);
 	}
@@ -608,10 +610,5 @@ public class Player implements Entity {
 
 	public List<TrailPart> getTrail() {
 		return playerTrail;
-	}
-
-	@Override
-	public void dispose() {
-		
 	}
 }

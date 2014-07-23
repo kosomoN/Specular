@@ -372,6 +372,13 @@ game1/Point Defense
   orig: 64, 64
   offset: 0, 0
   index: -1
+game1/Red Pixel
+  rotate: false
+  xy: 992, 127
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
 game1/Repulsor
   rotate: false
   xy: 832, 64

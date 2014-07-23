@@ -30,7 +30,7 @@ public class BulletBurst extends PowerUp {
 	}
 	
 	@Override
-	protected void removeEffect(Player player) {
+	public void removeEffect(Player player) {
 		player.addBulletBurstLevel(-1);
 	}
 
