@@ -1,10 +1,9 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -18,7 +17,7 @@ import com.tint.specular.utils.Util;
 public class EnemyStriver extends Enemy {
 
 	private static Animation anim;
-	private static Texture tex, warningTex;
+	private static AtlasRegion tex, warningTex;
 
 	public EnemyStriver(float x, float y, GameState gs) {
 		super(x, y, gs, 2);
@@ -28,10 +27,7 @@ public class EnemyStriver extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		if(hasSpawned)
-			Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
-		else
-			Util.drawCentered(batch, tex, x, y, tex.getWidth() * (spawnTimer / 100f), tex.getHeight() * (spawnTimer / 100f), rotation * 90 % 360);
+		Util.drawCentered(batch, tex, x, y, rotation * 90 % 360);
 	}
 	
 	@Override
@@ -45,15 +41,12 @@ public class EnemyStriver extends Enemy {
 		y += dy * slowdown;
 	}
 	
-	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);		
+	public static void init(TextureAtlas ta) {
+		tex = ta.findRegion("game1/Enemy Striver");
 		
-		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Warning.png"));
-		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		warningTex = ta.findRegion("game1/Enemy Striver Warning");
 		
-		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Anim.png"));
-		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		AtlasRegion animTex = ta.findRegion("game1/Enemy Striver Anim");
 		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 1);
 	}
 
@@ -64,7 +57,6 @@ public class EnemyStriver extends Enemy {
 	
 	@Override
 	public void dispose() {
-		tex.dispose();
 	}
 
 	@Override
@@ -83,7 +75,7 @@ public class EnemyStriver extends Enemy {
 	}
 
 	@Override
-	protected Texture getWarningTex() {
+	protected AtlasRegion getWarningTex() {
 		return warningTex;
 	}
 

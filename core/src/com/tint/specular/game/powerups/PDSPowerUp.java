@@ -1,21 +1,21 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.PDS;
 import com.tint.specular.game.entities.Player;
 
 public class PDSPowerUp extends PowerUp{
 
-	private static Texture tex;
+	private static AtlasRegion tex;
 	
 	public PDSPowerUp(float x, float y, GameState gs) {
 		super(x, y, gs, -1);
 	}
 	
-	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/powerups/Point Defense.png"));
+	public static void init(TextureAtlas ta) {
+		tex = ta.findRegion("game1/Point Defense");
 	}
 	
 	@Override
@@ -24,7 +24,7 @@ public class PDSPowerUp extends PowerUp{
 	}
 
 	@Override
-	public Texture getTexture() {
+	public AtlasRegion getTexture() {
 		return tex;
 	}
 

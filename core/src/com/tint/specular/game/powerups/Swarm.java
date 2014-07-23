@@ -1,14 +1,14 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Player;
 
 public class Swarm extends PowerUp {
 
-	private static Texture tex;
+	private static AtlasRegion tex;
 	private static float timeToStack;
 	private static float effect = 2;
 	private int stacks;
@@ -17,8 +17,8 @@ public class Swarm extends PowerUp {
 		super(x, y, gs, 800);
 	}
 	
-	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/powerups/Swarm.png"));
+	public static void init(TextureAtlas ta) {
+		tex = ta.findRegion("game1/Swarm");
 //		effect = Specular.prefs.getFloat("Swarm Effect");
 	}
 	
@@ -65,7 +65,7 @@ public class Swarm extends PowerUp {
 	public static float getEffect() { return effect; }
 
 	@Override
-	public Texture getTexture() {
+	public AtlasRegion getTexture() {
 		return tex;
 	}
 }

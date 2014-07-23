@@ -1,8 +1,8 @@
 package com.tint.specular.input;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.tint.specular.ui.HUD;
 import com.tint.specular.utils.Util;
 
 /**
@@ -13,7 +13,7 @@ import com.tint.specular.utils.Util;
 
 public class AnalogStick {
 	
-	public static Texture base, head;
+	public static AtlasRegion base, head;
 	
 	private float xBase, yBase, xHead, yHead;
 	private int pointer;
@@ -22,9 +22,9 @@ public class AnalogStick {
 		pointer = -1;
 	}
 	
-	public static void init() {
-		head = new Texture(Gdx.files.internal("graphics/game/HUD/Dpad Center.png"));
-		base = new Texture(Gdx.files.internal("graphics/game/HUD/Dpad Indicator.png"));
+	public static void init(HUD hud) {
+		head = hud.getDpadCenter();
+		base = hud.getDpadOuter();
 	}
 	
 	public void render(SpriteBatch batch) {

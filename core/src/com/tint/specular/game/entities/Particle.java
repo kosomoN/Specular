@@ -2,9 +2,9 @@ package com.tint.specular.game.entities;
 
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.tint.specular.game.GameState;
@@ -33,7 +33,7 @@ public class Particle implements Entity, Poolable {
 	
 	private static final float ROTATION_SPEED = 6;
 	private static TextureRegion[] textures;
-	private static Texture bigBase, smallBase;
+	private static AtlasRegion bigBase, smallBase;
 	private static Random rand = new Random();
 	
 	public Particle(GameState gs) {
@@ -70,9 +70,9 @@ public class Particle implements Entity, Poolable {
 	public float getX() { return x; }
 	public float getY() { return y; }
 
-	public static void init() {
-		bigBase = new Texture(Gdx.files.internal("graphics/game/Large Particles.png"));
-		smallBase = new Texture(Gdx.files.internal("graphics/game/Small Particles.png"));
+	public static void init(TextureAtlas ta) {
+		bigBase = ta.findRegion("game1/Large Particles");
+		smallBase = ta.findRegion("game1/Small Particles");
 		
 		//The amount of particles * 2 for large and small
 		textures = new TextureRegion[Type.values().length * 2];
@@ -86,8 +86,6 @@ public class Particle implements Entity, Poolable {
 	
 	@Override
 	public void dispose() {
-		bigBase.dispose();
-		smallBase.dispose();
 	}
 
 	/**

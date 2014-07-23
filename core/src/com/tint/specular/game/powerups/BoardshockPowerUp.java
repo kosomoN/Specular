@@ -1,13 +1,13 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 
 public class BoardshockPowerUp extends PowerUp {
 
-	private static Texture texture;
+	private static AtlasRegion texture;
 
 	public BoardshockPowerUp(float x, float y, GameState gs) {
 		super(x, y, gs, -1);
@@ -19,12 +19,12 @@ public class BoardshockPowerUp extends PowerUp {
 	}
 
 	@Override
-	public Texture getTexture() {
+	public AtlasRegion getTexture() {
 		return texture;
 	}
 	
-	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/powerups/BoardShock.png"));
+	public static void init(TextureAtlas ta) {
+		texture = ta.findRegion("game1/BoardShock");
 	}
 	
 }

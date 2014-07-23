@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -224,8 +225,8 @@ public class ControlSetupState extends State {
 		
 		if(stickPositionBtn.isChecked()) {
 			game.batch.begin();
-			game.batch.draw(AnalogStick.base, stage.getWidth() / 2 + inputProcessor.move.getXBase() - AnalogStick.base.getWidth() / 2, stage.getHeight() / 2 + inputProcessor.move.getYBase() - AnalogStick.base.getHeight() / 2);
-			game.batch.draw(AnalogStick.base, stage.getWidth() / 2 + inputProcessor.shoot.getXBase() - AnalogStick.base.getWidth() / 2, stage.getHeight() / 2 + inputProcessor.shoot.getYBase() - AnalogStick.base.getHeight() / 2);
+			game.batch.draw(AnalogStick.base, stage.getWidth() / 2 + inputProcessor.move.getXBase() - AnalogStick.base.getRegionWidth() / 2, stage.getHeight() / 2 + inputProcessor.move.getYBase() - AnalogStick.base.getRegionHeight() / 2);
+			game.batch.draw(AnalogStick.base, stage.getWidth() / 2 + inputProcessor.shoot.getXBase() - AnalogStick.base.getRegionWidth() / 2, stage.getHeight() / 2 + inputProcessor.shoot.getYBase() - AnalogStick.base.getRegionHeight() / 2);
 			game.batch.end();
 		}
 	}
@@ -256,7 +257,7 @@ public class ControlSetupState extends State {
 		private Animation anim;
 		private float animFrameTime;
 		private float direction;
-		private Texture barrelTexture;
+		private AtlasRegion barrelTexture;
 		private int timeSinceLastFire;
 		private int fireRate = 10;
 		

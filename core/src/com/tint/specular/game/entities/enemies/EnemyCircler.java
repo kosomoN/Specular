@@ -1,10 +1,9 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -18,7 +17,7 @@ import com.tint.specular.utils.Util;
 public class EnemyCircler extends Enemy {
 
 	private static Animation anim;
-	private static Texture tex, warningTex;
+	private static AtlasRegion tex, warningTex;
 	
 	private float offset;
 	private double angle;
@@ -69,15 +68,12 @@ public class EnemyCircler extends Enemy {
 	@Override
 	public float getOuterRadius() { return 30; }
 
-	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Circler.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	public static void init(TextureAtlas ta) {
+		tex = ta.findRegion("game1/Enemy Circler");
 		
-		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Circler Warning.png"));
-		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		warningTex = ta.findRegion("game1/Enemy Circler Warning");
 		
-		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Circler Anim.png"));
-		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		AtlasRegion animTex = ta.findRegion("game1/Enemy Circler Anim");
 		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 1);
 	}
 
@@ -88,7 +84,6 @@ public class EnemyCircler extends Enemy {
 	
 	@Override
 	public void dispose() {
-		tex.dispose();
 	}
 
 	@Override
@@ -102,7 +97,7 @@ public class EnemyCircler extends Enemy {
 	}
 
 	@Override
-	protected Texture getWarningTex() {
+	protected AtlasRegion getWarningTex() {
 		return warningTex;
 	}
 

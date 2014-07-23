@@ -1,9 +1,7 @@
 package com.tint.specular.game.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.tint.specular.game.GameState;
@@ -22,7 +20,7 @@ public class Bullet implements Entity, Poolable {
 
 	public static float damage = 1;
 	
-	private static Texture bulletTex;
+	private static AtlasRegion bulletTex;
 	private static int size;
 
 	public static int maxBounces = 0;
@@ -99,10 +97,9 @@ public class Bullet implements Entity, Poolable {
 	}
 
 	public static void init(final GameState gs) {
-		bulletTex = new Texture(Gdx.files.internal("graphics/game/Bullet.png"));
-		bulletTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bulletTex = gs.getTextureAtlas().findRegion("game1/Bullet");
 		
-		size = bulletTex.getWidth() / 2;
+		size = bulletTex.getRegionWidth() / 2;
 		
 		bulletPool = new Pool<Bullet>() {
 			@Override
@@ -127,10 +124,8 @@ public class Bullet implements Entity, Poolable {
 	public static void setTwist(boolean twist) { Bullet.twist = twist; }
 	public static void setDamage(float damage) { Bullet.damage = damage;}
 	public static boolean isTwisting() { return twist; }
-	
 	@Override
 	public void dispose() {
-		bulletTex.dispose();
 	}
 	
 	/**

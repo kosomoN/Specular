@@ -2,10 +2,10 @@ package com.tint.specular.game.entities.enemies;
 
 import java.util.Iterator;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
@@ -21,7 +21,7 @@ public class EnemyWorm extends Enemy {
 	
 	private static final int DIST_BETWEEN_PARTS = 50, LENGTH = 6;
 	
-	private static Texture body1Tex, body2Tex, headTex, tailTex;
+	private static AtlasRegion body1Tex, body2Tex, headTex, tailTex;
 	
 	private Array<Part> parts = new Array<Part>();
 	private Part head;
@@ -133,11 +133,11 @@ public class EnemyWorm extends Enemy {
 		renderEnemy(batch);
 	}
 	
-	public static void init() {
-		body1Tex = new Texture(Gdx.files.internal("graphics/game/enemies/Body 1.png"));
-		body2Tex = new Texture(Gdx.files.internal("graphics/game/enemies/Body 2.png"));
-		tailTex = new Texture(Gdx.files.internal("graphics/game/enemies/Tail.png"));
-		headTex = new Texture(Gdx.files.internal("graphics/game/enemies/Head.png"));
+	public static void init(TextureAtlas ta) {
+		body1Tex = ta.findRegion("game1/Body 1");
+		body2Tex = ta.findRegion("game1/Body 2");
+		tailTex = ta.findRegion("game1/Tail");
+		headTex = ta.findRegion("game1/Head");
 	}
 
 	public class Part {
@@ -268,7 +268,7 @@ public class EnemyWorm extends Enemy {
 	}
 
 	@Override
-	protected Texture getWarningTex() {
+	protected AtlasRegion getWarningTex() {
 		return null;
 	}
 

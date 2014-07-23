@@ -1,10 +1,9 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
@@ -20,7 +19,7 @@ public class EnemyBooster extends Enemy {
 
 	private static final double MAX_TURNANGLE = Math.PI / 256; // 0.012 degrees (per tick)
 	private static Animation anim;
-	private static Texture tex, warningTex;
+	private static AtlasRegion tex, warningTex;
 	
 	private double direction;
 	private int boostingDelay;
@@ -122,15 +121,12 @@ public class EnemyBooster extends Enemy {
 	@Override
 	public float getOuterRadius() { return 30; }
 	
-	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Booster.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	public static void init(TextureAtlas ta) {
+		tex = ta.findRegion("game1/Enemy Booster");
 		
-		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Booster Warning.png"));
-		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		warningTex = ta.findRegion("game1/Enemy Booster Warning");
 		
-		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Booster Anim.png"));
-		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		AtlasRegion animTex = ta.findRegion("game1/Enemy Booster Anim");
 		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 3);
 	}
 
@@ -141,7 +137,6 @@ public class EnemyBooster extends Enemy {
 	
 	@Override
 	public void dispose() {
-		tex.dispose();
 	}
 
 	@Override
@@ -155,7 +150,7 @@ public class EnemyBooster extends Enemy {
 	}
 
 	@Override
-	protected Texture getWarningTex() {
+	protected AtlasRegion getWarningTex() {
 		return warningTex;
 	}
 

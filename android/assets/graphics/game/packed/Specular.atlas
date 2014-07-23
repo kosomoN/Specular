@@ -1,0 +1,536 @@
+
+Specular.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ExploderEffect
+  rotate: false
+  xy: 0, 0
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+
+Specular2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ExploderEffectAlternate
+  rotate: false
+  xy: 0, 0
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+
+Specular3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ExploderEffectInner
+  rotate: false
+  xy: 0, 0
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+
+Specular4.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ExploderEffectWarning
+  rotate: false
+  xy: 0, 0
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+
+Specular5.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Ring
+  rotate: false
+  xy: 0, 0
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+
+Specular6.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Shockwave
+  rotate: false
+  xy: 0, 0
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+
+Specular7.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ShockwaveMask
+  rotate: false
+  xy: 0, 0
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+
+Specular8.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+game1/Enemy Dasher Anim
+  rotate: false
+  xy: 0, 512
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game1/Enemy Exploder
+  rotate: false
+  xy: 512, 768
+  size: 512, 256
+  orig: 512, 256
+  offset: 0, 0
+  index: -1
+game1/Enemy Exploder Anim
+  rotate: false
+  xy: 512, 512
+  size: 512, 256
+  orig: 512, 256
+  offset: 0, 0
+  index: -1
+game1/Enemy Shielder
+  rotate: false
+  xy: 512, 256
+  size: 512, 256
+  orig: 512, 256
+  offset: 0, 0
+  index: -1
+game1/Enemy Shielder Anim
+  rotate: false
+  xy: 0, 0
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game1/Tanker Anim
+  rotate: false
+  xy: 512, 0
+  size: 512, 256
+  orig: 512, 256
+  offset: 0, 0
+  index: -1
+
+Specular9.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+game1/5 Burst
+  rotate: false
+  xy: 768, 320
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/BoardShock
+  rotate: false
+  xy: 640, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Body 1
+  rotate: false
+  xy: 640, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Body 2
+  rotate: false
+  xy: 768, 256
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Bullet
+  rotate: false
+  xy: 960, 64
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Booster
+  rotate: false
+  xy: 832, 320
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Booster Anim
+  rotate: false
+  xy: 0, 128
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+game1/Enemy Booster Warning
+  rotate: false
+  xy: 704, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Circler
+  rotate: false
+  xy: 704, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Normal
+  rotate: false
+  xy: 704, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Circler Anim
+  rotate: false
+  xy: 0, 0
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+game1/Enemy Circler Warning
+  rotate: false
+  xy: 768, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Dasher
+  rotate: false
+  xy: 512, 256
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+game1/Enemy Dasher Dash Warning
+  rotate: false
+  xy: 832, 256
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Dasher Warning
+  rotate: false
+  xy: 768, 384
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+game1/Enemy Exploder Warning
+  rotate: false
+  xy: 896, 384
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+game1/Enemy Fast
+  rotate: false
+  xy: 896, 320
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Striver
+  rotate: false
+  xy: 896, 320
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Shielder Warning
+  rotate: false
+  xy: 512, 128
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+game1/Enemy Striver Anim
+  rotate: false
+  xy: 256, 0
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+game1/Enemy Striver Warning
+  rotate: false
+  xy: 960, 320
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Virus
+  rotate: false
+  xy: 768, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Wanderer
+  rotate: false
+  xy: 832, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Enemy Wanderer Anim
+  rotate: false
+  xy: 512, 384
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+game1/Enemy Wanderer Warning
+  rotate: false
+  xy: 896, 256
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/FireRate
+  rotate: false
+  xy: 960, 256
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Head
+  rotate: false
+  xy: 768, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Large Particles
+  rotate: false
+  xy: 256, 128
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+game1/Laser
+  rotate: false
+  xy: 960, 48
+  size: 1, 16
+  orig: 1, 16
+  offset: 0, 0
+  index: -1
+game1/Laser Powerup
+  rotate: false
+  xy: 768, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Life
+  rotate: false
+  xy: 832, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Mask
+  rotate: false
+  xy: 512, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+game1/Multiplier
+  rotate: false
+  xy: 896, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Point Defense
+  rotate: false
+  xy: 960, 192
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Repulsor
+  rotate: false
+  xy: 832, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Ricochet
+  rotate: false
+  xy: 832, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/ShieldUpgrade
+  rotate: false
+  xy: 896, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Slowdown
+  rotate: false
+  xy: 960, 128
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Small Particles
+  rotate: false
+  xy: 640, 256
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+game1/Swarm
+  rotate: false
+  xy: 896, 64
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Tail
+  rotate: false
+  xy: 896, 0
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+game1/Tanker
+  rotate: false
+  xy: 0, 384
+  size: 512, 128
+  orig: 512, 128
+  offset: 0, 0
+  index: -1
+game1/Tanker Warning
+  rotate: false
+  xy: 640, 128
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+
+Specular10.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+game2/Barrels
+  rotate: false
+  xy: 0, 0
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game2/Barrels Spread 1
+  rotate: false
+  xy: 512, 0
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game2/Player
+  rotate: false
+  xy: 0, 512
+  size: 1024, 512
+  orig: 1024, 512
+  offset: 0, 0
+  index: -1
+
+Specular11.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+game2/Barrels Spread 2
+  rotate: false
+  xy: 0, 512
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game2/Barrels Spread 3
+  rotate: false
+  xy: 0, 0
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game2/Player Death Anim
+  rotate: false
+  xy: 512, 512
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game2/Player Spawn Anim
+  rotate: false
+  xy: 512, 0
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+
+Specular12.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+game2/PDS Effect
+  rotate: false
+  xy: 512, 384
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+game2/Rate 1
+  rotate: false
+  xy: 0, 512
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game2/Rate 2
+  rotate: false
+  xy: 0, 0
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game2/Rate 3
+  rotate: false
+  xy: 512, 512
+  size: 512, 512
+  orig: 512, 512
+  offset: 0, 0
+  index: -1
+game2/Shield
+  rotate: false
+  xy: 512, 256
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1

@@ -3,6 +3,7 @@ package com.tint.specular.desktop;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.tools.texturepacker.TexturePacker.Settings;
 import com.tint.specular.Specular;
 import com.tint.specular.states.NativeAndroid;
 
@@ -14,6 +15,12 @@ import com.tint.specular.states.NativeAndroid;
 
 public class DesktopLauncher {
 	public static void main(String[] args) {
+		Settings s = new Settings();
+		s.paddingX = 0;
+		s.paddingY = 0;
+//		TexturePacker.process(s, "graphics/game/unpacked", "graphics/game/packed", "Specular");
+		
+		
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "Specular";
 		cfg.width = 1280;

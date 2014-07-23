@@ -1,7 +1,7 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Entity;
@@ -82,7 +82,7 @@ public abstract class PowerUp implements Entity {
 	@Override
 	public void render(SpriteBatch batch) {
 		if(!isActivated() && despawnTime > 0)	
-			batch.draw(getTexture(), x - getTexture().getWidth() / 2, y - getTexture().getHeight() / 2);
+			batch.draw(getTexture(), x - getTexture().getRegionWidth() / 2, y - getTexture().getRegionHeight() / 2);
 		
 		if(activated && activeTime < 20) {
 			ShockWaveRenderer.renderShockwave(batch, x, y, activeTime / 20, false);
@@ -101,15 +101,14 @@ public abstract class PowerUp implements Entity {
 	public float getY() { return y; }
 	public boolean isPaused() { return isPaused; }
 	public boolean isActivated() { return activated; }
-	public abstract Texture getTexture();
+	public abstract AtlasRegion getTexture();
 
 	@Override
 	public void dispose() {
-		getTexture().dispose();
 	}
 
 	public float getRadius() {
-		return getTexture().getWidth() / 2;
+		return getTexture().getRegionWidth() / 2;
 	}
 
 	public float getDespawnTime() {

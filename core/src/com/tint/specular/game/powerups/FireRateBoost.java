@@ -1,7 +1,7 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 
@@ -12,7 +12,7 @@ import com.tint.specular.game.entities.Player;
  */
 
 public class FireRateBoost extends PowerUp {
-	private static Texture texture;
+	private static AtlasRegion texture;
 	private static float boost = 2 / 3f;
 	public static int stacks;
 	
@@ -20,8 +20,8 @@ public class FireRateBoost extends PowerUp {
 		super(x, y, gs, 800);
 	}
 	
-	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/powerups/FireRate.png"));
+	public static void init(TextureAtlas ta) {
+		texture = ta.findRegion("game1/FireRate");
 //		boost = Specular.prefs.getFloat("Firerate Boost");
 	}
 	
@@ -41,7 +41,7 @@ public class FireRateBoost extends PowerUp {
 	public static float getBoost() { return boost; }
 	
 	@Override
-	public Texture getTexture() {
+	public AtlasRegion getTexture() {
 		return texture;
 	}
 }

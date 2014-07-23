@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class ShockWaveRenderer {
@@ -19,11 +20,11 @@ public class ShockWaveRenderer {
 			batch.draw(ring, x - ring.getWidth() / 2, y - ring.getHeight() / 2);
 	}
 	
-	public static void init() {
-		shockWave = new Texture(Gdx.files.internal("graphics/game/effects/Shockwave.png"));
-		ring = new Texture(Gdx.files.internal("graphics/game/effects/Ring.png"));
+	public static void init(TextureAtlas ta) {
+		shockWave = ta.findRegion("Shockwave").getTexture();
+		ring = ta.findRegion("Ring").getTexture();
 		
-		waveMask = new Texture(Gdx.files.internal("graphics/game/effects/ShockwaveMask.png"));
+		waveMask = ta.findRegion("ShockwaveMask").getTexture();
 		
 		ShaderProgram.pedantic = false;
 		 

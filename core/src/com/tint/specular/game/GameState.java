@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Rectangle;
@@ -95,6 +96,8 @@ public class GameState extends State {
 	protected Wave currentWave;
 	private int waveNumber;
 	
+	private TextureAtlas textureAtlas;
+	
 	// Boolean fields for start and end of game
 	protected boolean ready, shaken;
 	
@@ -166,9 +169,9 @@ public class GameState extends State {
 		super(game);
 		
 		// Loading map texture from a internal directory
-		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/maps/Level.png"));
-		Texture shockLight = new Texture(Gdx.files.internal("graphics/game/maps/ShockLight.png"));
-		Texture parallax = new Texture(Gdx.files.internal("graphics/game/maps/Parallax.png"));
+		Texture mapTexture = new Texture(Gdx.files.internal("graphics/game/packed/Level.png"));
+		Texture shockLight = new Texture(Gdx.files.internal("graphics/game/packed/ShockLight.png"));
+		Texture parallax = new Texture(Gdx.files.internal("graphics/game/packed/Parallax.png"));
 		
 		// Loading gameover texture
 		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
@@ -176,6 +179,8 @@ public class GameState extends State {
 		// Loading pause menu texture
 		pauseTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Pause.png"));
 		greyPixel = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Grey Pixel.png"));
+		
+		textureAtlas = new TextureAtlas(Gdx.files.internal("graphics/game/packed/Specular.atlas"));
 		
 		// Loading HUD
 		hud = new HUD(this);
@@ -214,37 +219,37 @@ public class GameState extends State {
 		GfxSettings.init();
 		
 		// Initializing entities and analogstick statically
-		Player.init();
+		Player.init(textureAtlas);
 		Bullet.init(this);
-		Particle.init();
-		EnemyWanderer.init();
-		EnemyCircler.init();
-		EnemyStriver.init();
-		EnemyBooster.init();
-		EnemyWorm.init();
-		EnemyVirus.init();
-		EnemyShielder.init();
-		EnemyExploder.init();
-		EnemyDasher.init();
-		EnemyTanker.init();
-		EnemyFront.init();
-		AnalogStick.init();
+		Particle.init(textureAtlas);
+		EnemyWanderer.init(textureAtlas);
+		EnemyCircler.init(textureAtlas);
+		EnemyStriver.init(textureAtlas);
+		EnemyBooster.init(textureAtlas);
+		EnemyWorm.init(textureAtlas);
+		EnemyVirus.init(textureAtlas);
+		EnemyShielder.init(textureAtlas);
+		EnemyExploder.init(textureAtlas);
+		EnemyDasher.init(textureAtlas);
+		EnemyTanker.init(textureAtlas);
+		EnemyFront.init(textureAtlas);
+		AnalogStick.init(hud);
 		
 		// Initializing power-ups
-		AddLife.init();
-		BulletBurst.init();
-		FireRateBoost.init();
-		ScoreMultiplier.init();
-		ShieldUpgrade.init();
-		SlowdownEnemies.init();
-		BoardshockPowerUp.init();
-		Ricochet.init();
-		Repulsor.init();
-		LaserPowerup.init();
-		ShockWaveRenderer.init();
+		AddLife.init(textureAtlas);
+		BulletBurst.init(textureAtlas);
+		FireRateBoost.init(textureAtlas);
+		ScoreMultiplier.init(textureAtlas);
+		ShieldUpgrade.init(textureAtlas);
+		SlowdownEnemies.init(textureAtlas);
+		BoardshockPowerUp.init(textureAtlas);
+		Ricochet.init(textureAtlas);
+		Repulsor.init(textureAtlas);
+		LaserPowerup.init(textureAtlas);
+		ShockWaveRenderer.init(textureAtlas);
 		Laser.init(this);
-		Swarm.init();
-		PDSPowerUp.init();
+		Swarm.init(textureAtlas);
+		PDSPowerUp.init(textureAtlas);
 		
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
@@ -889,5 +894,9 @@ public class GameState extends State {
 
 	public Array<Particle> getParticles() {
 		return particles;
+	}
+
+	public TextureAtlas getTextureAtlas() {
+		return textureAtlas;
 	}
 }

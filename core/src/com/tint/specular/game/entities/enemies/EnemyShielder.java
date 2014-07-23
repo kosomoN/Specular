@@ -1,10 +1,9 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
@@ -15,7 +14,7 @@ public class EnemyShielder extends Enemy {
 	private static final float FORCE = 7, RANGE = 300 * 300;
 	
 	private static Animation anim, spawnAnim;
-	private static Texture warningTex;
+	private static AtlasRegion warningTex;
 	private float speed;
 	
 	public EnemyShielder(float x, float y, GameState gs) {
@@ -51,17 +50,14 @@ public class EnemyShielder extends Enemy {
 		}
 	}
 	
-	public static void init() {
-		Texture texture = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Shielder.png"));
-		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	public static void init(TextureAtlas ta) {
+		AtlasRegion texture = ta.findRegion("game1/Enemy Shielder");
 		
 		anim = Util.getAnimation(texture, 128, 128, 1 / 15f, 0, 0, 3, 1);		
 		
-		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Shielder Warning.png"));
-		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		warningTex = ta.findRegion("game1/Enemy Shielder Warning");
 		
-		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Shielder Anim.png"));
-		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		AtlasRegion animTex = ta.findRegion("game1/Enemy Shielder Anim");
 		spawnAnim = Util.getAnimation(animTex, 128, 128, 1 / 15f, 0, 0, 3, 3);
 	}
 
@@ -86,7 +82,7 @@ public class EnemyShielder extends Enemy {
 	}
 
 	@Override
-	protected Texture getWarningTex() {
+	protected AtlasRegion getWarningTex() {
 		return warningTex;
 	}
 

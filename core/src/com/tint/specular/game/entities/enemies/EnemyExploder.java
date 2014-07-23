@@ -2,11 +2,11 @@ package com.tint.specular.game.entities.enemies;
 
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.game.Camera;
@@ -31,8 +31,9 @@ public class EnemyExploder extends Enemy {
 	
 	// Animation and graphics
 	private static Animation spawnAnim, anim;
-	private static Texture warningTex, explosionWarningTex;
-	private static Texture explosionTex1, explosionWarningTex2;
+	private static AtlasRegion warningTex, explosionWarningTex;
+	private static Texture explosionTex1;
+	private static AtlasRegion explosionWarningTex2;
 	private int shockWaveTime;
 	
 	// Movement
@@ -47,25 +48,20 @@ public class EnemyExploder extends Enemy {
 		shockWaveTime = 0;
 	}
 
-	public static void init() {
-		Texture spawnAnimTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Exploder Anim.png"));
+	public static void init(TextureAtlas ta) {
+		AtlasRegion spawnAnimTex = ta.findRegion("game1/Enemy Exploder Anim");
 		spawnAnim = Util.getAnimation(spawnAnimTex, 128, 128, 1 / 16f, 0, 0, 3, 1);
 		
-		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Exploder.png"));
-		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		AtlasRegion animTex = ta.findRegion("game1/Enemy Exploder");
 		anim = Util.getAnimation(animTex, 128, 128, 1 / 16f, 0, 0, 3, 1);
 		
-		explosionTex1 = new Texture(Gdx.files.internal("graphics/game/effects/ExploderEffectAlternate.png"));
-		explosionTex1.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		explosionTex1 = ta.findRegion("ExploderEffectAlternate").getTexture();
 		
-		explosionWarningTex2 = new Texture(Gdx.files.internal("graphics/game/effects/ExploderEffectInner.png"));
-		explosionWarningTex2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		explosionWarningTex2 = ta.findRegion("ExploderEffectInner");
 		
-		explosionWarningTex = new Texture(Gdx.files.internal("graphics/game/effects/ExploderEffectWarning.png"));
-		explosionWarningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		explosionWarningTex = ta.findRegion("ExploderEffectWarning");
 		
-		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Exploder Warning.png"));
-		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		warningTex = ta.findRegion("game1/Enemy Exploder Warning");
 	}
 	
 	@Override
@@ -208,7 +204,7 @@ public class EnemyExploder extends Enemy {
 	}
 
 	@Override
-	protected Texture getWarningTex() {
+	protected AtlasRegion getWarningTex() {
 		return warningTex;
 	}
 

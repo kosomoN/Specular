@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -36,7 +37,8 @@ public class Map {
 	private static ShapeRenderer shapeRenderer = new ShapeRenderer();
 	
 	private int width, height;
-	private Texture texture, shockLight, mask, parallax;
+	private Texture texture, shockLight, parallax;
+	private AtlasRegion mask;
 	private FrameBuffer fbo;
 	private ShaderProgram shader;
 	private String name;
@@ -55,7 +57,7 @@ public class Map {
 		
 		matrix.setToOrtho2D(0, 0, texture.getWidth(), texture.getHeight());
 		
-		mask = new Texture(Gdx.files.internal("graphics/game/Mask.png"));
+		mask = gs.getTextureAtlas().findRegion("game1/Mask");
 		
 		fbo = new FrameBuffer(Format.RGBA4444, shockLight.getWidth(), shockLight.getHeight(), false);
 		
@@ -103,13 +105,15 @@ public class Map {
 //			batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 			batch.begin();
 			batch.setColor(Color.RED);
-			if(gs.getPlayer().getLife() > 0) {
+			if(gs.getPlayer().getLife() > 0 && GfxSettings.ReturnPt()) {
 				for(TrailPart tp : gs.getPlayer().getTrail())
 					batch.draw(mask, tp.getX() - tp.getSize() / 2, fbo.getHeight() - tp.getY() - tp.getSize() / 2, tp.getSize(), tp.getSize());
 			}
 			
-			for(Bullet b : gs.getBullets()) {
-				batch.draw(mask, b.getX() - 80, fbo.getHeight() - b.getY() - 80, 160, 160);
+			if(GfxSettings.ReturnBt()){
+				for(Bullet b : gs.getBullets()) {
+					batch.draw(mask, b.getX() - 80, fbo.getHeight() - b.getY() - 80, 160, 160);
+				}
 			}
 			
 			for(PowerUp p : gs.getPowerUps()) {
@@ -121,77 +125,81 @@ public class Map {
 				}
 			}
 			
-			if(BoardShock.isActivated()) {
+			if(BoardShock.isActivated() && GfxSettings.ReturnBs()) {
 				float sizee = BoardShock.getShockWaveProgress() * 6144;
 				batch.draw(ShockWaveRenderer.getMaskTexture(), BoardShock.getActivationX() - sizee / 2, fbo.getHeight() - BoardShock.getActivationY() - sizee / 2, sizee, sizee);
 			}
 			
-			for(Particle e : gs.getParticles()) {
-				switch(e.getType()) {
-				case BULLET:
-					batch.setColor(1, 0, 0, 1);
-					break;
-				case ENEMY_BOOSTER:
-					batch.setColor(1, 1, 0, 1);
-					break;
-				case ENEMY_DASHER:
-					batch.setColor(0, 1, 0, 1);
-					break;
-				case ENEMY_CIRCLER:
-					batch.setColor(0.3f, 1f, 1f, 1);
-					break;
-				case ENEMY_SHIELDER:
-					batch.setColor(1, 1, 1, 1);
-					break;
-				case ENEMY_STRIVER:
-					batch.setColor(1, 0, 1, 1);
-					break;
-				case ENEMY_VIRUS:
-					batch.setColor(1, 0, 1, 1);
-					break;
-				case ENEMY_WANDERER:
-					batch.setColor(1, 0.9f, 0.5f, 1);
-					break;
-				case ENEMY_EXPLODER:
-					batch.setColor(0.8f, 0.2f, 0, 1);
-					break;
-				case ENEMY_TANKER:
-					batch.setColor(0.8f, 0.5f, 0, 1);
-					break;
-				default:
-					break;
+			if(GfxSettings.ReturnPtr()){
+				for(Particle e : gs.getParticles()) {
+					switch(e.getType()) {
+					case BULLET:
+						batch.setColor(1, 0, 0, 1);
+						break;
+					case ENEMY_BOOSTER:
+						batch.setColor(1, 1, 0, 1);
+						break;
+					case ENEMY_DASHER:
+						batch.setColor(0, 1, 0, 1);
+						break;
+					case ENEMY_CIRCLER:
+						batch.setColor(0.3f, 1f, 1f, 1);
+						break;
+					case ENEMY_SHIELDER:
+						batch.setColor(1, 1, 1, 1);
+						break;
+					case ENEMY_STRIVER:
+						batch.setColor(1, 0, 1, 1);
+						break;
+					case ENEMY_VIRUS:
+						batch.setColor(1, 0, 1, 1);
+						break;
+					case ENEMY_WANDERER:
+						batch.setColor(1, 0.9f, 0.5f, 1);
+						break;
+					case ENEMY_EXPLODER:
+						batch.setColor(0.8f, 0.2f, 0, 1);
+						break;
+					case ENEMY_TANKER:
+						batch.setColor(0.8f, 0.5f, 0, 1);
+						break;
+					default:
+						break;
+					}
+					
+					float size = e.getLifetimePercent() * 160 + 80;
+					batch.draw(mask, e.getX() - size / 2, fbo.getHeight() - e.getY() - size / 2, size, size);
 				}
-				
-				float size = e.getLifetimePercent() * 160 + 80;
-				batch.draw(mask, e.getX() - size / 2, fbo.getHeight() - e.getY() - size / 2, size, size);
 			}
 			
-			for(Enemy e : gs.getEnemies()) {
-				if(e instanceof EnemyWanderer)
-					batch.setColor(1, 0.9f, 0.5f, 1);
-				else if(e instanceof EnemyCircler)
-					batch.setColor(0.3f, 1f, 1f, 1);
-				else if(e instanceof EnemyStriver)
-					batch.setColor(1, 0, 1, 1);
-				else if(e instanceof EnemyShielder)
-					batch.setColor(1, 1, 1, 1);
-				else if(e instanceof EnemyDasher)
-					batch.setColor(0, 1, 0, 1);
-				else if(e instanceof EnemyTanker)
-					batch.setColor(0.8f, 0.5f, 0, 1);
-				else if(e instanceof EnemyBooster)
-					batch.setColor(1, 1, 0, 1);
-				else if(e instanceof EnemyExploder)
-					batch.setColor(0.8f, 0.2f, 0, 1);
-				else if(e instanceof EnemyVirus)
-					batch.setColor(1, 0, 1, 1);
-				else if(e instanceof EnemyWorm) {
-					batch.setColor(0.7f, 1, 0, 1);
-					for(EnemyWorm.Part p : ((EnemyWorm) e).getParts())
-						batch.draw(mask, p.getX() - 80, fbo.getHeight() - p.getY() - 80, 160, 160);
+			if(GfxSettings.ReturnEt()){
+				for(Enemy e : gs.getEnemies()) {
+					if(e instanceof EnemyWanderer)
+						batch.setColor(1, 0.9f, 0.5f, 1);
+					else if(e instanceof EnemyCircler)
+						batch.setColor(0.3f, 1f, 1f, 1);
+					else if(e instanceof EnemyStriver)
+						batch.setColor(1, 0, 1, 1);
+					else if(e instanceof EnemyShielder)
+						batch.setColor(1, 1, 1, 1);
+					else if(e instanceof EnemyDasher)
+						batch.setColor(0, 1, 0, 1);
+					else if(e instanceof EnemyTanker)
+						batch.setColor(0.8f, 0.5f, 0, 1);
+					else if(e instanceof EnemyBooster)
+						batch.setColor(1, 1, 0, 1);
+					else if(e instanceof EnemyExploder)
+						batch.setColor(0.8f, 0.2f, 0, 1);
+					else if(e instanceof EnemyVirus)
+						batch.setColor(1, 0, 1, 1);
+					else if(e instanceof EnemyWorm) {
+						batch.setColor(0.7f, 1, 0, 1);
+						for(EnemyWorm.Part p : ((EnemyWorm) e).getParts())
+							batch.draw(mask, p.getX() - 80, fbo.getHeight() - p.getY() - 80, 160, 160);
+					}
+					
+					batch.draw(mask, e.getX() - 80, fbo.getHeight() - e.getY() - 80, 160, 160);
 				}
-				
-				batch.draw(mask, e.getX() - 80, fbo.getHeight() - e.getY() - 80, 160, 160);
 			}
 			
 			batch.setColor(Color.WHITE);
@@ -208,8 +216,8 @@ public class Map {
 			shapeRenderer.begin(ShapeType.Filled);
 			
 			if(GfxSettings.ReturnPt()){
-			for(TrailPart tp : gs.getPlayer().getTrail())
-				shapeRenderer.rect(tp.getX() - tp.getSize() / 2, tp.getY() - tp.getSize() / 2, tp.getSize(), tp.getSize());
+				for(TrailPart tp : gs.getPlayer().getTrail())
+					shapeRenderer.rect(tp.getX() - tp.getSize() / 2, tp.getY() - tp.getSize() / 2, tp.getSize(), tp.getSize());
 			
 			}
 			
@@ -219,14 +227,14 @@ public class Map {
 			}
 			
 			if(GfxSettings.ReturnPtr()){
-			for(Particle e : gs.getParticles()) {
-				shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
+				for(Particle e : gs.getParticles()) {
+					shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
 				}
 			}
 			
 			if(GfxSettings.ReturnBt()){
-			for(Bullet b : gs.getBullets()) {
-				shapeRenderer.rect(b.getX() - 80, b.getY() - 80, 160, 160);
+				for(Bullet b : gs.getBullets()) {
+					shapeRenderer.rect(b.getX() - 80, b.getY() - 80, 160, 160);
 				}
 			}
 			

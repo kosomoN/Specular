@@ -1,8 +1,8 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Player;
@@ -12,14 +12,14 @@ import com.tint.specular.game.entities.enemies.Enemy;
 public class Repulsor extends PowerUp {
 	private static final float PUSHAWAY_RANGE = 500 * 500;
 	private static float maxActiveTime = 800;
-	private static Texture texture;
+	private static AtlasRegion texture;
 	
 	public Repulsor(float x, float y, GameState gs) {
 		super(x, y, gs, maxActiveTime);
 	}
 	
-	public static void init() {
-		texture = new Texture(Gdx.files.internal("graphics/game/powerups/Repulsor.png"));
+	public static void init(TextureAtlas ta) {
+		texture = ta.findRegion("game1/Repulsor");
 //		maxActiveTime = Specular.prefs.getFloat("Repulsor Max Time");
 	}
 	
@@ -52,7 +52,7 @@ public class Repulsor extends PowerUp {
 	public static float getMaxActiveTime() { return maxActiveTime; }
 	
 	@Override
-	public Texture getTexture() {
+	public AtlasRegion getTexture() {
 		return texture;
 	}
 }

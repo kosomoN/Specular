@@ -2,11 +2,10 @@ package com.tint.specular.game.entities.enemies;
 
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -14,7 +13,7 @@ import com.tint.specular.utils.Util;
 public class EnemyFront extends Enemy {
 
 	private static Animation spawnAnim;
-	private static Texture tex, warningTex;
+	private static AtlasRegion tex, warningTex;
 	
 	private double angle;
 	private Random random = new Random();
@@ -26,15 +25,12 @@ public class EnemyFront extends Enemy {
 		angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 	}
 
-	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Booster.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);		
+	public static void init(TextureAtlas ta) {
+		tex = ta.findRegion("game1/Enemy Booster");
 		
-		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Booster Warning.png"));
-		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		warningTex = ta.findRegion("game1/Enemy Booster Warning");
 		
-		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Booster Anim.png"));
-		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		AtlasRegion animTex = ta.findRegion("game1/Enemy Booster Anim");
 		spawnAnim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 1);
 	}
 	
@@ -116,7 +112,7 @@ public class EnemyFront extends Enemy {
 	}
 
 	@Override
-	protected Texture getWarningTex() {
+	protected AtlasRegion getWarningTex() {
 		return warningTex;
 	}
 

@@ -6,9 +6,10 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.tint.specular.Specular;
@@ -39,7 +40,7 @@ public class Player implements Entity {
 	private static final int PUSHAWAY_TIME = 50;
 	
 	public static Animation anim, spawnAnim, deathAnim;
-	public static Texture playerTex, playerSpawnTex, playerDeathTex, shieldTexture, barrelTexture[] = new Texture[7];
+	public static AtlasRegion playerTex, playerSpawnTex, playerDeathTex, pdsTex, shieldTexture, barrelTexture[] = new AtlasRegion[7];
 	public static int radius;
 	private static int startingLives = 3;//Specular.prefs.getInteger("Player Starting Lives");
 	
@@ -219,6 +220,11 @@ public class Player implements Entity {
 		} else {
 			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
 			batch.draw(baseAnimFrame, centerx - baseAnimFrame.getRegionWidth() / 2, centery - baseAnimFrame.getRegionHeight() / 2);
+			
+			if(PDS.isActive()) {
+				Util.drawCentered(batch, pdsTex, getX(), getY(), animFrameTime * 90);
+				Util.drawCentered(batch, pdsTex, getX(), getY(), -animFrameTime * 120);
+			}
 			
 			//Barrel
 			Util.drawCentered(batch, barrelTexture[bulletBurstLevel < 4 ? bulletBurstLevel : 3], getX(), getY(), direction);
@@ -566,33 +572,30 @@ public class Player implements Entity {
 		tilt = Specular.prefs.getBoolean("Tilt");
 	}
 	
-	public static void init() {
-		playerTex  = new Texture(Gdx.files.internal("graphics/game/Player.png"));
+	public static void init(TextureAtlas ta) {
+		playerTex = ta.findRegion("game2/Player");
 		anim = Util.getAnimation(playerTex, 128, 128, 1 / 16f, 0, 0, 7, 3);
 		
-		playerSpawnTex  = new Texture(Gdx.files.internal("graphics/game/Player Spawn Anim.png"));
+		playerSpawnTex  = ta.findRegion("game2/Player Spawn Anim");
 		spawnAnim = Util.getAnimation(playerSpawnTex, 128, 128, 1 / 16f, 0, 0, 4, 3);
 		
-		playerDeathTex  = new Texture(Gdx.files.internal("graphics/game/Player Death Anim.png"));
+		playerDeathTex  = ta.findRegion("game2/Player Death Anim");
 		deathAnim = Util.getAnimation(playerDeathTex, 128, 128, 1 / 16f, 0, 0, 3, 3);
 		
 		radius = (anim.getKeyFrame(0).getRegionWidth() - 10) / 2;
 		
-		shieldTexture = new Texture(Gdx.files.internal("graphics/game/Shield.png"));
+		shieldTexture = ta.findRegion("game2/Shield");
 		
-		barrelTexture[0] = new Texture(Gdx.files.internal("graphics/game/Barrels.png"));
-		barrelTexture[1] = new Texture(Gdx.files.internal("graphics/game/Barrels Spread 1.png"));
-		barrelTexture[2] = new Texture(Gdx.files.internal("graphics/game/Barrels Spread 2.png"));
-		barrelTexture[3] = new Texture(Gdx.files.internal("graphics/game/Barrels Spread 3.png"));
+		pdsTex = ta.findRegion("game2/PDS Effect");
 		
-		barrelTexture[4] = new Texture(Gdx.files.internal("graphics/game/Rate 1.png"));
-		barrelTexture[5] = new Texture(Gdx.files.internal("graphics/game/Rate 2.png"));
-		barrelTexture[6] = new Texture(Gdx.files.internal("graphics/game/Rate 3.png"));
-	}
-	
-	@Override
-	public void dispose() {
-		playerTex.dispose();
+		barrelTexture[0] = ta.findRegion("game2/Barrels");
+		barrelTexture[1] = ta.findRegion("game2/Barrels Spread 1");
+		barrelTexture[2] = ta.findRegion("game2/Barrels Spread 2");
+		barrelTexture[3] = ta.findRegion("game2/Barrels Spread 3");
+		
+		barrelTexture[4] = ta.findRegion("game2/Rate 1");
+		barrelTexture[5] = ta.findRegion("game2/Rate 2");
+		barrelTexture[6] = ta.findRegion("game2/Rate 3");
 	}
 	
 	public float getBarrelPosX(int barrelIndex) {
@@ -605,5 +608,10 @@ public class Player implements Entity {
 
 	public List<TrailPart> getTrail() {
 		return playerTrail;
+	}
+
+	@Override
+	public void dispose() {
+		
 	}
 }

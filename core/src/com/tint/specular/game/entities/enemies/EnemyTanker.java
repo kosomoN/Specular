@@ -1,10 +1,9 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
@@ -19,7 +18,7 @@ import com.tint.specular.utils.Util;
 public class EnemyTanker extends Enemy {
 
 	private static Animation anim;
-	private static Texture warningTex;
+	private static AtlasRegion warningTex;
 	private static TextureRegion[] tex = new TextureRegion[4];
 	public int hits;
 	public int onetickpasses;
@@ -75,17 +74,15 @@ public class EnemyTanker extends Enemy {
 		super.hit(damage);
 	}
 
-	public static void init() {
-		Texture texture = new Texture(Gdx.files.internal("graphics/game/enemies/Tanker.png"));
+	public static void init(TextureAtlas ta) {
+		AtlasRegion texture = ta.findRegion("game1/Tanker");
 		tex[0] = new TextureRegion(texture, 0, 0, 128, 128);
 		tex[1] = new TextureRegion(texture, 128, 0, 128, 128);
 		tex[2] = new TextureRegion(texture, 256, 0, 128, 128);
 		tex[3] = new TextureRegion(texture, 378, 0, 128, 128);
-		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Tanker Warning.png"));
-		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		warningTex = ta.findRegion("game1/Tanker Warning");
 		
-		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Tanker Anim.png"));
-		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		AtlasRegion animTex = ta.findRegion("game1/Tanker Anim");
 		anim = Util.getAnimation(animTex, 128, 128, 1 / 15f, 0, 0, 3, 1);	
 	}
 
@@ -110,7 +107,7 @@ public class EnemyTanker extends Enemy {
 	}
 
 	@Override
-	protected Texture getWarningTex() {
+	protected AtlasRegion getWarningTex() {
 		return warningTex;
 	}
 

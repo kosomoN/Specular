@@ -89,9 +89,8 @@ public class Util {
 	 * @param lastY - The last frames y coordianate
 	 * @return an animation
 	 */
-	public static Animation getAnimation(Texture texture, int spriteWidth, int spriteHeight, float frameTime, int firstX, int firstY, int lastX, int lastY) {
-		TextureRegion tr = new TextureRegion(texture);
-		TextureRegion[][] trArr = tr.split(spriteWidth, spriteHeight);
+	public static Animation getAnimation(TextureRegion texture, int spriteWidth, int spriteHeight, float frameTime, int firstX, int firstY, int lastX, int lastY) {
+		TextureRegion[][] trArr = texture.split(spriteWidth, spriteHeight);
 		Array<TextureRegion> frames = new Array<TextureRegion>();
 		for(int y = firstY; y <= lastY; y++) {
 			int x = 0;
@@ -129,10 +128,8 @@ public class Util {
 	 * @param centery - The centery
 	 * @param rotation - The angle of the rotation around the centerpoint
 	 */
-	public static void drawCentered(SpriteBatch batch, Texture tex, float centerx, float centery, float width, float height, float rotation) {
-		int texWidth = tex.getWidth();
-		int texHeight = tex.getHeight();
-		batch.draw(tex, centerx - width / 2, centery - height / 2, width / 2, height / 2, width, height, 1, 1, rotation, 0, 0, texWidth, texHeight, false, false);
+	public static void drawCentered(SpriteBatch batch, TextureRegion tex, float centerx, float centery, float width, float height, float rotation) {
+		batch.draw(tex, centerx - width / 2, centery - height / 2, width / 2, height / 2, width, height, 1, 1, rotation);
 	}
 	
 	/**

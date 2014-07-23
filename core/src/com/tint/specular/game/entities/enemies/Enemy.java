@@ -1,8 +1,8 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Entity;
@@ -77,7 +77,7 @@ public abstract class Enemy implements Entity {
 	
 	protected abstract Animation getSpawnAnim();
 	protected abstract float getRotationSpeed();
-	protected abstract Texture getWarningTex();
+	protected abstract AtlasRegion getWarningTex();
 	
 	public abstract Enemy copy();
 	public abstract void updateMovement();

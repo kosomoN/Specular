@@ -9,14 +9,14 @@ import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 
 public class HUD {
-	private AtlasRegion hudTopLeft, hudTopRight, hudBottom, bar, barFlipped, pause;
+	private AtlasRegion hudTopLeft, hudTopRight, hudBottom, bar, barFlipped, pause, dpadCenter, dpadOuter;
 	private Texture multiplierBar;
 	private AtlasRegion boardshockChargeTex[] = new AtlasRegion[4];
 	private GameState gs;
 	
 	public HUD(GameState gs) {
 		this.gs = gs;
-		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("graphics/game/HUD-packed/pack.atlas"));
+		TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("graphics/game/hud packed/pack.atlas"));
 		hudTopLeft = atlas.findRegion("HUD Top Left");
 		hudTopRight = atlas.findRegion("HUD Top Right");
 		hudBottom = atlas.findRegion("HUD bottom");
@@ -25,7 +25,10 @@ public class HUD {
 		barFlipped = new AtlasRegion(atlas.findRegion("Bar"));
 		barFlipped.flip(true, false);
 		
-		multiplierBar = new Texture(Gdx.files.internal("graphics/game/HUD/MP Bar.png"));
+		dpadCenter = atlas.findRegion("Dpad Center");
+		dpadOuter = atlas.findRegion("Dpad Indicator");
+		
+		multiplierBar = new Texture(Gdx.files.internal("graphics/game/hud packed/MP Bar.png"));
 		boardshockChargeTex[3] = atlas.findRegion("HUD Boardshock 3");
 	}
 
@@ -59,5 +62,13 @@ public class HUD {
 		int chargeLevel = (int) (gs.getBoardshockCharge() / 0.25f);
 		if(chargeLevel > 0)
 			batch.draw(boardshockChargeTex[chargeLevel - 1], -boardshockChargeTex[chargeLevel - 1].getRegionWidth() / 2, -Specular.camera.viewportHeight / 2);
+	}
+
+	public AtlasRegion getDpadCenter() {
+		return dpadCenter;
+	}
+
+	public AtlasRegion getDpadOuter() {
+		return dpadOuter;
 	}
 }

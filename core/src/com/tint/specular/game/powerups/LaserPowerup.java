@@ -1,23 +1,21 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.Player.AmmoType;
 
 public class LaserPowerup extends PowerUp {
 
-	private static Texture tex;
+	private static AtlasRegion tex;
 	
 	public LaserPowerup(float x, float y, GameState gs) {
 		super(x, y, gs, 800);
 	}
 	
-	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/powerups/Laser.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	public static void init(TextureAtlas ta) {
+		tex = ta.findRegion("game1/Laser Powerup");
 	}
 
 	@Override
@@ -43,7 +41,7 @@ public class LaserPowerup extends PowerUp {
 	}
 
 	@Override
-	public Texture getTexture() {
+	public AtlasRegion getTexture() {
 		return tex;
 	}
 

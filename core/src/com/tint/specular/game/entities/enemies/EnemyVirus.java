@@ -2,11 +2,10 @@ package com.tint.specular.game.entities.enemies;
 
 import static com.tint.specular.game.entities.enemies.EnemyVirus.Behavior.POINTLESS;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -27,7 +26,7 @@ public class EnemyVirus extends Enemy {
 	public static int virusAmount;
 	
 	private static Animation anim;
-	private static Texture tex, warningTex;
+	private static AtlasRegion tex, warningTex;
 	private float size = 1;
 	private float growthRate = (float) (BASE_GROWTH_RATE + BASE_GROWTH_RATE * Math.random());
 	private Behavior behavior;
@@ -56,7 +55,7 @@ public class EnemyVirus extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-		Util.drawCentered(batch, tex, (float) x - tex.getWidth() / 2 * size, y - tex.getHeight() / 2 * size, tex.getWidth() * size, tex.getHeight() * size, rotation * 80 % 360);
+		Util.drawCentered(batch, tex, (float) x - tex.getRegionWidth() / 2 * size, y - tex.getRegionHeight() / 2 * size, tex.getRegionWidth() * size, tex.getRegionHeight() * size, rotation * 80 % 360);
 	}
 	
 	@Override
@@ -128,15 +127,12 @@ public class EnemyVirus extends Enemy {
 		return 30 * size;
 	}
 	
-	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Virus.png"));
-		tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);		
+	public static void init(TextureAtlas ta) {
+		tex = ta.findRegion("game1/Enemy Virus");
 		
-		warningTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Warning.png"));
-		warningTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		warningTex = ta.findRegion("game1/Enemy Striver Warning");
 		
-		Texture animTex = new Texture(Gdx.files.internal("graphics/game/enemies/Enemy Striver Anim.png"));
-		animTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		AtlasRegion animTex = ta.findRegion("game1/Enemy Striver Anim");
 		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 1);
 	}
 
@@ -151,7 +147,7 @@ public class EnemyVirus extends Enemy {
 	}
 
 	@Override
-	protected Texture getWarningTex() {
+	protected AtlasRegion getWarningTex() {
 		return warningTex;
 	}
 

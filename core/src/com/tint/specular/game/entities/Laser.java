@@ -1,10 +1,8 @@
 package com.tint.specular.game.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pool.Poolable;
@@ -14,7 +12,7 @@ import com.tint.specular.game.entities.Particle.Type;
 public class Laser implements Entity, Poolable {
 
 	private static final int FADE_DELAY = 10;
-	private static Texture laserTexture;
+	private static AtlasRegion laserTexture;
 	private static Pool<Laser> laserPool;
 	
 	private float[] verticies = new float[4 * 5];
@@ -54,7 +52,7 @@ public class Laser implements Entity, Poolable {
 		verticies[12] = color;
 		verticies[17] = color;
 		
-		batch.draw(laserTexture, verticies, 0, 20);
+		batch.draw(laserTexture.getTexture(), verticies, 0, 20);
 	}
 	
 	@Override
@@ -69,12 +67,10 @@ public class Laser implements Entity, Poolable {
 
 	@Override
 	public void dispose() {
-		laserTexture.dispose();
 	}
 	
 	public static void init(final GameState gs) {
-		laserTexture = new Texture(Gdx.files.internal("graphics/game/Laser.png"));
-		laserTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		laserTexture = gs.getTextureAtlas().findRegion("game1/Laser");
 		
 		laserPool = new Pool<Laser>() {
 
@@ -125,26 +121,26 @@ public class Laser implements Entity, Poolable {
 		verticies[0] = x - normal.x;
 		verticies[1] = y - normal.y;
 		verticies[2] = Color.WHITE.toFloatBits();
-		verticies[3] = 0;
-		verticies[4] = 1;
+		verticies[3] = laserTexture.getU();
+		verticies[4] = laserTexture.getV2();
 		
 		verticies[5] = x + normal.x;
 		verticies[6] = y + normal.y;
 		verticies[7] = Color.WHITE.toFloatBits();
-		verticies[8] = 0;
-		verticies[9] = 0;
+		verticies[8] = laserTexture.getU();
+		verticies[9] = laserTexture.getV();
 		
 		verticies[10] = x2 + normal.x;
 		verticies[11] = y2 + normal.y;
 		verticies[12] = Color.WHITE.toFloatBits();
-		verticies[13] = 1;
-		verticies[14] = 0;
+		verticies[13] = laserTexture.getU2();
+		verticies[14] = laserTexture.getV();
 		
 		verticies[15] = x2 - normal.x;
 		verticies[16] = y2 - normal.y;
 		verticies[17] = Color.WHITE.toFloatBits();
-		verticies[18] = 1;
-		verticies[19] = 1;
+		verticies[18] = laserTexture.getU2();
+		verticies[19] = laserTexture.getV2();
 		
 		timer = 0;
 		
