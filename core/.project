@@ -15,11 +15,4 @@
 		<nature>org.springsource.ide.eclipse.gradle.core.nature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>assets</name>
-			<type>2</type>
-			<location>C:/Users/Daniel/Dropbox/Workspace/Specular/Specular/android/assets</location>
-		</link>
-	</linkedResources>
 </projectDescription>

@@ -110,6 +110,7 @@ public abstract class Enemy implements Entity {
 	public float getY() { return y; }
 	public float getDx() { return dx; }
 	public float getDy() { return dy; }
+	public float getSpeed() { return speed; }
 	public static float getSlowdown() { return slowdown; }
 
 	public float getLife() { return life; }

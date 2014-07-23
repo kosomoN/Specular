@@ -246,6 +246,8 @@ public class Wave {
 			break;
 		}
 		
+		e.setSpeed(e.getSpeed() + (gs.getGsTicks() / 10800f));
+		
 		gs.addEntity(e);
 		return e;
 	}

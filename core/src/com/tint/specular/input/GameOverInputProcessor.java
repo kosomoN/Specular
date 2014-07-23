@@ -16,7 +16,7 @@ public class GameOverInputProcessor extends InputAdapter {
 	private GameState gs;
 
 	// Buttons
-	private Button retry, menu, highscores;
+	private Button retry, menu, highscores, upgrades;
 	
 	private boolean touch;
 	
@@ -41,6 +41,11 @@ public class GameOverInputProcessor extends InputAdapter {
 		Texture highscoresPressedTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Highscores Pressed.png"));
 		
 		highscores = new Button(-420, -526, highscoresTex.getWidth(), highscoresTex.getHeight(), game.batch, highscoresTex, highscoresPressedTex);
+		
+		Texture upgradesTex = new Texture(Gdx.files.internal("graphics/game/packed/Upgrades.png"));
+		Texture upgradesPressedTex = new Texture(Gdx.files.internal("graphics/game/packed/Upgrades Pressed.png"));
+		
+		upgrades = new Button(-upgradesTex.getWidth() / 2, -upgradesTex.getHeight(), upgradesTex.getWidth(), upgradesTex.getHeight(), game.batch, upgradesTex, upgradesPressedTex);
 	}
 	
 	@Override
@@ -97,6 +102,15 @@ public class GameOverInputProcessor extends InputAdapter {
 			} else {
 				highscores.touchUp();
 			}
+			
+			
+			if(upgrades.isOver(touchpointx, touchpointy, false)) {
+				
+				// Go to highscores
+				game.enterState(States.UPGRADESTATE);
+			} else {
+				upgrades.touchUp();
+			}
 		}
 		
 
@@ -141,4 +155,5 @@ public class GameOverInputProcessor extends InputAdapter {
 	public Button getRetryBtn() { return retry; }
 	public Button getMenuBtn() { return menu; }
 	public Button getHighscoreBtn() { return highscores; }
+	public Button getUpgradeBtn() { return upgrades; }
 }

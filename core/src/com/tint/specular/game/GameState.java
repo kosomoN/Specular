@@ -177,7 +177,7 @@ public class GameState extends State {
 		Texture parallax = new Texture(Gdx.files.internal("graphics/game/packed/Parallax.png"));
 		
 		// Loading gameover texture
-		gameOverTex = new Texture(Gdx.files.internal("graphics/menu/gameover/Background.png"));
+		gameOverTex = new Texture(Gdx.files.internal("graphics/game/packed/Background.png"));
 		
 		// Loading pause menu texture
 		pauseTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Pause.png"));
@@ -536,7 +536,9 @@ public class GameState extends State {
 				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
 				ggInputProcessor.getRetryBtn().render();
 				ggInputProcessor.getMenuBtn().render();
+				ggInputProcessor.getMenuBtn().render();
 				ggInputProcessor.getHighscoreBtn().render();
+				ggInputProcessor.getUpgradeBtn().render();
 			}
 		}
 		
@@ -944,4 +946,9 @@ public class GameState extends State {
 	public TextureAtlas getTextureAtlas() {
 		return textureAtlas;
 	}
+	
+	public int getGsTicks(){
+		return ticks;
+	}
+	
 }

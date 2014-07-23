@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="assets"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
+	<classpathentry sourcepath="C:/Users/Merg/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.0-SNAPSHOT/56dbe5a756ae1efd82f80dd92ed45d1adcc5d83f/gdx-1.0-SNAPSHOT-sources.jar" kind="lib" path="C:/Users/Merg/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.0-SNAPSHOT/e544ea790a29a33485f683895bfa6507d805e91d/gdx-1.0-SNAPSHOT.jar" exported="true"/>
+	<classpathentry sourcepath="C:/Users/Merg/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-freetype/1.0-SNAPSHOT/1f1d06bff891064aac02073ae9ba0d4c02d1a1a5/gdx-freetype-1.0-SNAPSHOT-sources.jar" kind="lib" path="C:/Users/Merg/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-freetype/1.0-SNAPSHOT/ffddaf28baf256551e4b2e3ef1dca2b88d8518db/gdx-freetype-1.0-SNAPSHOT.jar" exported="true"/>
 </classpath>
