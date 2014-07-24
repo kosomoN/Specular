@@ -2,6 +2,8 @@ package com.tint.specular.game.entities.enemies;
 
 import java.util.Random;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -35,6 +37,8 @@ public class EnemyExploder extends Enemy {
 	private static Texture explosionTex1;
 	private static AtlasRegion explosionWarningTex2;
 	private int shockWaveTime;
+	
+	private Sound explosionSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Explosion.ogg"));	
 	
 	// Movement
 	private int timeSinceLastDirChange;
@@ -145,6 +149,8 @@ public class EnemyExploder extends Enemy {
 	private void explode() {
 		float distanceSquared;
 		double angle;
+		
+		explosionSound.play();
 		
 		// Enemies
 		for(Enemy e : gs.getEnemies()) {

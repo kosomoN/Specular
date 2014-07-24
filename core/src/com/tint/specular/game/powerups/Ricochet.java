@@ -12,6 +12,7 @@ public class Ricochet extends PowerUp {
 
 	private static AtlasRegion texture;
 	private static Texture levelTex;
+	private static int addBounces = 1;
 	
 	public Ricochet(float x, float y, GameState gs) {
 		super(x, y, gs, 1000);
@@ -31,14 +32,18 @@ public class Ricochet extends PowerUp {
 
 	@Override
 	protected void affect(Player p) {
-		Bullet.maxBounces += 1;
+		Bullet.maxBounces += addBounces;
 	}
 	
 	@Override
 	public void removeEffect(Player p) {
-		Bullet.maxBounces -= 1;
+		Bullet.maxBounces -= addBounces;
 	}
 
+	public static void setAddBounces(int addBounces) {
+		Ricochet.addBounces = addBounces;
+	}
+	
 	@Override
 	public AtlasRegion getTexture() {
 		return texture;

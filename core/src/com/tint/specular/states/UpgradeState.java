@@ -30,6 +30,7 @@ import com.tint.specular.upgrades.LifeUpgrade;
 import com.tint.specular.upgrades.MultiplierUpgrade;
 import com.tint.specular.upgrades.PDSUpgrade;
 import com.tint.specular.upgrades.RepulsorUpgrade;
+import com.tint.specular.upgrades.RicochetUpgrade;
 import com.tint.specular.upgrades.SlowdownUpgrade;
 import com.tint.specular.upgrades.SwarmUpgrade;
 import com.tint.specular.upgrades.Upgrade;
@@ -38,7 +39,7 @@ public class UpgradeState extends State {
 	
 	private Stage stage;
 	private UpgradeList list;
-	private Upgrade[] upgrades = new Upgrade[10];
+	private Upgrade[] upgrades = new Upgrade[11];
 	private static Texture[] upgradeLevels = {
 			new Texture(Gdx.files.internal("graphics/game/powerups/level 1.png")),
 			new Texture(Gdx.files.internal("graphics/game/powerups/level 2.png")),
@@ -63,8 +64,9 @@ public class UpgradeState extends State {
 		upgrades[5] = new PDSUpgrade(Specular.prefs.getInteger("PDS Upgrade Grade"), 10, ta);
 		upgrades[6] = new SwarmUpgrade(Specular.prefs.getInteger("Swarm Upgrade Grade"), 10, ta);
 		upgrades[7] = new RepulsorUpgrade(Specular.prefs.getInteger("Repulsor Upgrade Grade"), 10, ta);
-		upgrades[8] = new SlowdownUpgrade(Specular.prefs.getInteger("Slowdown Upgrade Grade"), 10, ta);
-		upgrades[9] = new BoardshockUpgrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"), 10, ta);
+		upgrades[8] = new RicochetUpgrade(Specular.prefs.getInteger("Ricochet Upgrade Grade"), 10, ta);
+		upgrades[9] = new SlowdownUpgrade(Specular.prefs.getInteger("Slowdown Upgrade Grade"), 10, ta);
+		upgrades[10] = new BoardshockUpgrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"), 10, ta);
 		
 		UpgradeList.init();
 	}
@@ -121,7 +123,7 @@ public class UpgradeState extends State {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				waitForDragDelay = 0;
-				currentlyPressing = 9 - (int) Math.floor(y / UpgradeList.rowHeight());
+				currentlyPressing = upgrades.length - (int) Math.floor(y / UpgradeList.rowHeight());
 				return true;
 			}
 
@@ -173,8 +175,9 @@ public class UpgradeState extends State {
 		Specular.prefs.putInteger("PDS Upgrade Grade", (int) upgrades[5].getGrade());
 		Specular.prefs.putInteger("Swarm Upgrade Grade", (int) upgrades[6].getGrade());
 		Specular.prefs.putInteger("Repulsor Upgrade Grade", (int) upgrades[7].getGrade());
-		Specular.prefs.putInteger("Slowdown Upgrade Grade", (int) upgrades[8].getGrade());
-		Specular.prefs.putInteger("Boardshock Upgrade Grade", (int) upgrades[9].getGrade());
+		Specular.prefs.putInteger("Ricochet Upgrade Grade", (int) upgrades[8].getGrade());
+		Specular.prefs.putInteger("Slowdown Upgrade Grade", (int) upgrades[9].getGrade());
+		Specular.prefs.putInteger("Boardshock Upgrade Grade", (int) upgrades[10].getGrade());
 		Specular.prefs.putFloat("Upgrade Points", upgradePoints);
 		
 		Specular.prefs.flush();
@@ -190,8 +193,9 @@ public class UpgradeState extends State {
 		upgrades[5].setGrade(Specular.prefs.getInteger("PDS Upgrade Grade"));
 		upgrades[6].setGrade(Specular.prefs.getInteger("Swarm Upgrade Grade"));
 		upgrades[7].setGrade(Specular.prefs.getInteger("Repulsor Upgrade Grade"));
-		upgrades[8].setGrade(Specular.prefs.getInteger("Slowdown Upgrade Grade"));
-		upgrades[9].setGrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"));
+		upgrades[8].setGrade(Specular.prefs.getInteger("Ricochet Upgrade Grade"));
+		upgrades[9].setGrade(Specular.prefs.getInteger("Slowdown Upgrade Grade"));
+		upgrades[10].setGrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"));
 		
 		upgradePoints = 1000;//Specular.prefs.getFloat("Upgrade Points");
 	}

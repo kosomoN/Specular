@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Music.OnCompletionListener;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -123,6 +124,7 @@ public class GameState extends State {
 	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
 	private float boardshockCharge = 0; //Value between 0 and 1
 	private int ticksforCamera;
+	private int tutorialTicks;
 	
 	// Fields that affect score or gameplay
 	private int scoreMultiplier = 1;
@@ -168,6 +170,9 @@ public class GameState extends State {
 	private int currentMusic = -1;
 	private Rectangle scissors = new Rectangle();
 	private Rectangle clipBounds;
+	
+	private Sound gameOverSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/GameOver.ogg"));
+	private Sound killSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Destruction.ogg"));	
 	
 	public GameState(Specular game) {
 		super(game);
@@ -418,6 +423,8 @@ public class GameState extends State {
 			}
 			
 			Camera.update(this);
+			
+			gameOverSound.play();
 		}
 	}
 	
@@ -509,9 +516,20 @@ public class GameState extends State {
 				
 				// Tutorial end
 				if(showTutorialEnd) {
-					game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
-					Util.writeCentered(game.batch, scoreFont, "Press to continue", 0, -100);
-					Util.writeCentered(game.batch, scoreFont, "End of tutorial", 0, 100);
+					tutorialTicks++;
+					
+					if(tutorialTicks > 120) {
+						float alpha = (tutorialTicks - 120) / 180f;
+						alpha = alpha > 1 ? 1 : alpha;
+						
+						game.batch.setColor(1, 1, 1, alpha);
+						game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
+						game.batch.setColor(Color.WHITE);
+						
+						scoreFont.setColor(1, 0, 0, alpha);
+						Util.writeCentered(game.batch, scoreFont, "Press to continue", 0, -100);
+						Util.writeCentered(game.batch, scoreFont, "End of tutorial", 0, 100);
+					}
 				}
 					
 				gameMode.render(game.batch);
@@ -613,6 +631,7 @@ public class GameState extends State {
 			enemiesKilled++;
 			
 			Camera.shake(0.3f, 0.1f);
+			killSound.play();
 		}
 	}
 	
@@ -664,6 +683,7 @@ public class GameState extends State {
 	
 	public void startTutorial(States returnState) {
 		tutorialOnGoing = true;
+		tutorialTicks = 0;
 		tutorial.start(returnState);
 	}
 	

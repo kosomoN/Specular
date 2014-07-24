@@ -72,12 +72,11 @@ public class Player implements Entity {
 //-----------------SOUND FX-----------------------	
 	
 	//Shoot sound
-	Sound soundShoot1 = Gdx.audio.newSound(Gdx.files.internal("audio/Shoot.wav"));
+	Sound shootBulletSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Shoot.ogg"));
 	
-	//Hit sound
-	Sound soundHit1 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit1.wav"));			
-	Sound soundHit2 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit2.wav"));	
-	Sound soundHit3 = Gdx.audio.newSound(Gdx.files.internal("audio/Hit3.wav"));
+	//Hit sounds
+	Sound deathSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Death.ogg"));			
+	Sound killSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Destruction.ogg"));	
 	private int shieldLoseRepelTimer;
 			
 //---------------SOUND FX END---------------------		
@@ -375,7 +374,7 @@ public class Player implements Entity {
 					}
 						
 					if(soundEffects)
-						soundShoot1.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
+						shootBulletSound.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
 					break;
 				case LASER:
 					shootLaser(direction);
@@ -416,9 +415,7 @@ public class Player implements Entity {
 	    					addLives(-1);
 	    					dying = true;
 	    					
-	    					//Hit sound (randomize)
-	//    					int randomNum = rand.nextInt(3);
-	//    					if (randomNum == 0) { soundHit1.play(1.0f); } else if (randomNum == 1) { soundHit2.play(1.0f); } else { soundHit3.play(1.0f); }
+	    					deathSound.play();
 	    					animFrameTime = 0;
 	    					clearEnemies = true;
 	    					

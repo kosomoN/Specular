@@ -47,7 +47,7 @@ public class Specular extends Game {
 	// Graphics has to be first, add new iPrefs last
 	private String[] iPrefs = {"Graphics", "Highscore", "Time Played Ticks", "Games Played", "Bullets Fired", "Bullets Missed", "Enemies Killed",
 			"Life Upgrade Grade", "Firerate Upgrade Grade", "Burst Upgrade Grade", "Beam Upgrade Grade", "Multiplier Upgrade Grade", "PDS Upgrade Grade", 
-			"Swarm Upgrade Grade", "Repulsor Upgrade Grade", "Slowdown Upgrade Grade", "Boardshock Upgrade Grade"};
+			"Swarm Upgrade Grade", "Repulsor Upgrade Grade", "Ricochet Upgrade Grade", "Slowdown Upgrade Grade", "Boardshock Upgrade Grade"};
 	// Add new fPrefs last
 	private String[] fPrefs = {"Move Stick Pos X", "Move Stick Pos Y", "Shoot Stick Pos X", "Shoot Stick Pos Y", "Sensitivity", "Upgrade Points"};
 	// The booleans which def value is true should be placed first

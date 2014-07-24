@@ -1,5 +1,7 @@
 package com.tint.specular.game.powerups;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -16,6 +18,7 @@ public class Repulsor extends PowerUp {
 	private static float maxActiveTime = 800;
 	private static AtlasRegion texture;
 	private static Texture levelTex;
+	private Sound repulsorSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/RepulsorEffect.ogg"));	
 	
 	public Repulsor(float x, float y, GameState gs) {
 		super(x, y, gs, maxActiveTime);
@@ -49,6 +52,8 @@ public class Repulsor extends PowerUp {
 				e.setY((float) (e.getY() + Math.sin(angle) * 20 * (1 - distanceSquared / PUSHAWAY_RANGE)));
 			}
 		}
+		
+		repulsorSound.loop();
 	}
 
 	@Override

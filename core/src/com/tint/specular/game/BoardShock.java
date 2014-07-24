@@ -9,7 +9,7 @@ import com.tint.specular.game.entities.enemies.EnemyWorm;
 
 public class BoardShock {
 	
-	private static Sound soundBs1 = Gdx.audio.newSound(Gdx.files.internal("audio/BoardSHOCK2.wav"));	
+	private static Sound boardshockSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/BoardShock.ogg"));	
 	private static float timeActivated;
 	private static boolean activated;
 	private static GameState gs;
@@ -22,7 +22,7 @@ public class BoardShock {
 		timeActivated = 0;
 		BoardShock.gs = gs;
 		
-		soundBs1.play();
+		boardshockSound.play();
 		
 		activationX = gs.getPlayer().getX();
 		activationY = gs.getPlayer().getY();

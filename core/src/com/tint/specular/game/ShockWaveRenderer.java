@@ -1,6 +1,7 @@
 package com.tint.specular.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 public class ShockWaveRenderer {
 	private static Texture shockWave, ring, waveMask;
 	private static ShaderProgram shader;
+	private static Sound shockwaveSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Shockwave.ogg"));	
 	
 	public static void renderShockwave(SpriteBatch batch, float x, float y, float time, boolean renderRing) {
 		batch.setShader(shader);
@@ -18,6 +20,8 @@ public class ShockWaveRenderer {
 		batch.setShader(null);
 		if(renderRing)
 			batch.draw(ring, x - ring.getWidth() / 2, y - ring.getHeight() / 2);
+		
+		shockwaveSound.play();
 	}
 	
 	public static void init(TextureAtlas ta) {
