@@ -56,6 +56,13 @@ public class EnemyWorm extends Enemy {
 	public void hit(float damage) {
 		head.hit(damage);
 	}
+	
+	public void kill() {
+		for(Iterator<Part> it = parts.iterator(); it.hasNext();) {
+			Part p = it.next();
+			p.hit(p.getLife());
+		}
+	}
 
 	private void setWormSpeed(float speed) {
 		this.speed = speed;

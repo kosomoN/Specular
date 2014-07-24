@@ -360,6 +360,8 @@ public class GameState extends State {
 						playerKilled = true;
 					}
 				}
+			} else {
+				clearLists();
 			}
 			
 			// Removing destroyed entities
@@ -841,18 +843,18 @@ public class GameState extends State {
 			});
 		}
 		
-		// Initializing power-ups
-		AddLife.reloadLevelTextures();
-		BulletBurst.reloadLevelTextures();
-		FireRateBoost.reloadLevelTextures();
-		ScoreMultiplier.reloadLevelTextures();
-		SlowdownEnemies.reloadLevelTextures();
-		BoardshockPowerUp.reloadLevelTextures();
-		Ricochet.reloadLevelTextures();
-		Repulsor.reloadLevelTextures();
-		LaserPowerup.reloadLevelTextures();
-		Swarm.reloadLevelTextures();
-		PDSPowerUp.reloadLevelTextures();
+		// Initializing power-up levels
+		AddLife.reloadLevelTextures(Specular.prefs.getInteger("Life Upgrade Grade"));
+		BulletBurst.reloadLevelTextures(Specular.prefs.getInteger("Burst Upgrade Grade"));
+		FireRateBoost.reloadLevelTextures(Specular.prefs.getInteger("Firerate Upgrade Grade"));
+		ScoreMultiplier.reloadLevelTextures(Specular.prefs.getInteger("Multiplier Upgrade Grade"));
+		SlowdownEnemies.reloadLevelTextures(Specular.prefs.getInteger("Slowdown Upgrade Grade"));
+		BoardshockPowerUp.reloadLevelTextures(Specular.prefs.getInteger("Board Upgrade Grade"));
+		Ricochet.reloadLevelTextures(Specular.prefs.getInteger("Ricochet Upgrade Grade"));
+		Repulsor.reloadLevelTextures(Specular.prefs.getInteger("Repulsor Upgrade Grade"));
+		LaserPowerup.reloadLevelTextures(Specular.prefs.getInteger("Beam Upgrade Grade"));
+		Swarm.reloadLevelTextures(Specular.prefs.getInteger("Swarm Upgrade Grade"));
+		PDSPowerUp.reloadLevelTextures(Specular.prefs.getInteger("PDS Upgrade Grade"));
 		
 		ticks = 0;
 		

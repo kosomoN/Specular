@@ -32,6 +32,8 @@ public abstract class PowerUp implements Entity {
 		this.maxActiveTime = maxActiveTime;
 	}
 	
+	public PowerUp() { }
+	
 	@Override
 	public boolean update() {
 		if(!isPaused) {
@@ -42,7 +44,7 @@ public abstract class PowerUp implements Entity {
 					affect(gs.getPlayer());
 					activated = true;
 				}
-				return despawnTime <= 0;
+				return gs.tutorialHasEnded() && despawnTime <= 0;
 			} else {
 				if(activeTime >= maxActiveTime) {
 					if(!hasRemovedEffect) {
@@ -82,7 +84,7 @@ public abstract class PowerUp implements Entity {
 	
 	@Override
 	public void render(SpriteBatch batch) {
-		if(!isActivated() && despawnTime > 0) {
+		if(!isActivated() && (despawnTime > 0 || gs.tutorialHasEnded())) {
 			batch.draw(getTexture(), x - getTexture().getRegionWidth() / 2, y - getTexture().getRegionHeight() / 2);
 			if(getLevelTexture() != null)
 				batch.draw(getLevelTexture(), x - getTexture().getRegionWidth() / 2, y - getTexture().getRegionHeight() / 2);

@@ -39,6 +39,14 @@ public class UpgradeState extends State {
 	private Stage stage;
 	private UpgradeList list;
 	private Upgrade[] upgrades = new Upgrade[10];
+	private static Texture[] upgradeLevels = {
+			new Texture(Gdx.files.internal("graphics/game/powerups/level 1.png")),
+			new Texture(Gdx.files.internal("graphics/game/powerups/level 2.png")),
+			new Texture(Gdx.files.internal("graphics/game/powerups/level 3.png")),
+			new Texture(Gdx.files.internal("graphics/game/powerups/level 4.png")),
+			new Texture(Gdx.files.internal("graphics/game/powerups/level 5.png")),
+			new Texture(Gdx.files.internal("graphics/game/powerups/level inf.png"))
+	};
 	private float upgradePoints;
 	protected int currentlyPressing;
 	protected float waitForDragDelay;
@@ -186,6 +194,26 @@ public class UpgradeState extends State {
 		upgrades[9].setGrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"));
 		
 		upgradePoints = 1000;//Specular.prefs.getFloat("Upgrade Points");
+	}
+	
+	public static Texture getUpgradeLevelTexture(float grade) {
+		if(grade > 0) {
+			if(grade < 2) {
+				return upgradeLevels[0];
+			} else if(grade < 3) {
+				return upgradeLevels[1];
+			} else if(grade < 5) {
+				return upgradeLevels[2];
+			} else if(grade < 10) {
+				return upgradeLevels[3];
+			} else if(grade == 10) {
+				return upgradeLevels[4]; // MAX
+			} else if(grade > 10) {
+				return upgradeLevels[5]; // Infinity if we someday want to enable
+			}
+		}
+		
+		return null;
 	}
 	
 	public Upgrade[] getUpgrades() {

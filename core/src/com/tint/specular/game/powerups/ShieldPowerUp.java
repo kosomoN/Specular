@@ -20,6 +20,10 @@ public class ShieldPowerUp extends PowerUp {
 		super(x, y, gs, -1);
 	}
 	
+	public ShieldPowerUp() {
+		super();
+	}
+	
 	public static void init(TextureAtlas ta) {
 		texture = ta.findRegion("game1/ShieldUpgrade");
 	}

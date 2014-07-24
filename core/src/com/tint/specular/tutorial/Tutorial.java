@@ -196,10 +196,10 @@ public class Tutorial {
 					
 					if(ticksGone >= 180 && !enemiesSpawned) {
 						for(int i = 0; i < 5; i++) {
-							gs.addEntity(new EnemyCircler((float) (Math.random() * Specular.camera.viewportWidth + 50 - 100), (float) (Math.random() * Specular.camera.viewportHeight + 50 - 100), gs));
+							gs.addEntity(new EnemyCircler((float) (Math.random() * (Specular.camera.viewportWidth - 100) + 50), (float) (Math.random() * (Specular.camera.viewportHeight - 100) + 50), gs));
 						}
 						enemiesSpawned = true;
-					} else if(gs.getEnemies().size == 0 && ticksGone >= 720) {
+					} else if(gs.getEnemies().size == 0 && ticksGone >= 540) {
 						currentWave.complete();
 						next();
 					}
@@ -231,7 +231,7 @@ public class Tutorial {
 						if(ticksGone >= 240 && !enemiesSpawned) {
 							Enemy e = null;
 							for(int i = 0; i < 10; i++) {
-								e = new EnemyWanderer((float) (Math.random() * Specular.camera.viewportWidth + 50 - 100), (float) (Math.random() * Specular.camera.viewportHeight + 50 - 100), gs);
+								e = new EnemyWanderer((float) (Math.random() * (Specular.camera.viewportWidth - 100) + 50), (float) (Math.random() * (Specular.camera.viewportHeight - 100) + 50), gs);
 								e.setSpeed((float) Math.random());
 								gs.addEntity(e);
 							}

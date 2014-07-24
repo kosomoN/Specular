@@ -2,6 +2,7 @@ package com.tint.specular.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Cullable;
 import com.badlogic.gdx.utils.Disposable;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
+import com.tint.specular.states.UpgradeState;
 import com.tint.specular.upgrades.Upgrade;
 import com.tint.specular.utils.Util;
 
@@ -28,6 +30,7 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 	public UpgradeList(Upgrade[] upgrades) {
 		super();
 		this.upgrades = upgrades;
+		
 		bars = new ProgressBar[upgrades.length];
 		for(int i = 0; i < upgrades.length; i++) {
 			bars[i] = new ProgressBar((int) (Specular.camera.viewportWidth - 200), 128);
@@ -55,6 +58,7 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 	public void draw(Batch batch, float parentAlpha) {
 		float itemY = getHeight() - rowHeight;
 		float y = getY() + itemY + 20;
+		Texture levelTex = null;
 		if(upgrades != null) {
 			for(int i = 0; i < upgrades.length; i++) {
 				y = getY() + itemY + 0;
@@ -62,6 +66,12 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 				
 				if (cullingArea == null || (itemY - rowHeight <= cullingArea.y + cullingArea.height && itemY + rowHeight >= cullingArea.y)) {
 					batch.draw(upgrades[i].getTexture(), getX() + 40, y + 35, upgrades[i].getTexture().getRegionWidth() * 1.5f, upgrades[i].getTexture().getRegionHeight() * 1.5f);
+					
+					levelTex = UpgradeState.getUpgradeLevelTexture(upgrades[i].getGrade());
+					if(levelTex != null) {
+						batch.draw(levelTex, getX() + 40, y + 35, levelTex.getWidth() * 1.5f, levelTex.getHeight() * 1.5f);
+					}
+					
 					bars[i].render(batch);
 					Util.writeCentered((SpriteBatch) batch, upgradeFont, upgrades[i].getDescription(), getX() + bars[i].getWidth() / 2, y + bars[i].getHeight() / 2);
 				} else if (itemY < cullingArea.y) {
