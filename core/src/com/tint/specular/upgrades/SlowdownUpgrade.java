@@ -28,4 +28,9 @@ public class SlowdownUpgrade extends Upgrade {
 	public AtlasRegion getTexture() {
 		return tex;
 	}
+
+	@Override
+	public String getDescription() {
+		return "Increase time of total freeze";
+	}
 }

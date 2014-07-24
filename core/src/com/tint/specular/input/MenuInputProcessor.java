@@ -84,6 +84,7 @@ public class MenuInputProcessor extends InputAdapter {
 			menuState.stopMusic();
 		} else {
 			menuState.setHowToPlay(false);
+			menuState.stopMusic();
 			helpPressed = false;
 			game.enterState(States.SINGLEPLAYER_GAMESTATE);
 			((GameState) game.getState(States.SINGLEPLAYER_GAMESTATE)).startTutorial(returnState);

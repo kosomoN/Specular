@@ -27,4 +27,9 @@ public class LaserUpgrade extends Upgrade {
 	public AtlasRegion getTexture() {
 		return tex;
 	}
+
+	@Override
+	public String getDescription() {
+		return "Increase targeting arc";
+	}
 }

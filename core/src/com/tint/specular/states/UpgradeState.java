@@ -57,6 +57,8 @@ public class UpgradeState extends State {
 		upgrades[7] = new RepulsorUpgrade(Specular.prefs.getInteger("Repulsor Upgrade Grade"), 10, ta);
 		upgrades[8] = new SlowdownUpgrade(Specular.prefs.getInteger("Slowdown Upgrade Grade"), 10, ta);
 		upgrades[9] = new BoardshockUpgrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"), 10, ta);
+		
+		UpgradeList.init();
 	}
 
 	@Override

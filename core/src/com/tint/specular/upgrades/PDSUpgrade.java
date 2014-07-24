@@ -28,4 +28,9 @@ public class PDSUpgrade extends Upgrade {
 	public AtlasRegion getTexture() {
 		return tex;
 	}
+
+	@Override
+	public String getDescription() {
+		return "Increase damage";
+	}
 }

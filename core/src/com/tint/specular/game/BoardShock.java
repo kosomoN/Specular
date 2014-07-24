@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.tint.specular.Specular;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyVirus;
+import com.tint.specular.game.entities.enemies.EnemyWorm;
 
 public class BoardShock {
 	
@@ -38,6 +39,11 @@ public class BoardShock {
 				zoom = 0;
 				for(Enemy e : gs.getEnemies()) {
 					if(!(e instanceof EnemyVirus) || Math.random() > efficiency) {
+						if(e instanceof EnemyWorm) {
+							e.kill();
+							continue;
+						}
+						
 						e.hit(e.getLife());
 						gs.gameMode.enemyKilled(e);
 					}

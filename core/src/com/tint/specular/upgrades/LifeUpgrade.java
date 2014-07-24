@@ -29,4 +29,9 @@ public class LifeUpgrade extends Upgrade {
 	public AtlasRegion getTexture() {
 		return tex;
 	}
+
+	@Override
+	public String getDescription() {
+		return "Fully upgraded = extra starting life";
+	}
 }

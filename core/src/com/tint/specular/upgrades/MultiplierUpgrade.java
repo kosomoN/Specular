@@ -27,4 +27,9 @@ public class MultiplierUpgrade extends Upgrade {
 	public AtlasRegion getTexture() {
 		return tex;
 	}
+
+	@Override
+	public String getDescription() {
+		return "Decrease multiplier cooldown";
+	}
 }

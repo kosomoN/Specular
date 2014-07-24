@@ -113,7 +113,7 @@ public class GameState extends State {
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	public static float TICK_LENGTH_MILLIS = 1000 / 60f;
-	public static int MULTIPLIER_COOLDOWN_TIME = 360; // ticks
+	public static int MULTIPLIER_COOLDOWN_TIME = 540; // ticks
 	private float unprocessed;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
@@ -305,7 +305,7 @@ public class GameState extends State {
 			
 			if(scoreMultiplier > 1) {
 				if(scoreMultiplierTimer < MULTIPLIER_COOLDOWN_TIME) {
-					float enemySizeDecrease = (float) scoreMultiplier / 2;
+					float enemySizeDecrease = (float) scoreMultiplier / 4;
 					
 					scoreMultiplierTimer += enemySizeDecrease;
 				} else {

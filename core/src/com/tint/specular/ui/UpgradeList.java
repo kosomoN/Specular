@@ -1,17 +1,25 @@
 package com.tint.specular.ui;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.scenes.scene2d.utils.Cullable;
 import com.badlogic.gdx.utils.Disposable;
 import com.tint.specular.Specular;
+import com.tint.specular.game.GameState;
 import com.tint.specular.upgrades.Upgrade;
+import com.tint.specular.utils.Util;
 
 public class UpgradeList extends Widget implements Cullable, Disposable {
 
 	private static float rowHeight = 160;
-	
+	private static BitmapFont upgradeFont;
 	private ProgressBar[] bars;
 	private Rectangle cullingArea;
 	private Upgrade[] upgrades;
@@ -31,6 +39,18 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 		invalidateHierarchy();
 	}
 	
+	public static void init() {
+		// Initializing font
+		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
+		FreeTypeFontParameter ftfp = new FreeTypeFontParameter();
+		ftfp.size = 40;
+		ftfp.characters = GameState.FONT_CHARACTERS;
+		upgradeFont = fontGen.generateFont(ftfp);
+		upgradeFont.setColor(Color.RED);
+		
+		fontGen.dispose();
+	}
+	
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
 		float itemY = getHeight() - rowHeight;
@@ -43,6 +63,7 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 				if (cullingArea == null || (itemY - rowHeight <= cullingArea.y + cullingArea.height && itemY + rowHeight >= cullingArea.y)) {
 					batch.draw(upgrades[i].getTexture(), getX() + 40, y + 35, upgrades[i].getTexture().getRegionWidth() * 1.5f, upgrades[i].getTexture().getRegionHeight() * 1.5f);
 					bars[i].render(batch);
+					Util.writeCentered((SpriteBatch) batch, upgradeFont, upgrades[i].getDescription(), getX() + bars[i].getWidth() / 2, y + bars[i].getHeight() / 2);
 				} else if (itemY < cullingArea.y) {
 					break;
 				}

@@ -45,6 +45,7 @@ public abstract class Upgrade {
 	
 	public abstract void refresh();
 	public abstract AtlasRegion getTexture();
+	public abstract String getDescription();
 
 	public void setGrade(int grade) {
 		this.grade = grade;
