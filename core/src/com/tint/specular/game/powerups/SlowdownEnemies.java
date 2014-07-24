@@ -1,7 +1,10 @@
 package com.tint.specular.game.powerups;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
@@ -14,6 +17,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 
 public class SlowdownEnemies extends PowerUp {
 	private static AtlasRegion texture;
+	private static Texture levelTex;
 	private static boolean hasUpdatedSlowdown = false;
 	private static float freezeTime; // Ms
 	private float ticksFrozen; // Only handled in one slowdown
@@ -25,6 +29,24 @@ public class SlowdownEnemies extends PowerUp {
 	public static void init(TextureAtlas ta) {
 		texture = ta.findRegion("game1/Slowdown");
 //		freezeTime = Specular.prefs.getFloat("Freeze Time");
+	}
+	
+	public static void reloadLevelTextures() {
+		int grade = Specular.prefs.getInteger("Slowdown Upgrade Grade");
+		
+		if(grade > 10) { // Infinity
+			levelTex = new Texture(Gdx.files.internal("graphics/game/powerups/level inf.png"));
+		} else if(grade == 10) { // Max
+			levelTex = new Texture(Gdx.files.internal("graphics/game/powerups/level 5.png"));
+		} else if(grade >= 5) {
+			levelTex = new Texture(Gdx.files.internal("graphics/game/powerups/level 4.png"));
+		} else if(grade >= 3) {
+			levelTex = new Texture(Gdx.files.internal("graphics/game/powerups/level 3.png"));
+		} else if(grade >= 2) {
+			levelTex = new Texture(Gdx.files.internal("graphics/game/powerups/level 2.png"));
+		} else if(grade >= 1) {
+			levelTex = new Texture(Gdx.files.internal("graphics/game/powerups/level 1.png"));
+		}
 	}
 	
 	@Override
@@ -55,4 +77,9 @@ public class SlowdownEnemies extends PowerUp {
 	
 	public static void setFreezeTime(float freezeTime) { SlowdownEnemies.freezeTime = freezeTime; }
 	public static float getFreezeTime() { return freezeTime; }
+
+	@Override
+	public Texture getLevelTexture() {
+		return levelTex;
+	}
 }

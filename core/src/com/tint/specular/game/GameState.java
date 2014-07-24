@@ -52,7 +52,7 @@ import com.tint.specular.game.powerups.PowerUp;
 import com.tint.specular.game.powerups.Repulsor;
 import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
-import com.tint.specular.game.powerups.ShieldUpgrade;
+import com.tint.specular.game.powerups.ShieldPowerUp;
 import com.tint.specular.game.powerups.SlowdownEnemies;
 import com.tint.specular.game.powerups.Swarm;
 import com.tint.specular.game.spawnsystems.ParticleSpawnSystem;
@@ -244,7 +244,7 @@ public class GameState extends State {
 		BulletBurst.init(textureAtlas);
 		FireRateBoost.init(textureAtlas);
 		ScoreMultiplier.init(textureAtlas);
-		ShieldUpgrade.init(textureAtlas);
+		ShieldPowerUp.init(textureAtlas);
 		SlowdownEnemies.init(textureAtlas);
 		BoardshockPowerUp.init(textureAtlas);
 		Ricochet.init(textureAtlas);
@@ -840,6 +840,19 @@ public class GameState extends State {
 				}
 			});
 		}
+		
+		// Initializing power-ups
+		AddLife.reloadLevelTextures();
+		BulletBurst.reloadLevelTextures();
+		FireRateBoost.reloadLevelTextures();
+		ScoreMultiplier.reloadLevelTextures();
+		SlowdownEnemies.reloadLevelTextures();
+		BoardshockPowerUp.reloadLevelTextures();
+		Ricochet.reloadLevelTextures();
+		Repulsor.reloadLevelTextures();
+		LaserPowerup.reloadLevelTextures();
+		Swarm.reloadLevelTextures();
+		PDSPowerUp.reloadLevelTextures();
 		
 		ticks = 0;
 		

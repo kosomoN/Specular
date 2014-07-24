@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
-import com.tint.specular.game.powerups.BulletBurst;
+import com.tint.specular.game.powerups.Repulsor;
 
 public class RepulsorUpgrade extends Upgrade {
 
@@ -22,7 +22,7 @@ public class RepulsorUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
-		BulletBurst.setMaxActiveTime((float) (800 + Math.sqrt(getGrade() * 100)));
+		Repulsor.setMaxActiveTime((float) (800 + Math.sqrt(getGrade() * 100)));
 	}
 	
 	public AtlasRegion getTexture() {

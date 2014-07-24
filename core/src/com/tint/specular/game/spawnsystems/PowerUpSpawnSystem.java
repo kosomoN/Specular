@@ -14,7 +14,7 @@ import com.tint.specular.game.powerups.PowerUp;
 import com.tint.specular.game.powerups.Repulsor;
 import com.tint.specular.game.powerups.Ricochet;
 import com.tint.specular.game.powerups.ScoreMultiplier;
-import com.tint.specular.game.powerups.ShieldUpgrade;
+import com.tint.specular.game.powerups.ShieldPowerUp;
 import com.tint.specular.game.powerups.SlowdownEnemies;
 import com.tint.specular.game.powerups.Swarm;
 
@@ -98,7 +98,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		else if(importance == slow)
 			gs.addEntity(new SlowdownEnemies(x, y, gs));
 		else if(importance == shield && player.getShields() < 3)
-			gs.addEntity(new ShieldUpgrade(x, y, gs));
+			gs.addEntity(new ShieldPowerUp(x, y, gs));
 		else if(importance == board)
 			gs.addEntity(new BoardshockPowerUp(x, y, gs));
 		else if(importance == ricochet)
