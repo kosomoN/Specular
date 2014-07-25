@@ -17,9 +17,12 @@ public class AnalogStick {
 	
 	private float xBase, yBase, xHead, yHead;
 	private int pointer;
+
+	private boolean isStatic;
 	
-	public AnalogStick() {
+	public AnalogStick(boolean isStatic) {
 		pointer = -1;
+		this.isStatic = isStatic;
 	}
 	
 	public static void init(HUD hud) {
@@ -28,8 +31,10 @@ public class AnalogStick {
 	}
 	
 	public void render(SpriteBatch batch) {
-		if(isActive()) {
+		if(isStatic || isActive())
 			Util.drawCentered(batch, base, xBase, yBase, 0);
+		
+		if(isActive()) {
 			Util.drawCentered(batch, head, xHead, yHead, 0);
 		}
 	}
@@ -70,5 +75,9 @@ public class AnalogStick {
 	
 	public boolean isActive() {
 		return pointer != -1;
+	}
+
+	public void setStatic(boolean isStatic) {
+		this.isStatic = isStatic;
 	}
 }

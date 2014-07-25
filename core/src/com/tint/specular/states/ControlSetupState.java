@@ -160,6 +160,8 @@ public class ControlSetupState extends State {
 			public void changed(ChangeEvent event, Actor actor) {
 				Specular.prefs.putBoolean("Static", staticBtn.isChecked());
 				staticSticks = staticBtn.isChecked();
+				inputProcessor.move.setStatic(staticSticks);
+				inputProcessor.shoot.setStatic(staticSticks);
 				stickPositionBtn.setVisible(staticBtn.isChecked());
 				if(staticBtn.isChecked()) {
 					inputProcessor.move.setBasePos(Specular.prefs.getFloat("Move Stick Pos X"), Specular.prefs.getFloat("Move Stick Pos Y"));
@@ -331,7 +333,7 @@ public class ControlSetupState extends State {
 	}
 	
 	private class ControlInputProcessor extends InputAdapter {
-		private AnalogStick shoot = new AnalogStick(), move = new AnalogStick();
+		private AnalogStick shoot = new AnalogStick(staticSticks), move = new AnalogStick(staticSticks);
 		
 		public ControlInputProcessor() {
 			if(staticSticks) {

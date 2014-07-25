@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.tint.specular.Specular;
+import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
 
 /**
@@ -27,8 +28,8 @@ public class GameInputProcessor implements InputProcessor {
 		tilt = Specular.prefs.getBoolean("Tilt");
 		staticSticks = Specular.prefs.getBoolean("Static");
 		
-		shoot = new AnalogStick();
-		move = new AnalogStick();
+		shoot = new AnalogStick(staticSticks);
+		move = new AnalogStick(staticSticks);
 		
 		move.setBasePos(Specular.prefs.getFloat("Move Stick Pos X"), Specular.prefs.getFloat("Move Stick Pos Y"));
 		shoot.setBasePos(Specular.prefs.getFloat("Shoot Stick Pos X"), Specular.prefs.getFloat("Shoot Stick Pos Y"));
@@ -44,6 +45,9 @@ public class GameInputProcessor implements InputProcessor {
 			s = true;
 		else if(keycode == Keys.D)
 			d = true;
+		
+		else if(keycode == Keys.F)
+			Camera.shake(1, 0.01f);
 		
 		return false;
 	}
@@ -215,5 +219,9 @@ public class GameInputProcessor implements InputProcessor {
 		// Resettng them
 		shoot.setPointer(-1);
 		move.setPointer(-1);
+	}
+
+	public boolean isStaticSticks() {
+		return staticSticks;
 	}
 }

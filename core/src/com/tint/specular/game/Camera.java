@@ -23,7 +23,9 @@ public class Camera {
 		
 		
 		float targetCameraZoom = 1;
-		if(gs.getEnemies().size > 0) {
+		
+		//Only calculate every 10 ticks
+		if(gs.getEnemies().size > 0 && gs.getGsTicks() % 10 == 0) {
 			float lowestDeltaX = Integer.MAX_VALUE;
 			float lowestDeltaY = Integer.MAX_VALUE;
 			
@@ -59,10 +61,10 @@ public class Camera {
 			//Moving the camera in the direction of the average of all enemies positions
 			enemyOffsetX += ((totalX / gs.getEnemies().size - cameraX) / 4 - enemyOffsetX) / 80;
 			enemyOffsetY += ((totalY / gs.getEnemies().size - cameraY) / 4 - enemyOffsetY) / 80;
-			
-			targetX += enemyOffsetX;
-			targetY += enemyOffsetY;
 		}
+		
+		targetX += enemyOffsetX;
+		targetY += enemyOffsetY;
 		
 		cameraX += ((targetX + gs.getCurrentMap().getWidth() / 2) - cameraX) / CAMERA_SPEED;
 		cameraY += ((targetY + gs.getCurrentMap().getHeight() / 2) - cameraY) / CAMERA_SPEED;

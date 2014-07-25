@@ -382,7 +382,7 @@ public class Player implements Entity {
 				}
 				//The amount of spaces, i.e. two bullet "lines" have one space between them
 				
-				timeSinceLastFire -= fireRate;
+				timeSinceLastFire %= fireRate;
 			}
 		}
 	}
