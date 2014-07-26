@@ -74,7 +74,7 @@ public class Specular extends Game {
 		
 		prefs = Gdx.app.getPreferences("Specular Preferences");
 		// Checks if the preferences are missing or it is the first time the app is run
-		checkPreferences(new ArrayList<Integer>());
+		checkPreferences();
 		Gdx.input.setCatchBackKey(true);
 		
 		
@@ -88,136 +88,122 @@ public class Specular extends Game {
 	 * Checks if everything is okay with the preferences and the program is good to go.
 	 * To reset a specific preference, use the list in the parameters to add the indexes for them.
 	 */
-	private void checkPreferences(List<Integer> failedIndexes) {
-		int prefsFailureIndex = 0;
+	private void checkPreferences() {
+		List<Integer> missingIndexes = new ArrayList<Integer>();
+		int index = 0;
 		
-		try {
-			/* Checking that the entries exists and are of valid type
-			 * Check order should stay same in both checkPreferences and createPreferences [int, float, boolean]
-			 */
+		/* Checking that the entries exists and are of valid type
+		 * Check order should stay same in both checkPreferences and createPreferences [int, float, boolean]
+		 */
 			
-			// Create new ones if there was any errors, error means List<Integer> ints == null or if an exception is thrown; it's handled below
-			if(failedIndexes != null) {
-				for(; prefsFailureIndex < iPrefs.length; prefsFailureIndex++) {
-					if(!failedIndexes.contains(prefsFailureIndex))
-						if(!prefs.contains(iPrefs[prefsFailureIndex]))
-							throw new NoPreferenceKeyException(iPrefs[prefsFailureIndex] + " missing");
-				}
-				
-				for(; prefsFailureIndex - iPrefs.length < fPrefs.length; prefsFailureIndex++) {
-					if(!failedIndexes.contains(prefsFailureIndex))
-						if(!prefs.contains(fPrefs[prefsFailureIndex - iPrefs.length]))
-							throw new NoPreferenceKeyException(fPrefs[prefsFailureIndex - iPrefs.length] + " missing");
-				}
-				
-				for(; prefsFailureIndex - fPrefs.length - iPrefs.length < bPrefs.length; prefsFailureIndex++) {
-					if(!failedIndexes.contains(prefsFailureIndex))
-						if(!prefs.contains(bPrefs[prefsFailureIndex - fPrefs.length - iPrefs.length]))
-							throw new NoPreferenceKeyException(bPrefs[prefsFailureIndex - fPrefs.length - iPrefs.length] + " missing");
-				}
-				
-				createPreferences(failedIndexes, prefsFailureIndex);
-			} else {
-				checkPreferences(new ArrayList<Integer>());
+		// Create new ones if there was any errors, error means List<Integer> ints == null or if an exception is thrown; it's handled below
+		for(; index < iPrefs.length; index++) {
+			if(!prefs.contains(iPrefs[index])) {
+				missingIndexes.add(index);
+				System.err.println(iPrefs[index] + " missing");
 			}
-		} catch(NumberFormatException nfe) {
-			List<Integer> tempInts = new ArrayList<Integer>();
-			tempInts.addAll(failedIndexes);
-			tempInts.add(prefsFailureIndex);
-			checkPreferences(tempInts);
-			nfe.printStackTrace();
-		} catch (NoPreferenceKeyException e) {
-			List<Integer> tempInts = new ArrayList<Integer>();
-			tempInts.addAll(failedIndexes);
-			tempInts.add(prefsFailureIndex);
-			checkPreferences(tempInts);
-			System.out.println(prefsFailureIndex);
-			e.printStackTrace();
-		} 
+		}
+		
+		for(; index - iPrefs.length < fPrefs.length; index++) {
+			if(!prefs.contains(fPrefs[index - iPrefs.length])) {
+				missingIndexes.add(index);
+				System.err.println(fPrefs[index - iPrefs.length] + " missing");
+			}
+		}
+		
+		for(; index - fPrefs.length - iPrefs.length < bPrefs.length; index++) {
+			if(!prefs.contains(bPrefs[index - fPrefs.length - iPrefs.length])) {
+				missingIndexes.add(index);
+				System.err.println(bPrefs[index - fPrefs.length - iPrefs.length] + " missing");
+			}
+		}
+		
+		if(missingIndexes.isEmpty())
+			System.out.println("No preferences missing");
+			
+		createPreferences(missingIndexes, index);
 	}
 	
 	/**
 	 * Creates default preferences for those who has errors
 	 */
-	private void createPreferences(List<Integer> failedIndexes, int prefsSize) {
+	private void createPreferences(List<Integer> missingIndexes, int prefsSize) {
 		// Preferences that might have errors and if so, replace with default value. Else, don't do anything
 		int i = 0;
-		
-		// Creating integer preferences
-		for(i = 0; i < iPrefs.length; i++) {
-			if(failedIndexes.contains(i)) {
-				// Graphics settings (High on by default) 0 = low, 1 = medium, 2 = high
-				prefs.putInteger(iPrefs[i], i == 0 ? 2 : 0); // First element in String array is graphics
-			}
+		int index = 0;
+		for(i = 0; i < missingIndexes.size(); i++) {
+			index = missingIndexes.get(i);
+			setDefaultPrefsValue(index);
 		}
 		
-		float x = -camera.viewportWidth / 6 * 2;
-		float y = -camera.viewportHeight / 6;
-		// Creating floating point preferences
-		for(int j = 0; j < fPrefs.length; j++) {
-			// Stick Position 						NOTE: THIS IS NOT VERY GOOD!
-			if(failedIndexes.contains(i)) {
-				if(j < 4) {
-					if(j % 2 == 1) {
-						prefs.putFloat(fPrefs[j], y);
-					} else {
-						if(j == 2)
-							prefs.putFloat(fPrefs[j], -x);
-						else
-							prefs.putFloat(fPrefs[j], x);
-					}
-				}
-			} 
-			// All the others
-			else if(j == 4) {
-				if(failedIndexes.contains(i)) {
-					prefs.putFloat(fPrefs[j], 1f);
-				}
-			} else  {
-				if(failedIndexes.contains(i)) {
-					prefs.putFloat(fPrefs[j], 0);
-				}
-			}
-			i++;
-		}
-		
-		int trueBooleans = 3;
-		// Creating boolean preferences
-		for(int k = 0; k < fPrefs.length; k++) {
-			if(failedIndexes.contains(i)) {
-				prefs.putBoolean(bPrefs[k], k < trueBooleans);
-			}
-			i++;
-		}
-
 		// Checking if there is too many preferences than there should and removes the unnecessary ones
-		// BUG! Still some wierd things happening but that doesn't interfere with anyhting important
+		// Duplicates isn't handled here but automatically removed (The last value stays)
 		Set<String> keys = prefs.get().keySet();
 		int a = 0;
-		System.out.println(keys.size() + ", " + prefsSize);
+		System.out.println("Preferences added: " + missingIndexes.size());
+		System.out.println("Current prefs size: " + keys.size() + " | Right prefs size: " + prefsSize);
 		if(keys.size() > prefsSize) {
 			iteration:
 			for(Iterator<String> it = keys.iterator(); it.hasNext();) {
 				String s = it.next();
-				for(a = 0; a < iPrefs.length; a++)
+				for(; a < iPrefs.length; a++)
 					if(iPrefs[a].equals(s))
 						continue iteration;
 				
-				for(a = 0; a < fPrefs.length; a++)
-					if(fPrefs[a].equals(s))
+				for(; a - iPrefs.length < fPrefs.length; a++)
+					if(fPrefs[a - iPrefs.length].equals(s))
 						continue iteration;
 				
-				for(a = 0; a < bPrefs.length; a++)
-					if(bPrefs[a].equals(s))
+				for(; a - iPrefs.length - fPrefs.length < bPrefs.length; a++)
+					if(bPrefs[a - iPrefs.length - fPrefs.length].equals(s))
 						continue iteration;
 				
 				System.err.println("Key: " + s + " and its value removed");
+				it.remove();
 				prefs.remove(s);
 			}
 		}
 		
 		//Needed for android to save the settings
 		prefs.flush();
+	}
+	
+	private void setDefaultPrefsValue(int index) {
+		if(index < iPrefs.length) {
+			// Graphics settings (High on by default) 0 = low, 1 = medium, 2 = high
+			prefs.putInteger(iPrefs[index], index == 0 ? 2 : 0); // First element in String array is graphics
+		} else if(index - iPrefs.length < fPrefs.length) {
+			index -= iPrefs.length;
+			
+			float x = -camera.viewportWidth / 6 * 2;
+			float y = -camera.viewportHeight / 6;
+			
+			// The first four elements in float prefs array are stick positions
+			if(index < 4) {
+				if(index % 2 == 1) {
+					prefs.putFloat(fPrefs[index], y);
+				} else {
+					if(index == 2)
+						prefs.putFloat(fPrefs[index], -x);
+					else
+						prefs.putFloat(fPrefs[index], x);
+				}
+			}
+			// All the others
+			else if(index == 4) {
+				prefs.putFloat(fPrefs[index], 1f); // Sensitivity
+			} else {
+				prefs.putFloat(fPrefs[index], 0);
+			}
+			index += iPrefs.length;
+			
+		} else if(index - iPrefs.length - fPrefs.length < bPrefs.length) {
+			int trueBooleans = 3; // This must be checked when booleans are added
+			
+			index -= (iPrefs.length + fPrefs.length);
+			prefs.putBoolean(bPrefs[index], index < trueBooleans); // The first three booleans have a default value of true, rest of them false
+			index += (iPrefs.length + fPrefs.length);
+		}
 	}
 	
 	public void load() {
@@ -245,10 +231,5 @@ public class Specular extends Game {
 	@Override
 	public void dispose() {
 		batch.dispose();
-	}
-	
-	private class NoPreferenceKeyException extends Exception {
-		private static final long serialVersionUID = 1L;
-		public NoPreferenceKeyException(String message) { super(message); }
 	}
 }

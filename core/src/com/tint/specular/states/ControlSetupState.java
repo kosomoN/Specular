@@ -125,7 +125,7 @@ public class ControlSetupState extends State {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				hideableUI.setVisible(!hideableUI.isVisible());
-				stickPositionBtn.setVisible(hideableUI.isVisible());
+				stickPositionBtn.setVisible(hideableUI.isVisible() && staticSticks);
 			}
 		});
 		
@@ -135,7 +135,7 @@ public class ControlSetupState extends State {
 		TextureRegion stickPositionTexDown = new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Positions Pressed.png")));
 		stickPositionBtn = new Button(new TextureRegionDrawable(stickPositionTex), new TextureRegionDrawable(stickPositionTexDown));
 		
-		stickPositionBtn.setPosition((stage.getWidth() - stickPositionBtn.getWidth()) / 2, (stage.getHeight() + Specular.camera.viewportHeight) / 2 - 250);
+		stickPositionBtn.setPosition((stage.getWidth() - stickPositionBtn.getWidth()) / 2, testBtn.getY() - testBtn.getHeight());//(stage.getHeight() + Specular.camera.viewportHeight) / 2 - 250);
 		
 		stickPositionBtn.setVisible(Specular.prefs.getBoolean("Static"));
 		
@@ -341,7 +341,7 @@ public class ControlSetupState extends State {
 				shoot.setBasePos(Specular.prefs.getFloat("Shoot Stick Pos X"), Specular.prefs.getFloat("Shoot Stick Pos Y"));
 			} else {
 				//Just a hack to stop it from rendering before the user touches the screen
-				move.setBasePos(-3000, -3000);
+				move.setPointer(-1);
 			}
 				
 		}
