@@ -123,7 +123,7 @@ public class UpgradeState extends State {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				waitForDragDelay = 0;
-				currentlyPressing = upgrades.length - (int) Math.floor(y / UpgradeList.rowHeight());
+				currentlyPressing = upgrades.length - 1 - (int) Math.floor(y / UpgradeList.rowHeight());
 				return true;
 			}
 

@@ -74,7 +74,7 @@ public class Specular extends Game {
 		
 		prefs = Gdx.app.getPreferences("Specular Preferences");
 		// Checks if the preferences are missing or it is the first time the app is run
-		checkPreferences();
+		checkPreferences(0);
 		Gdx.input.setCatchBackKey(true);
 		
 		
@@ -88,46 +88,57 @@ public class Specular extends Game {
 	 * Checks if everything is okay with the preferences and the program is good to go.
 	 * To reset a specific preference, use the list in the parameters to add the indexes for them.
 	 */
-	private void checkPreferences() {
+	private void checkPreferences(int index) {
 		List<Integer> missingIndexes = new ArrayList<Integer>();
-		int index = 0;
 		
 		/* Checking that the entries exists and are of valid type
 		 * Check order should stay same in both checkPreferences and createPreferences [int, float, boolean]
 		 */
+		
+		try {
+			// Create new ones if there was any errors, error means List<Integer> ints == null or if an exception is thrown; it's handled below
+			for(; index < iPrefs.length; index++) {
+				if(!prefs.contains(iPrefs[index])) {
+					missingIndexes.add(index);
+					
+					System.err.println(iPrefs[index] + " missing");
+				}
+				prefs.getInteger(iPrefs[index]);
+			}
 			
-		// Create new ones if there was any errors, error means List<Integer> ints == null or if an exception is thrown; it's handled below
-		for(; index < iPrefs.length; index++) {
-			if(!prefs.contains(iPrefs[index])) {
-				missingIndexes.add(index);
-				System.err.println(iPrefs[index] + " missing");
+			for(; index - iPrefs.length < fPrefs.length; index++) {
+				if(!prefs.contains(fPrefs[index - iPrefs.length])) {
+					missingIndexes.add(index);
+					System.err.println(fPrefs[index - iPrefs.length] + " missing");
+				}
+				prefs.getFloat(fPrefs[index - iPrefs.length]);
 			}
-		}
-		
-		for(; index - iPrefs.length < fPrefs.length; index++) {
-			if(!prefs.contains(fPrefs[index - iPrefs.length])) {
-				missingIndexes.add(index);
-				System.err.println(fPrefs[index - iPrefs.length] + " missing");
-			}
-		}
-		
-		for(; index - fPrefs.length - iPrefs.length < bPrefs.length; index++) {
-			if(!prefs.contains(bPrefs[index - fPrefs.length - iPrefs.length])) {
-				missingIndexes.add(index);
-				System.err.println(bPrefs[index - fPrefs.length - iPrefs.length] + " missing");
-			}
-		}
-		
-		if(missingIndexes.isEmpty())
-			System.out.println("No preferences missing");
 			
-		createPreferences(missingIndexes, index);
+			for(; index - fPrefs.length - iPrefs.length < bPrefs.length; index++) {
+				if(!prefs.contains(bPrefs[index - fPrefs.length - iPrefs.length])) {
+					missingIndexes.add(index);
+					System.err.println(bPrefs[index - fPrefs.length - iPrefs.length] + " missing");
+				}
+				prefs.getBoolean(bPrefs[index - iPrefs.length - fPrefs.length]);
+			}
+			
+			if(missingIndexes.isEmpty())
+				System.out.println("No preferences missing");
+			
+		} catch(NumberFormatException e) {
+			missingIndexes.add(index);
+			index++;
+			checkPreferences(index);
+			e.printStackTrace();
+		}
+		
+		createPreferences(missingIndexes);
 	}
 	
 	/**
 	 * Creates default preferences for those who has errors
 	 */
-	private void createPreferences(List<Integer> missingIndexes, int prefsSize) {
+	private void createPreferences(List<Integer> missingIndexes) {
 		// Preferences that might have errors and if so, replace with default value. Else, don't do anything
 		int i = 0;
 		int index = 0;
@@ -139,27 +150,31 @@ public class Specular extends Game {
 		// Checking if there is too many preferences than there should and removes the unnecessary ones
 		// Duplicates isn't handled here but automatically removed (The last value stays)
 		Set<String> keys = prefs.get().keySet();
-		int a = 0;
-		System.out.println("Preferences added: " + missingIndexes.size());
-		System.out.println("Current prefs size: " + keys.size() + " | Right prefs size: " + prefsSize);
-		if(keys.size() > prefsSize) {
+		System.out.println("Preferences changed: " + missingIndexes.size());
+		System.out.println("Current prefs size: " + keys.size() + " | Right prefs size: " + (iPrefs.length + fPrefs.length + bPrefs.length));
+		if(keys.size() > iPrefs.length + fPrefs.length + bPrefs.length) {
 			iteration:
 			for(Iterator<String> it = keys.iterator(); it.hasNext();) {
+				int a = 0;
 				String s = it.next();
-				for(; a < iPrefs.length; a++)
-					if(iPrefs[a].equals(s))
+				for(; a < iPrefs.length; a++) {
+					if(iPrefs[a].equals(s)) {
 						continue iteration;
+					}
+				}
 				
-				for(; a - iPrefs.length < fPrefs.length; a++)
-					if(fPrefs[a - iPrefs.length].equals(s))
+				for(; a - iPrefs.length < fPrefs.length; a++) {
+					if(fPrefs[a - iPrefs.length].equals(s)) {
 						continue iteration;
+					}
+				}
 				
 				for(; a - iPrefs.length - fPrefs.length < bPrefs.length; a++)
-					if(bPrefs[a - iPrefs.length - fPrefs.length].equals(s))
+					if(bPrefs[a - iPrefs.length - fPrefs.length].equals(s)) {
 						continue iteration;
+					}
 				
 				System.err.println("Key: " + s + " and its value removed");
-				it.remove();
 				prefs.remove(s);
 			}
 		}
