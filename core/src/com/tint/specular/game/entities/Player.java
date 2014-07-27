@@ -75,7 +75,8 @@ public class Player implements Entity {
 	
 	//Hit sounds
 	Sound deathSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Death.ogg"));			
-	Sound killSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Destruction.ogg"));	
+	Sound killSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Destruction.ogg"));
+	Sound spawnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Spawn.ogg"));
 	private int shieldLoseRepelTimer;
 			
 //---------------SOUND FX END---------------------		
@@ -562,6 +563,7 @@ public class Player implements Entity {
 		spawning = true;
 		dead = false;
 		tilt = Specular.prefs.getBoolean("Tilt");
+		spawnSound.play();
 	}
 	
 	public static void init(TextureAtlas ta) {

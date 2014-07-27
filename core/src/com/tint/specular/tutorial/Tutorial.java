@@ -256,6 +256,7 @@ public class Tutorial {
 	
 	private void end() {
 		gs.showTutorialEnd();
+		gs.getPlayer().setLife(Player.getStartingLives());
 	}
 	
 	public States getReturnState() {

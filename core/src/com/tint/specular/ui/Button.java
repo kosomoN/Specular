@@ -1,5 +1,7 @@
 package com.tint.specular.ui;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -19,6 +21,7 @@ public class Button {
 	private Texture upTexture, downTexture;
 	private SpriteBatch batch;
 	private boolean touched;
+	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPressed.ogg"));
 	
 	public Button(float x, float y, float width, float height, SpriteBatch batch, Texture upTexture, Texture downTexture) {
 		this.batch = batch;
@@ -37,6 +40,7 @@ public class Button {
 	}
 	
 	public void touchOver(float x, float y) {
+		btnSound.play();
 		touched = true;
 	}
 	

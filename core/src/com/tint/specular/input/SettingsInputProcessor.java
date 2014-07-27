@@ -1,19 +1,21 @@
 package com.tint.specular.input; 
   
-import com.badlogic.gdx.Gdx; 
-import com.badlogic.gdx.InputAdapter; 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.tint.specular.Specular; 
-import com.tint.specular.Specular.States; 
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.audio.Sound;
+import com.tint.specular.Specular;
+import com.tint.specular.Specular.States;
 import com.tint.specular.game.GfxSettings;
 import com.tint.specular.states.MainmenuState;
-import com.tint.specular.utils.Util; 
+import com.tint.specular.utils.Util;
   
 public class SettingsInputProcessor extends InputAdapter { 
   
     private Specular game; 
     private boolean soundsMuted = true, musicMuted = true, backBtnPressed, controlsPressed, daeronPressed, warriyoPressed;
     private int graphics;
+    private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPressed.ogg"));
       
     public SettingsInputProcessor(Specular game) {
         this.game = game; 
@@ -41,7 +43,10 @@ public class SettingsInputProcessor extends InputAdapter {
         
         daeronPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 570, 500, 110, false);
         warriyoPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 450, 500, 110, false);
-          
+        
+        if(!soundsMuted && (backBtnPressed || controlsPressed)) {
+        	btnSound.play();
+        }
         return false; 
     } 
   

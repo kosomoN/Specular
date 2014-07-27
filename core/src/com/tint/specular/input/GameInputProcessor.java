@@ -2,6 +2,7 @@ package com.tint.specular.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.InputProcessor;
 import com.tint.specular.Specular;
 import com.tint.specular.game.Camera;
@@ -21,6 +22,8 @@ public class GameInputProcessor implements InputProcessor {
 	private AnalogStick shoot, move;
 	private GameState gs;
 	private boolean pausePressed;
+	
+	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPressed.ogg"));
 	
 	public GameInputProcessor(GameState gs) {
 		this.gs = gs;
@@ -89,6 +92,7 @@ public class GameInputProcessor implements InputProcessor {
 				return false;
 			}
 			if(viewporty < 70 && viewportx > Specular.camera.viewportWidth - 400) {
+				btnSound.play();
 				pausePressed = true;
 				return false;
 			}
