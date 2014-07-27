@@ -15,7 +15,7 @@ public class SettingsInputProcessor extends InputAdapter {
     private Specular game; 
     private boolean soundsMuted = true, musicMuted = true, backBtnPressed, controlsPressed, daeronPressed, warriyoPressed;
     private int graphics;
-    private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPressed.ogg"));
+    private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPress.ogg"));
       
     public SettingsInputProcessor(Specular game) {
         this.game = game; 

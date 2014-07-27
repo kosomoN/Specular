@@ -101,7 +101,7 @@ public class UpgradeState extends State {
 			public boolean keyUp(int keycode) {
 				if(keycode == Keys.BACK || keycode == Keys.ESCAPE) {
 					saveUpgrades();
-					game.enterState(States.PROFILE_STATE);
+					game.enterState(States.MAINMENUSTATE);
 				}
 				return super.keyUp(keycode);
 			}
@@ -159,7 +159,7 @@ public class UpgradeState extends State {
 			public void clicked(InputEvent event, float x, float y) {
 				super.clicked(event, x, y);
 				saveUpgrades();
-				game.enterState(States.PROFILE_STATE);
+				game.enterState(States.MAINMENUSTATE);
 			}
 		});
 		stage.addActor(backBtn);

@@ -23,7 +23,7 @@ public class GameInputProcessor implements InputProcessor {
 	private GameState gs;
 	private boolean pausePressed;
 	
-	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPressed.ogg"));
+	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPress.ogg"));
 	
 	public GameInputProcessor(GameState gs) {
 		this.gs = gs;

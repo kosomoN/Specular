@@ -21,7 +21,7 @@ public class Button {
 	private Texture upTexture, downTexture;
 	private SpriteBatch batch;
 	private boolean touched;
-	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPressed.ogg"));
+	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPress.ogg"));
 	
 	public Button(float x, float y, float width, float height, SpriteBatch batch, Texture upTexture, Texture downTexture) {
 		this.batch = batch;

@@ -45,11 +45,13 @@ public class Specular extends Game {
 	public SpriteBatch batch;
 	
 	// Graphics has to be first, add new iPrefs last
-	private String[] iPrefs = {"Graphics", "Highscore", "Time Played Ticks", "Games Played", "Bullets Fired", "Bullets Missed", "Enemies Killed",
-			"Life Upgrade Grade", "Firerate Upgrade Grade", "Burst Upgrade Grade", "Beam Upgrade Grade", "Multiplier Upgrade Grade", "PDS Upgrade Grade", 
-			"Swarm Upgrade Grade", "Repulsor Upgrade Grade", "Ricochet Upgrade Grade", "Slowdown Upgrade Grade", "Boardshock Upgrade Grade"};
+	private String[] iPrefs = {"Graphics", "Highscore", "Player Starting Lives", "Time Played Ticks", "Games Played", "Bullets Fired", "Bullets Missed",
+			"Enemies Killed", "Multiplier Cooldown", "Life Upgrade Grade", "Firerate Upgrade Grade", "Burst Upgrade Grade", "Beam Upgrade Grade",
+			"Multiplier Upgrade Grade", "PDS Upgrade Grade", "Swarm Upgrade Grade", "Repulsor Upgrade Grade", "Ricochet Upgrade Grade", "Slowdown Upgrade Grade",
+			"Boardshock Upgrade Grade"};
 	// Add new fPrefs last
-	private String[] fPrefs = {"Move Stick Pos X", "Move Stick Pos Y", "Shoot Stick Pos X", "Shoot Stick Pos Y", "Sensitivity", "Upgrade Points"};
+	private String[] fPrefs = {"Move Stick Pos X", "Move Stick Pos Y", "Shoot Stick Pos X", "Shoot Stick Pos Y", "Sensitivity", "Upgrade Points", "Freeze Time",
+			"Boardshock Efficiency", "Burst Max Time", "Firerate Boost", "Swarm Effect", "Repulsor Max Time", "PDS Damage", "Laser Aiming Arc"};
 	// The booleans which def value is true should be placed first
 	private String[] bPrefs = {"First Time", "Static", "Particles", "MusicMuted", "SoundsMuted", "Tilt"};
 	

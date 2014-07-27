@@ -72,6 +72,7 @@ public class Player implements Entity {
 	
 	//Shoot sound
 	Sound shootBulletSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Shoot.ogg"));
+	Sound shootLaserSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Laser.ogg"));
 	
 	//Hit sounds
 	Sound deathSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Death.ogg"));			

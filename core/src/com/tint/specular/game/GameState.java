@@ -127,6 +127,7 @@ public class GameState extends State {
 	private int tutorialTicks;
 	
 	// Fields that affect score or gameplay
+	private final int LAST_HIGHSCORE = Specular.prefs.getInteger("Highscore");
 	private int scoreMultiplier = 1;
 	private int enemiesKilled;
 	private boolean enablePowerUps = true;
@@ -164,6 +165,7 @@ public class GameState extends State {
 	// Art
 	private HUD hud;
 	private Texture gameOverTex;
+	private Texture newHighscore;
 	private Texture pauseTex, greyPixel;
 	private Music music;
 	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","03.ogg","05.ogg","06.ogg"};
@@ -183,10 +185,11 @@ public class GameState extends State {
 		Texture shockLight = new Texture(Gdx.files.internal("graphics/game/packed/ShockLight.png"));
 		Texture parallax = new Texture(Gdx.files.internal("graphics/game/packed/Parallax.png"));
 		
-		// Loading gameover texture
+		// Loading gameover textures
 		gameOverTex = new Texture(Gdx.files.internal("graphics/game/packed/Background.png"));
+		newHighscore = new Texture(Gdx.files.internal("graphics/menu/gameover/New Highscore.png"));
 		
-		// Loading pause menu texture
+		// Loading pause menu textures
 		pauseTex = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Pause.png"));
 		greyPixel = new Texture(Gdx.files.internal("graphics/menu/pausemenu/Grey Pixel.png"));
 		
@@ -554,6 +557,10 @@ public class GameState extends State {
 					if(!shaken) {
 						Camera.shake(0.5f, 0.02f);
 						shaken = true;
+					}
+					
+					if(player.getScore() > LAST_HIGHSCORE) {
+						Util.drawCentered(game.batch, newHighscore, 0, 0, 0);
 					}
 				}
 				
@@ -968,10 +975,9 @@ public class GameState extends State {
 		Specular.prefs.putInteger("Games Played", Specular.prefs.getInteger("Games Played") + 1);
 		
 		Specular.prefs.putInteger("Player Starting Lives", Player.getStartingLives());
+		Specular.prefs.putInteger("Multiplier Cooldown", MULTIPLIER_COOLDOWN_TIME);
 		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
 		Specular.prefs.putFloat("Boardshock Efficiency", BoardShock.getEfficiency());
-		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
-		Specular.prefs.putInteger("Multiplier Cooldown", MULTIPLIER_COOLDOWN_TIME);
 		Specular.prefs.putFloat("Burst Max Time", BulletBurst.getMaxActiveTime());
 		Specular.prefs.putFloat("Firerate Boost", FireRateBoost.getBoost());
 		Specular.prefs.putFloat("Swarm Effect", Swarm.getEffect());
