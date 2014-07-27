@@ -478,8 +478,12 @@ public class GameState extends State {
 				ent.render(game.batch);
 		}
 		
-		for(Particle p : particles)
-			p.render(game.batch);
+        game.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+        
+        for(Particle p : particles)
+           p.render(game.batch);
+       
+        game.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		
 		for(Entity ent : enemies) {
 			ent.render(game.batch);
