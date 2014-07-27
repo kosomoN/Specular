@@ -52,8 +52,18 @@ public class Repulsor extends PowerUp {
 				e.setY((float) (e.getY() + Math.sin(angle) * 20 * (1 - distanceSquared / PUSHAWAY_RANGE)));
 			}
 		}
-		
+	}
+	
+	@Override
+	protected void affect(Player player) {
+		super.affect(player);
 		repulsorSound.loop();
+	}
+
+	@Override
+	public void removeEffect(Player player) {
+		super.removeEffect(player);
+		repulsorSound.stop();
 	}
 
 	@Override
