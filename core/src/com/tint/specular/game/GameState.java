@@ -172,7 +172,8 @@ public class GameState extends State {
 	private Rectangle clipBounds;
 	
 	private Sound gameOverSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/GameOver.ogg"));
-	private Sound killSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Destruction.ogg"));	
+	private Sound killSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Destruction.ogg"));
+	private boolean soundEffects;	
 	
 	public GameState(Specular game) {
 		super(game);
@@ -267,6 +268,8 @@ public class GameState extends State {
 		waveManager = new WaveManager(this);
 		
 		input = Gdx.input;
+		
+		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
 	}
 		
 	@Override
@@ -994,6 +997,10 @@ public class GameState extends State {
 	
 	public int getGsTicks(){
 		return ticks;
+	}
+
+	public boolean isSoundEnabled() {
+		return soundEffects;
 	}
 	
 }

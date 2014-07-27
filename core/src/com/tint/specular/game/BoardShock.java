@@ -22,7 +22,8 @@ public class BoardShock {
 		timeActivated = 0;
 		BoardShock.gs = gs;
 		
-		boardshockSound.play();
+		if(gs.isSoundEnabled())
+			boardshockSound.play();
 		
 		activationX = gs.getPlayer().getX();
 		activationY = gs.getPlayer().getY();

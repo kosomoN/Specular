@@ -19,7 +19,7 @@ import com.tint.specular.utils.Util;
 
 public class EnemyWorm extends Enemy {
 	
-	private static final int DIST_BETWEEN_PARTS = 50, LENGTH = 6;
+	private static final int DIST_BETWEEN_PARTS = 50, LENGTH = 9;
 	
 	private static AtlasRegion body1Tex, body2Tex, headTex, tailTex;
 	
@@ -29,6 +29,7 @@ public class EnemyWorm extends Enemy {
 	private float speed;
 	private int ticks;
 	private double angle;
+	private float headOffset = 0.8f;
 	
 	public EnemyWorm(float x, float y, GameState gs) {
 		super(x, y, gs, 1);
@@ -196,17 +197,23 @@ public class EnemyWorm extends Enemy {
 				
 				this.rotation = (float) Math.toDegrees(Math.atan2(y - nextPart.y, x - nextPart.x)) + 90;
 			} else {
-				angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
-				/*
-				if(deltaAngle > Math.PI)
-					deltaAngle += deltaAngle > 0 ? -Math.PI * 2 : Math.PI * 2;
+				angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x) + headOffset;
 				
-				if(deltaAngle < 0)
-					angle += TURN_RATE;
-				else
-					angle -= TURN_RATE;*/
 				x += Math.cos(angle) * speed * slowdown;
 				y += Math.sin(angle) * speed * slowdown;
+				
+				if(x - 20 - 18 < 0) {
+					headOffset = -headOffset;
+				} else if(x + 20 + 18 > gs.getCurrentMap().getHeight()){
+					headOffset = -headOffset;
+				}
+				
+				if(y - 20 - 18 < 0) {
+					headOffset = -headOffset;
+				} else if(y + 20 + 18 > gs.getCurrentMap().getHeight()){
+					headOffset = -headOffset;
+				}
+				
 				oldX = x;
 				oldY = y;
 			}

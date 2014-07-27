@@ -68,7 +68,6 @@ public class Player implements Entity {
 	private boolean tilt;
 	
 	private boolean dying, spawning, dead;
-	private boolean soundEffects;
 //-----------------SOUND FX-----------------------	
 	
 	//Shoot sound
@@ -90,7 +89,6 @@ public class Player implements Entity {
 		centerx = x;
 		centery = y;
 		pds = new PDS(gs, this);
-		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
 		setLife(startingLives);
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
@@ -373,7 +371,7 @@ public class Player implements Entity {
 						shootBullet(direction, offset, spaces - 2);
 					}
 						
-					if(soundEffects)
+					if(gs.isSoundEnabled())
 						shootBulletSound.play(0.7f, (float) (1 + Math.random() / 3 - 0.16), 0);
 					break;
 				case LASER:
