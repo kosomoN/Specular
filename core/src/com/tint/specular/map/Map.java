@@ -93,7 +93,7 @@ public class Map {
 	public void render(SpriteBatch batch, boolean light) {
 		batch.draw(texture, 0, 0);
 		
-		if(light) {
+		if(GfxSettings.setting != GfxSettings.LOW) {
 			batch.end();
 			
 			//Render masks to the framebuffer
@@ -126,48 +126,47 @@ public class Map {
 			}
 			
 			if(BoardShock.isActivated() && GfxSettings.ReturnBs()) {
-				float sizee = BoardShock.getShockWaveProgress() * 6144;
-				batch.draw(ShockWaveRenderer.getMaskTexture(), BoardShock.getActivationX() - sizee / 2, fbo.getHeight() - BoardShock.getActivationY() - sizee / 2, sizee, sizee);
+				float size = BoardShock.getShockWaveProgress() * 6144;
+				batch.draw(ShockWaveRenderer.getMaskTexture(), BoardShock.getActivationX() - size / 2, fbo.getHeight() - BoardShock.getActivationY() - size / 2, size, size);
 			}
 			
 			if(GfxSettings.ReturnPtr()){
 				for(Particle e : gs.getParticles()) {
 					switch(e.getType()) {
 					case BULLET:
-						batch.setColor(1, 0, 0, 1);
+						batch.setColor(1, 0, 0, e.getLifetimePercent());
 						break;
 					case ENEMY_BOOSTER:
-						batch.setColor(1, 1, 0, 1);
+						batch.setColor(1, 1, 0, e.getLifetimePercent());
 						break;
 					case ENEMY_DASHER:
-						batch.setColor(0, 1, 0, 1);
+						batch.setColor(0, 1, 0, e.getLifetimePercent());
 						break;
 					case ENEMY_CIRCLER:
-						batch.setColor(0.3f, 1f, 1f, 1);
+						batch.setColor(0.3f, 1f, 1f, e.getLifetimePercent());
 						break;
 					case ENEMY_SHIELDER:
-						batch.setColor(1, 1, 1, 1);
-						break;
+						batch.setColor(1, 1, 1, e.getLifetimePercent());
 					case ENEMY_STRIVER:
-						batch.setColor(1, 0, 1, 1);
+						batch.setColor(1, 0, 1, e.getLifetimePercent());
 						break;
 					case ENEMY_VIRUS:
-						batch.setColor(1, 0, 1, 1);
+						batch.setColor(1, 0, 1, e.getLifetimePercent());
 						break;
 					case ENEMY_WANDERER:
-						batch.setColor(1, 0.9f, 0.5f, 1);
+						batch.setColor(1, 0.9f, 0.5f, e.getLifetimePercent());
 						break;
 					case ENEMY_EXPLODER:
-						batch.setColor(0.8f, 0.2f, 0, 1);
+						batch.setColor(0.8f, 0.2f, 0, e.getLifetimePercent());
 						break;
 					case ENEMY_TANKER:
-						batch.setColor(0.8f, 0.5f, 0, 1);
+						batch.setColor(0.8f, 0.5f, 0, e.getLifetimePercent());
 						break;
 					default:
 						break;
 					}
 					
-					float size = e.getLifetimePercent() * 160 + 80;
+					float size = 240;//e.getLifetimePercent() * 160 + 80; //Uncomment for scaling glow size
 					batch.draw(mask, e.getX() - size / 2, fbo.getHeight() - e.getY() - size / 2, size, size);
 				}
 			}

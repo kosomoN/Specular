@@ -30,6 +30,7 @@ public class Particle implements Entity, Poolable {
 	private Type type;
 	private int textureIndexInArray;
 	private float rotation;
+	private boolean grow;
 	
 	private static final float ROTATION_SPEED = 6;
 	private static TextureRegion[] textures;
@@ -60,9 +61,9 @@ public class Particle implements Entity, Poolable {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		float alpha = (lifetime / 25f) * (lifetime / 25f);
-		batch.setColor(1, 1, 1, alpha < 1 ? alpha : 1);
-		Util.drawCentered(batch, textures[textureIndexInArray], x, y, rotation);
+		float alpha = Math.min((lifetime / 25f) * (lifetime / 25f), 1);
+		batch.setColor(1, 1, 1, alpha);
+		Util.drawCentered(batch, textures[textureIndexInArray], x, y, (grow ? 1.5f - alpha : alpha) * textures[textureIndexInArray].getRegionWidth(), (grow ? 1.5f - alpha : alpha) * textures[textureIndexInArray].getRegionHeight(), rotation); 
 		batch.setColor(1, 1, 1, 1);
 	}
 	
@@ -110,6 +111,8 @@ public class Particle implements Entity, Poolable {
 		lifetime = 30 + rand.nextInt(20);
 		
 		rotation = rand.nextInt(360);
+		
+		grow = rand.nextBoolean();
 	}
 	
 	@Override
