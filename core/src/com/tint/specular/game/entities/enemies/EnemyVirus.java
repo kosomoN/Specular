@@ -23,7 +23,7 @@ public class EnemyVirus extends Enemy {
 	}
 
 	private static final float BASE_GROWTH_RATE = 0.0025f;
-	public static int virusAmount;
+	public static int spawnedVirusAmount;
 	
 	private static Animation anim;
 	private static AtlasRegion tex, warningTex;
@@ -34,7 +34,7 @@ public class EnemyVirus extends Enemy {
 	
 	public EnemyVirus(float x, float y, GameState gs, boolean spawnedFromOtherVirus) {
 		super(x, y, gs, 1);
-		virusAmount++;
+		spawnedVirusAmount++;
 		
 		double rand = Math.random();
 		if(rand > 0.333) {
@@ -58,16 +58,6 @@ public class EnemyVirus extends Enemy {
 		Util.drawCentered(batch, tex, (float) x - tex.getRegionWidth() / 2 * size, y - tex.getRegionHeight() / 2 * size, tex.getRegionWidth() * size, tex.getRegionHeight() * size, rotation * 80 % 360);
 	}
 	
-	@Override
-	public boolean update() {
-		boolean isDead = super.update();
-		if(isDead) {
-			virusAmount--;
-			return true;
-		}
-		return false;
-	}
-
 	@Override
 	public void updateMovement() {
 		switch(behavior) {
@@ -105,7 +95,7 @@ public class EnemyVirus extends Enemy {
 		x += dx * slowdown;
 		y += dy * slowdown;
 		
-		size += growthRate * 10 / virusAmount;
+		size += growthRate * 10 / spawnedVirusAmount;
 		if(size >= 1.5f) {
 			size = 1;
 			gs.addEntity(new EnemyVirus(x, y, gs, true));

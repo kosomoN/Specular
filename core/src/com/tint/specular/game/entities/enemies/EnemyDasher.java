@@ -1,12 +1,10 @@
 package com.tint.specular.game.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
@@ -24,9 +22,10 @@ public class EnemyDasher extends Enemy {
 
 	private double direction;
 	private int boostingDelay = -1;
+	private boolean lastDashVertical = Math.random() > 0.5 ? true : false;
+	private int maxDashDistance = (int) (Math.random() * 500 + 750);
+	private float distanceMoved;
 	
-	private static ShaderProgram shader;
-
 	public EnemyDasher(float x, float y, GameState gs) {
 		super(x, y, gs, 10);
 	}
@@ -66,14 +65,8 @@ public class EnemyDasher extends Enemy {
 		
 		batch.setColor(Color.WHITE);
 		
-		if(speed > 0) {
-			batch.setShader(shader);
-			shader.setUniformf("blurSize", speed / 300);
-		}
 		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction) - 90);
 		
-		if(speed > 0)
-			batch.setShader(null);
 	}
 	
 	@Override
@@ -83,32 +76,35 @@ public class EnemyDasher extends Enemy {
 		if(boostingDelay > 120) {
 			speed += 0.5;
 			
-			dx = (float) (Math.cos(direction) * speed);
-			dy = (float) (Math.sin(direction) * speed);
-			x += dx * slowdown;
-			y += dy * slowdown;
-			
+
+			x += dx * speed * slowdown;
+			y += dy * speed * slowdown;
+		
+			distanceMoved += dx * speed * slowdown;
+	
+			distanceMoved += dy * speed * slowdown;
+
 			if(boostingDelay > 150) {
 				if (direction == 0) {
-					if(gs.getPlayer().getX() < x) {
+					if(distanceMoved > maxDashDistance || gs.getPlayer().getX() < x) {
 						boostingDelay = 0;
 						dx = 0;
 						dy = 0;
 					}
 				} else if (direction == Math.PI) {
-					if(gs.getPlayer().getX() > x) {
+					if(distanceMoved > maxDashDistance || gs.getPlayer().getX() > x) {
 						boostingDelay = 0;
 						dx = 0;
 						dy = 0;
 					}
 				} else if (direction == Math.PI / 2) {
-					if(gs.getPlayer().getY() < y) {
+					if(distanceMoved > maxDashDistance || gs.getPlayer().getY() < y) {
 						boostingDelay = 0;
 						dx = 0;
 						dy = 0;
 					}
 				} else if (direction == Math.PI / 2 * 3) {
-					if(gs.getPlayer().getY() > y) {
+					if(distanceMoved > maxDashDistance || gs.getPlayer().getY() > y) {
 						boostingDelay = 0;
 						dx = 0;
 						dy = 0;
@@ -120,18 +116,19 @@ public class EnemyDasher extends Enemy {
 
 		if(boostingDelay == 0) {
 			if(gs.getPlayer() != null) {
-				int dx = (int) (gs.getPlayer().getX() - x);
-				int dy = (int) (gs.getPlayer().getY() - y);
 				
-				if(Math.abs(dx) > Math.abs(dy)) {
-					direction = (dx > 0 ? 0 : Math.PI);
-				} else {
+				if(lastDashVertical) {
+					int dy = (int) (gs.getPlayer().getY() - y);
 					direction = (dy > 0 ? Math.PI / 2 : Math.PI / 2 * 3 );
+				} else {
+					int dx = (int) (gs.getPlayer().getX() - x);
+					direction = (dx > 0 ? 0 : Math.PI);
 				}
+				lastDashVertical = !lastDashVertical;
 			}
 			
-			dx = 0;
-			dy = 0;
+			dx = (float) (Math.cos(direction));
+			dy = (float) (Math.sin(direction));
 			speed = 0;
 		}
 		
@@ -154,18 +151,7 @@ public class EnemyDasher extends Enemy {
 		
 		AtlasRegion animTex = ta.findRegion("game1/Enemy Dasher Anim");
 		anim = Util.getAnimation(animTex, 128, 128, 1 / 15f, 0, 0, 3, 3);
-		
-
-		ShaderProgram.pedantic = false;
-		 
-		shader = new ShaderProgram(VERT, FRAG);
-		if (!shader.isCompiled()) {
-			System.err.println(shader.getLog());
-			Gdx.app.exit();
-		}
-		if (shader.getLog().length()!=0)
-			System.out.println(shader.getLog());
-		
+			
 	}
 	
 	@Override
@@ -202,43 +188,5 @@ public class EnemyDasher extends Enemy {
 		return new EnemyDasher(0, 0, gs);
 	}
 
-	private final static String VERT =  
-			"attribute vec4 "+ShaderProgram.POSITION_ATTRIBUTE+";\n" +
-			"attribute vec4 "+ShaderProgram.COLOR_ATTRIBUTE+";\n" +
-			"attribute vec2 "+ShaderProgram.TEXCOORD_ATTRIBUTE+"0;\n" +
-			
-			"uniform mat4 u_projTrans;\n" + 
-			" \n" + 
-			"varying vec2 vTexCoord;\n" +
-			
-			"void main() {\n" +  
-			"	vTexCoord = "+ShaderProgram.TEXCOORD_ATTRIBUTE+"0;\n" +
-			"	gl_Position =  u_projTrans * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" +
-			"}";
-	
-	private final static String FRAG = 
-			  "#ifdef GL_ES\n"
-			+ "#define LOWP lowp\n"
-			+ "precision mediump float;\n"
-			+ "#else\n"
-			+ "#define LOWP \n"
-			+ "#endif\n" +
-			"varying vec2 vTexCoord;\n" + 
-			"uniform sampler2D u_texture;\n"+
-			"uniform float blurSize;\n"+
-			"void main(void) {\n" + 
-			"   vec4 sum = vec4(0.0);\n"+
-			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y - 4.0*blurSize)) * 0.05;\n"+
-			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y - 3.0*blurSize)) * 0.09;\n"+
-			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y - 2.0*blurSize)) * 0.12;\n"+
-			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y - blurSize)) * 0.15;\n"+
-			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y)) * 0.16;\n"+
-			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y + blurSize)) * 0.15;\n"+
-			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y + 2.0*blurSize)) * 0.12;\n"+
-			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y + 3.0*blurSize)) * 0.09;\n"+
-			"	sum += texture2D(u_texture, vec2(vTexCoord.x, vTexCoord.y + 4.0*blurSize)) * 0.05;\n"+
- 
-   			"gl_FragColor = sum;\n" + 
-			"}";
 
 }
