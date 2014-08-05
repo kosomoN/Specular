@@ -19,7 +19,7 @@ import com.tint.specular.utils.Util;
 
 public class EnemyWorm extends Enemy {
 	
-	private static final int DIST_BETWEEN_PARTS = 50, LENGTH = 9;
+	private static final int DIST_BETWEEN_PARTS = 50, LENGTH = 16;
 	
 	private static AtlasRegion body1Tex, body2Tex, headTex, tailTex;
 	

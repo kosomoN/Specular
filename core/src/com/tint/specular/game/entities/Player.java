@@ -599,11 +599,11 @@ public class Player implements Entity {
 	}
 	
 	public float getBarrelPosX(int barrelIndex) {
-		return (float) (centerx + Math.cos(Math.toRadians(direction + barrelIndex * 8)) * 60);
+		return (float) (centerx + Math.cos(Math.toRadians(direction + barrelIndex * 8)) * 40);
 	}
 	
 	public float getBarrelPosY(int barrelIndex) {
-		return (float) (centery + Math.sin(Math.toRadians(direction + barrelIndex * 8)) * 60);
+		return (float) (centery + Math.sin(Math.toRadians(direction + barrelIndex * 8)) * 40);
 	}
 
 	public List<TrailPart> getTrail() {

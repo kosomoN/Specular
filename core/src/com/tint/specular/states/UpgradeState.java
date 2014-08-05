@@ -120,10 +120,14 @@ public class UpgradeState extends State {
 		list = new UpgradeList(getUpgrades());
 		list.addListener(new InputListener() {
 
+			private float downX, downY;
+			
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				waitForDragDelay = 0;
 				currentlyPressing = upgrades.length - 1 - (int) Math.floor(y / UpgradeList.rowHeight());
+				downX = x;
+				downY = y;
 				return true;
 			}
 
@@ -136,17 +140,19 @@ public class UpgradeState extends State {
 
 			@Override
 			public void touchDragged(InputEvent event, float x, float y, int pointer) {
-				currentlyPressing = -1;
+				if(Math.abs(downX - x) > 40 || Math.abs(downY - y) > 40)
+					currentlyPressing = -1;
+					
 				super.touchDragged(event, x, y, pointer);
 			}
 			
 			
 		});
 		
+		
 		ScrollPane sp = new ScrollPane(list);
 		sp.setSize(Specular.camera.viewportWidth - 200, Specular.camera.viewportHeight * 0.6f);
 		sp.setPosition(100, Specular.camera.viewportHeight * 0.2f);
-		
 		stage.addActor(sp);
 		
 		TextureRegionDrawable trd = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/highscore/Back.png"))));

@@ -118,7 +118,6 @@ public class GameState extends State {
 	private float unprocessed;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
-	private long gameOverTicks;
 	private boolean isPaused = false;
 	private int powerUpSpawnTime = 400;		// 10 sec in updates / ticks
 	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
@@ -208,11 +207,12 @@ public class GameState extends State {
 		// Initializing font
 		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
 		FreeTypeFontParameter ftfp = new FreeTypeFontParameter();
-		ftfp.size = 939; // MAX SIZE
-		ftfp.characters = FONT_CHARACTERS;
+		ftfp.size = 96; // MAX SIZE
+		ftfp.characters = "1234567890";
 		gameOverScoreFont = fontGen.generateFont(ftfp);
 		gameOverScoreFont.setColor(Color.RED);
 		
+		ftfp.characters = FONT_CHARACTERS;
 		ftfp.size = 64;
 		scoreFont = fontGen.generateFont(ftfp);
 		scoreFont.setColor(Color.RED);
@@ -335,7 +335,7 @@ public class GameState extends State {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
 				
-				if(!tutorialOnGoing) {// || (tutorial.getWave(TutorialEvent.POWER_UPS_SHOWN).isCompleted() || tutorial.getCurrentWave().equals(tutorial.getWave(TutorialEvent.POWER_UPS_SHOWN)))) {
+				if(!tutorialOnGoing) {
 					// Update power-ups
 					powerUpSpawnTime--;
 					if(powerUpSpawnTime < 0) {
@@ -410,7 +410,7 @@ public class GameState extends State {
 				else {
 					saveStats();
 					input.setInputProcessor(ggInputProcessor);
-					gameOverScoreFont.scale(7);
+					gameOverScoreFont.setScale(14);
 					
 					if(!Specular.nativeAndroid.isLoggedIn()) {
 						Specular.nativeAndroid.login(new RequestCallback() {
@@ -544,7 +544,6 @@ public class GameState extends State {
 					
 				gameMode.render(game.batch);
 			} else if(gameMode.isGameOver()) { // Game over screen
-				gameOverTicks++;
 				// Manual camera shake
 				Specular.camera.position.set(0, 0, 0);
 				Specular.camera.position.add(rand.nextFloat() * 100 * Camera.getShakeIntensity(), rand.nextFloat() * 100 * Camera.getShakeIntensity(), 0);
@@ -555,9 +554,11 @@ public class GameState extends State {
 				game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
 				
 				// Game Over effects [fade in, camera shake]
-				if(gameOverScoreFont.getScaleX() > 0.1f) {
-					gameOverScoreFont.scale(-0.07f);
+				if(gameOverScoreFont.getScaleX() > 1f) {
+					gameOverScoreFont.scale(-0.1f);
+					gameOverScoreFont.setColor(1, 0, 0, Math.max((10 - gameOverScoreFont.getScaleX()) / 10f, 0));
 				} else {
+					gameOverScoreFont.setScale(1);
 					if(!shaken) {
 						Camera.shake(0.5f, 0.02f);
 						shaken = true;
@@ -567,14 +568,7 @@ public class GameState extends State {
 						Util.drawCentered(game.batch, newHighscore, 0, 0, 0);
 					}
 				}
-				
-				long timeDelta = System.nanoTime() - gameOverTicks;
-				timeDelta = timeDelta < 0 ? 0 : timeDelta;
-				float alpha = gameOverTicks / 120f;
-				alpha = alpha > 1 ? 1 : alpha;
-				
-				gameOverScoreFont.setColor(1, 0, 0, alpha);
-				
+			
 				// Drawing final score and buttons
 				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
 				
@@ -833,8 +827,6 @@ public class GameState extends State {
 		
 //		MULTIPLIER_COOLDOWN_TIME = Specular.prefs.getInteger("Multiplier Cooldown");
 		
-		// Disable or enable virus spawn in start, > 0 = enable & < 0 = disable
-		EnemyVirus.virusAmount = 0;
 		
 		cs.resetCombo();
 		scoreMultiplier = 1;
