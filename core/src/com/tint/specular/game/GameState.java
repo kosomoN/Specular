@@ -62,6 +62,7 @@ import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.input.GameInputProcessor;
 import com.tint.specular.input.GameOverInputProcessor;
+import com.tint.specular.input.MenuInputProcessor;
 import com.tint.specular.input.PauseInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
@@ -110,6 +111,7 @@ public class GameState extends State {
 	private Stage stage;
 	private Tutorial tutorial;
 	private static int PARTICLE_LIMIT;
+	private float scoreFontAlpha = 0;
 	
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
@@ -298,7 +300,7 @@ public class GameState extends State {
 	protected void update() {
 		if(!isPaused) {
 			
-			if(tutorialOnGoing)
+			if(tutorialOnGoing || tutorial.isStarting())
 				tutorial.update();
 			
 			//Remove random particles if there are too many
@@ -335,7 +337,7 @@ public class GameState extends State {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
 				
-				if(!tutorialOnGoing) {
+				if(!tutorialOnGoing && !tutorial.isStarting()) {
 					// Update power-ups
 					powerUpSpawnTime--;
 					if(powerUpSpawnTime < 0) {
@@ -350,13 +352,13 @@ public class GameState extends State {
 				
 				// So that they don't spawn while death animation is playing
 				if(!player.isDying() && !player.isSpawning()) {
-					if(player.isDead() && !tutorialOnGoing) {
+					if(player.isDead() && !tutorialOnGoing && !tutorial.isStarting()) {
 						pss.spawn(true);
 			        	waveNumber++;
 						currentWave = waveManager.getWave(waveNumber);
 					} else {
 						player.updateHitDetection();
-						if(!tutorialOnGoing) {
+						if(!tutorialOnGoing && !tutorial.isStarting()) {
 							if(currentWave.update()) {
 								waveNumber++;
 								currentWave = waveManager.getWave(waveNumber);
@@ -410,7 +412,7 @@ public class GameState extends State {
 				else {
 					saveStats();
 					input.setInputProcessor(ggInputProcessor);
-					gameOverScoreFont.setScale(14);
+					gameOverScoreFont.scale(14);
 					
 					if(!Specular.nativeAndroid.isLoggedIn()) {
 						Specular.nativeAndroid.login(new RequestCallback() {
@@ -509,7 +511,7 @@ public class GameState extends State {
 		} else {
 			if(!gameMode.isGameOver()) {
 				// Tutorial
-				if(tutorialOnGoing && !showTutorialEnd)
+				if((tutorialOnGoing || tutorial.isStarting()) && !showTutorialEnd)
 					tutorial.render(game.batch);
 					
 				//Drawing HUD
@@ -529,14 +531,14 @@ public class GameState extends State {
 					tutorialTicks++;
 					
 					if(tutorialTicks > 120) {
-						float alpha = (tutorialTicks - 120) / 180f;
-						alpha = alpha > 1 ? 1 : alpha;
+						scoreFontAlpha = (tutorialTicks - 120) / 180f;
+						scoreFontAlpha = scoreFontAlpha > 1 ? 1 : scoreFontAlpha;
 						
-						game.batch.setColor(1, 1, 1, alpha);
+						game.batch.setColor(1, 1, 1, scoreFontAlpha);
 						game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
 						game.batch.setColor(Color.WHITE);
 						
-						scoreFont.setColor(1, 0, 0, alpha);
+						scoreFont.setColor(1, 0, 0, scoreFontAlpha);
 						Util.writeCentered(game.batch, scoreFont, "Press to continue", 0, -100);
 						Util.writeCentered(game.batch, scoreFont, "End of tutorial", 0, 100);
 					}
@@ -568,7 +570,7 @@ public class GameState extends State {
 						Util.drawCentered(game.batch, newHighscore, 0, 0, 0);
 					}
 				}
-			
+				
 				// Drawing final score and buttons
 				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
 				
@@ -689,15 +691,16 @@ public class GameState extends State {
 		}
 	}
 	
-	public void startTutorial(States returnState) {
+	public void startTutorial() {
 		tutorialOnGoing = true;
 		tutorialTicks = 0;
-		tutorial.start(returnState);
+		tutorial.startWaves(MenuInputProcessor.helpPressed() ? States.SINGLEPLAYER_GAMESTATE : States.MAINMENUSTATE);
 	}
 	
 	public void endTutorial() {
 		tutorialOnGoing = false;
 		showTutorialEnd = false;
+		tutorial.end();
 		if(!(tutorial.getReturnState() == States.SINGLEPLAYER_GAMESTATE)) {
 			game.enterState(tutorial.getReturnState());
 		}
@@ -727,6 +730,8 @@ public class GameState extends State {
 	public ParticleSpawnSystem getParticleSpawnSystem() { return pass; }
 	public Map getCurrentMap() { return currentMap;	}
 	
+	public Tutorial getTutorial() { return tutorial; }
+	
 	public float getBoardshockCharge() {
 		return boardshockCharge;
 	}
@@ -744,6 +749,8 @@ public class GameState extends State {
 	public boolean soundsEnabled() {
 		return soundsEnabled;
 	}
+	
+	public float getScoreFontAlpha() { return scoreFontAlpha; }
 	
 	public int getScoreMultiplier() { return scoreMultiplier; }
 	
@@ -827,7 +834,6 @@ public class GameState extends State {
 		
 //		MULTIPLIER_COOLDOWN_TIME = Specular.prefs.getInteger("Multiplier Cooldown");
 		
-		
 		cs.resetCombo();
 		scoreMultiplier = 1;
 		scoreMultiplierTimer = 0;
@@ -851,10 +857,12 @@ public class GameState extends State {
 		// Sets "first" time play to false
 		if(Specular.prefs.getBoolean("First Time")) {
 			// Start tutorial
-			startTutorial(States.SINGLEPLAYER_GAMESTATE);
+			tutorial.start();
 			
 			Specular.prefs.putBoolean("First Time", false);
 			Specular.prefs.flush();
+		} else if(MenuInputProcessor.helpPressed()) {
+			tutorial.start();
 		}
 		
 		if(!Specular.prefs.getBoolean("MusicMuted")) {
@@ -868,6 +876,8 @@ public class GameState extends State {
 				}
 			});
 		}
+		
+		scoreFontAlpha = 0;
 		
 		// Initializing power-up levels
 		AddLife.reloadLevelTextures(Specular.prefs.getInteger("Life Upgrade Grade"));

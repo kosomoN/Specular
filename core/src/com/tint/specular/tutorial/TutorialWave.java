@@ -1,5 +1,6 @@
 package com.tint.specular.tutorial;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.tutorial.Tutorial.TutorialEvent;
 
 public class TutorialWave {
@@ -14,6 +15,8 @@ public class TutorialWave {
 	public void start() {
 		completed = false;
 	}
+	
+	public void render(SpriteBatch batch) {}
 	
 	public void complete() {
 		completed = true;

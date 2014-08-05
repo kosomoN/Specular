@@ -1,5 +1,7 @@
 package com.tint.specular.tutorial;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,6 +14,7 @@ import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Bullet;
+import com.tint.specular.game.entities.Entity;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
@@ -35,6 +38,7 @@ public class Tutorial {
 	private static AtlasRegion redPixel;
 	private int currentWaveIndex;
 	private float textX, textY;
+	private boolean starting, ending;
 	
 	// Player movement
 	int ticksGone;
@@ -60,6 +64,7 @@ public class Tutorial {
 		this.returnState = returnState;
 		tutorialWaves.clear();
 		currentWaveIndex = 0;
+		starting = false;
 		enemiesSpawned = false;
 		bulletsFiredBefore = Bullet.bulletsFired;
 		
@@ -76,6 +81,19 @@ public class Tutorial {
 			public void complete() {
 				super.complete();
 				ticksGone = 0;
+				tutorialFont.setColor(Color.RED);
+			}
+
+			@Override
+			public void render(SpriteBatch batch) {
+				super.render(batch);
+				if(ticksGone <= 120) {
+					float alpha = (120 - ticksGone) / 120f;
+					alpha = alpha < 0 ? 0 : alpha;
+				
+					tutorialFont.setColor(1, 0, 0, alpha);
+					Util.writeCentered(batch, tutorialFont, "Combat skills", 0, 300);
+				}
 			}
 		});
 		tutorialWaves.add(new TutorialWave(TutorialEvent.PLAYER_SHOT) {
@@ -92,8 +110,20 @@ public class Tutorial {
 				Bullet.bulletsFired = bulletsFiredBefore;
 				ticksGone = 0;
 				enemiesSpawned = false;
+				tutorialFont.setColor(Color.RED);
 			}
-			
+
+			@Override
+			public void render(SpriteBatch batch) {
+				super.render(batch);
+				if(ticksGone >= 180) {
+					float alpha = (300 - ticksGone) / 120f;
+					alpha = alpha < 0 ? 0 : alpha;
+				
+					tutorialFont.setColor(1, 0, 0, alpha);
+					Util.writeCentered(batch, tutorialFont, "Enemies, kill them", 0, -300);
+				}
+			}
 		});
 		tutorialWaves.add(new TutorialWave(TutorialEvent.POWER_UPS_SHOWN) {
 			@Override
@@ -136,9 +166,17 @@ public class Tutorial {
 			@Override
 			public void complete() {
 				super.complete();
-				for(PowerUp pu : gs.getPowerUps()) {
-					pu.removeEffect(gs.getPlayer());
+
+				for(Iterator<Entity> it = gs.getEntities().iterator(); it.hasNext();) {
+					Entity ent = it.next();
+					if(ent instanceof PowerUp) {
+						it.remove();
+					}
 				}
+				
+				gs.getPowerUps().clear();
+				gs.getPlayer().setFireRate(10);
+				gs.getPlayer().setBulletBurstLevel(0);
 				
 				tutorialFont.setColor(Color.RED);
 			}
@@ -149,113 +187,133 @@ public class Tutorial {
 		redPixel = ta.findRegion("game1/Red Pixel");
 	}
 	
-	public void start(States returnState) {
+	public void startWaves(States returnState) {
 		reset(returnState);
-		currentWave = tutorialWaves.get(currentWaveIndex);
-		currentWave.start();
+		next();
+	}
+	
+	public void start() {
+		ending = false;
+		starting = true;
 	}
 	
 	public void render(SpriteBatch batch) {
-		switch(currentWave.getEvent()) {
-		case PLAYER_MOVED :
-			if(ticksGone < 32) {
-				batch.draw(redPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
-				Util.writeCentered(batch, tutorialFont, "Slide Here", -Specular.camera.viewportWidth / 4, 0);
-			}
-			break;
-			
-		case PLAYER_SHOT :
-			if(ticksGone < 32) {
-				batch.draw(redPixel, 0, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
-				Util.writeCentered(batch, tutorialFont, "Slide Here", Specular.camera.viewportWidth / 4, 0);
-			}
-			break;
-				
-		case POWER_UPS_SHOWN :
-			break;
-		}
-	}
-	
-	public void update() {
-		if(!currentWave.isCompleted()) {
-			outer:
+		if(starting) {
+			batch.draw(redPixel, -Specular.camera.viewportWidth / 2 + 180, -Specular.camera.viewportHeight / 2 + 150, Specular.camera.viewportWidth - 360, Specular.camera.viewportHeight - 300);
+			tutorialFont.setColor(0.3f, 0.5f, 1, 0.6f);
+			Util.writeCentered(batch, tutorialFont, "Welcome to the tutorial", 0, 100);
+			Util.writeCentered(batch, tutorialFont, "Touch to continue", 0, -100);
+			tutorialFont.setColor(Color.RED);
+		} else {
+			currentWave.render(batch);
 			switch(currentWave.getEvent()) {
 			case PLAYER_MOVED :
-				if(Player.distTraveledSqrd > 0) { // If player has moved
-					ticksGone++;
-					if(ticksGone >= 180) {
-						currentWave.complete();
-						next();
-					}
+				if(ticksGone < 32) {
+					batch.draw(redPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
+					Util.writeCentered(batch, tutorialFont, "Slide Here", -Specular.camera.viewportWidth / 4, 0);
 				}
 				break;
 				
 			case PLAYER_SHOT :
-				if(Bullet.bulletsFired > 0) {
-					ticksGone++;
-					
-					if(ticksGone >= 180 && !enemiesSpawned) {
-						for(int i = 0; i < 5; i++) {
-							gs.addEntity(new EnemyCircler((float) (Math.random() * (Specular.camera.viewportWidth - 100) + 50), (float) (Math.random() * (Specular.camera.viewportHeight - 100) + 50), gs));
-						}
-						enemiesSpawned = true;
-					} else if(gs.getEnemies().size == 0 && ticksGone >= 540) {
-						currentWave.complete();
-						next();
-					}
+				if(ticksGone < 32) {
+					batch.draw(redPixel, 0, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
+					Util.writeCentered(batch, tutorialFont, "Slide Here", Specular.camera.viewportWidth / 4, 0);
 				}
 				break;
 					
 			case POWER_UPS_SHOWN :
-				for(PowerUp pu : gs.getPowerUps()) {
-					if(!pu.isActivated()) {
-						break outer;
-					}
-				}
-				allActivated = true;
-				
-				if(allActivated) {
-					ticksGone++;
-					
-					if(ticksGone >= 90) {
-						float alpha = (90 + 96 - ticksGone) / 240f;
-						alpha = alpha < 0 ? 0 : alpha;
-					
-						tutorialFont.setColor(1, 0, 0, alpha);
-					}
-					
-					if(enemiesSpawned && gs.getEnemies().size == 0) {
-						currentWave.complete();
-						next();
-					} else {
-						if(ticksGone >= 240 && !enemiesSpawned) {
-							Enemy e = null;
-							for(int i = 0; i < 10; i++) {
-								e = new EnemyWanderer((float) (Math.random() * (Specular.camera.viewportWidth - 100) + 50), (float) (Math.random() * (Specular.camera.viewportHeight - 100) + 50), gs);
-								e.setSpeed((float) Math.random());
-								gs.addEntity(e);
-							}
-							enemiesSpawned = true;
+				break;
+			}
+		}
+	}
+	
+	public void update() {
+		if(!starting) {
+			if(!currentWave.isCompleted()) {
+				outer:
+				switch(currentWave.getEvent()) {
+				case PLAYER_MOVED :
+					if(Player.distTraveledSqrd > 0) { // If player has moved
+						ticksGone++;
+						if(ticksGone >= 180) {
+							currentWave.complete();
+							next();
 						}
 					}
+					break;
+					
+				case PLAYER_SHOT :
+					if(Bullet.bulletsFired > 0) {
+						ticksGone++;
+						
+						if(ticksGone >= 180 && !enemiesSpawned) {
+							for(int i = 0; i < 5; i++) {
+								gs.addEntity(new EnemyCircler((float) (Math.random() * (Specular.camera.viewportWidth - 100) + 50), (float) (Math.random() * (Specular.camera.viewportHeight - 100) + 50), gs));
+							}
+							enemiesSpawned = true;
+						} else if(gs.getEnemies().size == 0 && ticksGone >= 540) {
+							currentWave.complete();
+							next();
+						}
+					}
+					break;
+						
+				case POWER_UPS_SHOWN :
+					for(PowerUp pu : gs.getPowerUps()) {
+						if(!pu.isActivated()) {
+							break outer;
+						}
+					}
+					allActivated = true;
+					
+					if(allActivated) {
+						ticksGone++;
+						
+						if(ticksGone >= 90) {
+							float alpha = (90 + 96 - ticksGone) / 240f;
+							alpha = alpha < 0 ? 0 : alpha;
+						
+							tutorialFont.setColor(1, 0, 0, alpha);
+						}
+						
+						if(enemiesSpawned && gs.getEnemies().size == 0) {
+							currentWave.complete();
+							next();
+						} else {
+							if(ticksGone >= 120 && !enemiesSpawned) {
+								Enemy e = null;
+								for(int i = 0; i < 10; i++) {
+									e = new EnemyWanderer((float) (Math.random() * (Specular.camera.viewportWidth - 100) + 50), (float) (Math.random() * (Specular.camera.viewportHeight - 100) + 50), gs);
+									e.setSpeed((float) Math.random());
+									gs.addEntity(e);
+								}
+								enemiesSpawned = true;
+							}
+						}
+					}
+					break;
 				}
-				break;
 			}
 		}
 	}
 	
 	public void next() {
-		currentWaveIndex++;
 		if(currentWaveIndex < tutorialWaves.size) {
 			currentWave = tutorialWaves.get(currentWaveIndex);
 			currentWave.start();
 		} else {
-			end();
+			endWaves();
 		}
+		currentWaveIndex++;
 	}
 	
-	private void end() {
+	private void endWaves() {
+		ending = true;
 		gs.showTutorialEnd();
+	}
+	
+	public void end() {
+		ending = false;
 		gs.getPlayer().setLife(Player.getStartingLives());
 	}
 	
@@ -304,6 +362,14 @@ public class Tutorial {
 	
 	public boolean allPowerUpsActivated() {
 		return allActivated;
+	}
+	
+	public boolean isStarting() {
+		return starting;
+	}
+	
+	public boolean isEnding() {
+		return ending;
 	}
 }
 

@@ -84,7 +84,7 @@ public abstract class PowerUp implements Entity {
 	
 	@Override
 	public void render(SpriteBatch batch) {
-		if(!isActivated() && (despawnTime > 0 || gs.tutorialHasEnded())) {
+		if(!isActivated() && (despawnTime > 0 || !gs.tutorialHasEnded())) {
 			batch.draw(getTexture(), x - getTexture().getRegionWidth() / 2, y - getTexture().getRegionHeight() / 2);
 			if(getLevelTexture() != null)
 				batch.draw(getLevelTexture(), x - getTexture().getRegionWidth() / 2, y - getTexture().getRegionHeight() / 2);

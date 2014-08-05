@@ -17,7 +17,7 @@ import com.tint.specular.game.GameState;
 public class GameInputProcessor implements InputProcessor {
 
 	private boolean w, a, s, d;
-	private boolean touch, tutorialTouch;
+	private boolean touch;
 	private boolean tilt, staticSticks;
 	private AnalogStick shoot, move;
 	private GameState gs;
@@ -82,8 +82,10 @@ public class GameInputProcessor implements InputProcessor {
 		float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 		float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
 		
-		if(gs.tutorialEndIsShowing()) {
-			tutorialTouch = true;
+		if(gs.getTutorial().isEnding() && gs.getScoreFontAlpha() > 0.8f) {
+			gs.endTutorial();
+		} else if(gs.getTutorial().isStarting()) {
+			gs.startTutorial();
 		} else {
 			//Checking if touching boardshock button
 			if(viewporty > Specular.camera.viewportHeight - 90 &&
@@ -141,10 +143,8 @@ public class GameInputProcessor implements InputProcessor {
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 		float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
-		if(gs.tutorialEndIsShowing() && tutorialTouch) {
-			gs.endTutorial();
-			tutorialTouch = false;
-		} else {
+		
+		if(!gs.tutorialEndIsShowing()) {
 			if(viewporty < 70 && viewportx > Specular.camera.viewportWidth - 400) {
 				if(pausePressed) {
 					gs.setPaused(true);
@@ -163,7 +163,6 @@ public class GameInputProcessor implements InputProcessor {
 			if(pausePressed)
 				pausePressed = false;
 		}
-		
 		return false;
 	}
 
