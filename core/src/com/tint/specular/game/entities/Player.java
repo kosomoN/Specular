@@ -199,7 +199,7 @@ public class Player implements Entity {
 	
 	@Override
 	public void render(SpriteBatch batch) {
-		
+//		animFrameTime += 1 / 60f;
 		if(spawning) {
 			// Spawn animation
 			TextureRegion frame = spawnAnim.getKeyFrame(animFrameTime, false);
@@ -221,6 +221,10 @@ public class Player implements Entity {
 			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
 			batch.draw(baseAnimFrame, centerx - baseAnimFrame.getRegionWidth() / 2, centery - baseAnimFrame.getRegionHeight() / 2);
 			
+			if(PDS.isActive()) {
+				Util.drawCentered(batch, pdsTex, centerx, centery, animFrameTime * 140);
+				Util.drawCentered(batch, pdsTex, centerx, centery, animFrameTime * -234);
+			}		
 			//Barrel
 			Util.drawCentered(batch, barrelTexture[bulletBurstLevel < 4 ? bulletBurstLevel : 3], getX(), getY(), direction);
 			
