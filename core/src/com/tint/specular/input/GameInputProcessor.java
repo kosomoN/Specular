@@ -84,8 +84,6 @@ public class GameInputProcessor implements InputProcessor {
 		
 		if(gs.getTutorial().isEnding() && gs.getScoreFontAlpha() > 0.8f) {
 			gs.endTutorial();
-		} else if(gs.getTutorial().isStarting()) {
-			gs.startTutorial();
 		} else {
 			//Checking if touching boardshock button
 			if(viewporty > Specular.camera.viewportHeight - 90 &&
@@ -143,26 +141,24 @@ public class GameInputProcessor implements InputProcessor {
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		float viewportx = (float) screenX / Gdx.graphics.getWidth() * Specular.camera.viewportWidth;
 		float viewporty = (float) screenY / Gdx.graphics.getHeight() * Specular.camera.viewportHeight;
-		
-		if(!gs.tutorialEndIsShowing()) {
-			if(viewporty < 70 && viewportx > Specular.camera.viewportWidth - 400) {
-				if(pausePressed) {
-					gs.setPaused(true);
-					pausePressed = false;
-					return false;
-				}
-			}
-			if(touch) {
-				if(move.getPointer() == pointer) {
-					move.setPointer(-1);
-				} else if(shoot.getPointer() == pointer) {
-					shoot.setPointer(-1);
-				}
-			}
-			
-			if(pausePressed)
+
+		if(viewporty < 70 && viewportx > Specular.camera.viewportWidth - 400) {
+			if(pausePressed) {
+				gs.setPaused(true);
 				pausePressed = false;
+				return false;
+			}
 		}
+		if(touch) {
+			if(move.getPointer() == pointer) {
+				move.setPointer(-1);
+			} else if(shoot.getPointer() == pointer) {
+				shoot.setPointer(-1);
+			}
+		}
+
+		if(pausePressed)
+			pausePressed = false;
 		return false;
 	}
 

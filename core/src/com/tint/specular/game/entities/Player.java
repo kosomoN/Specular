@@ -415,13 +415,15 @@ public class Player implements Entity {
 		        			shieldLoseRepelTimer = PUSHAWAY_TIME;
 	        			} else {
 	        				Specular.nativeAndroid.sendAnalytics("Death", String.valueOf(gs.getCurrentWave().getID()), e.getClass().getSimpleName(), null);
-	        				
-	    					addLives(-1);
+	        				if(gs.tutorialHasEnded()) {
+	        					addLives(-1);
+	        					clearEnemies = true;
+	        				}
+
 	    					dying = true;
 	    					
 	    					deathSound.play();
 	    					animFrameTime = 0;
-	    					clearEnemies = true;
 	    					
 	    					gs.getParticleSpawnSystem().spawn(Type.BULLET, getX(), getY(), getDeltaX(), getDeltaY(), 20, false);
 	    					

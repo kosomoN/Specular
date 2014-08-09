@@ -116,7 +116,7 @@ public class Laser implements Entity, Poolable {
 		normal = new Vector2(x2 - x, y2 - y);
 		normal.nor();
 		normal.setAngle(normal.angle() + 90);
-		normal.scl(8);
+		normal.scl(laserTexture.getRegionHeight() / 2);
 		
 		verticies[0] = x - normal.x;
 		verticies[1] = y - normal.y;

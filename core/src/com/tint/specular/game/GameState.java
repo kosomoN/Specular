@@ -300,7 +300,7 @@ public class GameState extends State {
 	protected void update() {
 		if(!isPaused) {
 			
-			if(tutorialOnGoing || tutorial.isStarting())
+			if(tutorialOnGoing)
 				tutorial.update();
 			
 			//Remove random particles if there are too many
@@ -337,7 +337,7 @@ public class GameState extends State {
 				// Update game mode, enemy spawning and player hit detection
 				gameMode.update(TICK_LENGTH / 1000000);
 				
-				if(!tutorialOnGoing && !tutorial.isStarting()) {
+				if(!tutorialOnGoing) {
 					// Update power-ups
 					powerUpSpawnTime--;
 					if(powerUpSpawnTime < 0) {
@@ -352,13 +352,13 @@ public class GameState extends State {
 				
 				// So that they don't spawn while death animation is playing
 				if(!player.isDying() && !player.isSpawning()) {
-					if(player.isDead() && !tutorialOnGoing && !tutorial.isStarting()) {
+					if(player.isDead() && !tutorialOnGoing) {
 						pss.spawn(true);
 			        	waveNumber++;
 						currentWave = waveManager.getWave(waveNumber);
 					} else {
 						player.updateHitDetection();
-						if(!tutorialOnGoing && !tutorial.isStarting()) {
+						if(!tutorialOnGoing) {
 							if(currentWave.update()) {
 								waveNumber++;
 								currentWave = waveManager.getWave(waveNumber);
@@ -510,15 +510,15 @@ public class GameState extends State {
 			pauseInputProcessor.getToMenuButton().render();
 		} else {
 			if(!gameMode.isGameOver()) {
-				// Tutorial
-				if((tutorialOnGoing || tutorial.isStarting()) && !showTutorialEnd)
-					tutorial.render(game.batch);
-					
 				//Drawing HUD
 				hud.render(game.batch, scoreMultiplierTimer);
 				gameInputProcessor.getShootStick().render(game.batch);
 				gameInputProcessor.getMoveStick().render(game.batch);
-				
+
+				// Tutorial
+				if(tutorialOnGoing && !showTutorialEnd)
+					tutorial.render(game.batch);
+
 				// Drawing SCORE in the middle top of the screen
 				Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
 						Specular.camera.viewportHeight / 2 - 36);
@@ -539,7 +539,7 @@ public class GameState extends State {
 						game.batch.setColor(Color.WHITE);
 						
 						scoreFont.setColor(1, 0, 0, scoreFontAlpha);
-						Util.writeCentered(game.batch, scoreFont, "Press to continue", 0, -100);
+						Util.writeCentered(game.batch, scoreFont, "Tap to continue", 0, -100);
 						Util.writeCentered(game.batch, scoreFont, "End of tutorial", 0, 100);
 					}
 				}
@@ -857,12 +857,13 @@ public class GameState extends State {
 		// Sets "first" time play to false
 		if(Specular.prefs.getBoolean("First Time")) {
 			// Start tutorial
-			tutorial.start();
+			startTutorial();
 			
 			Specular.prefs.putBoolean("First Time", false);
 			Specular.prefs.flush();
 		} else if(MenuInputProcessor.helpPressed()) {
-			tutorial.start();
+			Specular.prefs.putBoolean("First Time", false);
+			startTutorial();
 		}
 		
 		if(!Specular.prefs.getBoolean("MusicMuted")) {

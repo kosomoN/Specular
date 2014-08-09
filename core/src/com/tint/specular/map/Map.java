@@ -241,16 +241,16 @@ public class Map {
 				if(!p.isActivated())
 					shapeRenderer.rect(p.getX() - 250, p.getY() - 250, 500, 500);
 			}
-			
+
 			if(GfxSettings.ReturnEt()){
-			for(Enemy e : gs.getEnemies()) {
-				if(e instanceof EnemyWorm) {
-					for(EnemyWorm.Part p : ((EnemyWorm) e).getParts())
-						shapeRenderer.rect(p.getX() - 80, p.getY() - 80, 160, 160);
+				for(Enemy e : gs.getEnemies()) {
+					if(e instanceof EnemyWorm) {
+						for(EnemyWorm.Part p : ((EnemyWorm) e).getParts())
+							shapeRenderer.rect(p.getX() - 80, p.getY() - 80, 160, 160);
+					}
+					shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
 				}
-				shapeRenderer.rect(e.getX() - 80, e.getY() - 80, 160, 160);
 			}
-		}
 			shapeRenderer.end();
 			
 			

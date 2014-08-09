@@ -23,7 +23,7 @@ public class EnemyVirus extends Enemy {
 	}
 
 	private static final float BASE_GROWTH_RATE = 0.0025f;
-	public static int spawnedVirusAmount;
+	private static int spawnedVirusAmount;
 	
 	private static Animation anim;
 	private static AtlasRegion tex, warningTex;
@@ -62,27 +62,29 @@ public class EnemyVirus extends Enemy {
 	public void updateMovement() {
 		switch(behavior) {
 		case POINTLESS:
-			dx = (float) (Math.cos(angle) * speed);
-			dy = (float) (Math.sin(angle) * speed);
 			if(x - 20 - 18 < 0) {
-				angle = Math.PI - angle + Math.random() * 0.2;
-				x = 20 + 18;
+				angle = Math.PI - angle;
+				x = 20 + 20;
 			}
 			 
 			if(x + 20 + 18 > gs.getCurrentMap().getHeight()) {
-				angle = Math.PI - angle + Math.random() * 0.2;
-				x = gs.getCurrentMap().getHeight() - 20 - 18;
+				angle = Math.PI - angle;
+				x = gs.getCurrentMap().getHeight() - 20 - 20;
 			}
 			
 			if(y - 20 - 18 < 0) {
 				angle = Math.PI * 2 - angle;
-				y = 20 + 18;
+				y = 20 + 20;
 			}
 			
 			if(y + 20 + 18 > gs.getCurrentMap().getHeight()){
 				angle = Math.PI * 2 - angle;
-				y = gs.getCurrentMap().getHeight() - 20 - 18;
+				y = gs.getCurrentMap().getHeight() - 20 - 20;
 			}
+			
+			dx = (float) (Math.cos(angle) * speed);
+			dy = (float) (Math.sin(angle) * speed);
+
 			break;
 		case FOLLOW:
 			double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
@@ -124,6 +126,10 @@ public class EnemyVirus extends Enemy {
 		
 		AtlasRegion animTex = ta.findRegion("game1/Enemy Striver Anim");
 		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 1);
+	}
+	
+	public static void resetSpawnedAmount() {
+		spawnedVirusAmount = 0;
 	}
 
 	@Override

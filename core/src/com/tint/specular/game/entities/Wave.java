@@ -29,6 +29,7 @@ public class Wave {
 	private GameState gs;
 	private WaveModifier modifier, permanentModifier;
 	private int timer, totalLength;
+	private boolean containsVirus = false;
 	
 	//This list is used to recalculate the formation
 	private List<EnemySpawnFormation> formationList = new ArrayList<EnemySpawnFormation>();
@@ -123,6 +124,8 @@ public class Wave {
 	}
 
 	private void start() {
+		if(containsVirus)
+			EnemyVirus.resetSpawnedAmount();
 		if(permanentModifier != null)
 			permanentModifier.start(gs);
 		if(modifier != null)
@@ -164,6 +167,11 @@ public class Wave {
 	 * @param spawndelay The delay that will added between enemy spawns
 	 */
 	public void addEnemies(EnemyType[] enemyTypes, int[] amounts, Formation formation, int spawnTime, float spawndelayTicks) {
+		for(EnemyType et : enemyTypes) {
+			if(et.equals(EnemyType.ENEMY_VIRUS))
+				containsVirus = true;
+		}
+		
 		List<EnemySpawn> tempEnemies = new ArrayList<EnemySpawn>();
 		for(int i = 0; i < enemyTypes.length; i++) {
 			for(int j = 0; j < amounts[i]; j++)
@@ -187,6 +195,9 @@ public class Wave {
 	}
 	
 	public void addEnemies(EnemyType enemyType, int amount, Formation formation, int spawnTime, float spawndelayTicks, boolean shuffle) {
+		if(enemyType.equals(EnemyType.ENEMY_VIRUS))
+			containsVirus = true;
+
 		List<EnemySpawn> tempEnemies = new ArrayList<EnemySpawn>();
 		for(int j = 0; j < amount; j++)
 			tempEnemies.add(new EnemySpawn(enemyType, spawnTime));

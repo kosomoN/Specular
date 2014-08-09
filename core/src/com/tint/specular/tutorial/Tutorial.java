@@ -35,10 +35,10 @@ public class Tutorial {
 	private Array<TutorialWave> tutorialWaves = new Array<TutorialWave>();
 	private TutorialWave currentWave;
 	private BitmapFont tutorialFont;
-	private static AtlasRegion redPixel;
+	private static AtlasRegion redPixel, slideTex;
 	private int currentWaveIndex;
 	private float textX, textY;
-	private boolean starting, ending;
+	private boolean ending;
 	
 	// Player movement
 	int ticksGone;
@@ -64,9 +64,9 @@ public class Tutorial {
 		this.returnState = returnState;
 		tutorialWaves.clear();
 		currentWaveIndex = 0;
-		starting = false;
 		enemiesSpawned = false;
 		bulletsFiredBefore = Bullet.bulletsFired;
+		ticksGone = 0;
 		
 		// Initializing tutorial steps
 		tutorialWaves.add(new TutorialWave(TutorialEvent.PLAYER_MOVED) {
@@ -86,14 +86,6 @@ public class Tutorial {
 
 			@Override
 			public void render(SpriteBatch batch) {
-				super.render(batch);
-				if(ticksGone <= 120) {
-					float alpha = (120 - ticksGone) / 120f;
-					alpha = alpha < 0 ? 0 : alpha;
-				
-					tutorialFont.setColor(1, 0, 0, alpha);
-					Util.writeCentered(batch, tutorialFont, "Combat skills", 0, 300);
-				}
 			}
 		});
 		tutorialWaves.add(new TutorialWave(TutorialEvent.PLAYER_SHOT) {
@@ -117,10 +109,10 @@ public class Tutorial {
 			public void render(SpriteBatch batch) {
 				super.render(batch);
 				if(ticksGone >= 180) {
-					float alpha = (300 - ticksGone) / 120f;
+					float alpha = (500 - ticksGone) / 120f;
 					alpha = alpha < 0 ? 0 : alpha;
 				
-					tutorialFont.setColor(1, 0, 0, alpha);
+					tutorialFont.setColor(1, 0, 0, Math.min(alpha, 1));
 					Util.writeCentered(batch, tutorialFont, "Enemies, kill them", 0, -300);
 				}
 			}
@@ -139,7 +131,7 @@ public class Tutorial {
 					x1 += 400;
 					x2 += 800;
 					textX += 600;
-				} else if(x1 > gs.getCurrentMap().getWidth() - 500) {
+				} else if(x1 > gs.getCurrentMap().getWidth() - 800) {
 					x1 -= 400;
 					x2 -= 800;
 					textX -= 600;
@@ -148,7 +140,7 @@ public class Tutorial {
 					x2 -= 400;
 				}
 				
-				if(y > gs.getCurrentMap().getHeight() - 500) {
+				if(y > gs.getCurrentMap().getHeight() - 800) {
 					y -= 400;
 					textY -= 800;
 				} else {
@@ -181,59 +173,53 @@ public class Tutorial {
 				tutorialFont.setColor(Color.RED);
 			}
 		});
+		
 	}
-	
+
 	public static void init(TextureAtlas ta) {
 		redPixel = ta.findRegion("game1/Red Pixel");
+		slideTex = ta.findRegion("game1/Slide");
 	}
-	
+
 	public void startWaves(States returnState) {
 		reset(returnState);
 		next();
 	}
-	
+
 	public void start() {
 		ending = false;
-		starting = true;
 	}
-	
+
 	public void render(SpriteBatch batch) {
-		if(starting) {
-			batch.draw(redPixel, -Specular.camera.viewportWidth / 2 + 180, -Specular.camera.viewportHeight / 2 + 150, Specular.camera.viewportWidth - 360, Specular.camera.viewportHeight - 300);
-			tutorialFont.setColor(0.3f, 0.5f, 1, 0.6f);
-			Util.writeCentered(batch, tutorialFont, "Welcome to the tutorial", 0, 100);
-			Util.writeCentered(batch, tutorialFont, "Touch to continue", 0, -100);
-			tutorialFont.setColor(Color.RED);
-		} else {
-			currentWave.render(batch);
-			switch(currentWave.getEvent()) {
-			case PLAYER_MOVED :
-				if(ticksGone < 32) {
-					batch.draw(redPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
-					Util.writeCentered(batch, tutorialFont, "Slide Here", -Specular.camera.viewportWidth / 4, 0);
-				}
-				break;
-				
-			case PLAYER_SHOT :
-				if(ticksGone < 32) {
-					batch.draw(redPixel, 0, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
-					Util.writeCentered(batch, tutorialFont, "Slide Here", Specular.camera.viewportWidth / 4, 0);
-				}
-				break;
-					
-			case POWER_UPS_SHOWN :
-				break;
+		currentWave.render(batch);
+		switch(currentWave.getEvent()) {
+		case PLAYER_MOVED :
+			if(ticksGone < 32) {
+				batch.draw(redPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
+				Util.drawCentered(batch, slideTex, gs.getGameProcessor().getMoveStick().getXBase(), gs.getGameProcessor().getMoveStick().getYBase(), 512, 512, 0);
+				Util.writeCentered(batch, tutorialFont, "Slide Here", -Specular.camera.viewportWidth / 4, 200);
 			}
+			break;
+
+		case PLAYER_SHOT :
+			if(ticksGone < 32) {
+				batch.draw(redPixel, 0, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight);
+				Util.drawCentered(batch, slideTex, gs.getGameProcessor().getShootStick().getXBase(), gs.getGameProcessor().getShootStick().getYBase(), 512, 512, 0);
+				Util.writeCentered(batch, tutorialFont, "Slide Here", Specular.camera.viewportWidth / 4, 300);
+			}
+			break;
+
+		case POWER_UPS_SHOWN :
+			break;
 		}
 	}
 	
 	public void update() {
-		if(!starting) {
-			if(!currentWave.isCompleted()) {
-				outer:
+		if(!currentWave.isCompleted()) {
+			outer:
 				switch(currentWave.getEvent()) {
 				case PLAYER_MOVED :
-					if(Player.distTraveledSqrd > 0) { // If player has moved
+					if(Player.distTraveledSqrd > 100) { // If player has moved
 						ticksGone++;
 						if(ticksGone >= 180) {
 							currentWave.complete();
@@ -241,11 +227,11 @@ public class Tutorial {
 						}
 					}
 					break;
-					
+
 				case PLAYER_SHOT :
 					if(Bullet.bulletsFired > 0) {
 						ticksGone++;
-						
+
 						if(ticksGone >= 180 && !enemiesSpawned) {
 							for(int i = 0; i < 5; i++) {
 								gs.addEntity(new EnemyCircler((float) (Math.random() * (Specular.camera.viewportWidth - 100) + 50), (float) (Math.random() * (Specular.camera.viewportHeight - 100) + 50), gs));
@@ -257,7 +243,7 @@ public class Tutorial {
 						}
 					}
 					break;
-						
+
 				case POWER_UPS_SHOWN :
 					for(PowerUp pu : gs.getPowerUps()) {
 						if(!pu.isActivated()) {
@@ -265,17 +251,17 @@ public class Tutorial {
 						}
 					}
 					allActivated = true;
-					
+
 					if(allActivated) {
 						ticksGone++;
-						
+
 						if(ticksGone >= 90) {
 							float alpha = (90 + 96 - ticksGone) / 240f;
 							alpha = alpha < 0 ? 0 : alpha;
-						
+
 							tutorialFont.setColor(1, 0, 0, alpha);
 						}
-						
+
 						if(enemiesSpawned && gs.getEnemies().size == 0) {
 							currentWave.complete();
 							next();
@@ -293,10 +279,9 @@ public class Tutorial {
 					}
 					break;
 				}
-			}
 		}
 	}
-	
+
 	public void next() {
 		if(currentWaveIndex < tutorialWaves.size) {
 			currentWave = tutorialWaves.get(currentWaveIndex);
@@ -306,40 +291,41 @@ public class Tutorial {
 		}
 		currentWaveIndex++;
 	}
-	
+
 	private void endWaves() {
 		ending = true;
 		gs.showTutorialEnd();
 	}
-	
+
 	public void end() {
 		ending = false;
 		gs.getPlayer().setLife(Player.getStartingLives());
+		gs.getPlayer().setScore(0);
 	}
-	
+
 	public States getReturnState() {
 		return returnState;
 	}
-	
+
 	public Array<TutorialWave> getTutorialWaves() {
 		return tutorialWaves;
 	}
-	
+
 	public TutorialWave getCurrentWave() {
 		return currentWave;
 	}
-	
+
 	public TutorialWave getWave(TutorialEvent event) {
 		for(TutorialWave wave : tutorialWaves) {
 			if(wave.getEvent().equals(event)) {
 				return wave;
 			}
 		}
-		
+
 		System.err.println("There is no wave with that event");
 		return null;
 	}
-	
+
 	public BitmapFont getFont() {
 		return tutorialFont;
 	}
@@ -347,27 +333,23 @@ public class Tutorial {
 	public int getTicks() {
 		return ticksGone;
 	}
-	
+
 	public float getTextX() {
 		return textX;
 	}
-	
+
 	public float getTextY() {
 		return textY;
 	}
-	
+
 	public boolean enemiesHasSpawned() {
 		return enemiesSpawned;
 	}
-	
+
 	public boolean allPowerUpsActivated() {
 		return allActivated;
 	}
-	
-	public boolean isStarting() {
-		return starting;
-	}
-	
+
 	public boolean isEnding() {
 		return ending;
 	}
