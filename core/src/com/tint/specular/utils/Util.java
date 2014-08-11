@@ -126,6 +126,21 @@ public class Util {
 	 * @param tex - The texture to draw
 	 * @param centerx - The centerx
 	 * @param centery - The centery
+	 * @param scale - The amount to scale the texture
+	 * @param rotation - The angle of the rotation around the centerpoint
+	 */
+	public static void drawCentered(SpriteBatch batch, Texture tex, float centerx, float centery, float scale, float rotation) {
+		int texWidth = tex.getWidth();
+		int texHeight = tex.getHeight();
+		batch.draw(tex, centerx - texWidth / 2, centery - texHeight / 2, texWidth / 2, texHeight / 2, texWidth, texHeight, scale, scale, rotation, 0, 0, texWidth, texHeight, false, false);
+	}
+	
+	/**
+	 * 
+	 * @param batch - The spritebatch to use
+	 * @param tex - The texture to draw
+	 * @param centerx - The centerx
+	 * @param centery - The centery
 	 * @param rotation - The angle of the rotation around the centerpoint
 	 */
 	public static void drawCentered(SpriteBatch batch, TextureRegion tex, float centerx, float centery, float width, float height, float rotation) {

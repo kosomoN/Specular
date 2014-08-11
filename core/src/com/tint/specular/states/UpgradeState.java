@@ -56,17 +56,17 @@ public class UpgradeState extends State {
 		super(game);
 		TextureAtlas ta = ((GameState) game.getState(States.SINGLEPLAYER_GAMESTATE)).getTextureAtlas();
 		
-		upgrades[0] = new LifeUpgrade(Specular.prefs.getInteger("Life Upgrade Grade"), 10, ta);
-		upgrades[1] = new FirerateUpgrade(Specular.prefs.getInteger("Firerate Upgrade Grade"), 10, ta);
-		upgrades[2] = new BurstUpgrade(Specular.prefs.getInteger("Burst Upgrade Grade"), 10, ta);
-		upgrades[3] = new LaserUpgrade(Specular.prefs.getInteger("Beam Upgrade Grade"), 10, ta);
-		upgrades[4] = new MultiplierUpgrade(Specular.prefs.getInteger("Multiplier Upgrade Grade"), 10, ta);
-		upgrades[5] = new PDSUpgrade(Specular.prefs.getInteger("PDS Upgrade Grade"), 10, ta);
-		upgrades[6] = new SwarmUpgrade(Specular.prefs.getInteger("Swarm Upgrade Grade"), 10, ta);
-		upgrades[7] = new RepulsorUpgrade(Specular.prefs.getInteger("Repulsor Upgrade Grade"), 10, ta);
-		upgrades[8] = new RicochetUpgrade(Specular.prefs.getInteger("Ricochet Upgrade Grade"), 10, ta);
-		upgrades[9] = new SlowdownUpgrade(Specular.prefs.getInteger("Slowdown Upgrade Grade"), 10, ta);
-		upgrades[10] = new BoardshockUpgrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"), 10, ta);
+		upgrades[0] = new LifeUpgrade(Specular.prefs.getFloat("Life Upgrade Grade"), 10, ta);
+		upgrades[1] = new FirerateUpgrade(Specular.prefs.getFloat("Firerate Upgrade Grade"), 10, ta);
+		upgrades[2] = new BurstUpgrade(Specular.prefs.getFloat("Burst Upgrade Grade"), 10, ta);
+		upgrades[3] = new LaserUpgrade(Specular.prefs.getFloat("Beam Upgrade Grade"), 10, ta);
+		upgrades[4] = new MultiplierUpgrade(Specular.prefs.getFloat("Multiplier Upgrade Grade"), 10, ta);
+		upgrades[5] = new PDSUpgrade(Specular.prefs.getFloat("PDS Upgrade Grade"), 10, ta);
+		upgrades[6] = new SwarmUpgrade(Specular.prefs.getFloat("Swarm Upgrade Grade"), 10, ta);
+		upgrades[7] = new RepulsorUpgrade(Specular.prefs.getFloat("Repulsor Upgrade Grade"), 10, ta);
+		upgrades[8] = new RicochetUpgrade(Specular.prefs.getFloat("Ricochet Upgrade Grade"), 10, ta);
+		upgrades[9] = new SlowdownUpgrade(Specular.prefs.getFloat("Slowdown Upgrade Grade"), 10, ta);
+		upgrades[10] = new BoardshockUpgrade(Specular.prefs.getFloat("Boardshock Upgrade Grade"), 10, ta);
 		
 		UpgradeList.init();
 	}
@@ -76,9 +76,10 @@ public class UpgradeState extends State {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		if(currentlyPressing != -1) {
-			if(waitForDragDelay > 0.1f) {
+			if(waitForDragDelay > 0.1f && upgrades[currentlyPressing].getCost() <= upgradePoints) {
 				upgrades[currentlyPressing].upgrade();
 				list.getProgressBars()[currentlyPressing].setValue(upgrades[currentlyPressing].getGrade());
+				upgradePoints -= upgrades[currentlyPressing].getCost();
 			} else {
 				System.out.println(waitForDragDelay);
 				waitForDragDelay += delta;
@@ -110,6 +111,12 @@ public class UpgradeState extends State {
 		currentlyPressing = -1;
 	}
 	
+	@Override
+	public void hide() {
+		super.hide();
+		saveUpgrades();
+	}
+
 	private void createUpgradeList() {
 		stage = new Stage(new ExtendViewport(1920, 1080), game.batch);
 		
@@ -171,39 +178,37 @@ public class UpgradeState extends State {
 		stage.addActor(backBtn);
 	}
 
-	public void saveUpgrades() {
-		//TODO CHANGE TO FLOAT!!!!!!!!!!!!!!
-		Specular.prefs.putInteger("Life Upgrade Grade", (int) upgrades[0].getGrade());
-		Specular.prefs.putInteger("Firerate Upgrade Grade", (int) upgrades[1].getGrade());
-		Specular.prefs.putInteger("Burst Upgrade Grade", (int) upgrades[2].getGrade());
-		Specular.prefs.putInteger("Beam Upgrade Grade", (int) upgrades[3].getGrade());
-		Specular.prefs.putInteger("Multiplier Upgrade Grade", (int) upgrades[4].getGrade());
-		Specular.prefs.putInteger("PDS Upgrade Grade", (int) upgrades[5].getGrade());
-		Specular.prefs.putInteger("Swarm Upgrade Grade", (int) upgrades[6].getGrade());
-		Specular.prefs.putInteger("Repulsor Upgrade Grade", (int) upgrades[7].getGrade());
-		Specular.prefs.putInteger("Ricochet Upgrade Grade", (int) upgrades[8].getGrade());
-		Specular.prefs.putInteger("Slowdown Upgrade Grade", (int) upgrades[9].getGrade());
-		Specular.prefs.putInteger("Boardshock Upgrade Grade", (int) upgrades[10].getGrade());
+	private void saveUpgrades() {
+		Specular.prefs.putFloat("Life Upgrade Grade", upgrades[0].getGrade());
+		Specular.prefs.putFloat("Firerate Upgrade Grade", upgrades[1].getGrade());
+		Specular.prefs.putFloat("Burst Upgrade Grade", upgrades[2].getGrade());
+		Specular.prefs.putFloat("Beam Upgrade Grade", upgrades[3].getGrade());
+		Specular.prefs.putFloat("Multiplier Upgrade Grade", upgrades[4].getGrade());
+		Specular.prefs.putFloat("PDS Upgrade Grade", upgrades[5].getGrade());
+		Specular.prefs.putFloat("Swarm Upgrade Grade", upgrades[6].getGrade());
+		Specular.prefs.putFloat("Repulsor Upgrade Grade", upgrades[7].getGrade());
+		Specular.prefs.putFloat("Ricochet Upgrade Grade", upgrades[8].getGrade());
+		Specular.prefs.putFloat("Slowdown Upgrade Grade", upgrades[9].getGrade());
+		Specular.prefs.putFloat("Boardshock Upgrade Grade", upgrades[10].getGrade());
 		Specular.prefs.putFloat("Upgrade Points", upgradePoints);
 		
 		Specular.prefs.flush();
 	}
 	
 	public void resetUpgrades() {
-
-		upgrades[0].setGrade(Specular.prefs.getInteger("Life Upgrade Grade"));
-		upgrades[1].setGrade(Specular.prefs.getInteger("Firerate Upgrade Grade"));
-		upgrades[2].setGrade(Specular.prefs.getInteger("Burst Upgrade Grade"));
-		upgrades[3].setGrade(Specular.prefs.getInteger("Beam Upgrade Grade"));
-		upgrades[4].setGrade(Specular.prefs.getInteger("Multiplier Upgrade Grade"));
-		upgrades[5].setGrade(Specular.prefs.getInteger("PDS Upgrade Grade"));
-		upgrades[6].setGrade(Specular.prefs.getInteger("Swarm Upgrade Grade"));
-		upgrades[7].setGrade(Specular.prefs.getInteger("Repulsor Upgrade Grade"));
-		upgrades[8].setGrade(Specular.prefs.getInteger("Ricochet Upgrade Grade"));
-		upgrades[9].setGrade(Specular.prefs.getInteger("Slowdown Upgrade Grade"));
-		upgrades[10].setGrade(Specular.prefs.getInteger("Boardshock Upgrade Grade"));
+		upgrades[0].setGrade(Specular.prefs.getFloat("Life Upgrade Grade"));
+		upgrades[1].setGrade(Specular.prefs.getFloat("Firerate Upgrade Grade"));
+		upgrades[2].setGrade(Specular.prefs.getFloat("Burst Upgrade Grade"));
+		upgrades[3].setGrade(Specular.prefs.getFloat("Beam Upgrade Grade"));
+		upgrades[4].setGrade(Specular.prefs.getFloat("Multiplier Upgrade Grade"));
+		upgrades[5].setGrade(Specular.prefs.getFloat("PDS Upgrade Grade"));
+		upgrades[6].setGrade(Specular.prefs.getFloat("Swarm Upgrade Grade"));
+		upgrades[7].setGrade(Specular.prefs.getFloat("Repulsor Upgrade Grade"));
+		upgrades[8].setGrade(Specular.prefs.getFloat("Ricochet Upgrade Grade"));
+		upgrades[9].setGrade(Specular.prefs.getFloat("Slowdown Upgrade Grade"));
+		upgrades[10].setGrade(Specular.prefs.getFloat("Boardshock Upgrade Grade"));
 		
-		upgradePoints = 1000;//Specular.prefs.getFloat("Upgrade Points");
+		upgradePoints = Specular.prefs.getFloat("Upgrade Points");
 	}
 	
 	public static Texture getUpgradeLevelTexture(float grade) {

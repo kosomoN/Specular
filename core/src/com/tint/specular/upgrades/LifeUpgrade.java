@@ -11,10 +11,10 @@ public class LifeUpgrade extends Upgrade {
 	private AtlasRegion tex;
 
 	public LifeUpgrade(GameState gs) {
-		super(gs, Specular.prefs.getInteger("Life Upgrade Grade"), 10);
+		super(gs, Specular.prefs.getFloat("Life Upgrade Grade"), 10);
 	}
 	
-	public LifeUpgrade(int grade, int maxGrade, TextureAtlas ta) {
+	public LifeUpgrade(float grade, float maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
 		tex = ta.findRegion("game1/Life");
 	}

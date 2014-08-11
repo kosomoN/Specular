@@ -27,6 +27,7 @@ import com.tint.specular.game.entities.Laser;
 import com.tint.specular.game.entities.PDS;
 import com.tint.specular.game.entities.Particle;
 import com.tint.specular.game.entities.Player;
+import com.tint.specular.game.entities.UpgradeOrb;
 import com.tint.specular.game.entities.Wave;
 import com.tint.specular.game.entities.WaveManager;
 import com.tint.specular.game.entities.enemies.Enemy;
@@ -56,6 +57,7 @@ import com.tint.specular.game.powerups.ScoreMultiplier;
 import com.tint.specular.game.powerups.ShieldPowerUp;
 import com.tint.specular.game.powerups.SlowdownEnemies;
 import com.tint.specular.game.powerups.Swarm;
+import com.tint.specular.game.spawnsystems.OrbSpawnSystem;
 import com.tint.specular.game.spawnsystems.ParticleSpawnSystem;
 import com.tint.specular.game.spawnsystems.PlayerSpawnSystem;
 import com.tint.specular.game.spawnsystems.PowerUpSpawnSystem;
@@ -95,6 +97,7 @@ public class GameState extends State {
 	protected PlayerSpawnSystem pss;
 	protected PowerUpSpawnSystem puss;
 	protected ParticleSpawnSystem pass;
+	protected OrbSpawnSystem oss;
 	protected ComboSystem cs;
 	protected WaveManager waveManager;
 	protected Wave currentWave;
@@ -233,6 +236,9 @@ public class GameState extends State {
 		// Tutorial
 		Tutorial.init(textureAtlas);
 		
+		// Upgrade Orb
+		UpgradeOrb.init();
+		
 		// Initializing entities and analogstick statically
 		Player.init(textureAtlas);
 		Bullet.init(this);
@@ -269,6 +275,7 @@ public class GameState extends State {
 		pss = new PlayerSpawnSystem(this);
 		puss = new PowerUpSpawnSystem(this);
 		pass = new ParticleSpawnSystem(this);
+		oss = new OrbSpawnSystem(this);
 		cs = new ComboSystem();
 		waveManager = new WaveManager(this);
 		
@@ -383,6 +390,8 @@ public class GameState extends State {
 				if(ent.update()) {
 					if(ent instanceof Particle)
 						pass.getPool().free((Particle) ent);
+					else if(ent instanceof UpgradeOrb)
+						oss.getPool().free((UpgradeOrb) ent); 
 					else if(ent instanceof Enemy)
 						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
 					else if(ent instanceof PowerUp)
@@ -639,6 +648,7 @@ public class GameState extends State {
 			cs.activate(enemies.size);
 			
 			enemiesKilled++;
+			oss.spawn(e.getX(), e.getY(), e.getDx() * Enemy.getSlowdown(), e.getDy() * Enemy.getSlowdown(), 5);
 			
 			Camera.shake(0.3f, 0.1f);
 			killSound.play();
@@ -728,6 +738,7 @@ public class GameState extends State {
 	public Player getPlayer() {	return player; }
 	
 	public ParticleSpawnSystem getParticleSpawnSystem() { return pass; }
+	public OrbSpawnSystem getOrbSpawnSystem() { return oss; }
 	public Map getCurrentMap() { return currentMap;	}
 	
 	public Tutorial getTutorial() { return tutorial; }
@@ -881,17 +892,17 @@ public class GameState extends State {
 		scoreFontAlpha = 0;
 		
 		// Initializing power-up levels
-		AddLife.reloadLevelTextures(Specular.prefs.getInteger("Life Upgrade Grade"));
-		BulletBurst.reloadLevelTextures(Specular.prefs.getInteger("Burst Upgrade Grade"));
-		FireRateBoost.reloadLevelTextures(Specular.prefs.getInteger("Firerate Upgrade Grade"));
-		ScoreMultiplier.reloadLevelTextures(Specular.prefs.getInteger("Multiplier Upgrade Grade"));
-		SlowdownEnemies.reloadLevelTextures(Specular.prefs.getInteger("Slowdown Upgrade Grade"));
-		BoardshockPowerUp.reloadLevelTextures(Specular.prefs.getInteger("Board Upgrade Grade"));
-		Ricochet.reloadLevelTextures(Specular.prefs.getInteger("Ricochet Upgrade Grade"));
-		Repulsor.reloadLevelTextures(Specular.prefs.getInteger("Repulsor Upgrade Grade"));
-		LaserPowerup.reloadLevelTextures(Specular.prefs.getInteger("Beam Upgrade Grade"));
-		Swarm.reloadLevelTextures(Specular.prefs.getInteger("Swarm Upgrade Grade"));
-		PDSPowerUp.reloadLevelTextures(Specular.prefs.getInteger("PDS Upgrade Grade"));
+		AddLife.reloadLevelTextures(Specular.prefs.getFloat("Life Upgrade Grade"));
+		BulletBurst.reloadLevelTextures(Specular.prefs.getFloat("Burst Upgrade Grade"));
+		FireRateBoost.reloadLevelTextures(Specular.prefs.getFloat("Firerate Upgrade Grade"));
+		ScoreMultiplier.reloadLevelTextures(Specular.prefs.getFloat("Multiplier Upgrade Grade"));
+		SlowdownEnemies.reloadLevelTextures(Specular.prefs.getFloat("Slowdown Upgrade Grade"));
+		BoardshockPowerUp.reloadLevelTextures(Specular.prefs.getFloat("Board Upgrade Grade"));
+		Ricochet.reloadLevelTextures(Specular.prefs.getFloat("Ricochet Upgrade Grade"));
+		Repulsor.reloadLevelTextures(Specular.prefs.getFloat("Repulsor Upgrade Grade"));
+		LaserPowerup.reloadLevelTextures(Specular.prefs.getFloat("Beam Upgrade Grade"));
+		Swarm.reloadLevelTextures(Specular.prefs.getFloat("Swarm Upgrade Grade"));
+		PDSPowerUp.reloadLevelTextures(Specular.prefs.getFloat("PDS Upgrade Grade"));
 		
 		ticks = 0;
 		

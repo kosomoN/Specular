@@ -7,10 +7,10 @@ public abstract class Upgrade {
 
 	protected GameState gs;
 	private float grade;
-	private int maxGrade;
+	private float maxGrade;
 	private int cost = 1;
 	
-	public Upgrade(GameState gs, float grade, int maxGrade) {
+	public Upgrade(GameState gs, float grade, float maxGrade) {
 		this.gs = gs;
 		this.grade = grade;
 		this.maxGrade = maxGrade;
@@ -24,7 +24,7 @@ public abstract class Upgrade {
 		grade = grade <= 0 ? 0 : --grade;
 	}
 	
-	public void setMaxGrade(int maxGrade) {
+	public void setMaxGrade(float maxGrade) {
 		if(maxGrade >= 0) {
 			this.maxGrade = maxGrade;
 			grade = grade > maxGrade ? maxGrade : grade;
@@ -35,7 +35,7 @@ public abstract class Upgrade {
 		return grade;
 	}
 	
-	public int getMaxGrade() {
+	public float getMaxGrade() {
 		return maxGrade;
 	}
 	
@@ -47,7 +47,7 @@ public abstract class Upgrade {
 	public abstract AtlasRegion getTexture();
 	public abstract String getDescription();
 
-	public void setGrade(int grade) {
+	public void setGrade(float grade) {
 		this.grade = grade;
 	}
 }

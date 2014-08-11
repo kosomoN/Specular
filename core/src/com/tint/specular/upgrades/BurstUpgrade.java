@@ -11,10 +11,10 @@ public class BurstUpgrade extends Upgrade {
 	private AtlasRegion tex;
 	
 	public BurstUpgrade(GameState gs) {
-		super(gs, Specular.prefs.getInteger("Burst Upgrade Grade"), 10);
+		super(gs, Specular.prefs.getFloat("Burst Upgrade Grade"), 10);
 	}
 	
-	public BurstUpgrade(int grade, int maxGrade, TextureAtlas ta) {
+	public BurstUpgrade(float grade, float maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
 		tex = ta.findRegion("game1/5 Burst");
 	}

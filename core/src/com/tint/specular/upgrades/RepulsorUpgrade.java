@@ -11,10 +11,10 @@ public class RepulsorUpgrade extends Upgrade {
 	private AtlasRegion tex;
 	
 	public RepulsorUpgrade(GameState gs) {
-		super(gs, Specular.prefs.getInteger("Repulsor Upgrade Grade"), 10);
+		super(gs, Specular.prefs.getFloat("Repulsor Upgrade Grade"), 10);
 	}
 	
-	public RepulsorUpgrade(int grade, int maxGrade, TextureAtlas ta) {
+	public RepulsorUpgrade(float grade, float maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
 		tex = ta.findRegion("game1/Repulsor");
 	}

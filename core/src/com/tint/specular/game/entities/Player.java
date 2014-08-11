@@ -43,14 +43,14 @@ public class Player implements Entity {
 	public static AtlasRegion playerTex, playerSpawnTex, playerDeathTex, pdsTex, shieldTexture, barrelTexture[] = new AtlasRegion[7];
 	public static int radius;
 	public static float distTraveledSqrd;
-	private static int startingLives = 3;//Specular.prefs.getInteger("Player Starting Lives");
+	private static int startingLives = Specular.prefs.getInteger("Player Starting Lives");
 	
 	private GameState gs;
 	private AmmoType ammo = AmmoType.BULLET;
 	private PDS pds;
 	private List<TrailPart> playerTrail = new ArrayList<TrailPart>();
 	
-	private float upgradePoints = 0;//Specular.prefs.getFloat("Upgrade Points");
+	private float upgradePoints = Specular.prefs.getFloat("Upgrade Points");
 	private float animFrameTime;
 	private float centerx, centery, dx, dy;
 	private float timeSinceLastFire, fireRate = 10f;
@@ -95,7 +95,7 @@ public class Player implements Entity {
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
-//		laserArc = Specular.prefs.getFloat("Laser Aiming Arc");
+		laserArc = Specular.prefs.getFloat("Laser Aiming Arc");
 		
 		for(int i = 0; i < TrailPart.AMOUNT; i++) {
 			playerTrail.add(new TrailPart(centerx, centery, (int) (i / (float) TrailPart.AMOUNT * TrailPart.SIZE)));

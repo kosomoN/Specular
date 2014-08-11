@@ -10,10 +10,10 @@ public class LaserUpgrade extends Upgrade {
 	private AtlasRegion tex;
 	
 	public LaserUpgrade(GameState gs) {
-		super(gs, Specular.prefs.getInteger("Beam Upgrade Grade"), 10);
+		super(gs, Specular.prefs.getFloat("Beam Upgrade Grade"), 10);
 	}
 	
-	public LaserUpgrade(int grade, int maxGrade, TextureAtlas ta) {
+	public LaserUpgrade(float grade, float maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
 		tex = ta.findRegion("game1/Laser Powerup");
 	}

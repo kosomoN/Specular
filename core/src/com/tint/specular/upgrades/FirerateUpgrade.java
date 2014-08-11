@@ -11,10 +11,10 @@ public class FirerateUpgrade extends Upgrade {
 	private AtlasRegion tex;
 	
 	public FirerateUpgrade(GameState gs) {
-		super(gs, Specular.prefs.getInteger("Firerate Upgrade Grade"), 10);
+		super(gs, Specular.prefs.getFloat("Firerate Upgrade Grade"), 10);
 	}
 	
-	public FirerateUpgrade(int grade, int maxGrade, TextureAtlas ta) {
+	public FirerateUpgrade(float grade, float maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
 		tex = ta.findRegion("game1/FireRate");
 	}

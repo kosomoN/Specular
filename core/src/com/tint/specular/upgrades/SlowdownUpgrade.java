@@ -11,10 +11,10 @@ public class SlowdownUpgrade extends Upgrade {
 	private AtlasRegion tex;
 	
 	public SlowdownUpgrade(GameState gs) {
-		super(gs, Specular.prefs.getInteger("Slowdown Upgrade Grade"), 10);
+		super(gs, Specular.prefs.getFloat("Slowdown Upgrade Grade"), 10);
 	}
 	
-	public SlowdownUpgrade(int grade, int maxGrade, TextureAtlas ta) {
+	public SlowdownUpgrade(float grade, float maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
 		tex = ta.findRegion("game1/Slowdown");
 	}

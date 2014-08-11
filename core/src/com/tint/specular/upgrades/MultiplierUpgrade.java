@@ -10,10 +10,10 @@ public class MultiplierUpgrade extends Upgrade {
 	private AtlasRegion tex;
 	
 	public MultiplierUpgrade(GameState gs) {
-		super(gs, Specular.prefs.getInteger("Multiplier Upgrade Grade"), 10);
+		super(gs, Specular.prefs.getFloat("Multiplier Upgrade Grade"), 10);
 	}
 	
-	public MultiplierUpgrade(int grade, int maxGrade, TextureAtlas ta) {
+	public MultiplierUpgrade(float grade, float maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
 		tex = ta.findRegion("game1/Multiplier");
 	}

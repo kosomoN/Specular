@@ -11,10 +11,10 @@ public class BoardshockUpgrade extends Upgrade {
 	private AtlasRegion tex;
 	
 	public BoardshockUpgrade(GameState gs) {
-		super(gs, Specular.prefs.getInteger("Boardshock Upgrade Grade"), 10);
+		super(gs, Specular.prefs.getFloat("Boardshock Upgrade Grade"), 10);
 	}
 	
-	public BoardshockUpgrade(int grade, int maxGrade, TextureAtlas ta) {
+	public BoardshockUpgrade(float grade, float maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
 		tex = ta.findRegion("game1/BoardShock");
 	}

@@ -11,10 +11,10 @@ public class RicochetUpgrade extends Upgrade {
 	private AtlasRegion tex;
 	
 	public RicochetUpgrade(GameState gs) {
-		super(gs, Specular.prefs.getInteger("Ricochet Upgrade Grade"), 10);
+		super(gs, Specular.prefs.getFloat("Ricochet Upgrade Grade"), 10);
 	}
 	
-	public RicochetUpgrade(int grade, int maxGrade, TextureAtlas ta) {
+	public RicochetUpgrade(float grade, float maxGrade, TextureAtlas ta) {
 		super(null, grade, maxGrade);
 		tex = ta.findRegion("game1/Ricochet");
 	}
