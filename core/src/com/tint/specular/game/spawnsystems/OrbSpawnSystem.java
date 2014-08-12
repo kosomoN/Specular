@@ -33,10 +33,10 @@ public class OrbSpawnSystem extends SpawnSystem {
 		int offset;
 		
 		for(int i = 0; i < amount; i++) {
-			offset = rand.nextInt(50) - 25;
+			offset = rand.nextInt(40) - 20;
 					
 			orb = orbPool.obtain();
-			orb.reUse(x, y, dir + offset, dx, dy);
+			orb.reUse(x, y, i * dir + offset, dx, dy);
 			
 			gs.addEntity(orb);
 		}

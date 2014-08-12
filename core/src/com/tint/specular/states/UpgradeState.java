@@ -77,9 +77,9 @@ public class UpgradeState extends State {
 		
 		if(currentlyPressing != -1) {
 			if(waitForDragDelay > 0.1f && upgrades[currentlyPressing].getCost() <= upgradePoints) {
-				upgrades[currentlyPressing].upgrade();
+				if(upgrades[currentlyPressing].upgrade())
+					upgradePoints -= upgrades[currentlyPressing].getCost();
 				list.getProgressBars()[currentlyPressing].setValue(upgrades[currentlyPressing].getGrade());
-				upgradePoints -= upgrades[currentlyPressing].getCost();
 			} else {
 				System.out.println(waitForDragDelay);
 				waitForDragDelay += delta;

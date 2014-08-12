@@ -67,7 +67,8 @@ public class GameOverInputProcessor extends InputAdapter {
 			menu.touchOver(touchpointx, touchpointy);
 		else if(highscores.isOver(touchpointx, touchpointy, false))
 			highscores.touchOver(touchpointx, touchpointy);
-			
+		else if(upgrades.isOver(touchpointx, touchpointy, false))
+			upgrades.touchOver(touchpointx, touchpointy);
 
 		
 		touch = true;
@@ -139,6 +140,12 @@ public class GameOverInputProcessor extends InputAdapter {
 			highscores.touchOver(touchpointx, touchpointy);
 		} else {
 			highscores.touchUp();
+		}
+		
+		if(upgrades.isOver(touchpointx, touchpointy, false)) {
+			upgrades.touchOver(touchpointx, touchpointy);
+		} else {
+			upgrades.touchUp();
 		}
 
 		return false;

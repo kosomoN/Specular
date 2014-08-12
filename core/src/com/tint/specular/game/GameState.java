@@ -145,6 +145,7 @@ public class GameState extends State {
 	private Array<Enemy> enemies = new Array<Enemy>(false, 64);
 	private Array<Bullet> bullets = new Array<Bullet>(false, 64);
 	private Array<Particle> particles = new Array<Particle>(false, PARTICLE_LIMIT);
+	private Array<UpgradeOrb> orbs = new Array<UpgradeOrb>(false, 64);
 	private Array<PowerUp> powerups = new Array<PowerUp>(false, 64);
 	
 	// Upgrades
@@ -405,6 +406,11 @@ public class GameState extends State {
 				}
 			}
 
+			for(Iterator<UpgradeOrb> it = orbs.iterator(); it.hasNext();) {
+				if(it.next().update())
+					it.remove();
+			}
+			
 			for(Iterator<Particle> it = particles.iterator(); it.hasNext();) {
 				if(it.next().update())
 					it.remove();
@@ -490,6 +496,9 @@ public class GameState extends State {
 		}
 		
         game.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
+        
+        for(UpgradeOrb orb : orbs)
+        	orb.render(game.batch);
         
         for(Particle p : particles)
            p.render(game.batch);
@@ -659,7 +668,11 @@ public class GameState extends State {
 		if(entity instanceof Particle) {
 			particles.add((Particle) entity);
 			return;
-		} if(entity instanceof Bullet)
+		} else if(entity instanceof UpgradeOrb) {
+			orbs.add((UpgradeOrb) entity);
+			return;
+		}
+		if(entity instanceof Bullet)
 			bullets.add((Bullet) entity);
 		else if(entity instanceof Enemy)
 			enemies.add((Enemy) entity);

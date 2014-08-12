@@ -16,8 +16,12 @@ public abstract class Upgrade {
 		this.maxGrade = maxGrade;
 	}
 	
-	public void upgrade() {
-		grade = (grade >= maxGrade ? maxGrade : grade + 0.1f);
+	public boolean upgrade() {
+		if(grade >= maxGrade)
+			return false;
+		
+		grade += 0.1f;
+		return true;
 	}
 
 	public void degrade() {

@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.tint.specular.Specular;
+import com.tint.specular.game.Camera;
 import com.tint.specular.game.GameState;
 import com.tint.specular.utils.Util;
 
@@ -34,11 +36,24 @@ public class UpgradeOrb implements Entity, Poolable {
 	public boolean update() {
 		// Lifetime decrease
 		lifetime--;
-		
-		if((gs.getPlayer().getX() - x) * (gs.getPlayer().getX() - x) + (gs.getPlayer().getY() - y) * (gs.getPlayer().getY() - y) <= 
-				(Player.getRadius() + tex.getWidth()) * (Player.getRadius() + tex.getWidth())) {
-			gs.getPlayer().addUpgradePoints(0.01f);
-			return true;
+		float dist = (gs.getPlayer().getX() - x) * (gs.getPlayer().getX() - x) + (gs.getPlayer().getY() - y) * (gs.getPlayer().getY() - y);
+		float radiusDist = (Player.getRadius() + tex.getWidth()) * (Player.getRadius() + tex.getWidth());
+		if(dist <= radiusDist * 20) {
+			//Calculating angle and force
+			double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
+			float dx = (float) (Math.cos(angle) * (radiusDist * 20 / dist));
+			float dy = (float) (Math.sin(angle) * (radiusDist * 20 / dist));
+			
+			// Add the force
+			if(this.dx * this.dx < dx * dx)
+				this.dx += dx;
+			if(this.dy * this.dy < dy * dy)
+				this.dy += dy;
+			
+			if(dist <= radiusDist) {
+				gs.getPlayer().addUpgradePoints(0.01f);
+				return true;
+			}
 		}
 		
 		// Movement
@@ -69,10 +84,17 @@ public class UpgradeOrb implements Entity, Poolable {
 
 	@Override
 	public void render(SpriteBatch batch) {
-		float size = Math.min((lifetime / 160f) * (lifetime / 160f), 1);
-		batch.setColor(1, 1, 1, size);
-		Util.drawCentered(batch, tex, x, y, size, 0);
-		batch.setColor(1, 1, 1, 1);
+		// Checking if on screen to increase performance
+		if(Camera.getCameraX() - Specular.camera.viewportWidth / 2 * Camera.getZoom() - 100 < x &&
+				Camera.getCameraX() + Specular.camera.viewportWidth / 2 * Camera.getZoom() + 100 > x &&
+				Camera.getCameraY() - Specular.camera.viewportHeight / 2 * Camera.getZoom() - 100 < y &&
+				Camera.getCameraY() + Specular.camera.viewportHeight / 2 * Camera.getZoom() + 100 > y) {
+			
+			float size = Math.min((lifetime / 160f) * (lifetime / 160f), 1);
+			batch.setColor(1, 1, 1, size);
+			Util.drawCentered(batch, tex, x, y, size, 0);
+			batch.setColor(1, 1, 1, 1);
+		}
 	}
 
 	public float getValue() {
@@ -100,8 +122,8 @@ public class UpgradeOrb implements Entity, Poolable {
 		
 		float cos = (float) Math.cos(Math.toRadians(direction));
 		float sin = (float) Math.sin(Math.toRadians(direction));
-		dx = (float) (cos * Math.random() * 5);
-		dy = (float) (sin * Math.random() * 5);
+		dx = (float) (cos * (Math.random() * 2 + 1));
+		dy = (float) (sin * (Math.random() * 2 + 1));
 		
 		// Adding speed the enemy had
 		dx += initialDx;
