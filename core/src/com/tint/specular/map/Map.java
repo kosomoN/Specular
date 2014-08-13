@@ -117,14 +117,7 @@ public class Map {
 				}
 			}
 			
-			if(GfxSettings.ReturnPtr()){
-				for(UpgradeOrb orb : gs.getOrbs()){
-					batch.setColor(0.2f, 0.4f, 1, 1);
-					batch.draw(mask, orb.getX() - 60, fbo.getHeight() - orb.getY() - 60, 100, 100);
-				
-				}
-			}
-			
+
 			for(PowerUp p : gs.getPowerUps()) {
 				if(!p.isActivated()) {
 					float alpha = p.getDespawnTime() % 100 / 100f;
@@ -137,6 +130,14 @@ public class Map {
 			if(BoardShock.isActivated() && GfxSettings.ReturnBs()) {
 				float size = BoardShock.getShockWaveProgress() * 6144;
 				batch.draw(ShockWaveRenderer.getMaskTexture(), BoardShock.getActivationX() - size / 2, fbo.getHeight() - BoardShock.getActivationY() - size / 2, size, size);
+			}
+						
+			if(GfxSettings.ReturnPtr()){
+				for(UpgradeOrb orb : gs.getOrbs()){
+					batch.setColor(0.2f, 0.4f, 1, 1);
+					batch.draw(mask, orb.getX() - 60, fbo.getHeight() - orb.getY() - 60, 100, 100);
+				
+				}
 			}
 			
 			if(GfxSettings.ReturnPtr()){
@@ -206,6 +207,7 @@ public class Map {
 							batch.draw(mask, p.getX() - 80, fbo.getHeight() - p.getY() - 80, 160, 160);
 					}
 					
+
 					batch.draw(mask, e.getX() - 80, fbo.getHeight() - e.getY() - 80, 160, 160);
 				}
 			}

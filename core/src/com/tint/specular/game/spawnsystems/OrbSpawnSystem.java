@@ -28,6 +28,8 @@ public class OrbSpawnSystem extends SpawnSystem {
 	}
 
 	public void spawn(float x, float y, float dx, float dy, int amount) {
+		
+		if(gs.tutorialHasEnded()){
 		UpgradeOrb orb;
 		float dir = 360f / amount;
 		int offset;
@@ -39,6 +41,7 @@ public class OrbSpawnSystem extends SpawnSystem {
 			orb.reUse(x, y, i * dir + offset, dx, dy);
 			
 			gs.addEntity(orb);
+			}
 		}
 	}
 	
