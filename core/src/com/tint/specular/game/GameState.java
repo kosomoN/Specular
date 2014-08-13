@@ -1040,4 +1040,8 @@ public class GameState extends State {
 		return soundEffects;
 	}
 	
+	public Array<UpgradeOrb> getOrbs() {
+		return orbs;
+	}
+	
 }
