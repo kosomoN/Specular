@@ -19,6 +19,7 @@ import com.tint.specular.game.GameState;
 import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Particle;
+import com.tint.specular.game.entities.UpgradeOrb;
 import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
@@ -113,6 +114,14 @@ public class Map {
 			if(GfxSettings.ReturnBt()){
 				for(Bullet b : gs.getBullets()) {
 					batch.draw(mask, b.getX() - 80, fbo.getHeight() - b.getY() - 80, 160, 160);
+				}
+			}
+			
+			if(GfxSettings.ReturnPtr()){
+				for(UpgradeOrb orb : gs.getOrbs()){
+					batch.setColor(0.2f, 0.4f, 1, 1);
+					batch.draw(mask, orb.getX() - 60, fbo.getHeight() - orb.getY() - 60, 100, 100);
+				
 				}
 			}
 			
@@ -235,6 +244,11 @@ public class Map {
 				for(Bullet b : gs.getBullets()) {
 					shapeRenderer.rect(b.getX() - 80, b.getY() - 80, 160, 160);
 				}
+			}
+			
+			for(UpgradeOrb Orbs : gs.getOrbs()) {
+				shapeRenderer.rect(Orbs.getX() - 60, Orbs.getY() - 60, 160, 160);
+				
 			}
 			
 			for(PowerUp p : gs.getPowerUps()) {

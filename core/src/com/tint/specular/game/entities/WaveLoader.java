@@ -14,6 +14,7 @@ import com.tint.specular.game.entities.enemies.EnemyWanderer;
 
 public class WaveLoader {
 
+
 	public static void initWaves(GameState gs, List<Wave> specialWaves) {
 		Gdx.app.log("Specular", "Loading Waves");
 		
@@ -116,16 +117,40 @@ public class WaveLoader {
 		specialWaves.add(wave);
 		
 		/* Combinations */
+		final EnemyType[] randomEnemies = new EnemyType[]{ENEMY_BOOSTER,ENEMY_CIRCLER,ENEMY_DASHER,ENEMY_STRIVER,ENEMY_TANKER,ENEMY_WANDERER};
+		final EnemyType[] hcEnemies = new EnemyType[]{ENEMY_EXPLODER,ENEMY_WORM,ENEMY_SHIELDER};
+
+		int random, randomHc;
+		random = rand.nextInt(randomEnemies.length);
+		randomHc = rand.nextInt(hcEnemies.length);
 		
 		// Worm and Dasher, should change
 		wave = new Wave(gs, 9, 800);
 			wave.addEnemies(new EnemyType[] {ENEMY_WORM, ENEMY_DASHER}, new int[] {1, 5}, Formation.RANDOM, 0, 10);
-		specialWaves.add(wave);
+		specialWaves.add(wave);			
 		
+		
+		// Wanderer and shielder
+			wave = new Wave(gs, 10, 800);
+				wave.addEnemies(new EnemyType[] {ENEMY_WANDERER, ENEMY_SHIELDER}, new int[] {10, 1}, Formation.RANDOM, 0, 10);
+			specialWaves.add(wave);	
+			
+		// Tanker and Dasher	
+			wave = new Wave(gs, 11, 800);
+			wave.addEnemies(new EnemyType[] {ENEMY_TANKER, ENEMY_DASHER}, new int[] {7, 3}, Formation.RANDOM, 0, 10);
+		specialWaves.add(wave);	
+		
+		// Random wave, get lucky or unlucky
+		wave = new Wave(gs, 12, 800);
+		wave.addEnemies(new EnemyType[] {randomEnemies[random], hcEnemies[randomHc]}, new int[] {8, 2}, Formation.RANDOM, 0, 10);
+	specialWaves.add(wave);	
+	
+	
 		// Shielder and wanderer, idea pretty clear
-		wave = new Wave(gs, 10, 800);
+		wave = new Wave(gs, 13, 800);
 			wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY, 0, 1);
 		wave.setPermanentModifer(new WaveModifier() {
+		
 			@Override
 			public void affectSpecial(GameState gs, Enemy justSpawnedEnemy) {
 				if(justSpawnedEnemy instanceof EnemyWanderer) {
