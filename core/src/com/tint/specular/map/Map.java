@@ -39,7 +39,7 @@ public class Map {
 	
 	private int width, height;
 	private Texture texture, shockLight, parallax;
-	private AtlasRegion mask;
+	private AtlasRegion mask, dasherMask, dasherMaskV;
 	private FrameBuffer fbo;
 	private ShaderProgram shader;
 	private String name;
@@ -59,6 +59,8 @@ public class Map {
 		matrix.setToOrtho2D(0, 0, texture.getWidth(), texture.getHeight());
 		
 		mask = gs.getTextureAtlas().findRegion("game1/Mask");
+		dasherMask = gs.getTextureAtlas().findRegion("game1/Dasher Mask");
+		dasherMaskV = gs.getTextureAtlas().findRegion("game1/Dasher Mask V");
 		
 		fbo = new FrameBuffer(Format.RGBA4444, shockLight.getWidth(), shockLight.getHeight(), false);
 		
@@ -135,7 +137,8 @@ public class Map {
 			if(GfxSettings.ReturnPtr()){
 				for(UpgradeOrb orb : gs.getOrbs()){
 					batch.setColor(0.2f, 0.4f, 1, 1);
-					batch.draw(mask, orb.getX() - 60, fbo.getHeight() - orb.getY() - 60, 100, 100);
+					float size = orb.getLifetime() / 2;
+					batch.draw(mask, orb.getX() - size / 2, fbo.getHeight() - orb.getY() - size / 2, size, size);
 				
 				}
 			}
@@ -180,7 +183,7 @@ public class Map {
 					batch.draw(mask, e.getX() - size / 2, fbo.getHeight() - e.getY() - size / 2, size, size);
 				}
 			}
-			
+
 			if(GfxSettings.ReturnEt()){
 				for(Enemy e : gs.getEnemies()) {
 					if(e instanceof EnemyWanderer)
@@ -191,9 +194,20 @@ public class Map {
 						batch.setColor(1, 0, 1, 1);
 					else if(e instanceof EnemyShielder)
 						batch.setColor(1, 1, 1, 1);
-					else if(e instanceof EnemyDasher)
+					else if(e instanceof EnemyDasher) {
 						batch.setColor(0, 1, 0, 1);
-					else if(e instanceof EnemyTanker)
+
+						EnemyDasher dasher = (EnemyDasher) e;
+						if(dasher.getDasherDirection() == 0) {
+							batch.draw(dasherMask, e.getX(), fbo.getHeight() - e.getY() - 32, gs.getCurrentMap().getWidth() - e.getX(), 64);
+						} else if(dasher.getDasherDirection() == Math.PI) {
+							batch.draw(dasherMask, e.getX(), fbo.getHeight() - e.getY() - 32, -e.getX(), 64);
+						} else if(dasher.getDasherDirection() == (Math.PI / 2 )){
+							batch.draw(dasherMaskV, e.getX() - 32, fbo.getHeight() - e.getY(), 64, -gs.getCurrentMap().getHeight() + e.getY());
+						} else {
+							batch.draw(dasherMaskV, e.getX() - 32, fbo.getHeight() - e.getY(), 64, e.getY());
+						}
+					} else if(e instanceof EnemyTanker)
 						batch.setColor(0.8f, 0.5f, 0, 1);
 					else if(e instanceof EnemyBooster)
 						batch.setColor(1, 1, 0, 1);
@@ -249,7 +263,7 @@ public class Map {
 			}
 			
 			for(UpgradeOrb Orbs : gs.getOrbs()) {
-				shapeRenderer.rect(Orbs.getX() - 60, Orbs.getY() - 60, 160, 160);
+				shapeRenderer.rect(Orbs.getX() - 80, Orbs.getY() - 80, 160, 160);
 				
 			}
 			
@@ -260,7 +274,23 @@ public class Map {
 
 			if(GfxSettings.ReturnEt()){
 				for(Enemy e : gs.getEnemies()) {
-					if(e instanceof EnemyWorm) {
+					if(e instanceof EnemyDasher) {
+						EnemyDasher dasher = (EnemyDasher) e;
+						if(dasher.getDasherDirection() == 0){
+
+							shapeRenderer.rect(e.getX(), e.getY() - 32, gs.getCurrentMap().getWidth() - e.getX(), 64);
+
+						} else if(dasher.getDasherDirection() == Math.PI){
+
+							shapeRenderer.rect(e.getX(), e.getY() - 32, -e.getX(), 64);
+
+						} else if(dasher.getDasherDirection() == (Math.PI / 2 )){
+
+							shapeRenderer.rect(e.getX() - 32, e.getY(), 64, gs.getCurrentMap().getHeight() - e.getY());
+						} else {
+							shapeRenderer.rect(e.getX() - 32, e.getY(), 64, -e.getY());
+						}
+					} else if(e instanceof EnemyWorm) {
 						for(EnemyWorm.Part p : ((EnemyWorm) e).getParts())
 							shapeRenderer.rect(p.getX() - 80, p.getY() - 80, 160, 160);
 					}

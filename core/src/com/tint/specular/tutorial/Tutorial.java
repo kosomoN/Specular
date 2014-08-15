@@ -301,6 +301,28 @@ public class Tutorial {
 		ending = false;
 		gs.getPlayer().setLife(Player.getStartingLives());
 		gs.getPlayer().setScore(0);
+		
+		/*
+		 *
+		 * 	 |   (_)    |
+             |    _)  |
+         (       (     |
+          (  _.-"""-._    )
+         ( .'         `.   )
+          /             \  )
+         |_=_=_=_=_=_=_=_|
+          \  '       '  /
+           \ `:     :' /
+            \ `:   :' / _____
+             \ `: :' / |WHEE!|
+              \ `:  /  ;-----'
+               \`o'/  '
+                 |
+                / \    
+		 */
+		
+		Bullet.bulletsMissed = 0;
+		Bullet.bulletsFired = 0;
 	}
 
 	public States getReturnState() {

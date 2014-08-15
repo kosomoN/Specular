@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.GfxSettings;
 import com.tint.specular.game.entities.Particle.Type;
 import com.tint.specular.utils.Util;
 
@@ -32,39 +33,40 @@ public class EnemyDasher extends Enemy {
 
 	@Override
 	public void renderEnemy(SpriteBatch batch) {
-			
-		//Render warning line
-		batch.setColor(1, 1, 1, ((float) Math.cos(boostingDelay / 60f * Math.PI * 2 + Math.PI) + 1) / 4);
-		
-		if(direction == 0 || direction == Math.PI) {
-			float width = 0;
-			if(direction == 0) {
-				width = gs.getCurrentMap().getWidth() - x;
-				for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getRegionWidth()); i < n; i++)
-					batch.draw(dashWarningTex, x + i * dashWarningTex.getRegionWidth(), y - dashWarningTex.getRegionHeight() / 2);
+
+		if(GfxSettings.setting == GfxSettings.LOW) {
+			//Render warning line
+			batch.setColor(1, 1, 1, ((float) Math.cos(boostingDelay / 60f * Math.PI * 2 + Math.PI) + 1) / 4);
+
+			if(direction == 0 || direction == Math.PI) {
+				float width = 0;
+				if(direction == 0) {
+					width = gs.getCurrentMap().getWidth() - x;
+					for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getRegionWidth()); i < n; i++)
+						batch.draw(dashWarningTex, x + i * dashWarningTex.getRegionWidth(), y - dashWarningTex.getRegionHeight() / 2);
+				} else {
+					width = x;
+					for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getRegionWidth()); i < n; i++)
+						batch.draw(dashWarningTex, x - (i + 1) * dashWarningTex.getRegionWidth(), y - dashWarningTex.getRegionHeight() / 2);
+				}
+
 			} else {
-				width = x;
-				for(int i = 0, n = (int) Math.ceil(width / dashWarningTex.getRegionWidth()); i < n; i++)
-					batch.draw(dashWarningTex, x - (i + 1) * dashWarningTex.getRegionWidth(), y - dashWarningTex.getRegionHeight() / 2);
+				float height = y;
+				if(direction == Math.PI / 2) {
+					//Upwards
+					height = gs.getCurrentMap().getHeight() - y;
+					for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getRegionHeight()); i < n; i++)
+						Util.drawCentered(batch, dashWarningTex, x, y + i * dashWarningTex.getRegionWidth(), 90);
+				} else {
+					//Downwards
+					for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getRegionHeight()); i < n; i++)
+						Util.drawCentered(batch, dashWarningTex, x, y - (i + 1) * dashWarningTex.getRegionWidth(), 90);
+
+				}
 			}
 
-		} else {
-			float height = y;
-			if(direction == Math.PI / 2) {
-				//Upwards
-				height = gs.getCurrentMap().getHeight() - y;
-				for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getRegionHeight()); i < n; i++)
-					Util.drawCentered(batch, dashWarningTex, x, y + i * dashWarningTex.getRegionWidth(), 90);
-			} else {
-				//Downwards
-				for(int i = 0, n = (int) Math.ceil(height / dashWarningTex.getRegionHeight()); i < n; i++)
-					Util.drawCentered(batch, dashWarningTex, x, y - (i + 1) * dashWarningTex.getRegionWidth(), 90);
-				
-			}
+			batch.setColor(Color.WHITE);
 		}
-		
-		batch.setColor(Color.WHITE);
-		
 		Util.drawCentered(batch, tex, x, y, (float) Math.toDegrees(direction) - 90);
 		
 	}
@@ -188,5 +190,8 @@ public class EnemyDasher extends Enemy {
 		return new EnemyDasher(0, 0, gs);
 	}
 
+	public double getDasherDirection() {
+		return direction;
+	}
 
 }

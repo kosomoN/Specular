@@ -101,6 +101,10 @@ public class UpgradeOrb implements Entity, Poolable {
 		return value;
 	}
 	
+	public float getLifetime() {
+		return lifetime;
+	}
+
 	@Override
 	public void dispose() {
 		
