@@ -45,7 +45,7 @@ public class Specular extends Game {
 	public SpriteBatch batch;
 	
 	// Graphics has to be first, add new iPrefs last
-	private String[] iPrefs = {"Graphics", "Highscore", "Player Starting Lives", "Time Played Ticks", "Games Played", "Bullets Fired", "Bullets Missed",
+	private String[] iPrefs = {"Graphics", "Highscore", "Time Played Ticks", "Games Played", "Bullets Fired", "Bullets Missed",
 			"Enemies Killed", "Multiplier Cooldown"};
 	// Add new fPrefs last
 	private String[] fPrefs = {"Move Stick Pos X", "Move Stick Pos Y", "Shoot Stick Pos X", "Shoot Stick Pos Y", "Sensitivity", "Upgrade Points", "Freeze Time",

@@ -1,8 +1,8 @@
 package com.tint.specular.game.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.utils.Pool.Poolable;
 import com.tint.specular.Specular;
 import com.tint.specular.game.Camera;
@@ -21,15 +21,15 @@ public class UpgradeOrb implements Entity, Poolable {
 	private float x, y, dx, dy;
 	private float value;
 	private float lifetime;
-	private static Texture tex;
+	private static AtlasRegion tex;
 	
 	public UpgradeOrb(GameState gs) {
 		this.gs = gs;
 		value = (float) (Math.random() * 20);
 	}
 	
-	public static void init() {
-		tex = new Texture(Gdx.files.internal("graphics/game/unpacked/game1/Orb.png"));
+	public static void init(TextureAtlas ta) {
+		tex = ta.findRegion("game1/Orb");
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class UpgradeOrb implements Entity, Poolable {
 		// Lifetime decrease
 		lifetime--;
 		float dist = (gs.getPlayer().getX() - x) * (gs.getPlayer().getX() - x) + (gs.getPlayer().getY() - y) * (gs.getPlayer().getY() - y);
-		float radiusDist = (Player.getRadius() + tex.getWidth()) * (Player.getRadius() + tex.getWidth());
+		float radiusDist = (Player.getRadius() + tex.getRegionWidth()) * (Player.getRadius() + tex.getRegionWidth());
 		if(dist <= radiusDist * 20) {
 			//Calculating angle and force
 			double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
@@ -92,7 +92,7 @@ public class UpgradeOrb implements Entity, Poolable {
 			
 			float size = Math.min((lifetime / 160f) * (lifetime / 160f), 1);
 			batch.setColor(1, 1, 1, size);
-			Util.drawCentered(batch, tex, x, y, size, 0);
+			Util.drawCentered(batch, tex, x, y, 0);
 			batch.setColor(1, 1, 1, 1);
 		}
 	}

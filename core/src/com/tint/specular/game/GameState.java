@@ -238,13 +238,11 @@ public class GameState extends State {
 		// Tutorial
 		Tutorial.init(textureAtlas);
 		
-		// Upgrade Orb
-		UpgradeOrb.init();
-		
 		// Initializing entities and analogstick statically
 		Player.init(textureAtlas);
 		Bullet.init(this);
 		Particle.init(textureAtlas);
+		UpgradeOrb.init(textureAtlas);
 		EnemyWanderer.init(textureAtlas);
 		EnemyCircler.init(textureAtlas);
 		EnemyStriver.init(textureAtlas);

@@ -43,7 +43,7 @@ public class Player implements Entity {
 	public static AtlasRegion playerTex, playerSpawnTex, playerDeathTex, pdsTex, shieldTexture, barrelTexture[] = new AtlasRegion[7];
 	public static int radius;
 	public static float distTraveledSqrd;
-	private static int startingLives = Specular.prefs.getInteger("Player Starting Lives");
+	private static int startingLives = Specular.prefs.getFloat("Life Upgrade Grade") < 10 ? 3 : 4;
 	
 	private GameState gs;
 	private AmmoType ammo = AmmoType.BULLET;
