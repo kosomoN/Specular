@@ -836,6 +836,7 @@ public class GameState extends State {
 		powerups.clear();
 		bullets.clear();
 		particles.clear();
+		orbs.clear();
 	}
 	
 	/**
