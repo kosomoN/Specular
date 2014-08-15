@@ -22,6 +22,7 @@ public class Button {
 	private SpriteBatch batch;
 	private boolean touched;
 	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPress.ogg"));
+	private float scale = 1.0f;
 	
 	public Button(float x, float y, float width, float height, SpriteBatch batch, Texture upTexture, Texture downTexture) {
 		this.batch = batch;
@@ -34,9 +35,9 @@ public class Button {
 /*_____________________________________________________________________*/
 	public void render() {
 		if(touched)
-			Util.drawCentered(batch, downTexture, hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height / 2, 0);
+			Util.drawCentered(batch, downTexture, hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height / 2, scale, 0);
 		else
-			Util.drawCentered(batch, upTexture, hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height / 2, 0);
+			Util.drawCentered(batch, upTexture, hitbox.x + hitbox.width / 2, hitbox.y + hitbox.height / 2, scale, 0);
 	}
 	
 	public void touchOver(float x, float y) {
@@ -61,6 +62,8 @@ public class Button {
 	//SETTERS
 	public void setPosition(float x, float y) { hitbox.setPosition(x, y); }
 	public void setSize(float width, float height) { hitbox.setSize(width, height); }
+	public void setScale(float scale) { this.scale = scale; }
+	public void setTouch(boolean touched) { this.touched = touched; }
 	
 	//GETTERS
 	public float getX() { return hitbox.getX();	}

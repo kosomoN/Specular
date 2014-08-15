@@ -129,6 +129,7 @@ public class GameState extends State {
 	private float boardshockCharge = 0; //Value between 0 and 1
 	private int ticksforCamera;
 	private int tutorialTicks;
+	private long gameOverTicks;
 	
 	// Fields that affect score or gameplay
 	private final int LAST_HIGHSCORE = Specular.prefs.getInteger("Highscore");
@@ -383,6 +384,7 @@ public class GameState extends State {
 				}
 			} else {
 				clearLists();
+				gameOverTicks++;
 			}
 			
 			// Removing destroyed entities
@@ -596,6 +598,19 @@ public class GameState extends State {
 				ggInputProcessor.getRetryBtn().render();
 				ggInputProcessor.getMenuBtn().render();
 				ggInputProcessor.getHighscoreBtn().render();
+				
+				if(player.getUpgradePoints() >= 1) {
+					if(!ggInputProcessor.isTouchingUpgradeBtn()) {
+						if(gameOverTicks % 90 < 40) {
+							ggInputProcessor.getUpgradeBtn().setScale(1.01f);
+							ggInputProcessor.getUpgradeBtn().setTouch(true);
+						} else {
+							ggInputProcessor.getUpgradeBtn().setScale(1.0f);
+							ggInputProcessor.getUpgradeBtn().setTouch(false);
+						}
+					}
+				}
+				
 				ggInputProcessor.getUpgradeBtn().render();
 			}
 		}
@@ -837,6 +852,7 @@ public class GameState extends State {
 		clearLists();
 		
 		ticks = 0;
+		gameOverTicks = 0;
 		
 		soundsEnabled = Specular.prefs.getBoolean("SoundsMuted");
 		particlesEnabled = Specular.prefs.getBoolean("Particles");

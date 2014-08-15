@@ -5,6 +5,7 @@ import com.tint.specular.game.GameState;
 
 public abstract class Upgrade {
 
+	protected boolean infinity;
 	protected GameState gs;
 	private float grade;
 	private float maxGrade;
@@ -36,6 +37,9 @@ public abstract class Upgrade {
 	}
 
 	public float getGrade() {
+		if(grade > maxGrade && !infinity)
+			grade = maxGrade;
+
 		return grade;
 	}
 	

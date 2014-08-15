@@ -33,7 +33,7 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 		
 		bars = new ProgressBar[upgrades.length];
 		for(int i = 0; i < upgrades.length; i++) {
-			bars[i] = new ProgressBar((int) (Specular.camera.viewportWidth - 200), 128);
+			bars[i] = new ProgressBar(Specular.camera.viewportWidth - 200, 128);
 			bars[i].setValue(upgrades[i].getGrade());
 			bars[i].setMaxValue(10);
 		}
@@ -65,14 +65,15 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 				bars[i].setPosition((int) getX(), (int) y);
 				
 				if (cullingArea == null || (itemY - rowHeight <= cullingArea.y + cullingArea.height && itemY + rowHeight >= cullingArea.y)) {
-					batch.draw(upgrades[i].getTexture(), getX() + 40, y + 35, upgrades[i].getTexture().getRegionWidth() * 1.5f, upgrades[i].getTexture().getRegionHeight() * 1.5f);
+					// The + 64 is for the space from edge of bar frame texture to actual frame edge
+					batch.draw(upgrades[i].getTexture(), getX() + 64 + 40, y + 35, upgrades[i].getTexture().getRegionWidth() * 1.5f, upgrades[i].getTexture().getRegionHeight() * 1.5f);
 					
 					levelTex = UpgradeState.getUpgradeLevelTexture(upgrades[i].getGrade());
 					if(levelTex != null) {
-						batch.draw(levelTex, getX() + 40, y + 35, levelTex.getWidth() * 1.5f, levelTex.getHeight() * 1.5f);
+						batch.draw(levelTex, getX() + 64 + 40, y + 35, levelTex.getWidth() * 1.5f, levelTex.getHeight() * 1.5f);
 					}
 					
-					bars[i].render(batch);
+					bars[i].draw(batch, parentAlpha);
 					Util.writeCentered((SpriteBatch) batch, upgradeFont, upgrades[i].getDescription(), getX() + bars[i].getWidth() / 2, y + bars[i].getHeight() / 2);
 				} else if (itemY < cullingArea.y) {
 					break;

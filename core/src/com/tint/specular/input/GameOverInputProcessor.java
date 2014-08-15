@@ -18,7 +18,9 @@ public class GameOverInputProcessor extends InputAdapter {
 	// Buttons
 	private Button retry, menu, highscores, upgrades;
 	
+	// Other
 	private boolean touch;
+	private boolean touchUpgradeBtn = false;
 	
 	public GameOverInputProcessor(Specular game, GameState gs) {
 		this.game = game;
@@ -67,8 +69,10 @@ public class GameOverInputProcessor extends InputAdapter {
 			menu.touchOver(touchpointx, touchpointy);
 		else if(highscores.isOver(touchpointx, touchpointy, false))
 			highscores.touchOver(touchpointx, touchpointy);
-		else if(upgrades.isOver(touchpointx, touchpointy, false))
+		else if(upgrades.isOver(touchpointx, touchpointy, false)) {
 			upgrades.touchOver(touchpointx, touchpointy);
+			touchUpgradeBtn = true;
+		}
 
 		
 		touch = true;
@@ -114,7 +118,7 @@ public class GameOverInputProcessor extends InputAdapter {
 			}
 		}
 		
-
+		touchUpgradeBtn = false;
 		
 		return false;
 	}
@@ -163,4 +167,5 @@ public class GameOverInputProcessor extends InputAdapter {
 	public Button getMenuBtn() { return menu; }
 	public Button getHighscoreBtn() { return highscores; }
 	public Button getUpgradeBtn() { return upgrades; }
+	public boolean isTouchingUpgradeBtn() { return touchUpgradeBtn; }
 }

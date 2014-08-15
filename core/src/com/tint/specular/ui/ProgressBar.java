@@ -3,15 +3,16 @@ package com.tint.specular.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 
-public class ProgressBar {
+public class ProgressBar extends Widget {
 
 	private Texture progressBar, barFill;
-	private int width, height;
-	private int x, y;
+	private float width, height;
+	private float x, y;
 	private float value, maxValue;
 	
-	public ProgressBar(int width, int height) {
+	public ProgressBar(float width, float height) {
 		this.width = width;
 		this.height = height;
 		
@@ -19,12 +20,14 @@ public class ProgressBar {
 		barFill = new Texture(Gdx.files.internal("graphics/menu/upgrademenu/ProgressBar.png"));
 	}
 
-	public void render(Batch batch) {
-		batch.draw(progressBar, x - 80, y - 45, width + 160, 256);
-		batch.draw(barFill, x + 17, y + 16, (int) (value / maxValue * width) - 45, height);
+	@Override
+	public void draw(Batch batch, float parentAlpha) {
+		batch.draw(progressBar, x - 17, y - 45, width + 40, 256);
+		float length = value / maxValue;
+		batch.draw(barFill, x + 64, y + 16, length < 0.1f ? 0 : length >= (width - 128) / width ? width - 128 : length * width, height);
 	}
-	
-	public void setPosition(int x, int y) {
+
+	public void setPosition(float x, float y) {
 		this.x = x;
 		this.y = y;
 	}
@@ -32,6 +35,14 @@ public class ProgressBar {
 	public void setSize(int width, int height) {
 		this.width = width;
 		this.height = height;
+	}
+	
+	public void setBarFrame(Texture progressBar) {
+		this.progressBar = progressBar;
+	}
+	
+	public void setBarFill(Texture barFill) {
+		this.barFill = barFill;
 	}
 	
 	public void setValue(float value) {
@@ -42,11 +53,11 @@ public class ProgressBar {
 		this.maxValue = maxValue;
 	}
 	
-	public int getWidth() {
+	public float getWidth() {
 		return width;
 	}
 	
-	public int getHeight() {
+	public float getHeight() {
 		return height;
 	}
 	

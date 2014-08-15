@@ -4,16 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -21,6 +27,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
 import com.tint.specular.game.GameState;
+import com.tint.specular.ui.ProgressBar;
 import com.tint.specular.ui.UpgradeList;
 import com.tint.specular.upgrades.BoardshockUpgrade;
 import com.tint.specular.upgrades.BurstUpgrade;
@@ -48,6 +55,11 @@ public class UpgradeState extends State {
 			new Texture(Gdx.files.internal("graphics/game/powerups/level 5.png")),
 			new Texture(Gdx.files.internal("graphics/game/powerups/level inf.png"))
 	};
+
+	private Label pointsLeftLabel;
+	private ProgressBar pointsLeftBar;
+	
+	private static BitmapFont UPFont;
 	private float upgradePoints;
 	protected int currentlyPressing;
 	protected float waitForDragDelay;
@@ -69,6 +81,16 @@ public class UpgradeState extends State {
 		upgrades[10] = new BoardshockUpgrade(Specular.prefs.getFloat("Boardshock Upgrade Grade"), 10, ta);
 		
 		UpgradeList.init();
+		
+		// Initializing font
+		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
+		FreeTypeFontParameter ftfp = new FreeTypeFontParameter();
+		ftfp.size = 40;
+		ftfp.characters = GameState.FONT_CHARACTERS;
+		UPFont = fontGen.generateFont(ftfp);
+		UPFont.setColor(Color.RED);
+		
+		fontGen.dispose();
 	}
 
 	@Override
@@ -77,9 +99,13 @@ public class UpgradeState extends State {
 		
 		if(currentlyPressing != -1) {
 			if(waitForDragDelay > 0.1f && upgrades[currentlyPressing].getCost() <= upgradePoints) {
-				if(upgrades[currentlyPressing].upgrade())
+				if(upgrades[currentlyPressing].upgrade()) {
 					upgradePoints -= upgrades[currentlyPressing].getCost();
+					pointsLeftLabel.setText("Points left " + (int) Math.floor(upgradePoints));
+					pointsLeftBar.setValue(upgradePoints);
+				}
 				list.getProgressBars()[currentlyPressing].setValue(upgrades[currentlyPressing].getGrade());
+				pointsLeftBar.setValue(upgradePoints);
 			} else {
 				System.out.println(waitForDragDelay);
 				waitForDragDelay += delta;
@@ -166,7 +192,7 @@ public class UpgradeState extends State {
 		TextureRegionDrawable trdPressed = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/highscore/Back Pressed.png"))));
 		ButtonStyle style = new ButtonStyle(trd, trdPressed, trd);
 		Button backBtn = new Button(style);
-		backBtn.setPosition(47, 0);
+		backBtn.setPosition(50, 0);
 		backBtn.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -176,6 +202,19 @@ public class UpgradeState extends State {
 			}
 		});
 		stage.addActor(backBtn);
+		
+		pointsLeftBar = new ProgressBar(Specular.camera.viewportWidth - backBtn.getWidth() - 220, 128);
+		pointsLeftBar.setPosition(backBtn.getX() + backBtn.getWidth() + 50, 40);
+		pointsLeftBar.setMaxValue(10);
+		pointsLeftBar.setValue(upgradePoints);
+		stage.addActor(pointsLeftBar);
+		
+		LabelStyle lStyle = new LabelStyle(UPFont, UPFont.getColor());
+		
+		pointsLeftLabel = new Label("Points left " + (int) Math.floor(upgradePoints), lStyle);
+		pointsLeftLabel.setPosition(Specular.camera.viewportWidth - UPFont.getBounds(pointsLeftLabel.getText()).width - 200, pointsLeftBar.getY() + pointsLeftBar.getHeight() / 2 + 24);
+		stage.addActor(pointsLeftLabel);
+		
 	}
 
 	private void saveUpgrades() {
