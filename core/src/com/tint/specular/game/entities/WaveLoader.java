@@ -140,14 +140,21 @@ public class WaveLoader {
 			wave.addEnemies(new EnemyType[] {ENEMY_TANKER, ENEMY_DASHER}, new int[] {7, 3}, Formation.RANDOM, 0, 10);
 		specialWaves.add(wave);	
 		
-		// Random wave, get lucky or unlucky
+		// Virus wave
 		wave = new Wave(gs, 12, 800);
+		wave.addEnemies(new EnemyType[] {ENEMY_VIRUS}, new int[] {7}, Formation.RANDOM, 0, 10);
+	specialWaves.add(wave);	
+		
+		
+		
+		// Random wave, get lucky or unlucky
+		wave = new Wave(gs, 13, 800);
 		wave.addEnemies(new EnemyType[] {randomEnemies[random], hcEnemies[randomHc]}, new int[] {8, 2}, Formation.RANDOM, 0, 10);
 	specialWaves.add(wave);	
 	
 	
 		// Shielder and wanderer, idea pretty clear
-		wave = new Wave(gs, 13, 800);
+		wave = new Wave(gs, 14, 800);
 			wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY, 0, 1);
 		wave.setPermanentModifer(new WaveModifier() {
 		
