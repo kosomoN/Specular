@@ -136,315 +136,336 @@ filter: Nearest,Nearest
 repeat: none
 game1/5 Burst
   rotate: false
-  xy: 768, 320
+  xy: 640, 832
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/BoardShock
   rotate: false
-  xy: 640, 64
+  xy: 128, 192
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Body 1
   rotate: false
-  xy: 640, 0
+  xy: 256, 320
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Body 2
   rotate: false
-  xy: 768, 256
+  xy: 384, 448
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Bullet
   rotate: false
-  xy: 960, 64
+  xy: 576, 512
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: -1
+game1/Dasher Mask
+  rotate: false
+  xy: 640, 640
+  size: 1, 64
+  orig: 1, 64
+  offset: 0, 0
+  index: -1
+game1/Dasher Mask V
+  rotate: false
+  xy: 704, 767
+  size: 64, 1
+  orig: 64, 1
+  offset: 0, 0
+  index: -1
 game1/Enemy Booster
   rotate: false
-  xy: 832, 320
+  xy: 512, 576
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Booster Anim
   rotate: false
-  xy: 0, 128
+  xy: 0, 640
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 game1/Enemy Booster Warning
   rotate: false
-  xy: 704, 64
+  xy: 640, 768
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Circler
   rotate: false
-  xy: 704, 0
+  xy: 704, 832
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Normal
   rotate: false
-  xy: 704, 0
+  xy: 704, 832
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Circler Anim
   rotate: false
-  xy: 0, 0
+  xy: 512, 896
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
 game1/Enemy Circler Warning
   rotate: false
-  xy: 768, 192
+  xy: 128, 128
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Dasher
   rotate: false
-  xy: 512, 256
+  xy: 256, 512
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 game1/Enemy Dasher Dash Warning
   rotate: false
-  xy: 832, 256
+  xy: 192, 192
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Dasher Warning
   rotate: false
-  xy: 768, 384
+  xy: 512, 768
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 game1/Enemy Exploder Warning
   rotate: false
-  xy: 896, 384
+  xy: 0, 128
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 game1/Enemy Fast
   rotate: false
-  xy: 896, 320
+  xy: 256, 256
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Striver
   rotate: false
-  xy: 896, 320
+  xy: 256, 256
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Shielder Warning
   rotate: false
-  xy: 512, 128
+  xy: 0, 0
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 game1/Enemy Striver Anim
   rotate: false
-  xy: 256, 0
+  xy: 768, 896
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
 game1/Enemy Striver Warning
   rotate: false
-  xy: 960, 320
+  xy: 320, 320
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Virus
   rotate: false
-  xy: 768, 128
+  xy: 384, 384
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Wanderer
   rotate: false
-  xy: 832, 192
+  xy: 448, 448
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Enemy Wanderer Anim
   rotate: false
-  xy: 512, 384
+  xy: 0, 256
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
 game1/Enemy Wanderer Warning
   rotate: false
-  xy: 896, 256
+  xy: 512, 512
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/FireRate
   rotate: false
-  xy: 960, 256
+  xy: 576, 576
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Head
   rotate: false
-  xy: 768, 64
+  xy: 640, 704
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Large Particles
   rotate: false
-  xy: 256, 128
+  xy: 0, 384
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 game1/Laser
   rotate: false
-  xy: 960, 48
+  xy: 832, 880
   size: 1, 16
   orig: 1, 16
   offset: 0, 0
   index: -1
 game1/Laser Powerup
   rotate: false
-  xy: 768, 0
+  xy: 704, 768
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Life
   rotate: false
-  xy: 832, 128
+  xy: 768, 832
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Mask
   rotate: false
-  xy: 512, 0
+  xy: 256, 384
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 game1/Multiplier
   rotate: false
-  xy: 896, 192
+  xy: 128, 64
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Orb
   rotate: false
-  xy: 992, 96
+  xy: 768, 800
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 game1/Point Defense
   rotate: false
-  xy: 960, 192
+  xy: 128, 0
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Red Pixel
   rotate: false
-  xy: 992, 95
+  xy: 192, 127
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 game1/Repulsor
   rotate: false
-  xy: 832, 64
+  xy: 192, 128
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Ricochet
   rotate: false
-  xy: 832, 0
+  xy: 256, 192
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/ShieldUpgrade
   rotate: false
-  xy: 896, 128
+  xy: 320, 256
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
+game1/Slide
+  rotate: false
+  xy: 256, 640
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
 game1/Slowdown
   rotate: false
-  xy: 960, 128
+  xy: 384, 320
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Small Particles
   rotate: false
-  xy: 640, 256
+  xy: 384, 512
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
   index: -1
 game1/Swarm
   rotate: false
-  xy: 896, 64
+  xy: 448, 384
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Tail
   rotate: false
-  xy: 896, 0
+  xy: 512, 448
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 game1/Tanker
   rotate: false
-  xy: 0, 384
+  xy: 0, 896
   size: 512, 128
   orig: 512, 128
   offset: 0, 0
   index: -1
 game1/Tanker Warning
   rotate: false
-  xy: 640, 128
+  xy: 512, 640
   size: 128, 128
   orig: 128, 128
   offset: 0, 0
