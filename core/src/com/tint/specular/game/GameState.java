@@ -925,7 +925,7 @@ public class GameState extends State {
 		FireRateBoost.reloadLevelTextures(Specular.prefs.getFloat("Firerate Upgrade Grade"));
 		ScoreMultiplier.reloadLevelTextures(Specular.prefs.getFloat("Multiplier Upgrade Grade"));
 		SlowdownEnemies.reloadLevelTextures(Specular.prefs.getFloat("Slowdown Upgrade Grade"));
-		BoardshockPowerUp.reloadLevelTextures(Specular.prefs.getFloat("Board Upgrade Grade"));
+		//BoardshockPowerUp.reloadLevelTextures(Specular.prefs.getFloat("Board Upgrade Grade"));
 		Ricochet.reloadLevelTextures(Specular.prefs.getFloat("Ricochet Upgrade Grade"));
 		Repulsor.reloadLevelTextures(Specular.prefs.getFloat("Repulsor Upgrade Grade"));
 		LaserPowerup.reloadLevelTextures(Specular.prefs.getFloat("Beam Upgrade Grade"));
