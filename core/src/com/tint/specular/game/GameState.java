@@ -77,7 +77,6 @@ import com.tint.specular.upgrades.BoardshockUpgrade;
 import com.tint.specular.upgrades.BurstUpgrade;
 import com.tint.specular.upgrades.FirerateUpgrade;
 import com.tint.specular.upgrades.LaserUpgrade;
-import com.tint.specular.upgrades.LifeUpgrade;
 import com.tint.specular.upgrades.MultiplierUpgrade;
 import com.tint.specular.upgrades.PDSUpgrade;
 import com.tint.specular.upgrades.RepulsorUpgrade;
@@ -150,7 +149,7 @@ public class GameState extends State {
 	private Array<PowerUp> powerups = new Array<PowerUp>(false, 64);
 	
 	// Upgrades
-	private Upgrade[] upgrades = {new LaserUpgrade(this), new BoardshockUpgrade(this), new BurstUpgrade(this), new FirerateUpgrade(this), new LifeUpgrade(this),
+	private Upgrade[] upgrades = {new LaserUpgrade(this), new BoardshockUpgrade(this), new BurstUpgrade(this), new FirerateUpgrade(this),
 			new MultiplierUpgrade(this), new PDSUpgrade(this), new RepulsorUpgrade(this), new SlowdownUpgrade(this), new SwarmUpgrade(this)};
 	
 	// Map control
@@ -1020,7 +1019,6 @@ public class GameState extends State {
 		Specular.prefs.putInteger("Enemies Killed", Specular.prefs.getInteger("Enemies Killed") + enemiesKilled);
 		Specular.prefs.putInteger("Games Played", Specular.prefs.getInteger("Games Played") + 1);
 		
-		Specular.prefs.putInteger("Player Starting Lives", Player.getStartingLives());
 		Specular.prefs.putInteger("Multiplier Cooldown", MULTIPLIER_COOLDOWN_TIME);
 		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
 		Specular.prefs.putFloat("Boardshock Efficiency", BoardShock.getEfficiency());

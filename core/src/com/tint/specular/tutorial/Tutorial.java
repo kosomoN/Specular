@@ -299,7 +299,7 @@ public class Tutorial {
 
 	public void end() {
 		ending = false;
-		gs.getPlayer().setLife(Player.getStartingLives());
+		gs.getPlayer().setLife(3);
 		gs.getPlayer().setScore(0);
 		
 		/*

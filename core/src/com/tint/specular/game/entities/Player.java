@@ -43,7 +43,6 @@ public class Player implements Entity {
 	public static AtlasRegion playerTex, playerSpawnTex, playerDeathTex, pdsTex, shieldTexture, barrelTexture[] = new AtlasRegion[7];
 	public static int radius;
 	public static float distTraveledSqrd;
-	private static int startingLives = Specular.prefs.getFloat("Life Upgrade Grade") < 10 ? 3 : 4;
 	
 	private GameState gs;
 	private AmmoType ammo = AmmoType.BULLET;
@@ -91,7 +90,7 @@ public class Player implements Entity {
 		centerx = x;
 		centery = y;
 		pds = new PDS(gs, this);
-		setLife(startingLives);
+		setLife(3);
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
@@ -524,7 +523,6 @@ public class Player implements Entity {
 	
 	public void changeAmmo(AmmoType ammo) { this.ammo = ammo; }
 	public void setLife(int life) { this.life = life; }
-	public static void setStartingLife(int startLife) { startingLives = startLife; }
 	public void addUpgradePoints(float upgradePoints) { this.upgradePoints += upgradePoints; }
 	public void kill(Array<Enemy> enemiesToSave) {
 		addLives(-1);
@@ -550,7 +548,6 @@ public class Player implements Entity {
 	public float getLaserArc() { return laserArc; }
 	public float getUpgradePoints() { return upgradePoints; }
 	public static float getRadius() { return radius; }
-	public static int getStartingLives() { return startingLives; }
 	public int getLife() { return life;	}
 	public int getBulletBurst() { return bulletBurst; }
 	public int getBulletBurstLevel() { return bulletBurstLevel; }
