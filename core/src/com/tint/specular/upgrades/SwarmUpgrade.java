@@ -22,7 +22,7 @@ public class SwarmUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
-		Swarm.setEffect((float) (2 * (1 + Math.sqrt(getGrade() / getMaxGrade()))));
+		Swarm.setEffect((float) (3 * (1 + Math.sqrt(getGrade() / getMaxGrade()))));
 	}
 	
 	public AtlasRegion getTexture() {
@@ -31,6 +31,6 @@ public class SwarmUpgrade extends Upgrade {
 
 	@Override
 	public String getDescription() {
-		return "Increase firerate";
+		return "improve firerate";
 	}
 }

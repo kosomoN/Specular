@@ -136,7 +136,7 @@ public class Map {
 						
 			if(GfxSettings.ReturnPtr()){
 				for(UpgradeOrb orb : gs.getOrbs()){
-					batch.setColor(0.2f, 0.4f, 1, 1);
+					batch.setColor(1, 0, 0, 1);
 					float size = orb.getLifetime() / 2;
 					batch.draw(mask, orb.getX() - size / 2, fbo.getHeight() - orb.getY() - size / 2, size, size);
 				

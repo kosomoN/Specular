@@ -22,7 +22,7 @@ public class RicochetUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific for every upgrade
-		Ricochet.setAddBounces((int) (1 + Math.floor(2 * (getGrade() / getMaxGrade()))));
+		Ricochet.setAddBounces((int) (1 + Math.floor(4 * (getGrade() / getMaxGrade()))));
 	}
 
 	@Override
@@ -32,6 +32,6 @@ public class RicochetUpgrade extends Upgrade {
 
 	@Override
 	public String getDescription() {
-		return "Increase the amount of reflections";
+		return "increase bullet reflections";
 	}
 }

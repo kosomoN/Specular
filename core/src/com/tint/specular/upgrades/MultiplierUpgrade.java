@@ -30,6 +30,6 @@ public class MultiplierUpgrade extends Upgrade {
 
 	@Override
 	public String getDescription() {
-		return "Decrease multiplier cooldown";
+		return "improve multiplier duration";
 	}
 }

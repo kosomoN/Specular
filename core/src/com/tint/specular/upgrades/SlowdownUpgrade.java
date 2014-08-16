@@ -22,7 +22,7 @@ public class SlowdownUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
-		SlowdownEnemies.setFreezeTime((float) (Math.sqrt(getGrade()) * 500));
+		SlowdownEnemies.setFreezeTime((float) (Math.sqrt(getGrade()) * 2000));
 	}
 	
 	public AtlasRegion getTexture() {
@@ -31,6 +31,6 @@ public class SlowdownUpgrade extends Upgrade {
 
 	@Override
 	public String getDescription() {
-		return "Increase time of total freeze";
+		return "freeze enemies longer";
 	}
 }

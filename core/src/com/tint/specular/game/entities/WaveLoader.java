@@ -59,20 +59,6 @@ public class WaveLoader {
 			});
 		specialWaves.add(wave);
 		
-		// Shielder Wave
-		wave = new Wave(gs, 3, 600);
-			wave.addEnemies(ENEMY_SHIELDER, 1, Formation.RANDOM, 0, 50);
-			wave.setPermanentModifer(new WaveModifier() {
-				@Override
-				public void affectBase(GameState gs, Enemy justSpawnedEnemy) {
-					Enemy e = justSpawnedEnemy.copy();
-					e.setX(50 + rand.nextInt(gs.getCurrentMap().getWidth() - 100));
-					e.setY(50 + rand.nextInt(gs.getCurrentMap().getHeight() - 100));
-					gs.addEntity(e);
-				}
-			});
-		specialWaves.add(wave);
-		
 		// Wanderer Wave
 		Formation f = Formation.RINGS;
 			f.setCenterRingPoint(gs.getCurrentMap().getWidth() / 2, gs.getCurrentMap().getHeight() / 2);

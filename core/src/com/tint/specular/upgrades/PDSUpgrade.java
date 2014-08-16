@@ -31,6 +31,6 @@ public class PDSUpgrade extends Upgrade {
 
 	@Override
 	public String getDescription() {
-		return "Increase damage";
+		return "improve defense capacity";
 	}
 }

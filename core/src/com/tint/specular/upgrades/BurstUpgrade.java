@@ -31,6 +31,6 @@ public class BurstUpgrade extends Upgrade {
 
 	@Override
 	public String getDescription() {
-		return "Increase duration";
+		return "increase duration";
 	}
 }

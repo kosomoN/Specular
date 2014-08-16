@@ -21,7 +21,7 @@ public class LaserUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
-		gs.getPlayer().setLaserArc((float) (30 + Math.sqrt(getGrade()) * 5));
+		gs.getPlayer().setLaserArc((float) (30 + Math.sqrt(getGrade()) * 3));
 	}
 	
 	public AtlasRegion getTexture() {
@@ -30,6 +30,6 @@ public class LaserUpgrade extends Upgrade {
 
 	@Override
 	public String getDescription() {
-		return "Increase targeting arc";
+		return "wider targeting arc";
 	}
 }

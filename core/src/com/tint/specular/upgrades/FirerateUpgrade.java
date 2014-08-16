@@ -21,7 +21,7 @@ public class FirerateUpgrade extends Upgrade {
 	
 	@Override
 	public void refresh() {
-		// Specific to every upgrade
+		// Specific to every upgrade/
 		FireRateBoost.setBoost((float) ((2 / 3f) / (1 + Math.sqrt(getGrade() / getMaxGrade()))));
 	}
 	
@@ -31,6 +31,6 @@ public class FirerateUpgrade extends Upgrade {
 
 	@Override
 	public String getDescription() {
-		return "Increase effect";
+		return "improve firerate increase";
 	}
 }

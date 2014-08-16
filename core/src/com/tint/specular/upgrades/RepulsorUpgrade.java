@@ -22,7 +22,7 @@ public class RepulsorUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every upgrade
-		Repulsor.setMaxActiveTime((float) (800 + Math.sqrt(getGrade() * 100)));
+		Repulsor.setMaxActiveTime((float) (800 + Math.sqrt(getGrade() * 140)));
 	}
 	
 	public AtlasRegion getTexture() {
@@ -31,6 +31,6 @@ public class RepulsorUpgrade extends Upgrade {
 
 	@Override
 	public String getDescription() {
-		return "Increase duration";
+		return "increase duration";
 	}
 }
