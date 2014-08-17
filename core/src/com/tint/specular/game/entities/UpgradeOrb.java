@@ -39,6 +39,7 @@ public class UpgradeOrb implements Entity, Poolable {
 		float dist = (gs.getPlayer().getX() - x) * (gs.getPlayer().getX() - x) + (gs.getPlayer().getY() - y) * (gs.getPlayer().getY() - y);
 		float radiusDist = (Player.getRadius() + tex.getRegionWidth()) * (Player.getRadius() + tex.getRegionWidth());
 		if(dist <= radiusDist * 20) {
+			
 			//Calculating angle and force
 			double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
 			float dx = (float) (Math.cos(angle) * (radiusDist * 20 / dist));
@@ -51,7 +52,7 @@ public class UpgradeOrb implements Entity, Poolable {
 				this.dy += dy;
 			
 			if(dist <= radiusDist) {
-				gs.getPlayer().addUpgradePoints(0.01f);
+				gs.getPlayer().addUpgradePoints(0.05f);
 				return true;
 			}
 		}
@@ -133,7 +134,7 @@ public class UpgradeOrb implements Entity, Poolable {
 		dx += initialDx;
 		dy += initialDy;
 		
-		lifetime = (float) (300 + Math.random() * 100);
+		lifetime = (float) (150 + Math.random() * 50);
 	}
 
 	@Override

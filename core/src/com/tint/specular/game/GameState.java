@@ -113,6 +113,7 @@ public class GameState extends State {
 	private Stage stage;
 	private Tutorial tutorial;
 	private static int PARTICLE_LIMIT;
+	private static int ORB_LIMIT = 50;
 	private float scoreFontAlpha = 0;
 	
 	// Fields related to game time
@@ -145,7 +146,7 @@ public class GameState extends State {
 	private Array<Enemy> enemies = new Array<Enemy>(false, 64);
 	private Array<Bullet> bullets = new Array<Bullet>(false, 64);
 	private Array<Particle> particles = new Array<Particle>(false, PARTICLE_LIMIT);
-	private Array<UpgradeOrb> orbs = new Array<UpgradeOrb>(false, 64);
+	private Array<UpgradeOrb> orbs = new Array<UpgradeOrb>(false, ORB_LIMIT);
 	private Array<PowerUp> powerups = new Array<PowerUp>(false, 64);
 	
 	// Upgrades
@@ -309,14 +310,19 @@ public class GameState extends State {
 			if(tutorialOnGoing)
 				tutorial.update();
 			
-			//Remove random particles if there are too many
+			// Remove random particles if there are too many
 			while(particles.size >= PARTICLE_LIMIT)
 				particles.removeIndex(rand.nextInt(particles.size));
+			
+			// Remove random orbs if there are too many
+			while(orbs.size >= ORB_LIMIT)
+				orbs.removeIndex(rand.nextInt(orbs.size));
 			
 			// Adding played time
 			if(!gameMode.isGameOver())
 				ticks++;
 				ticksforCamera++;
+				
 			// Updating combos
 			cs.update();
 			
@@ -391,7 +397,7 @@ public class GameState extends State {
 					if(ent instanceof Particle)
 						pass.getPool().free((Particle) ent);
 					else if(ent instanceof UpgradeOrb)
-						oss.getPool().free((UpgradeOrb) ent); 
+						oss.getPool().free((UpgradeOrb) ent);  
 					else if(ent instanceof Enemy)
 						enemies.removeIndex(enemies.indexOf((Enemy) ent, true));
 					else if(ent instanceof PowerUp)
@@ -669,7 +675,7 @@ public class GameState extends State {
 			cs.activate(enemies.size);
 			
 			enemiesKilled++;
-			oss.spawn(e.getX(), e.getY(), e.getDx() * Enemy.getSlowdown(), e.getDy() * Enemy.getSlowdown(), 5);
+			oss.spawn(e.getX(), e.getY(), e.getDx() * Enemy.getSlowdown(), e.getDy() * Enemy.getSlowdown(), 2);
 			
 			Camera.shake(0.3f, 0.1f);
 			killSound.play();
@@ -919,7 +925,7 @@ public class GameState extends State {
 		scoreFontAlpha = 0;
 		
 		// Initializing power-up levels
-		AddLife.reloadLevelTextures(Specular.prefs.getFloat("Life Upgrade Grade"));
+		//AddLife.reloadLevelTextures(Specular.prefs.getFloat("Life Upgrade Grade"));
 		BulletBurst.reloadLevelTextures(Specular.prefs.getFloat("Burst Upgrade Grade"));
 		FireRateBoost.reloadLevelTextures(Specular.prefs.getFloat("Firerate Upgrade Grade"));
 		ScoreMultiplier.reloadLevelTextures(Specular.prefs.getFloat("Multiplier Upgrade Grade"));
