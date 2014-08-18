@@ -18,6 +18,7 @@ public class LoadingState extends State {
 	private Texture background;
 //	private long timeShowed;
 	private boolean hasRendered = false; 
+	public static boolean isFirstTime;
 
 	public LoadingState(Specular game) {
 		super(game);
@@ -44,7 +45,13 @@ public class LoadingState extends State {
 			game.load();
 			
 //			if(System.currentTimeMillis() - timeShowed > 2000) {
+			if(Specular.prefs.getBoolean("First Time")){
+				game.enterState(States.PROFILE_STATE);
+				isFirstTime = true;
+			} else {
 				game.enterState(States.MAINMENUSTATE);
+				
+			}
 //			} 
 		}
 		
@@ -68,5 +75,9 @@ public class LoadingState extends State {
 			background.dispose();
 			background = null;
 		}
+	}
+	
+	public static boolean fbFirstTime() {
+		return isFirstTime;
 	}
 }

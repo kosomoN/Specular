@@ -68,7 +68,6 @@ import com.tint.specular.input.MenuInputProcessor;
 import com.tint.specular.input.PauseInputProcessor;
 import com.tint.specular.map.Map;
 import com.tint.specular.map.MapHandler;
-import com.tint.specular.states.NativeAndroid.RequestCallback;
 import com.tint.specular.states.State;
 import com.tint.specular.tutorial.Tutorial;
 import com.tint.specular.tutorial.Tutorial.TutorialEvent;
@@ -434,17 +433,7 @@ public class GameState extends State {
 					input.setInputProcessor(ggInputProcessor);
 					gameOverScoreFont.scale(14);
 					
-					if(!Specular.nativeAndroid.isLoggedIn()) {
-						Specular.nativeAndroid.login(new RequestCallback() {
-							@Override
-							public void success() {
-								Specular.nativeAndroid.postHighscore(player.getScore());
-							}
-							
-							public void failed() {
-							}
-						});
-					} else {
+					if(Specular.nativeAndroid.isLoggedIn()) {
 						Specular.nativeAndroid.postHighscore(player.getScore());
 					}
 				}
