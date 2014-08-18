@@ -57,12 +57,22 @@ public class MainmenuState extends State {
 	
 	@Override
 	public void show() {
+				
+		if(Specular.nativeAndroid.isLoggedIn()) {
+			Specular.nativeAndroid.postHighscore(Specular.prefs.getInteger("Highscore"));
+				
+		}
+		
 		super.show();
 		Specular.camera.position.set(Specular.camera.viewportWidth / 2, Specular.camera.viewportHeight / 2, 0);
 		Specular.camera.update();
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		menuInputProcessor = new MenuInputProcessor(game,this);
 		startMusic();
+		
+
+			
+		
 		
 		Gdx.input.setInputProcessor(menuInputProcessor);
 	}
