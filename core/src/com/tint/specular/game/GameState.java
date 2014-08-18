@@ -140,6 +140,9 @@ public class GameState extends State {
 	private boolean tutorialOnGoing;
 	private boolean showTutorialEnd;
 	
+	// Sound timers
+	private int GAMEOVERSOUND_TIMER = 1; //ticks from entering gamoverstate to start playing sound
+	
 	// Lists for keeping track of entities in the world
 	private Array<Entity> entities = new Array<Entity>(false, 128);
 	private Array<Enemy> enemies = new Array<Enemy>(false, 64);
@@ -180,6 +183,8 @@ public class GameState extends State {
 	
 	private Sound gameOverSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/GameOver.ogg"));
 	private Sound killSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Destruction.ogg"));
+	private Sound multiplierUpSound = Gdx.audio.newSound(Gdx.files.internal("audio/Shoot.wav"));
+	private Sound multiplierDownSound = Gdx.audio.newSound(Gdx.files.internal("audio/Shoot.wav"));
 	private boolean soundEffects;	
 	
 	public GameState(Specular game) {
@@ -333,12 +338,14 @@ public class GameState extends State {
 					
 					scoreMultiplierTimer += enemySizeDecrease;
 				} else {
+					multiplierDownSound.play(1f, scoreMultiplier - 10, 0);
 					scoreMultiplierTimer = 0;
 					scoreMultiplier--;
 				}
 			}
 			
 			if(cs.getCombo() > 7) {
+				multiplierUpSound.play(1f, scoreMultiplier - 5, 0);
 				setScoreMultiplier(scoreMultiplier + 1);
 				cs.resetCombo();
 			}
@@ -441,7 +448,6 @@ public class GameState extends State {
 			
 			Camera.update(this);
 			
-			gameOverSound.play();
 		}
 	}
 	
@@ -477,10 +483,10 @@ public class GameState extends State {
 		
 		if(tutorialOnGoing && tutorial.getCurrentWave().getEvent() == TutorialEvent.POWER_UPS_SHOWN) {
 			if(!tutorial.enemiesHasSpawned()) {
-				Util.writeCentered(game.batch, tutorial.getFont(), "These will help you", tutorial.getTextX(), tutorial.getTextY() + 200);
+				Util.writeCentered(game.batch, tutorial.getFont(), "these are power-ups", tutorial.getTextX(), tutorial.getTextY() + 200);
 
 				if(tutorial.allPowerUpsActivated())
-					Util.writeCentered(game.batch, tutorial.getFont(), "they're all different", tutorial.getTextX(), tutorial.getTextY());
+					Util.writeCentered(game.batch, tutorial.getFont(), "some can be combined", tutorial.getTextX(), tutorial.getTextY());
 			}
 		}
 		
@@ -551,8 +557,7 @@ public class GameState extends State {
 						game.batch.setColor(Color.WHITE);
 						
 						scoreFont.setColor(1, 0, 0, scoreFontAlpha);
-						Util.writeCentered(game.batch, scoreFont, "Tap to continue", 0, -100);
-						Util.writeCentered(game.batch, scoreFont, "End of tutorial", 0, 100);
+						Util.writeCentered(game.batch, scoreFont, "tap to continue", 0, -100);
 					}
 				}
 					
@@ -584,6 +589,9 @@ public class GameState extends State {
 				}
 				
 				// Drawing final score and buttons
+				if(gameOverTicks == GAMEOVERSOUND_TIMER) {
+					gameOverSound.play();
+				}
 				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
 				
 				game.batch.setColor(Color.WHITE);
@@ -594,7 +602,7 @@ public class GameState extends State {
 				if(player.getUpgradePoints() >= 1) {
 					if(!ggInputProcessor.isTouchingUpgradeBtn()) {
 						if(gameOverTicks % 90 < 40) {
-							ggInputProcessor.getUpgradeBtn().setScale(1.01f);
+							ggInputProcessor.getUpgradeBtn().setScale(1.00f);
 							ggInputProcessor.getUpgradeBtn().setTouch(true);
 						} else {
 							ggInputProcessor.getUpgradeBtn().setScale(1.0f);
@@ -667,7 +675,7 @@ public class GameState extends State {
 			oss.spawn(e.getX(), e.getY(), e.getDx() * Enemy.getSlowdown(), e.getDy() * Enemy.getSlowdown(), 2);
 			
 			Camera.shake(0.3f, 0.1f);
-			killSound.play();
+			killSound.play(1, (float) (1 + Math.random() / 3 - 0.16), 0);
 		}
 	}
 	
@@ -998,6 +1006,7 @@ public class GameState extends State {
 		
 		if(!gameMode.isGameOver()) {
 			saveStats();
+
 		}
 		
 		setPaused(false);
@@ -1016,7 +1025,7 @@ public class GameState extends State {
 		
 		Specular.prefs.putInteger("Multiplier Cooldown", MULTIPLIER_COOLDOWN_TIME);
 		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
-		Specular.prefs.putFloat("Boardshock Efficiency", BoardShock.getEfficiency());
+		//Specular.prefs.putFloat("Boardshock Efficiency", BoardShock.getEfficiency());
 		Specular.prefs.putFloat("Burst Max Time", BulletBurst.getMaxActiveTime());
 		Specular.prefs.putFloat("Firerate Boost", FireRateBoost.getBoost());
 		Specular.prefs.putFloat("Swarm Effect", Swarm.getEffect());

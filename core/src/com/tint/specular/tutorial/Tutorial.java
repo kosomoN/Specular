@@ -113,7 +113,7 @@ public class Tutorial {
 					alpha = alpha < 0 ? 0 : alpha;
 				
 					tutorialFont.setColor(1, 0, 0, Math.min(alpha, 1));
-					Util.writeCentered(batch, tutorialFont, "Enemies, kill them", 0, -300);
+					Util.writeCentered(batch, tutorialFont, "destroy these enemies", 0, -300);
 				}
 			}
 		});

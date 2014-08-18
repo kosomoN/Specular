@@ -1,5 +1,7 @@
 package com.tint.specular.game.entities;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
@@ -9,6 +11,7 @@ public class PDS implements Entity {
 	private static int ammo;
 	private static float range;
 	private static float damage = 2;
+	private Sound pdsSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/laser.ogg"));
 	private GameState gs;
 	private Player player;
 	
@@ -38,6 +41,7 @@ public class PDS implements Entity {
 				distSqrd = dx * dx + dy * dy;
 				
 				if(distSqrd < range * range) {
+					pdsSound.play();
 					e.hit(damage);
 					gs.addEntity(Laser.obtainLaser(player.getX(), player.getY(), e.getX(), e.getY(), 0, false));;
 					ammo--;

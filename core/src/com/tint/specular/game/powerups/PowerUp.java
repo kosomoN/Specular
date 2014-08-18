@@ -1,5 +1,7 @@
 package com.tint.specular.game.powerups;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
@@ -17,6 +19,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 
 public abstract class PowerUp implements Entity {
 	private static final int PUSHAWAY_TIME = 160, PUSHAWAY_RANGE_SQUARED = 500 * 500;
+	private static Sound shockwaveSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Shockwave.ogg"));
 	
 	protected GameState gs;
 	protected float x, y;
@@ -88,6 +91,9 @@ public abstract class PowerUp implements Entity {
 			batch.draw(getTexture(), x - getTexture().getRegionWidth() / 2, y - getTexture().getRegionHeight() / 2);
 			if(getLevelTexture() != null)
 				batch.draw(getLevelTexture(), x - getTexture().getRegionWidth() / 2, y - getTexture().getRegionHeight() / 2);
+		}
+		if(activated && activeTime == 0) {
+			shockwaveSound.play();
 		}
 		
 		if(activated && activeTime < 20) {

@@ -52,7 +52,7 @@ public class UpgradeOrb implements Entity, Poolable {
 				this.dy += dy;
 			
 			if(dist <= radiusDist) {
-				gs.getPlayer().addUpgradePoints(0.05f);
+				gs.getPlayer().addUpgradePoints(0.02f);
 				return true;
 			}
 		}
