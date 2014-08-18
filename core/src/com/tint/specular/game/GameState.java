@@ -981,7 +981,7 @@ public class GameState extends State {
 	}
 
 	public void boardshock() {
-		if(boardshockCharge >= 1 && !player.isDying() && !player.isSpawning()) {
+		if(boardshockCharge >= 0 && !player.isDying() && !player.isSpawning()) {
 			BoardShock.activate(this);
 			boardshockCharge = 0;
 		}
@@ -1046,6 +1046,10 @@ public class GameState extends State {
 
 	public boolean isSoundEnabled() {
 		return soundEffects;
+	}
+	
+	public Music gameMusic() {
+		return music;
 	}
 	
 	public Array<UpgradeOrb> getOrbs() {
