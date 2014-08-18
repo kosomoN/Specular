@@ -16,6 +16,9 @@ public class BoardShock {
 	private static float zoom = 0;
 	private static float activationX, activationY;
 	private static float efficiency = 0.25f;//Specular.prefs.getFloat("Boardshock Efficiency");
+
+
+
 	
 	public static void activate(GameState gs) {
 		activated = true;
@@ -29,14 +32,15 @@ public class BoardShock {
 		activationY = gs.getPlayer().getY();
 	}
 
-	public static void update() {
+	public static void update() {		
 		if(activated) {
 			timeActivated += 1;
 			
 			if(timeActivated >= 120) {
-				activated = false;
+				gs.gameMusic().setVolume(0.15f + (timeActivated / 550));
 			} else if(timeActivated == 18) {
 				Camera.shake(2.5f, 0.1f);
+				gs.gameMusic().setVolume(0.15f);
 				zoom = 0;
 				for(Enemy e : gs.getEnemies()) {
 					if(!(e instanceof EnemyVirus) || Math.random() > efficiency) {
