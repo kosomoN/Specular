@@ -989,7 +989,7 @@ public class GameState extends State {
 	}
 
 	public void boardshock() {
-		if(boardshockCharge >= 0 && !player.isDying() && !player.isSpawning()) {
+		if(boardshockCharge >= 1 && !player.isDying() && !player.isSpawning()) {
 			BoardShock.activate(this);
 			boardshockCharge = 0;
 		}

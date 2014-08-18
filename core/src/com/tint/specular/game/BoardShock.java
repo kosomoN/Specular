@@ -37,6 +37,7 @@ public class BoardShock {
 			timeActivated += 1;
 			
 			if(timeActivated >= 120) {
+				activated = false;
 				gs.gameMusic().setVolume(0.15f + (timeActivated / 550));
 			} else if(timeActivated == 18) {
 				Camera.shake(2.5f, 0.1f);
