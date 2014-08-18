@@ -873,7 +873,7 @@ public class GameState extends State {
 
 		resetGameTime();
 		
-//		MULTIPLIER_COOLDOWN_TIME = Specular.prefs.getInteger("Multiplier Cooldown");
+		MULTIPLIER_COOLDOWN_TIME = Specular.prefs.getInteger("Multiplier Cooldown");
 		
 		cs.resetCombo();
 		scoreMultiplier = 1;
@@ -1006,7 +1006,6 @@ public class GameState extends State {
 		
 		if(!gameMode.isGameOver()) {
 			saveStats();
-
 		}
 		
 		setPaused(false);

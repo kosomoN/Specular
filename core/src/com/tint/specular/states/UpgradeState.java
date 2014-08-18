@@ -27,7 +27,6 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.tint.specular.Specular;
 import com.tint.specular.Specular.States;
 import com.tint.specular.game.GameState;
-import com.tint.specular.ui.ProgressBar;
 import com.tint.specular.ui.UpgradeList;
 import com.tint.specular.upgrades.BurstUpgrade;
 import com.tint.specular.upgrades.FirerateUpgrade;
@@ -55,10 +54,10 @@ public class UpgradeState extends State {
 	};
 
 	private Label pointsLeftLabel;
-	private ProgressBar pointsLeftBar;
 	
 	private static BitmapFont UPFont;
 	private float upgradePoints;
+	private float upgradeDelay;
 	protected int currentlyPressing;
 	protected float waitForDragDelay;
 	
@@ -96,16 +95,20 @@ public class UpgradeState extends State {
 		
 		if(currentlyPressing != -1) {
 			if(waitForDragDelay > 0.1f && upgrades[currentlyPressing].getCost() <= upgradePoints) {
-				if(upgrades[currentlyPressing].upgrade()) {
-					upgradePoints -= upgrades[currentlyPressing].getCost();
-					pointsLeftLabel.setText("Points left " + (int) Math.floor(upgradePoints));
-					pointsLeftBar.setValue(upgradePoints);
+				if(upgradeDelay > 0.02f) {
+					if(upgrades[currentlyPressing].upgrade()) {
+						upgradePoints -= upgrades[currentlyPressing].getCost();
+						pointsLeftLabel.setText("points available " + (int) Math.floor(upgradePoints));
+						upgradeDelay = 0;
+					}
+				} else {
+					upgradeDelay += delta;
 				}
 				list.getProgressBars()[currentlyPressing].setValue(upgrades[currentlyPressing].getGrade());
-				pointsLeftBar.setValue(upgradePoints);
 			} else {
 				System.out.println(waitForDragDelay);
 				waitForDragDelay += delta;
+				
 			}
 		}
 		
@@ -155,6 +158,7 @@ public class UpgradeState extends State {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				waitForDragDelay = 0;
+				upgradeDelay = 0;
 				currentlyPressing = upgrades.length - 1 - (int) Math.floor(y / UpgradeList.rowHeight());
 				downX = x;
 				downY = y;
@@ -200,16 +204,10 @@ public class UpgradeState extends State {
 		});
 		stage.addActor(backBtn);
 		
-		pointsLeftBar = new ProgressBar(Specular.camera.viewportWidth - backBtn.getWidth() - 220, 128);
-		pointsLeftBar.setPosition(backBtn.getX() + backBtn.getWidth() + 50, 40);
-		pointsLeftBar.setMaxValue(10);
-		pointsLeftBar.setValue(upgradePoints);
-		stage.addActor(pointsLeftBar);
-		
 		LabelStyle lStyle = new LabelStyle(UPFont, UPFont.getColor());
 		
 		pointsLeftLabel = new Label("Points left " + (int) Math.floor(upgradePoints), lStyle);
-		pointsLeftLabel.setPosition(Specular.camera.viewportWidth - UPFont.getBounds(pointsLeftLabel.getText()).width - 200, pointsLeftBar.getY() + pointsLeftBar.getHeight() / 2 + 24);
+		pointsLeftLabel.setPosition(Specular.camera.viewportWidth - UPFont.getBounds(pointsLeftLabel.getText()).width - 200, 85);
 		stage.addActor(pointsLeftLabel);
 		
 	}
