@@ -38,10 +38,14 @@ public class BoardShock {
 			
 			if(timeActivated >= 120) {
 				activated = false;
-				gs.gameMusic().setVolume(0.15f + (timeActivated / 550));
+				if(gs.gameMusic() != null){
+					gs.gameMusic().setVolume(0.15f + (timeActivated / 550));
+				}
 			} else if(timeActivated == 18) {
 				Camera.shake(2.5f, 0.1f);
-				gs.gameMusic().setVolume(0.15f);
+				if(gs.gameMusic() != null){
+					gs.gameMusic().setVolume(0.15f);
+				}
 				zoom = 0;
 				for(Enemy e : gs.getEnemies()) {
 					if(!(e instanceof EnemyVirus) || Math.random() > efficiency) {
