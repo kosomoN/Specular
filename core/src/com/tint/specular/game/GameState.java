@@ -961,6 +961,7 @@ public class GameState extends State {
 		currentMusic = random;
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + musicFileNames[random]));
 		music.play();
+		music.setVolume(1);
 	}
 	
 	@Override
