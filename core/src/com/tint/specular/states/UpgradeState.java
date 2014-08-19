@@ -57,7 +57,6 @@ public class UpgradeState extends State {
 	
 	private static BitmapFont UPFont;
 	private float upgradePoints;
-	private float upgradeDelay;
 	protected int currentlyPressing;
 	protected float waitForDragDelay;
 	
@@ -92,21 +91,15 @@ public class UpgradeState extends State {
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
+
 		if(currentlyPressing != -1) {
 			if(waitForDragDelay > 0.1f && upgrades[currentlyPressing].getCost() <= upgradePoints) {
-				if(upgradeDelay > 0.02f) {
-					if(upgrades[currentlyPressing].upgrade()) {
-						upgradePoints -= upgrades[currentlyPressing].getCost();
-						pointsLeftLabel.setText("points available " + (int) Math.floor(upgradePoints));
-						upgradeDelay = 0;
-					}
-				} else {
-					upgradeDelay += delta;
+				if(upgrades[currentlyPressing].upgrade()) {
+					upgradePoints -= upgrades[currentlyPressing].getCost();
+					pointsLeftLabel.setText("points available " + (int) Math.floor(upgradePoints));
 				}
 				list.getProgressBars()[currentlyPressing].setValue(upgrades[currentlyPressing].getGrade());
 			} else {
-				System.out.println(waitForDragDelay);
 				waitForDragDelay += delta;
 				
 			}
@@ -158,7 +151,6 @@ public class UpgradeState extends State {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				waitForDragDelay = 0;
-				upgradeDelay = 0;
 				currentlyPressing = upgrades.length - 1 - (int) Math.floor(y / UpgradeList.rowHeight());
 				downX = x;
 				downY = y;

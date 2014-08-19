@@ -35,7 +35,6 @@ import com.tint.specular.game.entities.enemies.EnemyBooster;
 import com.tint.specular.game.entities.enemies.EnemyCircler;
 import com.tint.specular.game.entities.enemies.EnemyDasher;
 import com.tint.specular.game.entities.enemies.EnemyExploder;
-import com.tint.specular.game.entities.enemies.EnemyFront;
 import com.tint.specular.game.entities.enemies.EnemyShielder;
 import com.tint.specular.game.entities.enemies.EnemyStriver;
 import com.tint.specular.game.entities.enemies.EnemyTanker;
@@ -226,11 +225,11 @@ public class GameState extends State {
 		ftfp.characters = FONT_CHARACTERS;
 		ftfp.size = 64;
 		scoreFont = fontGen.generateFont(ftfp);
-		scoreFont.setColor(Color.RED);
+//		scoreFont.setColor(Color.RED);
 		
 		ftfp.size = 40;
 		multiplierFont = fontGen.generateFont(ftfp);
-		multiplierFont.setColor(Color.RED);
+//		multiplierFont.setColor(Color.RED);
 		
 		// Tutorial (Must be initialized before fontGen.dispose())
 		tutorial = new Tutorial(this, fontGen);
@@ -257,7 +256,6 @@ public class GameState extends State {
 		EnemyExploder.init(textureAtlas);
 		EnemyDasher.init(textureAtlas);
 		EnemyTanker.init(textureAtlas);
-		EnemyFront.init(textureAtlas);
 		AnalogStick.init(hud);
 		
 		// Initializing power-ups
@@ -466,7 +464,7 @@ public class GameState extends State {
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		game.batch.begin();
 		
-		game.batch.setColor(1, 0, 0, 1);
+		game.batch.setColor(1, 1, 1, 1);
 		game.batch.draw(currentMap.getParallax(), -1024 + Camera.getCameraX() / 2, -1024 +  Camera.getCameraY() / 2, 4096, 4096);
 		game.batch.setColor(1, 1, 1, 1);
 		
