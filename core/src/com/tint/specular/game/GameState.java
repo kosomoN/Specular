@@ -587,8 +587,9 @@ public class GameState extends State {
 				}
 				
 				// Drawing final score and buttons
+				music.setVolume(0.25f);
 				if(gameOverTicks == GAMEOVERSOUND_TIMER) {
-					gameOverSound.play(1.5f, 1, 0);
+					gameOverSound.play(1f, 1, 0);
 				}
 				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
 				
@@ -673,7 +674,7 @@ public class GameState extends State {
 			oss.spawn(e.getX(), e.getY(), e.getDx() * Enemy.getSlowdown(), e.getDy() * Enemy.getSlowdown(), 2);
 			
 			Camera.shake(0.3f, 0.1f);
-			killSound.play(1, (float) (1 + Math.random() / 3 - 0.16), 0);
+			killSound.play(0.75f, (float) (1 + Math.random() / 3 - 0.16), 0);
 		}
 	}
 	
@@ -855,6 +856,8 @@ public class GameState extends State {
 		
 		soundsEnabled = Specular.prefs.getBoolean("SoundsMuted");
 		particlesEnabled = Specular.prefs.getBoolean("Particles");
+		
+		music.setVolume(1f);
 		
 		gameMode = new Ranked(this);
 		enemiesKilled = 0;
