@@ -136,8 +136,8 @@ public class Map {
 						
 			if(GfxSettings.ReturnPtr()){
 				for(UpgradeOrb orb : gs.getOrbs()){
-					batch.setColor(1, 0, 0, 1);
-					float size = orb.getLifetime() / 2;
+					batch.setColor(1, 1, 0, 1);
+					float size = orb.getLifetime() / 2 + 80;
 					batch.draw(mask, orb.getX() - size / 2, fbo.getHeight() - orb.getY() - size / 2, size, size);
 				
 				}
@@ -263,7 +263,7 @@ public class Map {
 			}
 			
 			for(UpgradeOrb Orbs : gs.getOrbs()) {
-				shapeRenderer.rect(Orbs.getX() - 80, Orbs.getY() - 80, 160, 160);
+				shapeRenderer.circle(Orbs.getX(), Orbs.getY(), 150);
 				
 			}
 			
