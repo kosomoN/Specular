@@ -70,12 +70,12 @@ public class Player implements Entity {
 //-----------------SOUND FX-----------------------	
 	
 	//Shoot sound
-	Sound shootBulletSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Shoot.ogg"));
-	Sound shootLaserSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Laser.ogg"));
+	Sound shootBulletSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Shoot.wav"));
+	Sound shootLaserSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Laser.wav"));
 	
 	//Hit sounds
 	Sound deathSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Death.ogg"));
-	Sound spawnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Spawn.ogg"));
+	Sound spawnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Respawn.ogg"));
 	private int shieldLoseRepelTimer;
 			
 //---------------SOUND FX END---------------------		
@@ -376,12 +376,12 @@ public class Player implements Entity {
 					}
 						
 					if(gs.isSoundEnabled())
-						shootBulletSound.play(0.7f, (float) (1 + Math.random() / 4 - 0.16), 0);
+						shootBulletSound.play(0.3f, (float) (1 + Math.random() / 3 - 0.16), 0);
 					break;
 				case LASER:
 					shootLaser(direction);
 					if(gs.isSoundEnabled())
-						shootLaserSound.play(0.4f, (float) (1 + Math.random() / 6 - 0.16), 0);
+						shootLaserSound.play(0.2f, (float) (1 + Math.random() / 6 - 0.16), 0);
 					break;
 				}
 				//The amount of spaces, i.e. two bullet "lines" have one space between them

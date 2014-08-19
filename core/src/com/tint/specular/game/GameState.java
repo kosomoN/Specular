@@ -140,7 +140,7 @@ public class GameState extends State {
 	private boolean showTutorialEnd;
 	
 	// Sound timers
-	private int GAMEOVERSOUND_TIMER = 1; //ticks from entering gamoverstate to start playing sound
+	private int GAMEOVERSOUND_TIMER = 105; //ticks from entering gamoverstate to start playing sound
 	
 	// Lists for keeping track of entities in the world
 	private Array<Entity> entities = new Array<Entity>(false, 128);
@@ -182,8 +182,8 @@ public class GameState extends State {
 	
 	private Sound gameOverSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/GameOver.ogg"));
 	private Sound killSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Destruction.ogg"));
-	private Sound multiplierUpSound = Gdx.audio.newSound(Gdx.files.internal("audio/Shoot.wav"));
-	private Sound multiplierDownSound = Gdx.audio.newSound(Gdx.files.internal("audio/Shoot.wav"));
+	private Sound multiplierUpSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/MultiplierUp.ogg"));
+	private Sound multiplierDownSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/MultiplierDown.ogg"));
 	private boolean soundEffects;	
 	
 	public GameState(Specular game) {
@@ -336,14 +336,14 @@ public class GameState extends State {
 					
 					scoreMultiplierTimer += enemySizeDecrease;
 				} else {
-					multiplierDownSound.play(1f, scoreMultiplier - 10, 0);
+					multiplierDownSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
 					scoreMultiplierTimer = 0;
 					scoreMultiplier--;
 				}
 			}
 			
 			if(cs.getCombo() > 7) {
-				multiplierUpSound.play(1f, scoreMultiplier - 5, 0);
+				multiplierUpSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
 				setScoreMultiplier(scoreMultiplier + 1);
 				cs.resetCombo();
 			}
@@ -588,7 +588,7 @@ public class GameState extends State {
 				
 				// Drawing final score and buttons
 				if(gameOverTicks == GAMEOVERSOUND_TIMER) {
-					gameOverSound.play();
+					gameOverSound.play(1.5f, 1, 0);
 				}
 				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
 				

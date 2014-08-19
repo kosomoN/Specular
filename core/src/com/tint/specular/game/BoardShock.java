@@ -25,9 +25,6 @@ public class BoardShock {
 		timeActivated = 0;
 		BoardShock.gs = gs;
 		
-		if(gs.isSoundEnabled())
-			boardshockSound.play();
-		
 		activationX = gs.getPlayer().getX();
 		activationY = gs.getPlayer().getY();
 	}
@@ -42,6 +39,8 @@ public class BoardShock {
 					gs.gameMusic().setVolume(0.15f + (timeActivated / 550));
 				}
 			} else if(timeActivated == 18) {
+				if(gs.isSoundEnabled())
+					boardshockSound.play(3f, 1, 0);
 				Camera.shake(2.5f, 0.1f);
 				if(gs.gameMusic() != null){
 					gs.gameMusic().setVolume(0.15f);
