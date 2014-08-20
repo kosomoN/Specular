@@ -96,7 +96,7 @@ public class Map {
 	public void render(SpriteBatch batch, boolean light) {
 		batch.draw(texture, 0, 0);
 		
-		if(GfxSettings.setting != GfxSettings.LOW) {
+		if(GfxSettings.setting >= GfxSettings.LOW) {
 			batch.end();
 			
 			//Render masks to the framebuffer
@@ -134,11 +134,11 @@ public class Map {
 				batch.draw(ShockWaveRenderer.getMaskTexture(), BoardShock.getActivationX() - size / 2, fbo.getHeight() - BoardShock.getActivationY() - size / 2, size, size);
 			}
 						
-			if(GfxSettings.ReturnPtr()){
+			if(GfxSettings.BoardShockFx){
 				for(UpgradeOrb orb : gs.getOrbs()){
 					float alpha = Math.min((orb.getLifetime() / 160f) * (orb.getLifetime() / 160f) + 0.4f, 1);
 					batch.setColor(1, 0.5f, 0.5f, alpha);
-					float size = 200;
+					float size = GfxSettings.getOrbSize();
 					batch.draw(mask, orb.getX() - size / 2, fbo.getHeight() - orb.getY() - size / 2, size, size);
 				
 				}
