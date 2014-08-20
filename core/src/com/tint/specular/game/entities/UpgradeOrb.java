@@ -91,8 +91,8 @@ public class UpgradeOrb implements Entity, Poolable {
 				Camera.getCameraY() - Specular.camera.viewportHeight / 2 * Camera.getZoom() - 100 < y &&
 				Camera.getCameraY() + Specular.camera.viewportHeight / 2 * Camera.getZoom() + 100 > y) {
 			
-			float size = Math.min((lifetime / 160f) * (lifetime / 160f), 1);
-			batch.setColor(1, 1, 1, size);
+			float alpha = Math.min((lifetime / 160f) * (lifetime / 160f), 1);
+			batch.setColor(1, 1, 1, alpha);
 			Util.drawCentered(batch, tex, x, y, 0);
 			batch.setColor(1, 1, 1, 1);
 		}

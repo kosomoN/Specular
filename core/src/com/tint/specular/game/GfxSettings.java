@@ -12,6 +12,7 @@ public class GfxSettings {
 	public static boolean ParticleTrail;
 	public static boolean BoardShockFx;
 	public static int setting;
+	public static int orbSize;
 
 
 	public static void init() {
@@ -32,6 +33,7 @@ public class GfxSettings {
 			BulletTrail = false;
 			ParticleTrail = false;
 			BoardShockFx = true;
+			orbSize = 200;
 		}
 		
 		if(setting == HIGH) {
@@ -41,6 +43,7 @@ public class GfxSettings {
 			BulletTrail = true;
 			ParticleTrail = true;
 			BoardShockFx = true;
+			orbSize = 250;
 		}
 	}
 	
@@ -51,5 +54,6 @@ public class GfxSettings {
 	public static boolean ReturnBt () {return BulletTrail;}
 	public static boolean ReturnPtr () {return ParticleTrail;}
 	public static int ReturnSetting () {return setting;}
+	public static int getOrbSize () {return orbSize;}
 }
 
