@@ -175,7 +175,7 @@ public class GameState extends State {
 	private Texture newHighscore;
 	private Texture pauseTex, greyPixel;
 	private Music music;
-	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","03.ogg","05.ogg","06.ogg"};
+	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","04.ogg","05.ogg","06.ogg"};
 	private int currentMusic = -1;
 	private Rectangle scissors = new Rectangle();
 	private Rectangle clipBounds;

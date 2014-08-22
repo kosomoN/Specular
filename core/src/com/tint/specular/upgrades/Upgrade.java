@@ -21,7 +21,7 @@ public abstract class Upgrade {
 		if(grade >= maxGrade)
 			return false;
 		
-		grade += 0.005f;
+		grade += 0.01f;
 		return true;
 	}
 
