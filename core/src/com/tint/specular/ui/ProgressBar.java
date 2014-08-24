@@ -24,7 +24,7 @@ public class ProgressBar extends Widget {
 	public void draw(Batch batch, float parentAlpha) {
 		batch.draw(progressBar, x - 17, y - 45, width + 40, 256);
 		float length = value / maxValue;
-		batch.draw(barFill, x + 64, y + 16, length < 0.1f ? 0 : length * (width - 128), height);
+		batch.draw(barFill, x + 64, y + 16, length < 0.01f ? 0 : length * (width - 128), height);
 	}
 
 	public void setPosition(float x, float y) {

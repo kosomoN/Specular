@@ -587,7 +587,8 @@ public class GameState extends State {
 				}
 				
 				// Drawing final score and buttons
-				music.setVolume(0.25f);
+				if(music != null)
+					music.setVolume(0.25f);
 				if(gameOverTicks == GAMEOVERSOUND_TIMER) {
 					gameOverSound.play(1f, 1, 0);
 				}
@@ -857,7 +858,8 @@ public class GameState extends State {
 		soundsEnabled = Specular.prefs.getBoolean("SoundsMuted");
 		particlesEnabled = Specular.prefs.getBoolean("Particles");
 		
-		music.setVolume(1f);
+		if(music != null)
+			music.setVolume(1f);
 		
 		gameMode = new Ranked(this);
 		enemiesKilled = 0;
