@@ -73,11 +73,11 @@ public class AndroidLauncher extends AndroidApplication {
 					public void call(final Session session, SessionState state, Exception exception) {
 						Log.i("Specular", state.toString());
 						//If logged in
-						if(state.equals(SessionState.OPENED) && fbuser != null) {
+						if(state.equals(SessionState.OPENED)) {
 							System.out.println("Opened");
 							
 							//Request user information
-							Request.newMeRequest(session, new Request.GraphUserCallback() {
+							final Request meRequest = Request.newMeRequest(session, new Request.GraphUserCallback() {
 								@Override
 								public void onCompleted(GraphUser user, Response response) {
 									
@@ -91,7 +91,13 @@ public class AndroidLauncher extends AndroidApplication {
 				                    	callback.failed();
 				                    }
 								}
-							}).executeAsync();
+							});
+							AndroidLauncher.this.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									meRequest.executeAsync();
+								}
+							});
 							
 						} else if(state.equals(SessionState.CLOSED) || state.equals(SessionState.CLOSED_LOGIN_FAILED)) {
 							fbuser = null;
@@ -119,11 +125,14 @@ public class AndroidLauncher extends AndroidApplication {
 			}
 
 			@Override
-			public boolean postHighscore(final int score) {
+			public boolean postHighscore(final int score, boolean requestPublishPermission) {
 				final Session session = Session.getActiveSession();
 				
 				//Checking for publish permissions
 				if(!session.getPermissions().contains("publish_actions")) {
+					if(!requestPublishPermission) {
+						return false;
+					}
 					final NewPermissionsRequest permissionRequest = new NewPermissionsRequest(activity, "publish_actions");
 					permissionRequest.setCallback(new StatusCallback() {
 						@Override

@@ -2,10 +2,10 @@ package com.tint.specular.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Rectangle;
@@ -58,7 +58,7 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 	public void draw(Batch batch, float parentAlpha) {
 		float itemY = getHeight() - rowHeight;
 		float y = getY() + itemY + 20;
-		Texture levelTex = null;
+		AtlasRegion levelTex = null;
 		if(upgrades != null) {
 			for(int i = 0; i < upgrades.length; i++) {
 				y = getY() + itemY + 0;
@@ -70,7 +70,7 @@ public class UpgradeList extends Widget implements Cullable, Disposable {
 					
 					levelTex = UpgradeState.getUpgradeLevelTexture(upgrades[i].getGrade());
 					if(levelTex != null) {
-						batch.draw(levelTex, getX() + 64 + 40, y + 35, levelTex.getWidth() * 1.5f, levelTex.getHeight() * 1.5f);
+						batch.draw(levelTex, getX() + 64 + 40, y + 35, levelTex.getRegionWidth() * 1.5f, levelTex.getRegionHeight() * 1.5f);
 					}
 					
 					bars[i].draw(batch, parentAlpha);

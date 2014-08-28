@@ -59,7 +59,7 @@ public class MainmenuState extends State {
 	public void show() {
 				
 		if(Specular.nativeAndroid.isLoggedIn()) {
-			Specular.nativeAndroid.postHighscore(Specular.prefs.getInteger("Highscore"));
+			Specular.nativeAndroid.postHighscore(Specular.prefs.getInteger("Highscore"), false);
 				
 		}
 		

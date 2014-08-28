@@ -96,7 +96,7 @@ public class Map {
 	public void render(SpriteBatch batch, boolean light) {
 		batch.draw(texture, 0, 0);
 		
-		if(GfxSettings.setting >= GfxSettings.LOW) {
+		if(GfxSettings.setting > GfxSettings.LOW && light) {
 			batch.end();
 			
 			//Render masks to the framebuffer
@@ -136,7 +136,7 @@ public class Map {
 						
 			if(GfxSettings.BoardShockFx){
 				for(UpgradeOrb orb : gs.getOrbs()){
-					float alpha = Math.min((orb.getLifetime() / 160f) * (orb.getLifetime() / 160f) + 0.4f, 1);
+					float alpha = Math.min((orb.getLifetime() / 50f) * (orb.getLifetime() / 50f) + 0.4f, 1);
 					batch.setColor(1, 0.5f, 0.5f, alpha);
 					float size = GfxSettings.getOrbSize();
 					batch.draw(mask, orb.getX() - size / 2, fbo.getHeight() - orb.getY() - size / 2, size, size);
@@ -264,7 +264,7 @@ public class Map {
 			}
 			
 			for(UpgradeOrb Orbs : gs.getOrbs()) {
-				shapeRenderer.circle(Orbs.getX(), Orbs.getY(), 200);
+				shapeRenderer.rect(Orbs.getX() - 125, Orbs.getY() - 125, 250, 250);
 				
 			}
 			

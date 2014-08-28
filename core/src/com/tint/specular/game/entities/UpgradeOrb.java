@@ -42,17 +42,11 @@ public class UpgradeOrb implements Entity, Poolable {
 			
 			//Calculating angle and force
 			double angle = Math.atan2(gs.getPlayer().getY() - y, gs.getPlayer().getX() - x);
-			float dx = (float) (Math.cos(angle) * (radiusDist * 20 / dist));
-			float dy = (float) (Math.sin(angle) * (radiusDist * 20 / dist));
-			
-			// Add the force
-			if(this.dx * this.dx < dx * dx)
-				this.dx += dx;
-			if(this.dy * this.dy < dy * dy)
-				this.dy += dy;
+			dx += (float) (Math.cos(angle) * 1.4f);
+			dy += (float) (Math.sin(angle) * 1.4f);
 			
 			if(dist <= radiusDist) {
-				gs.getPlayer().addUpgradePoints(1f);
+				gs.getPlayer().addUpgradePoints(1);
 				return true;
 			}
 		}
@@ -60,8 +54,8 @@ public class UpgradeOrb implements Entity, Poolable {
 		// Movement
 		x += dx;
 		y += dy;
-		dx *= 0.97f;
-		dy *= 0.97f;
+		dx *= 0.93f;
+		dy *= 0.93f;
 		
 		// Bounce off borders, * 0.9f is for the amount of force the border absorbs
 		if(x - 20 - 18 < 0) {
@@ -91,8 +85,8 @@ public class UpgradeOrb implements Entity, Poolable {
 				Camera.getCameraY() - Specular.camera.viewportHeight / 2 * Camera.getZoom() - 100 < y &&
 				Camera.getCameraY() + Specular.camera.viewportHeight / 2 * Camera.getZoom() + 100 > y) {
 			
-			float alpha = Math.min((lifetime / 160f) * (lifetime / 160f), 1);
-			batch.setColor(1, 1, 1, alpha);
+			float size = Math.min((lifetime / 50f) * (lifetime / 50f), 1);
+			batch.setColor(1, 1, 1, size);
 			Util.drawCentered(batch, tex, x, y, 0);
 			batch.setColor(1, 1, 1, 1);
 		}
@@ -134,7 +128,7 @@ public class UpgradeOrb implements Entity, Poolable {
 		dx += initialDx;
 		dy += initialDy;
 		
-		lifetime = (float) (150 + Math.random() * 50);
+		lifetime = (float) (250 + Math.random() * 50);
 	}
 
 	@Override

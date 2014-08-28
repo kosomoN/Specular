@@ -45,7 +45,7 @@ public class DesktopLauncher {
 			}
 
 			@Override
-			public boolean postHighscore(int score) {
+			public boolean postHighscore(int score, boolean requestPublishPermission) {
 				Specular.prefs.putInteger("Highscore", score);
 				Specular.prefs.flush();
 				return false;

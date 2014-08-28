@@ -2,7 +2,6 @@ package com.tint.specular.game.powerups;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
@@ -114,7 +113,7 @@ public abstract class PowerUp implements Entity {
 	public boolean isPaused() { return isPaused; }
 	public boolean isActivated() { return activated; }
 	public abstract AtlasRegion getTexture();
-	public abstract Texture getLevelTexture();
+	public abstract AtlasRegion getLevelTexture();
 
 	@Override
 	public void dispose() {

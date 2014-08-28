@@ -12,7 +12,7 @@ public interface NativeAndroid {
 	public boolean login(RequestCallback loginCallback);
 	public void logout();
 	public boolean isLoggedIn();
-	public boolean postHighscore(int score);
+	public boolean postHighscore(int score, boolean requestPublishPermission);
 	
 	public interface RequestCallback {
 		public void success();

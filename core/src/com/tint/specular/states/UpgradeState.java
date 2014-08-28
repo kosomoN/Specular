@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -44,14 +45,7 @@ public class UpgradeState extends State {
 	private Stage stage;
 	private UpgradeList list;
 	private Upgrade[] upgrades = new Upgrade[9];
-	private static Texture[] upgradeLevels = {
-			new Texture(Gdx.files.internal("graphics/game/powerups/level 1.png")),
-			new Texture(Gdx.files.internal("graphics/game/powerups/level 2.png")),
-			new Texture(Gdx.files.internal("graphics/game/powerups/level 3.png")),
-			new Texture(Gdx.files.internal("graphics/game/powerups/level 4.png")),
-			new Texture(Gdx.files.internal("graphics/game/powerups/level 5.png")),
-			new Texture(Gdx.files.internal("graphics/game/powerups/level inf.png"))
-	};
+	private static AtlasRegion[] upgradeLevels;
 
 	private Label pointsLeftLabel;
 	
@@ -86,6 +80,13 @@ public class UpgradeState extends State {
 		UPFont.setColor(Color.RED);
 		
 		fontGen.dispose();
+		upgradeLevels = new AtlasRegion[6];
+		upgradeLevels[0] = ta.findRegion("game1/level 1");
+		upgradeLevels[1] = ta.findRegion("game1/level 2");
+		upgradeLevels[2] = ta.findRegion("game1/level 3");
+		upgradeLevels[3] = ta.findRegion("game1/level 4");
+		upgradeLevels[4] = ta.findRegion("game1/level 5");
+		upgradeLevels[5] = ta.findRegion("game1/level inf");
 	}
 
 	@Override
@@ -235,7 +236,7 @@ public class UpgradeState extends State {
 		upgradePoints = Specular.prefs.getFloat("Upgrade Points");
 	}
 	
-	public static Texture getUpgradeLevelTexture(float grade) {
+	public static AtlasRegion getUpgradeLevelTexture(float grade) {
 		if(grade > 0) {
 			if(grade < 2) {
 				return upgradeLevels[0];

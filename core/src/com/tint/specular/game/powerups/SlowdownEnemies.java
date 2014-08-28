@@ -1,6 +1,5 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
@@ -16,7 +15,7 @@ import com.tint.specular.states.UpgradeState;
 
 public class SlowdownEnemies extends PowerUp {
 	private static AtlasRegion texture;
-	private static Texture levelTex;
+	private static AtlasRegion levelTex;
 	private static boolean hasUpdatedSlowdown = false;
 	private static float freezeTime; // Ms
 	private float ticksFrozen; // Only handled in one slowdown
@@ -68,7 +67,7 @@ public class SlowdownEnemies extends PowerUp {
 	public static float getFreezeTime() { return freezeTime; }
 
 	@Override
-	public Texture getLevelTexture() {
+	public AtlasRegion getLevelTexture() {
 		return levelTex;
 	}
 }

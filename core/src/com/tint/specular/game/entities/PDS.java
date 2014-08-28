@@ -11,7 +11,7 @@ public class PDS implements Entity {
 	private static int ammo;
 	private static float range;
 	private static float damage = 2;
-	private Sound pdsSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/laser.ogg"));
+	private Sound pdsSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Laser.ogg"));
 	private GameState gs;
 	private Player player;
 	

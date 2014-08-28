@@ -1,6 +1,5 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
@@ -15,7 +14,7 @@ import com.tint.specular.states.UpgradeState;
 
 public class FireRateBoost extends PowerUp {
 	private static AtlasRegion texture;
-	private static Texture levelTex;
+	private static AtlasRegion levelTex;
 	private static float boost = 2 / 3f;
 	public static int stacks;
 	
@@ -57,7 +56,7 @@ public class FireRateBoost extends PowerUp {
 	}
 
 	@Override
-	public Texture getLevelTexture() {
+	public AtlasRegion getLevelTexture() {
 		return levelTex;
 	}
 }

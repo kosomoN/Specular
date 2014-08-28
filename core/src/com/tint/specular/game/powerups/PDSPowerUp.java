@@ -1,6 +1,5 @@
 package com.tint.specular.game.powerups;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
@@ -11,7 +10,7 @@ import com.tint.specular.states.UpgradeState;
 public class PDSPowerUp extends PowerUp{
 
 	private static AtlasRegion tex;
-	private static Texture levelTex;
+	private static AtlasRegion levelTex;
 	
 	public PDSPowerUp(float x, float y, GameState gs) {
 		super(x, y, gs, -1);
@@ -40,7 +39,7 @@ public class PDSPowerUp extends PowerUp{
 	}
 
 	@Override
-	public Texture getLevelTexture() {
+	public AtlasRegion getLevelTexture() {
 		return levelTex;
 	}
 

@@ -439,7 +439,7 @@ public class GameState extends State {
 					gameOverScoreFont.scale(14);
 					
 					if(Specular.nativeAndroid.isLoggedIn()) {
-						Specular.nativeAndroid.postHighscore(player.getScore());
+						Specular.nativeAndroid.postHighscore(player.getScore(), true);
 					}
 				}
 			}

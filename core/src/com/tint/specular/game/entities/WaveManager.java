@@ -9,10 +9,11 @@ import com.tint.specular.game.entities.enemies.Enemy;
 
 public class WaveManager {
 
-	private List<Wave> specialWaves = new ArrayList<Wave>();
+	private List<Wave> specialWaves;
 	private Random rand = new Random();
 	
 	public WaveManager(GameState gs) {
+		specialWaves = new ArrayList<Wave>();
 		WaveLoader.initWaves(gs, specialWaves);
 	}
 
