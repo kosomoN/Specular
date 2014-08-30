@@ -3,6 +3,7 @@ package com.tint.specular.game.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.enemies.Enemy;
 
@@ -19,7 +20,7 @@ public class PDS implements Entity {
 		this.gs = gs;
 		this.player = player;
 		range = 200;
-//		damage = Specular.prefs.getFloat("PDS Damage");
+		damage = Specular.prefs.getFloat("PDS Damage");
 	}
 	
 	@Override
@@ -52,8 +53,11 @@ public class PDS implements Entity {
 		return false;
 	}
 	
-	public static void refillAmmo(int ammo) {
-		PDS.ammo += ammo;
+	public static void refillAmmo(int ammo0, int ammo1) {
+		PDS.ammo += ammo0;
+		if(ammo1 == 1) {
+			PDS.ammo = 0;
+		}
 	}
 	
 	public static void increaseRange(float range) {

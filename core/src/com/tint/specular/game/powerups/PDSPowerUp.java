@@ -30,7 +30,7 @@ public class PDSPowerUp extends PowerUp{
 	
 	@Override
 	protected void affect(Player player) {
-		PDS.refillAmmo(10);
+		PDS.refillAmmo(10,0);
 	}
 
 	@Override

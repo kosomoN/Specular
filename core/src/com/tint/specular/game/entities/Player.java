@@ -76,6 +76,7 @@ public class Player implements Entity {
 	//Hit sounds
 	Sound deathSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Death.ogg"));
 	Sound spawnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Respawn.ogg"));
+	Sound shieldSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/Shockwave.ogg"));
 	private int shieldLoseRepelTimer;
 			
 //---------------SOUND FX END---------------------		
@@ -211,6 +212,7 @@ public class Player implements Entity {
 			TextureRegion frame = deathAnim.getKeyFrame(animFrameTime, false);
 			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
 			if(deathAnim.isAnimationFinished(animFrameTime)) {
+				PDS.refillAmmo(0,0);
 				dying  =  false;
 				dead = true;
 				animFrameTime = 0;
@@ -413,6 +415,7 @@ public class Player implements Entity {
 		        			
 		        			shields--;
 		        			shieldLoseRepelTimer = PUSHAWAY_TIME;
+		        			shieldSound.play();
 	        			} else {
 	        				Specular.nativeAndroid.sendAnalytics("Death", String.valueOf(gs.getCurrentWave().getID()), e.getClass().getSimpleName(), null);
 	        				if(gs.tutorialHasEnded()) {

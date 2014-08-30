@@ -33,17 +33,19 @@ public class BoardShock {
 		if(activated) {
 			timeActivated += 1;
 			
-			if(timeActivated >= 120) {
+			if(timeActivated >= 180) {
 				activated = false;
+			}
+			if(timeActivated >= 60) {
 				if(gs.gameMusic() != null){
-					gs.gameMusic().setVolume(0.15f + (timeActivated / 550));
+					gs.gameMusic().setVolume(0.05f + ((timeActivated-60) / 180));
 				}
 			} else if(timeActivated == 18) {
 				if(gs.isSoundEnabled())
-					boardshockSound.play(3f, 1, 0);
+					boardshockSound.play(1f, 1, 0);
 				Camera.shake(2.5f, 0.1f);
 				if(gs.gameMusic() != null){
-					gs.gameMusic().setVolume(0.15f);
+					gs.gameMusic().setVolume(0.05f);
 				}
 				zoom = 0;
 				for(Enemy e : gs.getEnemies()) {
