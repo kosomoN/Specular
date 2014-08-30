@@ -415,6 +415,7 @@ public class Player implements Entity {
 		        			
 		        			shields--;
 		        			shieldLoseRepelTimer = PUSHAWAY_TIME;
+		        			if(gs.isSoundEnabled())
 		        			shieldSound.play();
 	        			} else {
 	        				Specular.nativeAndroid.sendAnalytics("Death", String.valueOf(gs.getCurrentWave().getID()), e.getClass().getSimpleName(), null);
@@ -425,7 +426,8 @@ public class Player implements Entity {
 
 	    					dying = true;
 	    					
-	    					deathSound.play(0.75f, 1, 0);
+	    					if(gs.isSoundEnabled())
+	    						deathSound.play(0.75f, 1, 0);
 	    					animFrameTime = 0;
 	    					
 	    					gs.getParticleSpawnSystem().spawn(Type.BULLET, getX(), getY(), getDeltaX(), getDeltaY(), 20, false);
@@ -451,7 +453,8 @@ public class Player implements Entity {
 		        				
 		    					addLives(-1);
 		    					dying = true;
-		    					deathSound.play(0.75f, 1, 0);
+		    					if(gs.isSoundEnabled())
+		    						deathSound.play(0.75f, 1, 0);
 		    					animFrameTime = 0;
 		    					clearEnemies = true;
 		    					gs.getParticleSpawnSystem().spawn(Type.BULLET, getX(), getY(), getDeltaX(), getDeltaY(), 20, false);
@@ -572,7 +575,8 @@ public class Player implements Entity {
 		spawning = true;
 		dead = false;
 		tilt = Specular.prefs.getBoolean("Tilt");
-		spawnSound.play(0.6f, 1, 0);
+		if(gs.isSoundEnabled())
+			spawnSound.play(0.6f, 1, 0);
 	}
 	
 	public static void init(TextureAtlas ta) {

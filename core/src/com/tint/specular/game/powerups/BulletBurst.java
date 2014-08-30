@@ -2,7 +2,9 @@ package com.tint.specular.game.powerups;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.states.UpgradeState;
 
@@ -27,7 +29,7 @@ public class BulletBurst extends PowerUp {
 	
 	public static void init(TextureAtlas ta) {
 		texture = ta.findRegion("game1/5 Burst");
-//		maxActiveTime = Specular.prefs.getFloat("Burst Max Time");
+		maxActiveTime = Specular.prefs.getFloat("Burst Max Time");
 	}
 	
 	public static void reloadLevelTextures(float grade) {
@@ -41,7 +43,8 @@ public class BulletBurst extends PowerUp {
 	
 	@Override
 	public void removeEffect(Player player) {
-		player.addBulletBurstLevel(-1);
+		if(!Bullet.isTwisting())
+			player.addBulletBurstLevel(-1);
 	}
 
 	@Override

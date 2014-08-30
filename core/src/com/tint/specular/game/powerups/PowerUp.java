@@ -91,7 +91,7 @@ public abstract class PowerUp implements Entity {
 			if(getLevelTexture() != null)
 				batch.draw(getLevelTexture(), x - getTexture().getRegionWidth() / 2, y - getTexture().getRegionHeight() / 2);
 		}
-		if(activated && activeTime == 0) {
+		if(gs.isSoundEnabled() && activated && activeTime == 0) {
 			shockwaveSound.play();
 		}
 		

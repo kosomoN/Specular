@@ -2,6 +2,7 @@ package com.tint.specular.game.powerups;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.states.UpgradeState;
@@ -28,7 +29,7 @@ public class FireRateBoost extends PowerUp {
 	
 	public static void init(TextureAtlas ta) {
 		texture = ta.findRegion("game1/FireRate");
-//		boost = Specular.prefs.getFloat("Firerate Boost");
+		boost = Specular.prefs.getFloat("Firerate Boost");
 	}
 	
 	public static void reloadLevelTextures(float grade) {

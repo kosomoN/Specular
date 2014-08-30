@@ -2,6 +2,7 @@ package com.tint.specular.game.powerups;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Player;
@@ -25,7 +26,7 @@ public class Swarm extends PowerUp {
 	
 	public static void init(TextureAtlas ta) {
 		tex = ta.findRegion("game1/Swarm");
-//		effect = Specular.prefs.getFloat("Swarm Effect");
+		effect = Specular.prefs.getFloat("Swarm Effect");
 	}
 	
 	public static void reloadLevelTextures(float grade) {

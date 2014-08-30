@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -14,12 +15,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider.SliderStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -43,11 +46,13 @@ public class ControlSetupState extends State {
 	private long lastTickTime;
 	private float sensitivity;
 	private boolean tilt, staticSticks;
+	private boolean soundEffects;
 	public ControlInputProcessor inputProcessor;
 	private Stage stage;
 	private Button staticBtn;
 	private WidgetGroup hideableUI;
 	private Button stickPositionBtn;
+	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPress.ogg"));
 	
 	public ControlSetupState(Specular game) {
 		super(game);
@@ -75,6 +80,8 @@ public class ControlSetupState extends State {
 		
 		tilt = Specular.prefs.getBoolean("Tilt");
 		staticSticks = Specular.prefs.getBoolean("Static");
+		
+		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
 		
 		inputProcessor = new ControlInputProcessor();
 		Gdx.input.setInputProcessor(new InputMultiplexer(stage, inputProcessor));
@@ -108,10 +115,42 @@ public class ControlSetupState extends State {
 		
 		backBtn.setPosition((stage.getWidth() - Specular.camera.viewportWidth) / 2 + 47, (stage.getHeight() - Specular.camera.viewportHeight) / 2);
 		
-		backBtn.addListener(new ChangeListener() {
+		backBtn.addListener(new ClickListener() {
+			boolean entered;
+			boolean touched;
+			
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				saveAndExit();
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				entered = true;
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				entered = false;
+				touched = false;
+			}
+			
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				if(soundEffects)
+					btnSound.play();
+				touched = true;
+				return super.touchDown(event, x, y, pointer, button);
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				super.touchUp(event, x, y, pointer, button);
+				if(entered)
+					saveAndExit();
+			}
+
+			@Override
+			public void touchDragged(InputEvent event, float x, float y, int pointer) {
+				if(entered && !touched && soundEffects) {
+					btnSound.play();
+				}
+				touched = entered;
 			}
 		});
 		
@@ -121,11 +160,44 @@ public class ControlSetupState extends State {
 		
 		testBtn.setPosition((stage.getWidth() - testBtn.getWidth()) / 2, (stage.getHeight() + Specular.camera.viewportHeight) / 2 - testBtnTex.getRegionHeight());
 		
-		testBtn.addListener(new ChangeListener() {
+		testBtn.addListener(new ClickListener() {
+			boolean entered;
+			boolean touched;
+			
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				hideableUI.setVisible(!hideableUI.isVisible());
-				stickPositionBtn.setVisible(hideableUI.isVisible() && staticSticks);
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				entered = true;
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				entered = false;
+				touched = false;
+			}
+			
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				if(soundEffects)
+					btnSound.play();
+				touched = true;
+				return super.touchDown(event, x, y, pointer, button);
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				super.touchUp(event, x, y, pointer, button);
+				if(entered) {
+					hideableUI.setVisible(!hideableUI.isVisible());
+					stickPositionBtn.setVisible(hideableUI.isVisible() && staticSticks);
+				}
+			}
+
+			@Override
+			public void touchDragged(InputEvent event, float x, float y, int pointer) {
+				if(entered && !touched && soundEffects) {
+					btnSound.play();
+				}
+				touched = entered;
 			}
 		});
 		
@@ -139,11 +211,42 @@ public class ControlSetupState extends State {
 		
 		stickPositionBtn.setVisible(Specular.prefs.getBoolean("Static"));
 		
-		stickPositionBtn.addListener(new ChangeListener() {
+		stickPositionBtn.addListener(new ClickListener() {
+			boolean entered;
+			boolean touched;
+			
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				entered = true;
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				entered = false;
+				touched = false;
+			}
+			
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				if(soundEffects)
+					btnSound.play();
+				touched = true;
+				return super.touchDown(event, x, y, pointer, button);
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				super.touchUp(event, x, y, pointer, button);
 				hideableUI.setVisible(!stickPositionBtn.isChecked());
 				testBtn.setVisible(!stickPositionBtn.isChecked());
+			}
+
+			@Override
+			public void touchDragged(InputEvent event, float x, float y, int pointer) {
+				if(entered && !touched && soundEffects) {
+					btnSound.play();
+				}
+				touched = entered;
 			}
 		});
 		

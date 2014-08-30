@@ -116,12 +116,38 @@ public class SettingsInputProcessor extends InputAdapter {
         float touchpointx = (float) Gdx.input.getX() / Gdx.graphics.getWidth() * Specular.camera.viewportWidth; 
         float touchpointy = (float) Gdx.input.getY() / Gdx.graphics.getHeight() * Specular.camera.viewportHeight; 
           
-        backBtnPressed = Util.isTouching(touchpointx, touchpointy, 80, Specular.camera.viewportHeight - 160, 435, 105, false); 
-        controlsPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 1030, Specular.camera.viewportHeight - 155, 905, 110, false);
+        if(Util.isTouching(touchpointx, touchpointy, 80, Specular.camera.viewportHeight - 160, 435, 105, false)) {
+        	if(!backBtnPressed)
+        		btnSound.play();
+        	backBtnPressed = true;
+        } else {
+        	backBtnPressed = false;
+        }
+        	
+        if(Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 1030, Specular.camera.viewportHeight - 155, 905, 110, false)) {
+        	if(!controlsPressed)
+        		btnSound.play();
+        	controlsPressed = true;
+        } else {
+        	controlsPressed = false;
+        }
         
-        daeronPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 570, 500, 110, false);
+        if(Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 570, 500, 110, false)) {
+        	if(!daeronPressed)
+        		btnSound.play();
+        	daeronPressed = true;
+        } else {
+        	daeronPressed = false;
+        }
         
-        warriyoPressed = Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 450, 500, 110, false);
+        if(Util.isTouching(touchpointx, touchpointy, Specular.camera.viewportWidth - 650, Specular.camera.viewportHeight - 450, 500, 110, false)) {
+        	if(!warriyoPressed)
+        		btnSound.play();
+        	warriyoPressed = true;
+        } else {
+        	warriyoPressed = false;
+        }
+        
         return false; 
     }
     

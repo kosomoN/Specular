@@ -135,7 +135,6 @@ public class GameState extends State {
 	private int enemiesKilled;
 	private boolean enablePowerUps = true;
 	private boolean particlesEnabled;
-	private boolean soundsEnabled;
 	private boolean tutorialOnGoing;
 	private boolean showTutorialEnd;
 	
@@ -283,7 +282,6 @@ public class GameState extends State {
 		
 		input = Gdx.input;
 		
-		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
 	}
 		
 	@Override
@@ -336,14 +334,18 @@ public class GameState extends State {
 					
 					scoreMultiplierTimer += enemySizeDecrease;
 				} else {
-					multiplierDownSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
+					if(isSoundEnabled())
+						multiplierDownSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
+					
 					scoreMultiplierTimer = 0;
 					scoreMultiplier--;
 				}
 			}
 			
 			if(cs.getCombo() > 7) {
-				multiplierUpSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
+				if(isSoundEnabled())
+					multiplierUpSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
+				
 				setScoreMultiplier(scoreMultiplier + 1);
 				cs.resetCombo();
 			}
@@ -589,7 +591,7 @@ public class GameState extends State {
 				// Drawing final score and buttons
 				if(music != null)
 					music.setVolume(0.25f);
-				if(gameOverTicks == GAMEOVERSOUND_TIMER) {
+				if(gameOverTicks == GAMEOVERSOUND_TIMER && isSoundEnabled()) {
 					gameOverSound.play(1f, 1, 0);
 				}
 				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
@@ -675,7 +677,9 @@ public class GameState extends State {
 			oss.spawn(e.getX(), e.getY(), e.getDx() * Enemy.getSlowdown(), e.getDy() * Enemy.getSlowdown(), 2);
 			
 			Camera.shake(0.3f, 0.1f);
-			killSound.play(0.75f, (float) (1 + Math.random() / 3 - 0.16), 0);
+			
+			if(isSoundEnabled())
+				killSound.play(0.75f, (float) (1 + Math.random() / 3 - 0.16), 0);
 		}
 	}
 	
@@ -785,10 +789,6 @@ public class GameState extends State {
 		return particlesEnabled;
 	}
 	
-	public boolean soundsEnabled() {
-		return soundsEnabled;
-	}
-	
 	public float getScoreFontAlpha() { return scoreFontAlpha; }
 	
 	public int getScoreMultiplier() { return scoreMultiplier; }
@@ -855,7 +855,7 @@ public class GameState extends State {
 		ticks = 0;
 		gameOverTicks = 0;
 		
-		soundsEnabled = Specular.prefs.getBoolean("SoundsMuted");
+		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
 		particlesEnabled = Specular.prefs.getBoolean("Particles");
 		
 		if(music != null)

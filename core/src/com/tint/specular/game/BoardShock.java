@@ -15,7 +15,7 @@ public class BoardShock {
 	private static GameState gs;
 	private static float zoom = 0;
 	private static float activationX, activationY;
-	private static float efficiency = 0.25f;//Specular.prefs.getFloat("Boardshock Efficiency");
+	private static float efficiency = Specular.prefs.getFloat("Boardshock Efficiency");
 
 
 

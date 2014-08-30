@@ -17,6 +17,8 @@ import com.tint.specular.utils.Util;
 public class Button {
 	
 	//FIELDS
+	public static boolean btnSoundsEnabled = !Specular.prefs.getBoolean("SoundsMuted");
+	
 	private Rectangle hitbox;
 	private Texture upTexture, downTexture;
 	private SpriteBatch batch;
@@ -41,7 +43,8 @@ public class Button {
 	}
 	
 	public void touchOver(float x, float y) {
-		btnSound.play();
+		if(!touched && btnSoundsEnabled)
+			btnSound.play();
 		touched = true;
 	}
 	

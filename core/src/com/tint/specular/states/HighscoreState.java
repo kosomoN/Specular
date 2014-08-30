@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,14 +13,16 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.tint.specular.Specular;
+import com.tint.specular.Specular.States;
 import com.tint.specular.ui.HighscoreList;
 import com.tint.specular.ui.HighscoreList.Highscore;
 
@@ -37,8 +40,10 @@ public class HighscoreState extends State {
 	private boolean shouldUpdate;
 	private HighscoreList list;
 	private boolean isLoggedIn = false;
+	private boolean soundEffects;
 	private BitmapFont font;
 	private String timePlayed, accuracy;
+	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPress.ogg"));
 	
 	public HighscoreState(Specular game) {
 		super(game);
@@ -120,6 +125,8 @@ public class HighscoreState extends State {
 		float accuracy = 1 - (float) Specular.prefs.getInteger("Bullets Missed") / Specular.prefs.getInteger("Bullets Fired");
 		accuracy *= 100;
 		this.accuracy = String.format("%.1f", accuracy) + "%";
+		
+		soundEffects = !Specular.prefs.getBoolean("SoundsMuted");
 	}
 	
 	private void createUi() {
@@ -157,20 +164,52 @@ public class HighscoreState extends State {
 					new TextureRegionDrawable(new TextureRegion(pressedTex)));
 			loginBtn.setPosition(1250, 15);
 			
-			loginBtn.addListener(new ChangeListener() {
+			loginBtn.addListener(new ClickListener() {
+				boolean entered;
+				boolean touched;
+				
 				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-                    Specular.nativeAndroid.login(new NativeAndroid.RequestCallback() {
-                        
-                        @Override
-                        public void success() {
-                            shouldUpdate = true;
-                        }
+				public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+					entered = true;
+				}
 
-                        @Override
-                        public void failed() {
-                        }
-                    });
+				@Override
+				public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+					entered = false;
+					touched = false;
+				}
+				
+				@Override
+				public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+					if(soundEffects)
+						btnSound.play();
+					touched = true;
+					return super.touchDown(event, x, y, pointer, button);
+				}
+
+				@Override
+				public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+					super.touchUp(event, x, y, pointer, button);
+					if(entered)
+						Specular.nativeAndroid.login(new NativeAndroid.RequestCallback() {
+	                        
+	                        @Override
+	                        public void success() {
+	                            shouldUpdate = true;
+	                        }
+
+	                        @Override
+	                        public void failed() {
+	                        }
+	                    });
+				}
+
+				@Override
+				public void touchDragged(InputEvent event, float x, float y, int pointer) {
+					if(entered && !touched && soundEffects) {
+						btnSound.play();
+					}
+					touched = entered;
 				}
 			});
 			
@@ -184,13 +223,45 @@ public class HighscoreState extends State {
 								new TextureRegionDrawable(new TextureRegion(pressedTex)));
 		backBtn.setPosition(47, 0);
 		
-		backBtn.addListener(new ChangeListener() {
+		backBtn.addListener(new ClickListener() {
+			boolean entered;
+			boolean touched;
 			
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				game.enterState(Specular.States.MAINMENUSTATE);
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+				entered = true;
+			}
+
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+				entered = false;
+				touched = false;
+			}
+			
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				if(soundEffects)
+					btnSound.play();
+				touched = true;
+				return super.touchDown(event, x, y, pointer, button);
+			}
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				super.touchUp(event, x, y, pointer, button);
+				if(entered)
+					game.enterState(States.MAINMENUSTATE);
+			}
+
+			@Override
+			public void touchDragged(InputEvent event, float x, float y, int pointer) {
+				if(entered && !touched && soundEffects) {
+					btnSound.play();
+				}
+				touched = entered;
 			}
 		});
+		
 		stage.addActor(backBtn);
 		
 		Gdx.input.setInputProcessor(new InputMultiplexer(stage, new InputAdapter() {
@@ -204,9 +275,7 @@ public class HighscoreState extends State {
 				return super.keyUp(keycode);
 			}
 		}));
-	}
-	
-	
+	}	
 
 	@Override
 	public void hide() {

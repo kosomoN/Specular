@@ -150,7 +150,8 @@ public class EnemyExploder extends Enemy {
 		float distanceSquared;
 		double angle;
 		
-		explosionSound.play();
+		if(gs.isSoundEnabled())
+			explosionSound.play();
 		
 		// Enemies
 		for(Enemy e : gs.getEnemies()) {

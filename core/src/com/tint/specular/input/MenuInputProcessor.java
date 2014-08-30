@@ -39,6 +39,7 @@ public class MenuInputProcessor extends InputAdapter {
 		Texture helpTexPr = new Texture(Gdx.files.internal("graphics/menu/mainmenu/Help.png"));
 		helpBtn = new Button(1620 , 470, 128, 128, game.batch, helpTex, helpTexPr);
 		
+		Button.btnSoundsEnabled = !Specular.prefs.getBoolean("SoundsMuted");
 	}
 
 	@Override

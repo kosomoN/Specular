@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
 import com.tint.specular.game.ShockWaveRenderer;
 import com.tint.specular.game.entities.Player;
@@ -30,7 +31,7 @@ public class Repulsor extends PowerUp {
 	
 	public static void init(TextureAtlas ta) {
 		texture = ta.findRegion("game1/Repulsor");
-//		maxActiveTime = Specular.prefs.getFloat("Repulsor Max Time");
+		maxActiveTime = Specular.prefs.getFloat("Repulsor Max Time");
 	}
 	
 	public static void reloadLevelTextures(float grade) {
