@@ -19,7 +19,8 @@ public class Repulsor extends PowerUp {
 	private static float maxActiveTime = 800;
 	private static AtlasRegion texture;
 	private static AtlasRegion levelTex;
-	private Sound repulsorSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/RepulsorEffect.ogg"));	
+	private static Sound repulsorSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/RepulsorEffect.ogg"));
+	private static int stacks;
 	
 	public Repulsor(float x, float y, GameState gs) {
 		super(x, y, gs, maxActiveTime);
@@ -63,12 +64,15 @@ public class Repulsor extends PowerUp {
 	protected void affect(Player player) {
 		super.affect(player);
 		repulsorSound.loop();
+		stacks++;
 	}
 
 	@Override
 	public void removeEffect(Player player) {
 		super.removeEffect(player);
-		repulsorSound.stop();
+		stacks--;
+		if(stacks <= 0)
+			repulsorSound.stop();
 	}
 
 	@Override
@@ -79,6 +83,7 @@ public class Repulsor extends PowerUp {
 		}
 	}
 
+	public static void stopSound() { repulsorSound.stop(); }
 	public static void setMaxActiveTime(float maxActiveTime) { Repulsor.maxActiveTime = maxActiveTime; }
 	public static float getMaxActiveTime() { return maxActiveTime; }
 	

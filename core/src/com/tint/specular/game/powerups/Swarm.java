@@ -63,11 +63,22 @@ public class Swarm extends PowerUp {
 			if(pu instanceof LaserPowerup)
 				pu.resume();
 		
-		if(stacks <= 1) {
+		if(stacks == 1) {
 			player.setFireRate(10f);
 			player.setBulletBurstLevel(0);
 			Bullet.setTwist(false);
 			Bullet.setDamage(1);
+			
+			for(PowerUp pu : gs.getPowerUps())
+				if(!(pu instanceof Swarm)) {
+					if(pu instanceof FireRateBoost) {
+						// Re-activating firerate boost with same power as before
+						FireRateBoost.stacks--;
+						pu.affect(gs.getPlayer());
+					} else if(pu instanceof BulletBurst) {
+						pu.affect(gs.getPlayer());
+					}
+				}
 		}
 		stacks--;
 	}

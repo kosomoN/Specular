@@ -49,9 +49,9 @@ public class Specular extends Game {
 			"Enemies Killed", "Multiplier Cooldown"};
 	// Add new fPrefs last
 	private String[] fPrefs = {"Move Stick Pos X", "Move Stick Pos Y", "Shoot Stick Pos X", "Shoot Stick Pos Y", "Sensitivity", "Upgrade Points", "Freeze Time",
-			"Boardshock Efficiency", "Burst Max Time", "Firerate Boost", "Swarm Effect", "Repulsor Max Time", "PDS Damage", "Laser Aiming Arc", "Life Upgrade Grade",
-			"Firerate Upgrade Grade", "Burst Upgrade Grade", "Beam Upgrade Grade", "Multiplier Upgrade Grade", "PDS Upgrade Grade", "Swarm Upgrade Grade",
-			"Repulsor Upgrade Grade", "Ricochet Upgrade Grade", "Slowdown Upgrade Grade", "Boardshock Upgrade Grade"};
+			"Burst Max Time", "Firerate Boost", "Swarm Effect", "Repulsor Max Time", "PDS Damage", "Laser Aiming Arc", "Life Upgrade Grade",
+			"Firerate Upgrade Grade", "Burst Upgrade Grade", "Beam Upgrade Grade", "Multiplier Upgrade Grade", "PDS Upgrade Grade",
+			"Swarm Upgrade Grade", "Repulsor Upgrade Grade", "Ricochet Upgrade Grade", "Slowdown Upgrade Grade"};
 	// The booleans which def value is true should be placed first
 	private String[] bPrefs = {"First Time", "Static", "Particles", "MusicMuted", "SoundsMuted", "Tilt"};
 	

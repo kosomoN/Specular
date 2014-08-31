@@ -39,13 +39,20 @@ public class FireRateBoost extends PowerUp {
 	@Override
 	protected void affect(Player player) {
 		stacks++;
-		player.setFireRate((float) (10 * Math.pow(boost, stacks)));
+		float firerate = (float) (10 * Math.pow(boost, stacks));
+		if(firerate <= gs.getPlayer().getFireRate())
+			player.setFireRate(firerate);
 	}
 	
 	@Override
 	public void removeEffect(Player player) {
 		stacks--;
-		player.setFireRate((float) (10 * Math.pow(boost, stacks)));
+		float firerate = (float) (10 * Math.pow(boost, stacks));
+		for(PowerUp pu : gs.getPowerUps())
+			if(pu instanceof Swarm)
+				if(firerate > gs.getPlayer().getFireRate())
+					return;
+		player.setFireRate(firerate);
 	}
 	
 	public static void setBoost(float boost) { FireRateBoost.boost = boost; }

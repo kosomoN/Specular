@@ -23,6 +23,7 @@ import com.tint.specular.game.entities.enemies.Enemy;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
 import com.tint.specular.game.entities.enemies.EnemyWorm.Part;
 import com.tint.specular.game.powerups.FireRateBoost;
+import com.tint.specular.game.powerups.Repulsor;
 import com.tint.specular.input.AnalogStick;
 import com.tint.specular.utils.Util;
 
@@ -307,6 +308,9 @@ public class Player implements Entity {
         centerx += dx;
         centery += dy;
         distTraveledSqrd += dx * dx + dy * dy;
+        
+        if(life <= 0)
+        	Repulsor.stopSound(); // Has to be stopped manually
         
         return life <= 0;
 	}

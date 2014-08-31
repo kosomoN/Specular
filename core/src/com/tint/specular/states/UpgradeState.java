@@ -67,7 +67,6 @@ public class UpgradeState extends State {
 		upgrades[6] = new RepulsorUpgrade(Specular.prefs.getFloat("Repulsor Upgrade Grade"), 10, ta);
 		upgrades[7] = new RicochetUpgrade(Specular.prefs.getFloat("Ricochet Upgrade Grade"), 10, ta);
 		upgrades[8] = new SlowdownUpgrade(Specular.prefs.getFloat("Slowdown Upgrade Grade"), 10, ta);
-		//upgrades[10] = new BoardshockUpgrade(Specular.prefs.getFloat("Boardshock Upgrade Grade"), 10, ta);
 		
 		UpgradeList.init();
 		
@@ -215,7 +214,6 @@ public class UpgradeState extends State {
 		Specular.prefs.putFloat("Repulsor Upgrade Grade", upgrades[6].getGrade());
 		Specular.prefs.putFloat("Ricochet Upgrade Grade", upgrades[7].getGrade());
 		Specular.prefs.putFloat("Slowdown Upgrade Grade", upgrades[8].getGrade());
-		//Specular.prefs.putFloat("Boardshock Upgrade Grade", upgrades[10].getGrade());
 		Specular.prefs.putFloat("Upgrade Points", upgradePoints);
 		
 		Specular.prefs.flush();
@@ -231,7 +229,6 @@ public class UpgradeState extends State {
 		upgrades[6].setGrade(Specular.prefs.getFloat("Repulsor Upgrade Grade"));
 		upgrades[7].setGrade(Specular.prefs.getFloat("Ricochet Upgrade Grade"));
 		upgrades[8].setGrade(Specular.prefs.getFloat("Slowdown Upgrade Grade"));
-		//upgrades[10].setGrade(Specular.prefs.getFloat("Boardshock Upgrade Grade"));
 		
 		upgradePoints = Specular.prefs.getFloat("Upgrade Points");
 	}
