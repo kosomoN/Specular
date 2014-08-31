@@ -118,7 +118,7 @@ public class WaveLoader {
 		
 		/* Combinations */
 		final EnemyType[] randomEnemies = new EnemyType[]{ENEMY_BOOSTER,ENEMY_CIRCLER,ENEMY_DASHER,ENEMY_STRIVER,ENEMY_WANDERER};
-		final EnemyType[] hcEnemies = new EnemyType[]{ENEMY_EXPLODER,ENEMY_WORM,ENEMY_TANKER};
+		final EnemyType[] hcEnemies = new EnemyType[]{ENEMY_EXPLODER,ENEMY_TANKER};
 
 		int random, randomHc;
 		random = rand.nextInt(randomEnemies.length);
