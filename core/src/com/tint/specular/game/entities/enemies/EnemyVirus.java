@@ -125,7 +125,7 @@ public class EnemyVirus extends Enemy {
 		warningTex = ta.findRegion("game1/Enemy Striver Warning");
 		
 		AtlasRegion animTex = ta.findRegion("game1/Enemy Striver Anim");
-		anim = Util.getAnimation(animTex, 32, 32, 1 / 15f, 0, 0, 3, 1);
+		anim = Util.getAnimation(animTex, 64, 64, 1 / 15f, 0, 0, 3, 1);
 	}
 	
 	public static void resetSpawnedAmount() {
