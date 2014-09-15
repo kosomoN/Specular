@@ -9,7 +9,7 @@ public abstract class Upgrade {
 	protected GameState gs;
 	private float grade;
 	private float maxGrade;
-	private int cost = 1;
+	private float cost = 1;
 	
 	public Upgrade(GameState gs, float grade, float maxGrade) {
 		this.gs = gs;
@@ -21,7 +21,7 @@ public abstract class Upgrade {
 		if(grade >= maxGrade)
 			return false;
 		
-		grade += 0.01f;
+		grade += (3 * 0.01f / (grade + 1));
 		return true;
 	}
 
@@ -35,6 +35,10 @@ public abstract class Upgrade {
 			grade = grade > maxGrade ? maxGrade : grade;
 		}
 	}
+	
+	public void setCost(float cost) {
+		this.cost = cost;
+	}
 
 	public float getGrade() {
 		if(grade > maxGrade && !infinity)
@@ -47,7 +51,7 @@ public abstract class Upgrade {
 		return maxGrade;
 	}
 	
-	public int getCost() {
+	public float getCost() {
 		return cost;
 	}
 	

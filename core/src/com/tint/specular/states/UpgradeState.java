@@ -92,12 +92,15 @@ public class UpgradeState extends State {
 	public void render(float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+		//timer += delta;
 		if(currentlyPressing != -1) {
 			if(waitForDragDelay > 0.1f && upgrades[currentlyPressing].getCost() <= upgradePoints) {
 				if(upgrades[currentlyPressing].upgrade()) {
 					upgradePoints -= upgrades[currentlyPressing].getCost();
+					upgrades[currentlyPressing].setCost((float) Math.pow(2, upgrades[currentlyPressing].getGrade() / 5));
 					pointsLeftLabel.setText("points available " + (int) Math.floor(upgradePoints));
 				}
+		
 				list.getProgressBars()[currentlyPressing].setValue(upgrades[currentlyPressing].getGrade());
 			} else {
 				waitForDragDelay += delta;
