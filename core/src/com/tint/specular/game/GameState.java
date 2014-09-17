@@ -224,11 +224,11 @@ public class GameState extends State {
 		ftfp.characters = FONT_CHARACTERS;
 		ftfp.size = 64;
 		scoreFont = fontGen.generateFont(ftfp);
-//		scoreFont.setColor(Color.RED);
+		scoreFont.setColor(Color.RED);
 		
 		ftfp.size = 40;
 		multiplierFont = fontGen.generateFont(ftfp);
-//		multiplierFont.setColor(Color.RED);
+		multiplierFont.setColor(Color.RED);
 		
 		// Tutorial (Must be initialized before fontGen.dispose())
 		tutorial = new Tutorial(this, fontGen);
