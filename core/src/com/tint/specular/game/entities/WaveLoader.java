@@ -20,7 +20,7 @@ public class WaveLoader {
 		
 		final Random rand = new Random();
 		
-		/* Enemy specific waves */
+		// Enemy specific waves
 		
 		// Booster Wave
 		Wave wave = new Wave(gs, 0, 600);
@@ -107,7 +107,7 @@ public class WaveLoader {
 			wave.setPermanentModifer(new WaveModifier() {
 				@Override
 				public void affectBase(GameState gs, Enemy justSpawnedEnemy) {
-					Enemy e = justSpawnedEnemy;
+					Enemy e = justSpawnedEnemy.copy();
 					e.setX(50 + rand.nextInt(gs.getCurrentMap().getWidth() - 100));
 					e.setY(50 + rand.nextInt(gs.getCurrentMap().getHeight() - 100));
 					gs.addEntity(e);
@@ -116,7 +116,7 @@ public class WaveLoader {
 			
 		specialWaves.add(wave);
 		
-		/* Combinations */
+		// Combinations
 		final EnemyType[] randomEnemies = new EnemyType[]{ENEMY_BOOSTER,ENEMY_CIRCLER,ENEMY_DASHER,ENEMY_STRIVER,ENEMY_WANDERER};
 		final EnemyType[] hcEnemies = new EnemyType[]{ENEMY_EXPLODER,ENEMY_TANKER};
 
@@ -146,11 +146,6 @@ public class WaveLoader {
 		wave = new Wave(gs, 13, 800);
 			wave.addEnemies(new EnemyType[] {ENEMY_WORM, ENEMY_DASHER}, new int[] {1, 6}, Formation.RANDOM, 0, 10);
 		specialWaves.add(wave);			
-		
-		// Tanker and Dasher	
-			wave = new Wave(gs, 14, 800);
-			wave.addEnemies(new EnemyType[] {ENEMY_TANKER, ENEMY_DASHER}, new int[] {6, 8}, Formation.EDGES, 0, 10);
-		specialWaves.add(wave);	
 		
 		// Random wave, get lucky or unlucky
 		wave = new Wave(gs, 15, 800);

@@ -213,7 +213,7 @@ public class Player implements Entity {
 			TextureRegion frame = deathAnim.getKeyFrame(animFrameTime, false);
 			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
 			if(deathAnim.isAnimationFinished(animFrameTime)) {
-				PDS.refillAmmo(0,0);
+				PDS.refillAmmo(0,1);
 				dying  =  false;
 				dead = true;
 				animFrameTime = 0;

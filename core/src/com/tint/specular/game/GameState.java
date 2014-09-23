@@ -130,7 +130,7 @@ public class GameState extends State {
 	private long gameOverTicks;
 	
 	// Fields that affect score or gameplay
-	private final int LAST_HIGHSCORE = Specular.prefs.getInteger("Highscore");
+	private int lastHighscore = Specular.prefs.getInteger("Highscore");
 	private int scoreMultiplier = 1;
 	private int enemiesKilled;
 	private boolean enablePowerUps = true;
@@ -347,7 +347,18 @@ public class GameState extends State {
 					multiplierUpSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
 				
 				setScoreMultiplier(scoreMultiplier + 1);
+				if(getScoreMultiplier() == 10) {
+					multiplierFont.scale(2);
+				}
+				
 				cs.resetCombo();
+			}
+			
+			if(multiplierFont.getScaleX() > 1) {
+				multiplierFont.scale(- 0.05f);
+				if(multiplierFont.getScaleX() <= 1) {
+					multiplierFont.setScale(1);
+				}
 			}
 			
 			boolean playerKilled = false;		// A variable to keep track of player status
@@ -583,8 +594,9 @@ public class GameState extends State {
 						shaken = true;
 					}
 					
-					if(player.getScore() > LAST_HIGHSCORE) {
+					if(player.getScore() > lastHighscore) {
 						Util.drawCentered(game.batch, newHighscore, 0, 0, 0);
+						lastHighscore = player.getScore();
 					}
 				}
 				

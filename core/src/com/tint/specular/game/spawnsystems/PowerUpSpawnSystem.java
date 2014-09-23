@@ -75,7 +75,7 @@ public class PowerUpSpawnSystem extends SpawnSystem {
 		if(pushAway > importance)
 			importance = pushAway;
 		
-		float laser = (float) (rand.nextDouble() - (gs.getPlayer().getAmmoType().equals(AmmoType.LASER) ? rand.nextDouble() * 0.8f : 0));
+		float laser = (float) (rand.nextDouble() - (gs.getPlayer().getAmmoType().equals(AmmoType.LASER) ? rand.nextDouble() * 0.7f : 0));
 		if(laser > importance)
 			importance = laser;
 		

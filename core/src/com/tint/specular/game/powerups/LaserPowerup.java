@@ -3,6 +3,7 @@ package com.tint.specular.game.powerups;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.entities.Bullet;
 import com.tint.specular.game.entities.Player;
 import com.tint.specular.game.entities.Player.AmmoType;
 import com.tint.specular.states.UpgradeState;
@@ -30,7 +31,8 @@ public class LaserPowerup extends PowerUp {
 
 	@Override
 	protected void affect(Player player) {
-		player.changeAmmo(AmmoType.LASER);
+		if(!Bullet.isTwisting())
+			player.changeAmmo(AmmoType.LASER);
 	}
 
 	@Override
