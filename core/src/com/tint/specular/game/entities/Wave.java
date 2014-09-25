@@ -21,6 +21,9 @@ import com.tint.specular.game.entities.enemies.EnemyWanderer;
 import com.tint.specular.game.entities.enemies.EnemyWorm;
 
 public class Wave {
+	
+	public static final float ENEMY_SPEED_INCREASE = 10000, ENEMY_LIFE_INCREASE = 10000;
+	
 	private static final Random rand = new Random();
 	private static final List<Long> usedIDs = new ArrayList<Long>();
 	
@@ -29,6 +32,7 @@ public class Wave {
 	private WaveModifier modifier, permanentModifier;
 	private int timer, totalLength;
 	private boolean containsVirus = false;
+	private int minimumWaveSpawn = 0;
 	
 	//This list is used to recalculate the formation
 	private List<EnemySpawnFormation> formationList = new ArrayList<EnemySpawnFormation>();
@@ -40,15 +44,20 @@ public class Wave {
 
 	private int waveNumber;
 
-	public Wave(GameState gs, long ID, int totalLengthTicks) {
+	public Wave(GameState gs, long ID, int totalLengthTicks, int minimumWaveSpawn) {
 		this.gs = gs;
 		this.ID = ID;
+		this.minimumWaveSpawn = minimumWaveSpawn;
 		if(usedIDs.contains(ID)) {
 			throw new IllegalArgumentException("ID: " + ID + " is used twice!");
 		}
 		usedIDs.add(ID);
 			
 		this.totalLength = totalLengthTicks;
+	}
+	
+	public Wave(GameState gs, long ID, int totalLengthTicks) {
+		this(gs, ID, totalLengthTicks, 0);
 	}
 	
 	public long getID() {
@@ -253,7 +262,10 @@ public class Wave {
 			break;
 		}
 		
-		e.setSpeed(e.getSpeed() + (gs.getGsTicks() / 10800f));
+		e.setSpeed(e.getSpeed() * (1 + gs.getGsTicks() / ENEMY_SPEED_INCREASE));
+		
+		//Round it to stop it from increasing immediately
+		e.setLife(Math.round(e.getLife() * (1 + gs.getGsTicks() / ENEMY_LIFE_INCREASE)));
 		
 		gs.addEntity(e);
 		return e;
@@ -333,5 +345,9 @@ public class Wave {
 	
 	public void setPermanentModifer(WaveModifier permanentModifier) {
 		this.permanentModifier = permanentModifier;
+	}
+
+	public int getMinimumWaveSpawn() {
+		return minimumWaveSpawn;
 	}
 }
