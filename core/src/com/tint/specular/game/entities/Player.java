@@ -169,7 +169,7 @@ public class Player implements Entity {
 				gs.enemyHit(e);
 				gs.addEntity(Laser.obtainLaser(centerx, centery, e.getX(), e.getY(), barrel, true));
 			} else {
-				shootLaserInDir(direction + barrel * 8, barrel);
+				shootLaserInDir(direction + barrel * (float) (laserArc / bulletBurst), barrel);
 			}
 		}
 	}

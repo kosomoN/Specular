@@ -24,22 +24,27 @@ public class WaveLoader {
 		
 		// Enemy specific waves
 		
+		// Base Wave
+		Wave wave = new Wave(gs, 0, 600, 0);
+			wave.addEnemies(ENEMY_WANDERER, 1, Formation.RANDOM, 0, 0);
+		specialWaves.add(wave);
+		
 		// Booster Wave
-		Wave wave = new Wave(gs, 0, 600);
-		wave.addEnemies(ENEMY_BOOSTER, 4, Formation.CORNERS, 0, 100);
-		wave.setPermanentModifer(new WaveModifier() {
-			@Override
-			public void affectSpecial(GameState gs, Enemy justSpawnedEnemy) {
-				justSpawnedEnemy.setLife(2);
-			}
-		});
+		wave = new Wave(gs, 1, 600, 14);
+			wave.addEnemies(ENEMY_BOOSTER, 4, Formation.CORNERS, 0, 100);
+			wave.setPermanentModifer(new WaveModifier() {
+				@Override
+				public void affectSpecial(GameState gs, Enemy justSpawnedEnemy) {
+					justSpawnedEnemy.setLife(2);
+				}
+			});
 		specialWaves.add(wave);
 		
 		
 		
 		
 		// Dasher Wave
-		wave = new Wave(gs, 1, 800);
+		wave = new Wave(gs, 2, 800, 10);
 			int side = rand.nextInt(4);
 			if(side == 0)
 				Formation.SIDE.setSide(Formation.Sides.LEFT);
@@ -58,7 +63,7 @@ public class WaveLoader {
 		/* EXPLODER REMOVED UNTIL SOURCE OF LAG IS FOUND
 		
 		// Exploder Wave
-		wave = new Wave(gs, 2, 400);
+		wave = new Wave(gs, 3, 400);
 			wave.addEnemies(ENEMY_EXPLODER, 8, Formation.EDGES, 0, 20);
 			wave.setPermanentModifer(new WaveModifier() {
 				@Override
@@ -75,7 +80,7 @@ public class WaveLoader {
 		// Wanderer Wave
 		Formation f = Formation.RINGS;
 			f.setCenterRingPoint(gs.getCurrentMap().getWidth() / 2, gs.getCurrentMap().getHeight() / 2);
-			wave = new Wave(gs, 4, 800);
+			wave = new Wave(gs, 5, 800, 5);
 				wave.addEnemies(ENEMY_WANDERER, 8, f, 10, 1, false);
 		
 			f.setRadius(400);
@@ -91,7 +96,7 @@ public class WaveLoader {
 		// Tanker Wave
 		Formation g = Formation.RINGS;
 			g.setCenterRingPoint(gs.getCurrentMap().getWidth() / 2, gs.getCurrentMap().getHeight() / 2);
-			wave = new Wave(gs, 5, 800);
+			wave = new Wave(gs, 6, 800, 25);
 				wave.addEnemies(ENEMY_TANKER, 8, f, 10, 1, false);
 		specialWaves.add(wave);
 				
@@ -100,7 +105,7 @@ public class WaveLoader {
 		// Circler Wave
 		Formation h = Formation.RINGS;
 			h.setCenterRingPoint(gs.getCurrentMap().getWidth() / 2, gs.getCurrentMap().getHeight() / 2);
-			wave = new Wave(gs, 7, 800);
+			wave = new Wave(gs, 7, 800, 7);
 				wave.addEnemies(ENEMY_CIRCLER, 8, f, 10, 1, false);
 			
 			h.setRadius(400);
@@ -114,7 +119,7 @@ public class WaveLoader {
 		
 		
 		// Striver Wave
-		wave = new Wave(gs, 8, 600);
+		wave = new Wave(gs, 8, 600, 2);
 			wave.addEnemies(ENEMY_STRIVER, 20, Formation.EDGES, 0, 0);
 		specialWaves.add(wave);
 		
@@ -122,15 +127,15 @@ public class WaveLoader {
 		
 		
 		// Virus wave
-		wave = new Wave(gs, 9, 800);
-		wave.addEnemies(new EnemyType[] {ENEMY_VIRUS}, new int[] {7}, Formation.RANDOM, 0, 10);
+		wave = new Wave(gs, 9, 800, 20);
+			wave.addEnemies(new EnemyType[] {ENEMY_VIRUS}, new int[] {7}, Formation.RANDOM, 0, 10);
 		specialWaves.add(wave);	
 		
 		
 		
 		
 		// Worm Wave
-		wave = new Wave(gs, 10, 700);
+		wave = new Wave(gs, 10, 700, 20);
 			wave.addEnemies(ENEMY_WORM, 1, Formation.CORNERS, 0, 0);
 			wave.setPermanentModifer(new WaveModifier() {
 				@Override
@@ -153,7 +158,7 @@ public class WaveLoader {
 		// Striver and Wanderer
 		Formation i = Formation.RINGS;
 			i.setCenterRingPoint(gs.getCurrentMap().getWidth() / 2, gs.getCurrentMap().getHeight() / 2);
-			wave = new Wave(gs, 11, 800);
+			wave = new Wave(gs, 11, 800, 25);
 				wave.addEnemies(ENEMY_WANDERER, 8, f, 10, 1, false);
 			
 			i.setRadius(600);
@@ -167,7 +172,7 @@ public class WaveLoader {
 		
 		
 		// Booster and Wanderer
-		wave = new Wave(gs, 12, 800);
+		wave = new Wave(gs, 12, 800, 17);
 			wave.addEnemies(new EnemyType[] {ENEMY_BOOSTER, ENEMY_WANDERER}, new int[] {6, 22}, Formation.EDGES, 0, 0);
 		specialWaves.add(wave);		
 		
@@ -175,29 +180,30 @@ public class WaveLoader {
 		
 		
 		// Worm and Dasher
-		wave = new Wave(gs, 13, 800);
+		wave = new Wave(gs, 13, 800, 28);
 			wave.addEnemies(new EnemyType[] {ENEMY_WORM, ENEMY_DASHER}, new int[] {1, 6}, Formation.RANDOM, 0, 10);
 		specialWaves.add(wave);			
 		
 		
 		
 		
-		final EnemyType[] randomEnemies = new EnemyType[]{ENEMY_BOOSTER,ENEMY_CIRCLER,ENEMY_DASHER,ENEMY_STRIVER,ENEMY_WANDERER};
+		/*final EnemyType[] randomEnemies = new EnemyType[]{ENEMY_BOOSTER,ENEMY_CIRCLER,ENEMY_DASHER,ENEMY_STRIVER,ENEMY_WANDERER};
 		final EnemyType[] hcEnemies = new EnemyType[]{ENEMY_EXPLODER,ENEMY_TANKER};
 
 		int random = rand.nextInt(randomEnemies.length);
 		int randomHc = rand.nextInt(hcEnemies.length);
 		
 		// Random wave, get lucky or unlucky
-		wave = new Wave(gs, 15, 800);
-		wave.addEnemies(new EnemyType[] {randomEnemies[random], hcEnemies[randomHc]}, new int[] {8, 2}, Formation.RANDOM, 0, 10);
-		specialWaves.add(wave);	
+		// REASON: UNBALANCABLE
+		/*wave = new Wave(gs, 15, 800);
+			wave.addEnemies(new EnemyType[] {randomEnemies[random], hcEnemies[randomHc]}, new int[] {8, 2}, Formation.RANDOM, 0, 10);
+		specialWaves.add(wave);	*/
 	
 		
 		
 		
 		// Shielder and Wanderer
-		wave = new Wave(gs, 16, 800);
+		wave = new Wave(gs, 16, 800, 12);
 			wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY, 0, 1);
 		wave.setPermanentModifer(new WaveModifier() {
 		
