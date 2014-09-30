@@ -47,7 +47,7 @@ public class EnemyExploder extends Enemy {
 	
 	public EnemyExploder(float x, float y, GameState gs) {
 		super(x, y, gs, 2);
-		speed = 0.5f;
+		targetSpeed = 0.5f;
 		rotation = 0;
 		shockWaveTime = 0;
 	}

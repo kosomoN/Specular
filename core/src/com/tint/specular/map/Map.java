@@ -199,14 +199,18 @@ public class Map {
 						batch.setColor(0, 1, 0, 1);
 
 						EnemyDasher dasher = (EnemyDasher) e;
-						if(dasher.getDasherDirection() == 0) {
-							batch.draw(dasherMask, e.getX(), fbo.getHeight() - e.getY() - 32, gs.getCurrentMap().getWidth() - e.getX(), 64);
-						} else if(dasher.getDasherDirection() == Math.PI) {
-							batch.draw(dasherMask, e.getX(), fbo.getHeight() - e.getY() - 32, -e.getX(), 64);
-						} else if(dasher.getDasherDirection() == (Math.PI / 2 )){
-							batch.draw(dasherMaskV, e.getX() - 32, fbo.getHeight() - e.getY(), 64, -gs.getCurrentMap().getHeight() + e.getY());
-						} else {
-							batch.draw(dasherMaskV, e.getX() - 32, fbo.getHeight() - e.getY(), 64, e.getY());
+						
+						if(dasher.getBoostingDelay() >= 0) {
+				
+							if(dasher.getDasherDirection() == 0) {
+								batch.draw(dasherMask, e.getX(), fbo.getHeight() - e.getY() - 32, gs.getCurrentMap().getWidth() - e.getX(), 64);
+							} else if(dasher.getDasherDirection() == Math.PI) {
+								batch.draw(dasherMask, e.getX(), fbo.getHeight() - e.getY() - 32, -e.getX(), 64);
+							} else if(dasher.getDasherDirection() == (Math.PI / 2 )){
+								batch.draw(dasherMaskV, e.getX() - 32, fbo.getHeight() - e.getY(), 64, -gs.getCurrentMap().getHeight() + e.getY());
+							} else {
+								batch.draw(dasherMaskV, e.getX() - 32, fbo.getHeight() - e.getY(), 64, e.getY());
+							}
 						}
 					} else if(e instanceof EnemyTanker)
 						batch.setColor(0.8f, 0.5f, 0, 1);
@@ -276,20 +280,25 @@ public class Map {
 			if(GfxSettings.ReturnEt()){
 				for(Enemy e : gs.getEnemies()) {
 					if(e instanceof EnemyDasher) {
+						
 						EnemyDasher dasher = (EnemyDasher) e;
-						if(dasher.getDasherDirection() == 0){
-
-							shapeRenderer.rect(e.getX(), e.getY() - 32, gs.getCurrentMap().getWidth() - e.getX(), 64);
-
-						} else if(dasher.getDasherDirection() == Math.PI){
-
-							shapeRenderer.rect(e.getX(), e.getY() - 32, -e.getX(), 64);
-
-						} else if(dasher.getDasherDirection() == (Math.PI / 2 )){
-
-							shapeRenderer.rect(e.getX() - 32, e.getY(), 64, gs.getCurrentMap().getHeight() - e.getY());
-						} else {
-							shapeRenderer.rect(e.getX() - 32, e.getY(), 64, -e.getY());
+						
+						if(dasher.getBoostingDelay() >= 0) {
+							
+							if(dasher.getDasherDirection() == 0){
+	
+								shapeRenderer.rect(e.getX(), e.getY() - 32, gs.getCurrentMap().getWidth() - e.getX(), 64);
+	
+							} else if(dasher.getDasherDirection() == Math.PI){
+	
+								shapeRenderer.rect(e.getX(), e.getY() - 32, -e.getX(), 64);
+	
+							} else if(dasher.getDasherDirection() == (Math.PI / 2 )){
+	
+								shapeRenderer.rect(e.getX() - 32, e.getY(), 64, gs.getCurrentMap().getHeight() - e.getY());
+							} else {
+								shapeRenderer.rect(e.getX() - 32, e.getY(), 64, -e.getY());
+							}
 						}
 					} else if(e instanceof EnemyWorm) {
 						for(EnemyWorm.Part p : ((EnemyWorm) e).getParts())

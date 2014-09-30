@@ -22,7 +22,7 @@ public class EnemyDasher extends Enemy {
 	private static AtlasRegion tex, warningTex, dashWarningTex;
 
 	private double direction;
-	private int boostingDelay = -1;
+	private int boostingDelay = -100;
 	private boolean lastDashVertical = Math.random() > 0.5 ? true : false;
 	private int maxDashDistance = (int) (Math.random() * 500 + 750);
 	private float distanceMoved;
@@ -136,7 +136,8 @@ public class EnemyDasher extends Enemy {
 		
 		boostingDelay++;
 
-
+		//To stop deacceleration
+		targetSpeed = speed;
 	}
 
 	@Override
@@ -192,6 +193,10 @@ public class EnemyDasher extends Enemy {
 
 	public double getDasherDirection() {
 		return direction;
+	}
+
+	public int getBoostingDelay() {
+		return boostingDelay;
 	}
 
 }

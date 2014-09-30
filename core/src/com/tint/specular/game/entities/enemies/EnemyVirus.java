@@ -50,7 +50,7 @@ public class EnemyVirus extends Enemy {
 		if(spawnedFromOtherVirus)
 			hasSpawned = true;
 		
-		speed = 3;
+		targetSpeed = 3;
 	}
 
 	@Override

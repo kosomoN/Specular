@@ -31,7 +31,7 @@ public class EnemyCircler extends Enemy {
             offset = (float) Math.toRadians(-60);
 	    }
 	    
-	    speed = (float) (Math.random() * 2 + 1);
+	    targetSpeed = (float) (Math.random() * 2 + 1);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class EnemyStriver extends Enemy {
 	public EnemyStriver(float x, float y, GameState gs) {
 		super(x, y, gs, 2);
 		
-		speed = (float) (Math.random() * 2 + 2);
+		targetSpeed = (float) (Math.random() * 2 + 2);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ import com.tint.specular.game.entities.enemies.EnemyWorm;
 
 public class Wave {
 	
-	public static final float ENEMY_SPEED_INCREASE = 10000, ENEMY_LIFE_INCREASE = 10000;
+	public static final float ENEMY_SPEED_INCREASE = 2000, ENEMY_LIFE_INCREASE = 6000;
 	
 	private static final Random rand = new Random();
 	private static final List<Long> usedIDs = new ArrayList<Long>();
@@ -262,7 +262,7 @@ public class Wave {
 			break;
 		}
 		
-		e.setSpeed(e.getSpeed() * (1 + gs.getGsTicks() / ENEMY_SPEED_INCREASE));
+		e.setSpeed(e.getTargetSpeed() * (1 + gs.getGsTicks() / ENEMY_SPEED_INCREASE));
 		
 		//Round it to stop it from increasing immediately
 		e.setLife(Math.round(e.getLife() * (1 + gs.getGsTicks() / ENEMY_LIFE_INCREASE)));

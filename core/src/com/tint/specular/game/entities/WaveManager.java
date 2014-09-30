@@ -25,7 +25,6 @@ public class WaveManager {
 			
 			//Check if a new wave is available for this waveNumber and then find the next valid one
 			while(specialWaves.get(lastValidWaveIndex + 1).getMinimumWaveSpawn() <= waveNumber) {
-				System.out.println(waveNumber + " " + lastValidWaveIndex);
 				lastValidWaveIndex++;
 				
 				//We have reached the end DUN DUN DUUUUUUN

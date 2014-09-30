@@ -19,7 +19,7 @@ public class EnemyShielder extends Enemy {
 	
 	public EnemyShielder(float x, float y, GameState gs) {
 		super(x, y, gs, 10);
-		speed = 6;
+		targetSpeed = 6;
 	}
 
 	@Override
@@ -36,6 +36,7 @@ public class EnemyShielder extends Enemy {
 		dy = (float) (Math.sin(angle) * speed);
 		x += dx * slowdown;
 		y += dy * slowdown;
+		
 		
 		float distanceSquared;
 		for(Enemy e : gs.getEnemies()) {

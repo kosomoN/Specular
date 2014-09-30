@@ -191,6 +191,8 @@ public class AndroidLauncher extends AndroidApplication {
 									
 							} catch (JSONException e) {
 								e.printStackTrace();
+							} catch (NullPointerException e) {
+								e.printStackTrace();
 							}
 						}
 					}).executeAsync();

@@ -163,7 +163,6 @@ public class UpgradeState extends State {
 			@Override
 			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
 				currentlyPressing = -1;
-				System.out.println("up");
 				super.touchUp(event, x, y, pointer, button);
 			}
 

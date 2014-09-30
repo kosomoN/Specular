@@ -25,7 +25,7 @@ public class EnemyTanker extends Enemy {
 
 	public EnemyTanker(float x, float y, GameState gs) {
 		super(x, y, gs, 20);	
-		speed = (float) 1.5;
+		targetSpeed = (float) 1.5;
 	}
 
 	@Override
@@ -69,8 +69,11 @@ public class EnemyTanker extends Enemy {
 	@Override
 	public void hit(float damage) {	
 		speed += 0.55f;
+		//To stop deacceleration
+		targetSpeed = speed;
 		if(hits < 19)
 			hits++;
+		
 		super.hit(damage);
 	}
 

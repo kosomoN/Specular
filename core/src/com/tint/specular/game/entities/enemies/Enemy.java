@@ -24,7 +24,8 @@ public abstract class Enemy implements Entity {
 	protected float x, y, dx, dy;
 	protected float direction, rotation;
 	protected static float slowdown = 1;
-	protected float speed;
+	protected float targetSpeed;
+	protected float speed = 0;
 	
 	protected float life;
 	protected boolean hasSpawned;
@@ -44,9 +45,10 @@ public abstract class Enemy implements Entity {
 	@Override
 	public boolean update() {
 		rotation += 1 / 60f;
-		if(hasSpawned)
+		if(hasSpawned) {
+			speed += Math.signum(targetSpeed - speed) * 0.1f; 
 			updateMovement();
-		else {
+		} else {
 			spawnTimer++;
 			//Animation length and 2 seconds for the warning. Multiply with 60 to get ticks
 			if(spawnTimer >= (getSpawnAnim().animationDuration + 2) * 60)
@@ -84,7 +86,7 @@ public abstract class Enemy implements Entity {
 
 	/**
 	 * 
-	 * @param slowdown - 1 means normal speed, 0 means no speed.
+	 * @param slowdown - 1 means normal targetSpeed, 0 means no targetSpeed.
 	 */
 	public static void setSlowdown(float slowdown) {
 		Enemy.slowdown = slowdown;
@@ -110,7 +112,8 @@ public abstract class Enemy implements Entity {
 	public float getY() { return y; }
 	public float getDx() { return dx; }
 	public float getDy() { return dy; }
-	public float getSpeed() { return speed; }
+	public float getTargetSpeed() { return targetSpeed; }
+	public float getCurrentSpeed() { return speed; }
 	public static float getSlowdown() { return slowdown; }
 
 	public float getLife() { return life; }
@@ -142,6 +145,6 @@ public abstract class Enemy implements Entity {
 	}
 	
 	public void setSpeed(float speed) {
-		this.speed = speed;
+		this.targetSpeed = speed;
 	}
 }

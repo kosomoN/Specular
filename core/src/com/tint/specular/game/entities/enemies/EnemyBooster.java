@@ -114,6 +114,9 @@ public class EnemyBooster extends Enemy {
 			y = gs.getCurrentMap().getHeight() - 20 - 18;
 			boostingDelay = 0;
 		}
+		
+		//To stop deacceleration
+		targetSpeed = speed;
 	}
 	
 	@Override

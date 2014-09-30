@@ -30,7 +30,7 @@ public class EnemyWanderer extends Enemy {
 		angle = random.nextInt(360);
 		turnRate = random.nextInt(40) - 20;
 		
-		speed = (float) (2 + Math.random());
+		targetSpeed = (float) (2 + Math.random());
 	}
 	
 	public static void init(TextureAtlas ta) {
