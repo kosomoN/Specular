@@ -204,6 +204,11 @@ public class UpgradeState extends State {
 		pointsLeftLabel.setPosition(Specular.camera.viewportWidth - UPFont.getBounds(pointsLeftLabel.getText()).width - 200, 85);
 		stage.addActor(pointsLeftLabel);
 		
+		Image orb = new Image(((GameState) game.getState(States.SINGLEPLAYER_GAMESTATE)).getTextureAtlas().findRegion("game1/Orb"));
+		orb.setPosition(Specular.camera.viewportWidth - UPFont.getBounds(pointsLeftLabel.getText()).width - 320, 85 - orb.getHeight() / 2);
+		orb.scaleBy(1.8f);
+		stage.addActor(orb);
+		
 	}
 
 	private void saveUpgrades() {
