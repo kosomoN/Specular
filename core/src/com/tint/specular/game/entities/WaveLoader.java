@@ -30,7 +30,7 @@ public class WaveLoader {
 		specialWaves.add(wave);
 		
 		// Booster Wave
-		wave = new Wave(gs, 1, 600, 14);
+		wave = new Wave(gs, 1, 600, 15);
 			wave.addEnemies(ENEMY_BOOSTER, 4, Formation.CORNERS, 0, 100);
 			wave.setPermanentModifer(new WaveModifier() {
 				@Override
@@ -44,7 +44,7 @@ public class WaveLoader {
 		
 		
 		// Dasher Wave
-		wave = new Wave(gs, 2, 800, 10);
+		wave = new Wave(gs, 2, 800, 12);
 			int side = rand.nextInt(4);
 			if(side == 0)
 				Formation.SIDE.setSide(Formation.Sides.LEFT);
@@ -85,9 +85,6 @@ public class WaveLoader {
 		
 			f.setRadius(400);
 				wave.addEnemies(ENEMY_WANDERER, 16, f, 20, 1, false);
-		
-			f.setRadius(700);
-				wave.addEnemies(ENEMY_WANDERER, 32, f, 30, 1, false);
 		specialWaves.add(wave);
 		
 		
@@ -96,7 +93,7 @@ public class WaveLoader {
 		// Tanker Wave
 		Formation g = Formation.RINGS;
 			g.setCenterRingPoint(gs.getCurrentMap().getWidth() / 2, gs.getCurrentMap().getHeight() / 2);
-			wave = new Wave(gs, 6, 800, 25);
+			wave = new Wave(gs, 6, 800, 30);
 				wave.addEnemies(ENEMY_TANKER, 8, f, 10, 1, false);
 		specialWaves.add(wave);
 				
@@ -105,29 +102,26 @@ public class WaveLoader {
 		// Circler Wave
 		Formation h = Formation.RINGS;
 			h.setCenterRingPoint(gs.getCurrentMap().getWidth() / 2, gs.getCurrentMap().getHeight() / 2);
-			wave = new Wave(gs, 7, 800, 7);
+			wave = new Wave(gs, 7, 800, 10);
 				wave.addEnemies(ENEMY_CIRCLER, 8, f, 10, 1, false);
 			
 			h.setRadius(400);
 				wave.addEnemies(ENEMY_CIRCLER, 16, f, 20, 1, false);
-			
-			h.setRadius(700);
-				wave.addEnemies(ENEMY_CIRCLER, 32, f, 30, 1, false);
 		specialWaves.add(wave);
 			
 		
 		
 		
 		// Striver Wave
-		wave = new Wave(gs, 8, 600, 2);
-			wave.addEnemies(ENEMY_STRIVER, 20, Formation.EDGES, 0, 0);
+		wave = new Wave(gs, 8, 600, 3);
+			wave.addEnemies(ENEMY_STRIVER, 16, Formation.EDGES, 0, 0);
 		specialWaves.add(wave);
 		
 		
 		
 		
 		// Virus wave
-		wave = new Wave(gs, 9, 800, 20);
+		wave = new Wave(gs, 9, 800, 7);
 			wave.addEnemies(new EnemyType[] {ENEMY_VIRUS}, new int[] {7}, Formation.RANDOM, 0, 10);
 		specialWaves.add(wave);	
 		
@@ -172,7 +166,7 @@ public class WaveLoader {
 		
 		
 		// Booster and Wanderer
-		wave = new Wave(gs, 12, 800, 17);
+		wave = new Wave(gs, 12, 800, 20);
 			wave.addEnemies(new EnemyType[] {ENEMY_BOOSTER, ENEMY_WANDERER}, new int[] {6, 22}, Formation.EDGES, 0, 0);
 		specialWaves.add(wave);		
 		
@@ -180,7 +174,7 @@ public class WaveLoader {
 		
 		
 		// Worm and Dasher
-		wave = new Wave(gs, 13, 800, 28);
+		wave = new Wave(gs, 13, 800, 30);
 			wave.addEnemies(new EnemyType[] {ENEMY_WORM, ENEMY_DASHER}, new int[] {1, 6}, Formation.RANDOM, 0, 10);
 		specialWaves.add(wave);			
 		
@@ -203,7 +197,7 @@ public class WaveLoader {
 		
 		
 		// Shielder and Wanderer
-		wave = new Wave(gs, 16, 800, 12);
+		wave = new Wave(gs, 16, 800, 25);
 			wave.addEnemies(new EnemyType[] {ENEMY_SHIELDER, ENEMY_WANDERER}, new int[] {1, 20}, Formation.SURROUND_ENEMY, 0, 1);
 		wave.setPermanentModifer(new WaveModifier() {
 		

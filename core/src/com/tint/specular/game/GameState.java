@@ -125,7 +125,6 @@ public class GameState extends State {
 	private int powerUpSpawnTime = 400;		// 10 sec in updates / ticks
 	private float scoreMultiplierTimer = 0; // 6 sec in updates / ticks
 	private float boardshockCharge = 0; //Value between 0 and 1
-	private int ticksforCamera;
 	private int tutorialTicks;
 	private long gameOverTicks;
 	
@@ -285,15 +284,7 @@ public class GameState extends State {
 	}
 		
 	@Override
-	public void render(float delta) {
-		if(GfxSettings.ReturnSetting() == GfxSettings.LOW){
-			PARTICLE_LIMIT = 50;
-		} else if(GfxSettings.ReturnSetting() == GfxSettings.MEDIUM){
-			PARTICLE_LIMIT = 150;
-		} else {
-			PARTICLE_LIMIT = 300;
-		}
-		
+	public void render(float delta) {		
 		long currTime = System.nanoTime();
         unprocessed += (currTime - lastTickTime) / TICK_LENGTH;
         lastTickTime = currTime;
@@ -321,7 +312,6 @@ public class GameState extends State {
 			// Adding played time
 			if(!gameMode.isGameOver())
 				ticks++;
-				ticksforCamera++;
 				
 			// Updating combos
 			cs.update();
@@ -347,7 +337,7 @@ public class GameState extends State {
 					multiplierUpSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
 				
 				setScoreMultiplier(scoreMultiplier + 1);
-				if(getScoreMultiplier() == 10) {
+				if(getScoreMultiplier() % 10 == 0) {
 					multiplierFont.scale(2);
 				}
 				
@@ -659,17 +649,7 @@ public class GameState extends State {
 						
 						e.hit(Bullet.damage);
 						b.hit();
-						
-						//Adding a small camerashake
-						if(GfxSettings.ReturnSetting() > GfxSettings.LOW && ticksforCamera == 30){
-							Camera.shake(0.1f, 0.05f);
-							if(ticksforCamera == 50){
-								
-							ticksforCamera = 0;
-							
-							}
-						}
-						
+					
 						// Rewarding player depending on game mode
 						enemyHit(e);
 						break;
@@ -932,6 +912,14 @@ public class GameState extends State {
 					randomizeMusic();
 				}
 			});
+		}
+		
+		if(GfxSettings.ReturnSetting() == GfxSettings.LOW){
+			PARTICLE_LIMIT = 50;
+		} else if(GfxSettings.ReturnSetting() == GfxSettings.MEDIUM){
+			PARTICLE_LIMIT = 150;
+		} else {
+			PARTICLE_LIMIT = 300;
 		}
 		
 		scoreFontAlpha = 0;
