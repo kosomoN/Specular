@@ -35,8 +35,8 @@ import com.tint.specular.utils.Util;
 
 public class Player implements Entity {
 	
-	public static final int MAX_DELTA_SPEED = 1;
-	public static final float FRICTION = 0.95f;
+	public static final float MAX_DELTA_SPEED = 1.7f;
+	public static final float FRICTION = 0.90f;
 	private static final float PUSHAWAY_RANGE_SQUARED = 500 * 500;
 	private static final int PUSHAWAY_TIME = 50;
 	
@@ -64,6 +64,7 @@ public class Player implements Entity {
 	private int bulletBurst = 3;
 	private int bulletBurstLevel;
 	private int score = 0;
+	private String formattedScore;
 	
 	private boolean tilt;
 	
@@ -92,6 +93,8 @@ public class Player implements Entity {
 		centery = y;
 		pds = new PDS(gs, this);
 		setLife(3);
+		
+		setScore(0);
 		
 		sensitivity = Specular.prefs.getFloat("Sensitivity");
 		maxSpeedAreaSquared = (Specular.camera.viewportWidth / 8 * sensitivity) * (Specular.camera.viewportWidth / 8 * sensitivity);
@@ -317,13 +320,13 @@ public class Player implements Entity {
 	
 	public void updateMovement() {
 		if(gs.getGameProcessor().isWDown())
-			changeSpeed(0, 0.6f);
+			changeSpeed(0, 0.6f * 2);
 		if(gs.getGameProcessor().isADown())
-			changeSpeed(-0.6f, 0);
+			changeSpeed(-0.6f * 2, 0);
 		if(gs.getGameProcessor().isSDown())
-			changeSpeed(0, -0.6f);
+			changeSpeed(0, -0.6f * 2);
 		if(gs.getGameProcessor().isDDown())
-			changeSpeed(0.6f, 0);
+			changeSpeed(0.6f * 2, 0);
 		
 		if(tilt) {
 			changeSpeed(Gdx.input.getAccelerometerX() * 0.1f * 0.6f, Gdx.input.getAccelerometerY() * 0.1f * 0.6f);
@@ -382,7 +385,7 @@ public class Player implements Entity {
 					}
 						
 					if(gs.isSoundEnabled())
-						shootBulletSound.play(0.2f, (float) (1 + Math.random() / 3 - 0.16), 0);
+						shootBulletSound.play(0.15f, (float) (1 + Math.random() / 3 - 0.16), 0);
 					break;
 				case LASER:
 					shootLaser(direction);
@@ -485,11 +488,25 @@ public class Player implements Entity {
 	}
 	
 	public void addScore(int score) {
-		this.score += score * gs.getScoreMultiplier();
+		setScore(this.score + score);
 	}
 	
 	public void setScore(int score) {
 		this.score = score;
+		
+		//Don't ask
+		String scoreStr = String.valueOf(score);
+		if(scoreStr.length() > 3) {
+			int mod = scoreStr.length() % 3;
+			if(mod == 0)
+				mod = 3;
+			formattedScore = scoreStr.substring(0, mod);
+			for(int i = 0; i < (scoreStr.length() - 1) / 3; i++) {
+				formattedScore += "," + scoreStr.substring(mod + i * 3, mod + i * 3 + 3);
+			}
+		} else {
+			formattedScore = scoreStr;
+		}
 	}
 	
 	public void changeSpeed(float dx, float dy) {
@@ -566,6 +583,8 @@ public class Player implements Entity {
 	public int getScore() { return score; }
 	public int getShields() { return shields; }
 
+	public String getFormattedScore() { return formattedScore; }
+	
 	public boolean hasShield() { return shields > 0; }
 	public boolean isDying() { return dying; }
 	public boolean isSpawning() { return spawning; }

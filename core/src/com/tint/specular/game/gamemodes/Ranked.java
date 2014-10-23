@@ -23,7 +23,7 @@ public class Ranked extends GameMode {
 	
 	@Override
 	public void enemyKilled(Enemy e) {
-		gs.getPlayer().addScore((int) (e.getValue() * gs.getScoreMultiplier()));
+		gs.getPlayer().addScore((int) (e.getValue() * gs.getScoreMultiplier() * 200 + 1));
 	}
 
 	@Override

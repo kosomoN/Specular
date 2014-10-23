@@ -43,7 +43,7 @@ public class HighscoreList extends Widget implements Cullable, Disposable {
 				textOffsetX = 80;
 				font.draw(batch, highscores[i].name, getX() + textOffsetX, getY() + itemY - textOffsetY + 25);
 				if(highscores[i].score != -1) {
-					font.draw(batch, String.valueOf(highscores[i].score), getX() + getWidth() - textOffsetX - font.getBounds(String.valueOf(highscores[i].score)).width, getY() + itemY - textOffsetY - 25);
+					font.draw(batch,highscores[i].scoreStr, getX() + getWidth() - textOffsetX - font.getBounds(String.valueOf(highscores[i].score)).width, getY() + itemY - textOffsetY - 25);
 				}
 			} else if (itemY < cullingArea.y) {
 				break;
@@ -104,11 +104,25 @@ public class HighscoreList extends Widget implements Cullable, Disposable {
 	
 	public static class Highscore {
 		public String name;
+		public String scoreStr;
 		public int score;
 		
 		public Highscore(String name, int score) {
 			this.name = name;
 			this.score = score;
+			
+			String unformattedScore = String.valueOf(score);
+			if(unformattedScore.length() > 3) {
+				int mod = unformattedScore.length() % 3;
+				if(mod == 0)
+					mod = 3;
+				scoreStr = unformattedScore.substring(0, mod);
+				for(int i = 0; i < (unformattedScore.length() - 1) / 3; i++) {
+					scoreStr += "," + unformattedScore.substring(mod + i * 3, mod + i * 3 + 3);
+				}
+			} else {
+				scoreStr = unformattedScore;
+			}
 		}
 	}
 }

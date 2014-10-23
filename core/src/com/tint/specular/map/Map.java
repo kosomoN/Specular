@@ -86,7 +86,6 @@ public class Map {
 		
 		//Reset bound texture
 		Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
-		
 	}
 	
 	public Map() {
@@ -161,6 +160,7 @@ public class Map {
 						break;
 					case ENEMY_SHIELDER:
 						batch.setColor(1, 1, 1, e.getLifetimePercent());
+						break;
 					case ENEMY_STRIVER:
 						batch.setColor(1, 0, 1, e.getLifetimePercent());
 						break;

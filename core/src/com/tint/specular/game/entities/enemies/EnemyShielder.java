@@ -49,6 +49,8 @@ public class EnemyShielder extends Enemy {
 				}
 			}
 		}
+		
+		targetSpeed = speed;
 	}
 	
 	public static void init(TextureAtlas ta) {

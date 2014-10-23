@@ -173,7 +173,7 @@ public class GameState extends State {
 	private Texture newHighscore;
 	private Texture pauseTex, greyPixel;
 	private Music music;
-	private final String[] musicFileNames = new String[]{"01.ogg","02.ogg","04.ogg","05.ogg","06.ogg"};
+	private final String[] musicFileNames = new String[]{"01.ogg","04.ogg","05.ogg","06.ogg"};
 	private int currentMusic = -1;
 	private Rectangle scissors = new Rectangle();
 	private Rectangle clipBounds;
@@ -216,15 +216,16 @@ public class GameState extends State {
 		FreeTypeFontGenerator fontGen = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Battlev2l.ttf"));
 		FreeTypeFontParameter ftfp = new FreeTypeFontParameter();
 		ftfp.size = 96; // MAX SIZE
-		ftfp.characters = "1234567890";
+		ftfp.characters = "1234567890,";
 		gameOverScoreFont = fontGen.generateFont(ftfp);
 		gameOverScoreFont.setColor(Color.RED);
 		
-		ftfp.characters = FONT_CHARACTERS;
+		ftfp.characters = "1234567890,tapocniue"; //Characters for "Tap to continue"
 		ftfp.size = 64;
 		scoreFont = fontGen.generateFont(ftfp);
 		scoreFont.setColor(Color.RED);
 		
+		ftfp.characters = "1234567890,x";
 		ftfp.size = 40;
 		multiplierFont = fontGen.generateFont(ftfp);
 		multiplierFont.setColor(Color.RED);
@@ -320,7 +321,7 @@ public class GameState extends State {
 			
 			if(scoreMultiplier > 1) {
 				if(scoreMultiplierTimer < MULTIPLIER_COOLDOWN_TIME) {
-					float enemySizeDecrease = (float) scoreMultiplier / 4;
+					float enemySizeDecrease = (float) scoreMultiplier / 3;
 					
 					scoreMultiplierTimer += enemySizeDecrease;
 				} else {
@@ -539,7 +540,7 @@ public class GameState extends State {
 					tutorial.render(game.batch);
 
 				// Drawing SCORE in the middle top of the screen
-				Util.writeCentered(game.batch, scoreFont, String.valueOf(player.getScore()), 0,
+				Util.writeCentered(game.batch, scoreFont, player.getFormattedScore(), 0,
 						Specular.camera.viewportHeight / 2 - 36);
 				// Drawing MULTIPLIER on screen
 				Util.writeCentered(game.batch, multiplierFont, "x" + Math.round(scoreMultiplier), 0,
@@ -584,7 +585,7 @@ public class GameState extends State {
 						shaken = true;
 					}
 					
-					if(player.getScore() > lastHighscore) {
+					if(player.getScore() >= lastHighscore) {
 						Util.drawCentered(game.batch, newHighscore, 0, 0, 0);
 						lastHighscore = player.getScore();
 					}
@@ -596,7 +597,7 @@ public class GameState extends State {
 				if(gameOverTicks == GAMEOVERSOUND_TIMER && isSoundEnabled()) {
 					gameOverSound.play(1f, 1, 0);
 				}
-				Util.writeCentered(game.batch, gameOverScoreFont, String.valueOf(getPlayer().getScore()), 0, 100);
+				Util.writeCentered(game.batch, gameOverScoreFont, player.getFormattedScore(), 0, 100);
 				
 				game.batch.setColor(Color.WHITE);
 				ggInputProcessor.getRetryBtn().render();
@@ -884,6 +885,7 @@ public class GameState extends State {
 		refreshUpgrades();
 		
 		waveNumber = 0;
+		waveManager.resetGame();
 		currentWave = waveManager.getWave(waveNumber);
 	}
 
@@ -904,14 +906,7 @@ public class GameState extends State {
 		
 		if(!Specular.prefs.getBoolean("MusicMuted")) {
 			randomizeMusic();
-					
-			// Creating Array containing music file paths
-			music.setOnCompletionListener(new OnCompletionListener() {
-				@Override
-				public void onCompletion(Music music) {
-					randomizeMusic();
-				}
-			});
+
 		}
 		
 		if(GfxSettings.ReturnSetting() == GfxSettings.LOW){
@@ -957,13 +952,23 @@ public class GameState extends State {
 			random = rand.nextInt(musicFileNames.length);
 		}
 		
-		if(music != null)
+		if(music != null) {
+			music.stop();
 			music.dispose();
+		}
 		
 		currentMusic = random;
 		music = Gdx.audio.newMusic(Gdx.files.internal("audio/" + musicFileNames[random]));
 		music.play();
 		music.setVolume(1);
+		
+		music.setOnCompletionListener(new OnCompletionListener() {
+			@Override
+			public void onCompletion(Music music) {
+				randomizeMusic();
+				music.dispose();
+			}
+		});
 	}
 	
 	@Override
@@ -1036,6 +1041,9 @@ public class GameState extends State {
 		Specular.prefs.putFloat("PDS Damage", PDS.getDamage());
 		Specular.prefs.putFloat("Laser Aiming Arc", getPlayer().getLaserArc());
 		Specular.prefs.putFloat("Upgrade Points", getPlayer().getUpgradePoints());
+		
+		if(player.getScore() > Specular.prefs.getInteger("Highscore"))
+			Specular.prefs.putInteger("Highscore", player.getScore());
 		
 		Specular.prefs.flush();
 	}

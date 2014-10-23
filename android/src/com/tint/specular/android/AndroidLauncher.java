@@ -233,7 +233,6 @@ public class AndroidLauncher extends AndroidApplication {
 							//Read scores from list
 							for(GraphObject go : response.getGraphObject().getPropertyAsList("data", GraphObject.class)) {
 								String name = go.getPropertyAs("user", GraphObject.class).getProperty("name").toString();
-								System.out.println(fbuser);
 								if(go.getPropertyAs("user", GraphObject.class).getProperty("id").equals(fbuser.getId())) {
 									Specular.prefs.putInteger("Highscore", (Integer) go.getProperty("score"));
 									Specular.prefs.flush();

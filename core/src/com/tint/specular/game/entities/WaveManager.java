@@ -15,6 +15,7 @@ public class WaveManager {
 	
 	public WaveManager(GameState gs) {
 		specialWaves = new ArrayList<Wave>();
+		Wave.init();
 		WaveLoader.initWaves(gs, specialWaves);
 	}
 
@@ -37,6 +38,10 @@ public class WaveManager {
 		wave.reset(waveNumber);
 		wave.setModifer(getModifier(waveNumber));
 		return wave;
+	}
+	
+	public void resetGame() {
+		lastValidWaveIndex = 0;
 	}
 	
 	private WaveModifier getModifier(int waveNumber) {

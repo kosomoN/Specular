@@ -102,7 +102,7 @@ public class WaveLoader {
 		// Circler Wave
 		Formation h = Formation.RINGS;
 			h.setCenterRingPoint(gs.getCurrentMap().getWidth() / 2, gs.getCurrentMap().getHeight() / 2);
-			wave = new Wave(gs, 7, 800, 10);
+			wave = new Wave(gs, 7, 800, 12);
 				wave.addEnemies(ENEMY_CIRCLER, 8, f, 10, 1, false);
 			
 			h.setRadius(400);
@@ -113,8 +113,8 @@ public class WaveLoader {
 		
 		
 		// Striver Wave
-		wave = new Wave(gs, 8, 600, 3);
-			wave.addEnemies(ENEMY_STRIVER, 16, Formation.EDGES, 0, 0);
+		wave = new Wave(gs, 8, 600, 10);
+			wave.addEnemies(ENEMY_STRIVER, 12, Formation.EDGES, 0, 0);
 		specialWaves.add(wave);
 		
 		

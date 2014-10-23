@@ -42,7 +42,7 @@ public class HighscoreState extends State {
 	private boolean isLoggedIn = false;
 	private boolean soundEffects;
 	private BitmapFont font;
-	private String timePlayed, accuracy;
+	private String timePlayed, accuracy, scoreStr;
 	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPress.ogg"));
 	
 	public HighscoreState(Specular game) {
@@ -65,7 +65,7 @@ public class HighscoreState extends State {
 			game.batch.draw(highscoreBar, Specular.camera.viewportWidth * (1780f / 1920), 0, highscoreBar.getWidth(), Specular.camera.viewportHeight);
 			
 			font.draw(game.batch, "Highscore:", 120, 850);
-			font.draw(game.batch, String.valueOf(Specular.prefs.getInteger("Highscore")), 400, 850);
+			font.draw(game.batch, scoreStr, 400, 850);
 			
 			font.draw(game.batch, "Time played:", 500 - font.getBounds("Time played:").width, 750);
 			font.draw(game.batch, timePlayed, 515, 750);
@@ -115,6 +115,20 @@ public class HighscoreState extends State {
 		game.batch.setProjectionMatrix(Specular.camera.combined);
 		
 		((MainmenuState) game.getState(Specular.States.MAINMENUSTATE)).startMusic();
+	
+		
+		String unformattedScore = String.valueOf(Specular.prefs.getInteger("Highscore"));
+		if(unformattedScore.length() > 3) {
+			int mod = unformattedScore.length() % 3;
+			if(mod == 0)
+				mod = 3;
+			scoreStr = unformattedScore.substring(0, mod);
+			for(int i = 0; i < (unformattedScore.length() - 1) / 3; i++) {
+				scoreStr += "," + unformattedScore.substring(mod + i * 3, mod + i * 3 + 3);
+			}
+		} else {
+			scoreStr = unformattedScore;
+		}
 		
 		int seconds = Specular.prefs.getInteger("Time Played Ticks") / 60;
 		int hours = seconds / 3600;
