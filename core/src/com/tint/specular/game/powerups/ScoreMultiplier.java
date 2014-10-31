@@ -13,6 +13,7 @@ import com.tint.specular.states.UpgradeState;
  */
 
 public class ScoreMultiplier extends PowerUp {
+	public static float MULTIPLIER;
 	private static AtlasRegion texture;
 	private static AtlasRegion levelTex;
 	
@@ -34,7 +35,7 @@ public class ScoreMultiplier extends PowerUp {
 	
 	@Override
 	protected void affect(Player player) {
-		gs.setScoreMultiplier(gs.getScoreMultiplier() * 2);
+		gs.setScoreMultiplier((int) (gs.getScoreMultiplier() * MULTIPLIER));
 	}
 
 	@Override

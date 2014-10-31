@@ -42,7 +42,9 @@ public class PDS implements Entity {
 				distSqrd = dx * dx + dy * dy;
 				
 				if(distSqrd < range * range) {
-					pdsSound.play();
+					if(gs.isSoundEnabled())
+						pdsSound.play();
+					
 					e.hit(damage);
 					gs.addEntity(Laser.obtainLaser(player.getX(), player.getY(), e.getX(), e.getY(), 0, false));;
 					ammo--;

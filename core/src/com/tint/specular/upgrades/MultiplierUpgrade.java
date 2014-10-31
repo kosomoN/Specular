@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.tint.specular.Specular;
 import com.tint.specular.game.GameState;
+import com.tint.specular.game.powerups.ScoreMultiplier;
 
 public class MultiplierUpgrade extends Upgrade {
 
@@ -21,7 +22,7 @@ public class MultiplierUpgrade extends Upgrade {
 	@Override
 	public void refresh() {
 		// Specific to every update
-		GameState.MULTIPLIER_COOLDOWN_TIME = (int) (360 * (1 + Math.sqrt(getGrade()) / getMaxGrade() * 0.2f));
+		ScoreMultiplier.MULTIPLIER = 1.5f + (getGrade() / getMaxGrade() * 0.5f);
 	}
 	
 	public AtlasRegion getTexture() {

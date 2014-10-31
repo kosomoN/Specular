@@ -117,7 +117,7 @@ public class GameState extends State {
 	// Fields related to game time
 	public static float TICK_LENGTH = 1000000000 / 60f; //1 sec in nanos
 	public static float TICK_LENGTH_MILLIS = 1000 / 60f;
-	public static int MULTIPLIER_COOLDOWN_TIME = 540; // ticks
+	public static final int MULTIPLIER_COOLDOWN_TIME = 360; // ticks
 	private float unprocessed;
 	private int ticks;
 	private long lastTickTime = System.nanoTime();
@@ -321,9 +321,9 @@ public class GameState extends State {
 			
 			if(scoreMultiplier > 1) {
 				if(scoreMultiplierTimer < MULTIPLIER_COOLDOWN_TIME) {
-					float enemySizeDecrease = (float) scoreMultiplier / 3;
+					float decreaseRate = (float) scoreMultiplier / 3;
 					
-					scoreMultiplierTimer += enemySizeDecrease;
+					scoreMultiplierTimer += decreaseRate;
 				} else {
 					if(isSoundEnabled())
 						multiplierDownSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
@@ -869,8 +869,6 @@ public class GameState extends State {
 
 		resetGameTime();
 		
-		MULTIPLIER_COOLDOWN_TIME = Specular.prefs.getInteger("Multiplier Cooldown");
-		
 		cs.resetCombo();
 		scoreMultiplier = 1;
 		scoreMultiplierTimer = 0;
@@ -1031,7 +1029,6 @@ public class GameState extends State {
 		Specular.prefs.putInteger("Enemies Killed", Specular.prefs.getInteger("Enemies Killed") + enemiesKilled);
 		Specular.prefs.putInteger("Games Played", Specular.prefs.getInteger("Games Played") + 1);
 		
-		Specular.prefs.putInteger("Multiplier Cooldown", MULTIPLIER_COOLDOWN_TIME);
 		Specular.prefs.putFloat("Freeze Time", SlowdownEnemies.getFreezeTime());
 		//Specular.prefs.putFloat("Boardshock Efficiency", BoardShock.getEfficiency());
 		Specular.prefs.putFloat("Burst Max Time", BulletBurst.getMaxActiveTime());

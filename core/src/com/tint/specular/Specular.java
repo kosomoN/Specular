@@ -44,15 +44,12 @@ public class Specular extends Game {
 	public static Preferences prefs;
 	public SpriteBatch batch;
 	
-	// Graphics has to be first, add new iPrefs last
 	private String[] iPrefs = {"Graphics", "Highscore", "Time Played Ticks", "Games Played", "Bullets Fired", "Bullets Missed",
-			"Enemies Killed", "Multiplier Cooldown"};
-	// Add new fPrefs last
+			"Enemies Killed"};
 	private String[] fPrefs = {"Move Stick Pos X", "Move Stick Pos Y", "Shoot Stick Pos X", "Shoot Stick Pos Y", "Sensitivity", "Upgrade Points", "Freeze Time",
-			"Burst Max Time", "Firerate Boost", "Swarm Effect", "Repulsor Max Time", "PDS Damage", "Laser Aiming Arc", "Life Upgrade Grade",
+			"Burst Max Time", "Firerate Boost", "Swarm Effect", "Repulsor Max Time", "PDS Damage", "Laser Aiming Arc",
 			"Firerate Upgrade Grade", "Burst Upgrade Grade", "Beam Upgrade Grade", "Multiplier Upgrade Grade", "PDS Upgrade Grade",
 			"Swarm Upgrade Grade", "Repulsor Upgrade Grade", "Ricochet Upgrade Grade", "Slowdown Upgrade Grade"};
-	// The booleans which def value is true should be placed first
 	private String[] bPrefs = {"First Time", "Static", "Particles", "MusicMuted", "SoundsMuted", "Tilt"};
 	
 	public Specular(NativeAndroid facebook) {
@@ -188,38 +185,46 @@ public class Specular extends Game {
 	private void setDefaultPrefsValue(int index) {
 		if(index < iPrefs.length) {
 			// Graphics settings (High on by default) 0 = low, 1 = medium, 2 = high
-			prefs.putInteger(iPrefs[index], index == 0 ? 2 : 0); // First element in String array is graphics
+			if(iPrefs[index] == "Graphics") {
+				prefs.putInteger(iPrefs[index], 2);
+			} else {
+				prefs.putInteger(iPrefs[index], 0);
+			}
 		} else if(index - iPrefs.length < fPrefs.length) {
 			index -= iPrefs.length;
 			
-			float x = -camera.viewportWidth / 6 * 2;
-			float y = -camera.viewportHeight / 6;
-			
-			// The first four elements in float prefs array are stick positions
-			if(index < 4) {
-				if(index % 2 == 1) {
-					prefs.putFloat(fPrefs[index], y);
-				} else {
-					if(index == 2)
-						prefs.putFloat(fPrefs[index], -x);
-					else
-						prefs.putFloat(fPrefs[index], x);
-				}
-			}
-			// All the others
-			else if(index == 4) {
-				prefs.putFloat(fPrefs[index], 1f); // Sensitivity
+			if(fPrefs[index] == "Move Stick Pos X") {
+				prefs.putFloat(fPrefs[index], -camera.viewportWidth / 6 * 2);
+			} else if(fPrefs[index] == "Move Stick Pos Y") {
+				prefs.putFloat(fPrefs[index], -camera.viewportHeight / 6);
+			} else if(fPrefs[index] == "Shoot Stick Pos X") {
+				prefs.putFloat(fPrefs[index], camera.viewportWidth / 6 * 2);
+			} else if(fPrefs[index] == "Shoot Stick Pos Y") {
+				prefs.putFloat(fPrefs[index], -camera.viewportHeight / 6);
+			} else if(fPrefs[index] == "Sensitivity") {
+				prefs.putFloat(fPrefs[index], 1);
 			} else {
 				prefs.putFloat(fPrefs[index], 0);
 			}
+			
 			index += iPrefs.length;
 			
 		} else if(index - iPrefs.length - fPrefs.length < bPrefs.length) {
-			int trueBooleans = 3; // This must be checked when booleans are added
-			
 			index -= (iPrefs.length + fPrefs.length);
-			prefs.putBoolean(bPrefs[index], index < trueBooleans); // The first three booleans have a default value of true, rest of them false
-			index += (iPrefs.length + fPrefs.length);
+			
+			if(bPrefs[index] == "First Time") {
+				prefs.putBoolean(bPrefs[index], true);
+			} else if(bPrefs[index] == "Static") {
+				prefs.putBoolean(bPrefs[index], true);
+			} else if(bPrefs[index] == "Particles") {
+				prefs.putBoolean(bPrefs[index], true);
+			} else if(bPrefs[index] == "MusicMuted") {
+				prefs.putBoolean(bPrefs[index], false);
+			} else if(bPrefs[index] == "SoundsMuted") {
+				prefs.putBoolean(bPrefs[index], false);
+			} else if(bPrefs[index] == "Tilt") {
+				prefs.putBoolean(bPrefs[index], false);
+			}
 		}
 	}
 	
