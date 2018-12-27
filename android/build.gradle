@@ -93,8 +93,8 @@ task run(type: Exec) {
 idea {
     module {
         sourceDirs += file("src");
-        project.configurations.compile.setCanBeResolved(true)
-        scopes = [ COMPILE: [plus:[project.configurations.compile]]]
+        project.configurations.implementation.setCanBeResolved(true)
+        scopes = [ IMPLEMENTATION: [plus:[project.configurations.implementation]]]
 
         iml {
             withXml {
