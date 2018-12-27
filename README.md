@@ -1,9 +1,8 @@
-Specular
-======================
+# Specular
 
 A fast paced twinstick shooter, featuring ludicrous firepower and awesome music!
 
-[Download for free from Google Play!](https://play.google.com/store/apps/details?id=com.tint.specular)
+[Download the current release](https://github.com/kosomoN/Specular/releases/latest)
 
 [Or check out this review](http://www.supergamedroid.com/2014/10/28/unleash-bullet-hell-in-awesome-new-arcade-shooter-specular/)
 
