@@ -176,7 +176,7 @@ public class Wave {
 	 * @param amounts
 	 * @param formation
 	 * @param spawnTime The tick they will spawn at, 0 for the beginning of the wave
-	 * @param spawndelay The delay that will added between enemy spawns
+	 * @param spawndelayTicks The delay that will added between enemy spawns
 	 */
 	public void addEnemies(EnemyType[] enemyTypes, int[] amounts, Formation formation, int spawnTime, float spawndelayTicks) {
 		for(EnemyType et : enemyTypes) {
