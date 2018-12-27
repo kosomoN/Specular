@@ -33,7 +33,7 @@ import com.tint.specular.ui.HighscoreList.Highscore;
  */
 
 public class HighscoreState extends State {
-	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzÂ‰ˆABCDEFGHIJKLMNOPQRSTUVWXYZ≈ƒ÷0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"¥`'<>";
+	private static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyz√•√§√∂ABCDEFGHIJKLMNOPQRSTUVWXYZ√Ö√Ñ√ñ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"`'<>";
 	
 	private Stage stage;
 	private Texture profileTex, highscoreBar;
