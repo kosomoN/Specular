@@ -17,7 +17,7 @@ import com.tint.specular.utils.Util;
 
 public class EnemyTanker extends Enemy {
 
-	private static Animation anim;
+	private static Animation<TextureRegion> anim;
 	private static AtlasRegion warningTex;
 	private static TextureRegion[] tex = new TextureRegion[4];
 	public int hits;
@@ -105,7 +105,7 @@ public class EnemyTanker extends Enemy {
 	}	
 	
 	@Override
-	protected Animation getSpawnAnim() {
+	protected Animation<TextureRegion> getSpawnAnim() {
 		return anim;
 	}
 

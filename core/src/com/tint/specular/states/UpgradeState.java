@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -50,9 +51,10 @@ public class UpgradeState extends State {
 	private Label pointsLeftLabel;
 	
 	private static BitmapFont UPFont;
+	private GlyphLayout fontLayout;
 	private float upgradePoints;
-	protected int currentlyPressing;
-	protected float waitForDragDelay;
+	private int currentlyPressing;
+	private float waitForDragDelay;
 	
 	public UpgradeState(Specular game) {
 		super(game);
@@ -86,6 +88,8 @@ public class UpgradeState extends State {
 		upgradeLevels[3] = ta.findRegion("game1/level 4");
 		upgradeLevels[4] = ta.findRegion("game1/level 5");
 		upgradeLevels[5] = ta.findRegion("game1/level inf");
+
+		fontLayout = new GlyphLayout();
 	}
 
 	@Override
@@ -201,11 +205,13 @@ public class UpgradeState extends State {
 		LabelStyle lStyle = new LabelStyle(UPFont, UPFont.getColor());
 		
 		pointsLeftLabel = new Label("Points left " + (int) Math.floor(upgradePoints), lStyle);
-		pointsLeftLabel.setPosition(Specular.camera.viewportWidth - UPFont.getBounds(pointsLeftLabel.getText()).width - 200, 85);
+        fontLayout.setText(UPFont, pointsLeftLabel.getText());
+		pointsLeftLabel.setPosition(Specular.camera.viewportWidth - fontLayout.width - 200, 85);
 		stage.addActor(pointsLeftLabel);
 		
 		Image orb = new Image(((GameState) game.getState(States.SINGLEPLAYER_GAMESTATE)).getTextureAtlas().findRegion("game1/Orb"));
-		orb.setPosition(Specular.camera.viewportWidth - UPFont.getBounds(pointsLeftLabel.getText()).width - 320, 85 - orb.getHeight() / 2);
+		fontLayout.setText(UPFont, pointsLeftLabel.getText());
+		orb.setPosition(Specular.camera.viewportWidth - fontLayout.width - 320, 85 - orb.getHeight() / 2);
 		orb.scaleBy(1.8f);
 		stage.addActor(orb);
 		
@@ -226,7 +232,7 @@ public class UpgradeState extends State {
 		Specular.prefs.flush();
 	}
 	
-	public void resetUpgrades() {
+	private void resetUpgrades() {
 		upgrades[0].setGrade(Specular.prefs.getFloat("Firerate Upgrade Grade"));
 		upgrades[1].setGrade(Specular.prefs.getFloat("Burst Upgrade Grade"));
 		upgrades[2].setGrade(Specular.prefs.getFloat("Beam Upgrade Grade"));

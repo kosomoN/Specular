@@ -32,7 +32,7 @@ public class EnemyExploder extends Enemy {
 	private boolean exploded, explosionDone;
 	
 	// Animation and graphics
-	private static Animation spawnAnim, anim;
+	private static Animation<TextureRegion> spawnAnim, anim;
 	private static AtlasRegion warningTex, explosionWarningTex;
 	private static Texture explosionTex1;
 	private static AtlasRegion explosionWarningTex2;

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.Glyph;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.scenes.scene2d.utils.Cullable;
@@ -19,11 +20,13 @@ public class HighscoreList extends Widget implements Cullable, Disposable {
 	private Rectangle cullingArea;
 	private static Highscore[] highscores = new Highscore[] {new Highscore("Loading", -1)};
 	private BitmapFont font;
+	private GlyphLayout fontLayout;
 	private float prefHeight;
 	
 	public HighscoreList(BitmapFont font) {
 		super();
 		this.font = font;
+		fontLayout = new GlyphLayout();
 		itemBackground = new Texture(Gdx.files.internal("graphics/menu/highscore/Profiles.png"));
 		highscoreText = new Texture(Gdx.files.internal("graphics/menu/highscore/Highscores.png"));
 		textOffsetY = (rowHeight - font.getLineHeight()) / 2;
@@ -37,21 +40,23 @@ public class HighscoreList extends Widget implements Cullable, Disposable {
 		batch.draw(highscoreText, getX() - 10, getY() + itemY - 170);
 		itemY -= rowHeight;
 		if(highscores != null) {
-		for (int i = 0; i < highscores.length; i++) {
-			if (cullingArea == null || (itemY - rowHeight <= cullingArea.y + cullingArea.height && itemY >= cullingArea.y)) {
-				batch.draw(itemBackground, getX() + 13, getY() + itemY - 190);
-				textOffsetX = 80;
-				font.draw(batch, highscores[i].name, getX() + textOffsetX, getY() + itemY - textOffsetY + 25);
-				if(highscores[i].score != -1) {
-					font.draw(batch,highscores[i].scoreStr, getX() + getWidth() - textOffsetX - font.getBounds(String.valueOf(highscores[i].score)).width, getY() + itemY - textOffsetY - 25);
-				}
-			} else if (itemY < cullingArea.y) {
-				break;
-			}
-			itemY -= rowHeight;
-		}
-		} else {
-			
+            for (int i = 0; i < highscores.length; i++) {
+                if (cullingArea == null || (itemY - rowHeight <= cullingArea.y + cullingArea.height && itemY >= cullingArea.y)) {
+                    batch.draw(itemBackground, getX() + 13, getY() + itemY - 190);
+                    textOffsetX = 80;
+                    font.draw(batch, highscores[i].name, getX() + textOffsetX, getY() + itemY - textOffsetY + 25);
+                    if(highscores[i].score != -1) {
+                        String text = highscores[i].scoreStr;
+                        fontLayout.setText(font, text);
+                        float x = getX() + getWidth() - textOffsetX - fontLayout.width;
+                        float y = getY() + itemY - textOffsetY - 25;
+                        font.draw(batch, text, x, y);
+                    }
+                } else if (itemY < cullingArea.y) {
+                    break;
+                }
+                itemY -= rowHeight;
+            }
 		}
 	}
 
@@ -68,7 +73,8 @@ public class HighscoreList extends Widget implements Cullable, Disposable {
 	public void setItems(Highscore[] scores) {
 		for(Highscore h : scores) {
 			//Calculating where to cut the name if it is too long
-			if(font.getBounds(h.name).width > getWidth() - textOffsetX * 2) {
+            fontLayout.setText(font, h.name);
+			if(fontLayout.width > getWidth() - textOffsetX * 2) {
 				int index = 0;
 				BitmapFontData data = font.getData();
 				int width = 0;

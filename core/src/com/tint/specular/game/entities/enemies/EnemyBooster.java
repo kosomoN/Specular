@@ -18,7 +18,7 @@ import com.tint.specular.utils.Util;
 public class EnemyBooster extends Enemy {
 
 	private static final double MAX_TURNANGLE = Math.PI / 256; // 0.012 degrees (per tick)
-	private static Animation anim;
+	private static Animation<TextureRegion> anim;
 	private static AtlasRegion tex, warningTex;
 	
 	private double direction;
@@ -148,7 +148,7 @@ public class EnemyBooster extends Enemy {
 	}	
 	
 	@Override
-	protected Animation getSpawnAnim() {
+	protected Animation<TextureRegion> getSpawnAnim() {
 		return anim;
 	}
 

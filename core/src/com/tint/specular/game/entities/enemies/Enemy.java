@@ -51,7 +51,7 @@ public abstract class Enemy implements Entity {
 		} else {
 			spawnTimer++;
 			//Animation length and 2 seconds for the warning. Multiply with 60 to get ticks
-			if(spawnTimer >= (getSpawnAnim().animationDuration + 2) * 60)
+			if(spawnTimer >= (getSpawnAnim().getAnimationDuration() + 2) * 60)
 				hasSpawned = true;
 		}
 		return life <= 0;
@@ -77,7 +77,7 @@ public abstract class Enemy implements Entity {
 
 	protected abstract void renderEnemy(SpriteBatch batch);
 	
-	protected abstract Animation getSpawnAnim();
+	protected abstract Animation<TextureRegion> getSpawnAnim();
 	protected abstract float getRotationSpeed();
 	protected abstract AtlasRegion getWarningTex();
 	

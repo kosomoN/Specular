@@ -40,7 +40,7 @@ public class Player implements Entity {
 	private static final float PUSHAWAY_RANGE_SQUARED = 500 * 500;
 	private static final int PUSHAWAY_TIME = 50;
 	
-	public static Animation anim, spawnAnim, deathAnim;
+	public static Animation<TextureRegion> anim, spawnAnim, deathAnim;
 	public static AtlasRegion playerTex, playerSpawnTex, playerDeathTex, pdsTex, shieldTexture, barrelTexture[] = new AtlasRegion[7];
 	public static int radius;
 	public static float distTraveledSqrd;
@@ -110,11 +110,11 @@ public class Player implements Entity {
 		if(bulletBurst % 2 == 0) {
 			for(int j = 0; j < (spaces - 1) / 2 + 1; j++) {
 				if(j == 0) {
-					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2, getTwist(), dx, dy));
-					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2, getTwist(), dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2f, getTwist(), dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2f, getTwist(), dx, dy));
 				} else {
-					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2 + j * offset, getTwist(), dx, dy));
-					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2 - j * offset, getTwist(), dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction + offset / 2f + j * offset, getTwist(), dx, dy));
+					gs.addEntity(Bullet.obtainBullet(centerx, centery, direction - offset / 2f - j * offset, getTwist(), dx, dy));
 				}
 			}
 			
@@ -206,7 +206,7 @@ public class Player implements Entity {
 		if(spawning) {
 			// Spawn animation
 			TextureRegion frame = spawnAnim.getKeyFrame(animFrameTime, false);
-			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
+			batch.draw(frame, centerx - frame.getRegionWidth() / 2f, centery - frame.getRegionHeight() / 2f);
 			if(spawnAnim.isAnimationFinished(animFrameTime)) {
 				spawning = false;
 				animFrameTime = 0;
@@ -214,7 +214,7 @@ public class Player implements Entity {
 		} else if(dying) {
 			// Death animation
 			TextureRegion frame = deathAnim.getKeyFrame(animFrameTime, false);
-			batch.draw(frame, centerx - frame.getRegionWidth() / 2, centery - frame.getRegionHeight() / 2);
+			batch.draw(frame, centerx - frame.getRegionWidth() / 2f, centery - frame.getRegionHeight() / 2f);
 			if(deathAnim.isAnimationFinished(animFrameTime)) {
 				PDS.refillAmmo(0,1);
 				dying  =  false;
@@ -223,7 +223,9 @@ public class Player implements Entity {
 			}
 		} else {
 			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
-			batch.draw(baseAnimFrame, centerx - baseAnimFrame.getRegionWidth() / 2, centery - baseAnimFrame.getRegionHeight() / 2);
+			batch.draw(baseAnimFrame,
+                    centerx - baseAnimFrame.getRegionWidth() / 2f,
+                    centery - baseAnimFrame.getRegionHeight() / 2f);
 			
 			if(PDS.isActive()) {
 				Util.drawCentered(batch, pdsTex, centerx, centery, animFrameTime * 140);

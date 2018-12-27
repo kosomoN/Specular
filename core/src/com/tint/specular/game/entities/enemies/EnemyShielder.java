@@ -13,7 +13,7 @@ public class EnemyShielder extends Enemy {
 
 	private static final float FORCE = 7, RANGE = 300 * 300;
 	
-	private static Animation anim, spawnAnim;
+	private static Animation<TextureRegion> anim, spawnAnim;
 	private static AtlasRegion warningTex;
 	private float speed;
 	
@@ -80,7 +80,7 @@ public class EnemyShielder extends Enemy {
 	}	
 	
 	@Override
-	protected Animation getSpawnAnim() {
+	protected Animation<TextureRegion> getSpawnAnim() {
 		return spawnAnim;
 	}
 

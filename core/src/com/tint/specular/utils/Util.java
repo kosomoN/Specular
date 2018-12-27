@@ -2,10 +2,7 @@ package com.tint.specular.utils;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.utils.Array;
 
 /**
@@ -27,25 +24,12 @@ public class Util {
 	 * @return - If the point is inside the rect returns true, else false
 	 */
 	public static boolean isTouching(float checkX, float checkY, float x, float y, float width, float height, boolean invertedy) {
-		if(checkX >= x) {
-			if(checkX <= x + width) {
-				if(!invertedy) {
-					if(checkY >= y) {
-						if(checkY <= y + height) {
-							return true;
-						}
-					}
-				} else {
-					if(Gdx.graphics.getHeight() - checkY >= y) {
-						if(Gdx.graphics.getHeight() - checkY <= y + height) {
-							return true;
-						}
-					}
-				}
-				
-			}
-		}
-		return false;
+        if (invertedy)
+            checkY = Gdx.graphics.getHeight() - checkY;
+
+        boolean inXRange = checkX >= x && checkX <= x + width;
+        boolean inYRange = checkY >= y && checkY <= y + height;
+        return inXRange && inYRange;
 	}
 	
 	public static boolean isOnLine(float startX, float startY, float endX, float endY, float checkX, float checkY, float lineWidth) {
@@ -53,17 +37,17 @@ public class Util {
 		float direction = (float) Math.atan2(startY - checkY, startX - checkX);
 		
 		if(lineWidth != 1) {
-			float maxDifference = (float) Math.abs((startDirection - 2f * Math.atan2(startY - endY, startX - (endX + lineWidth / 2))));
-			if(direction < startDirection + maxDifference && direction > startDirection - maxDifference) {
-				return true;
-			}
+		    float dx = startX - (endX + lineWidth / 2);
+		    float dy = startY - endY;
+		    double angle = Math.atan2(dy, dx);
+		    float deltaAngle = (float) Math.abs(startDirection - 2f * angle);
+		    boolean inUpperBound = direction < startDirection + deltaAngle;
+            boolean inLowerBound = direction > startDirection - deltaAngle;
+            return inUpperBound && inLowerBound;
 		} else {
-			if(direction == startDirection) {
-				return true;
-			}
+            return direction == startDirection;
 		}
-		return false;
-	}
+    }
 	
 	/**
 	 * Calculates distance with pythagoras statement
@@ -74,7 +58,7 @@ public class Util {
 	 * @return - Distance between the two points squared
 	 */
 	public static float getDistanceSquared(float x1, float y1, float x2, float y2) {
-		return (float) ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+		return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
 	}
 	
 	/**
@@ -89,7 +73,7 @@ public class Util {
 	 * @param lastY - The last frames y coordianate
 	 * @return an animation
 	 */
-	public static Animation getAnimation(TextureRegion texture, int spriteWidth, int spriteHeight, float frameTime, int firstX, int firstY, int lastX, int lastY) {
+	public static Animation<TextureRegion> getAnimation(TextureRegion texture, int spriteWidth, int spriteHeight, float frameTime, int firstX, int firstY, int lastX, int lastY) {
 		TextureRegion[][] trArr = texture.split(spriteWidth, spriteHeight);
 		Array<TextureRegion> frames = new Array<TextureRegion>();
 		for(int y = firstY; y <= lastY; y++) {
@@ -103,7 +87,7 @@ public class Util {
 				frames.add(trArr[y][x]);
 			}
 		}
-		return new Animation(frameTime, frames);
+		return new Animation<TextureRegion>(frameTime, frames);
 	}
 	
 	/**
@@ -117,7 +101,10 @@ public class Util {
 	public static void drawCentered(SpriteBatch batch, Texture tex, float centerx, float centery, float rotation) {
 		int texWidth = tex.getWidth();
 		int texHeight = tex.getHeight();
-		batch.draw(tex, centerx - texWidth / 2, centery - texHeight / 2, texWidth / 2, texHeight / 2, texWidth, texHeight, 1, 1, rotation, 0, 0, texWidth, texHeight, false, false);
+		batch.draw(tex, centerx - texWidth / 2f, centery - texHeight / 2f,
+                texWidth / 2f, texHeight / 2f, texWidth, texHeight,
+                1, 1, rotation, 0, 0, texWidth, texHeight,
+                false, false);
 	}
 	
 	/**
@@ -132,7 +119,9 @@ public class Util {
 	public static void drawCentered(SpriteBatch batch, Texture tex, float centerx, float centery, float scale, float rotation) {
 		int texWidth = tex.getWidth();
 		int texHeight = tex.getHeight();
-		batch.draw(tex, centerx - texWidth / 2, centery - texHeight / 2, texWidth / 2, texHeight / 2, texWidth, texHeight, scale, scale, rotation, 0, 0, texWidth, texHeight, false, false);
+		batch.draw(tex, centerx - texWidth / 2f, centery - texHeight / 2f,
+                texWidth / 2f, texHeight / 2f, texWidth, texHeight, scale, scale, rotation,
+                0, 0, texWidth, texHeight, false, false);
 	}
 	
 	/**
@@ -156,12 +145,16 @@ public class Util {
 	 * @param rotation - The angle of the rotation around the centerpoint
 	 */
 	public static void drawCentered(SpriteBatch batch, TextureRegion tex, float centerx, float centery, float rotation) {
-		batch.draw(tex, centerx - tex.getRegionWidth() / 2, centery - tex.getRegionHeight() / 2,
-				tex.getRegionWidth() / 2, tex.getRegionHeight() / 2, tex.getRegionWidth(), tex.getRegionHeight(), 1, 1, rotation);
+		batch.draw(tex,
+                centerx - tex.getRegionWidth() / 2f,
+                centery - tex.getRegionHeight() / 2f,
+				tex.getRegionWidth() / 2f, tex.getRegionHeight() / 2f,
+                tex.getRegionWidth(), tex.getRegionHeight(),
+                1, 1, rotation);
 	}
 	
 	public static void writeCentered(SpriteBatch batch, BitmapFont font, String s, float centerx, float centery) {
-		font.draw(batch, s, centerx - font.getBounds(s).width / 2, centery + font.getCapHeight() / 2);
-		
+        GlyphLayout layout = new GlyphLayout(font, s);
+		font.draw(batch, s, centerx - layout.width / 2, centery + font.getCapHeight() / 2);
 	}
 }

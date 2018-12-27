@@ -47,7 +47,7 @@ public class ControlSetupState extends State {
 	private float sensitivity;
 	private boolean tilt, staticSticks;
 	private boolean soundEffects;
-	public ControlInputProcessor inputProcessor;
+	private ControlInputProcessor inputProcessor;
 	private Stage stage;
 	private Button staticBtn;
 	private WidgetGroup hideableUI;
@@ -66,8 +66,8 @@ public class ControlSetupState extends State {
 		map = gs.getMapHandler().getMap("Map");
 		
 		//Player
-		player.x = map.getWidth() / 2;
-		player.y = map.getHeight() / 2;
+		player.x = map.getWidth() / 2f;
+		player.y = map.getHeight() / 2f;
 		player.anim = Player.anim;
 		player.barrelTexture = Player.barrelTexture[0];
 		
@@ -91,7 +91,7 @@ public class ControlSetupState extends State {
 		
 		selectedTex = new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Selected.png"));
 		TextureRegionDrawable knobTex = new TextureRegionDrawable(new TextureRegion(selectedTex));
-		knobTex.setMinWidth(256);;
+		knobTex.setMinWidth(256);
 		//Slider ui
 		SliderStyle sliderStyle = new SliderStyle(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("graphics/menu/settingsmenu/Slider.png"))))
 			, knobTex);
@@ -267,13 +267,18 @@ public class ControlSetupState extends State {
 				inputProcessor.shoot.setStatic(staticSticks);
 				stickPositionBtn.setVisible(staticBtn.isChecked());
 				if(staticBtn.isChecked()) {
-					inputProcessor.move.setBasePos(Specular.prefs.getFloat("Move Stick Pos X"), Specular.prefs.getFloat("Move Stick Pos Y"));
-					inputProcessor.shoot.setBasePos(Specular.prefs.getFloat("Shoot Stick Pos X"), Specular.prefs.getFloat("Shoot Stick Pos Y"));
+				    float movePosX = Specular.prefs.getFloat("Move Stick Pos X");
+				    float movePosY = Specular.prefs.getFloat("Move Stick Pos Y");
+                    float shootPosX = Specular.prefs.getFloat("Shoot Stick Pos X");
+                    float shootPosY = Specular.prefs.getFloat("Shoot Stick Pos Y");
+					inputProcessor.move.setBasePos(movePosX, movePosY);
+					inputProcessor.shoot.setBasePos(shootPosX, shootPosY);
 				} else {
 					Specular.prefs.putFloat("Move Stick Pos X", inputProcessor.move.getXBase());
 					Specular.prefs.putFloat("Move Stick Pos Y", inputProcessor.move.getYBase());
 					Specular.prefs.putFloat("Shoot Stick Pos X", inputProcessor.shoot.getXBase());
 					Specular.prefs.putFloat("Shoot Stick Pos Y", inputProcessor.shoot.getYBase());
+					Specular.prefs.flush();
 				}
 			}
 		});
@@ -329,9 +334,15 @@ public class ControlSetupState extends State {
 		}
 		
 		if(stickPositionBtn.isChecked()) {
+		    float stickBaseW = AnalogStick.base.getRegionWidth();
+		    float stickBaseH = AnalogStick.base.getRegionHeight();
+		    float moveStickX = stage.getWidth() / 2 + inputProcessor.move.getXBase() - stickBaseW / 2f;
+		    float moveStickY = stage.getHeight() / 2 + inputProcessor.move.getYBase() - stickBaseH / 2f;
+            float shootStickX = stage.getWidth() / 2 + inputProcessor.shoot.getXBase() - stickBaseW / 2f;
+            float shootStickY = stage.getHeight() / 2 + inputProcessor.shoot.getYBase() - stickBaseH / 2f;
 			game.batch.begin();
-			game.batch.draw(AnalogStick.base, stage.getWidth() / 2 + inputProcessor.move.getXBase() - AnalogStick.base.getRegionWidth() / 2, stage.getHeight() / 2 + inputProcessor.move.getYBase() - AnalogStick.base.getRegionHeight() / 2);
-			game.batch.draw(AnalogStick.base, stage.getWidth() / 2 + inputProcessor.shoot.getXBase() - AnalogStick.base.getRegionWidth() / 2, stage.getHeight() / 2 + inputProcessor.shoot.getYBase() - AnalogStick.base.getRegionHeight() / 2);
+			game.batch.draw(AnalogStick.base, moveStickX, moveStickY);
+			game.batch.draw(AnalogStick.base, shootStickX, shootStickY);
 			game.batch.end();
 		}
 	}
@@ -352,6 +363,7 @@ public class ControlSetupState extends State {
 			Specular.prefs.putFloat("Move Stick Pos Y", inputProcessor.move.getYBase());
 			Specular.prefs.putFloat("Shoot Stick Pos X", inputProcessor.shoot.getXBase());
 			Specular.prefs.putFloat("Shoot Stick Pos Y", inputProcessor.shoot.getYBase());
+			Specular.prefs.flush();
 		}
 
 		game.enterState(States.SETTINGSMENUSTATE);
@@ -359,7 +371,7 @@ public class ControlSetupState extends State {
 
 	private class DummyPlayer {
 		public float x, y, dx, dy;
-		private Animation anim;
+		private Animation<TextureRegion> anim;
 		private float animFrameTime;
 		private float direction;
 		private AtlasRegion barrelTexture;
@@ -370,7 +382,7 @@ public class ControlSetupState extends State {
 			animFrameTime += Gdx.graphics.getDeltaTime();
 			TextureRegion baseAnimFrame = anim.getKeyFrame(animFrameTime, true);
 			Util.drawCentered(batch, barrelTexture, x, y, direction);
-			batch.draw(baseAnimFrame, x - baseAnimFrame.getRegionWidth() / 2, y - baseAnimFrame.getRegionHeight() / 2);
+			batch.draw(baseAnimFrame, x - baseAnimFrame.getRegionWidth() / 2f, y - baseAnimFrame.getRegionHeight() / 2f);
 		}
 
 		private void update() {
@@ -387,13 +399,10 @@ public class ControlSetupState extends State {
 				if(moveStick.isActive() && distBaseToHead != 0) {
 					//calculating the angle with delta x and delta y
 					double angle = Math.atan2(moveDy, moveDx);
-					
+					float speed = (distBaseToHead >= maxSpeedAreaSquared ? 1 : distBaseToHead / maxSpeedAreaSquared);
 					changeSpeed(
-							(float) Math.cos(angle) * Player.MAX_DELTA_SPEED *
-							(distBaseToHead >= maxSpeedAreaSquared ? 1 : distBaseToHead / maxSpeedAreaSquared),
-							
-							(float) Math.sin(angle) * Player.MAX_DELTA_SPEED *
-							(distBaseToHead >= maxSpeedAreaSquared ? 1 : distBaseToHead / maxSpeedAreaSquared)
+							(float) Math.cos(angle) * Player.MAX_DELTA_SPEED * speed,
+							(float) Math.sin(angle) * Player.MAX_DELTA_SPEED * speed
 							);
 				}
 			}

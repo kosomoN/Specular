@@ -326,7 +326,7 @@ public class GameState extends State {
 					scoreMultiplierTimer += decreaseRate;
 				} else {
 					if(isSoundEnabled())
-						multiplierDownSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
+						multiplierDownSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3f), 0);
 					
 					scoreMultiplierTimer = 0;
 					scoreMultiplier--;
@@ -335,20 +335,22 @@ public class GameState extends State {
 			
 			if(cs.getCombo() > 7) {
 				if(isSoundEnabled())
-					multiplierUpSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3), 0);
+					multiplierUpSound.play(1f, (float) Math.sqrt(scoreMultiplier / 3f), 0);
 				
 				setScoreMultiplier(scoreMultiplier + 1);
 				if(getScoreMultiplier() % 10 == 0) {
-					multiplierFont.scale(2);
+				    float curScale = multiplierFont.getScaleX();
+					multiplierFont.getData().setScale(curScale * 2);
 				}
 				
 				cs.resetCombo();
 			}
 			
 			if(multiplierFont.getScaleX() > 1) {
-				multiplierFont.scale(- 0.05f);
+                float curScale = multiplierFont.getScaleX();
+				multiplierFont.getData().setScale(curScale - 0.05f);
 				if(multiplierFont.getScaleX() <= 1) {
-					multiplierFont.setScale(1);
+					multiplierFont.getData().setScale(1);
 				}
 			}
 			
@@ -440,7 +442,7 @@ public class GameState extends State {
 				else {
 					saveStats();
 					input.setInputProcessor(ggInputProcessor);
-					gameOverScoreFont.scale(14);
+					gameOverScoreFont.getData().setScale(14);
 					
 					if(Specular.nativeAndroid.isLoggedIn()) {
 						Specular.nativeAndroid.postHighscore(player.getScore(), true);
@@ -572,14 +574,15 @@ public class GameState extends State {
 				game.batch.setProjectionMatrix(Specular.camera.combined);
 				
 				game.batch.draw(greyPixel, -Specular.camera.viewportWidth / 2, -Specular.camera.viewportHeight / 2, Specular.camera.viewportWidth, Specular.camera.viewportHeight);
-				game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2, -gameOverTex.getHeight() / 2);
+				game.batch.draw(gameOverTex, -gameOverTex.getWidth() / 2f, -gameOverTex.getHeight() / 2f);
 				
 				// Game Over effects [fade in, camera shake]
 				if(gameOverScoreFont.getScaleX() > 1f) {
-					gameOverScoreFont.scale(-0.1f);
+				    float curScale = gameOverScoreFont.getScaleX();
+					gameOverScoreFont.getData().setScale(curScale - 0.1f);
 					gameOverScoreFont.setColor(1, 0, 0, Math.max((10 - gameOverScoreFont.getScaleX()) / 10f, 0));
 				} else {
-					gameOverScoreFont.setScale(1);
+					gameOverScoreFont.getData().setScale(1);
 					if(!shaken) {
 						Camera.shake(0.5f, 0.02f);
 						shaken = true;

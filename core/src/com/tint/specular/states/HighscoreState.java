@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -42,11 +43,13 @@ public class HighscoreState extends State {
 	private boolean isLoggedIn = false;
 	private boolean soundEffects;
 	private BitmapFont font;
+	private GlyphLayout fontLayout;
 	private String timePlayed, accuracy, scoreStr;
 	private Sound btnSound = Gdx.audio.newSound(Gdx.files.internal("audio/fx/ButtonPress.ogg"));
 	
 	public HighscoreState(Specular game) {
 		super(game);
+		fontLayout = new GlyphLayout();
 	}
 
 	@Override
@@ -66,21 +69,26 @@ public class HighscoreState extends State {
 			
 			font.draw(game.batch, "Highscore:", 120, 850);
 			font.draw(game.batch, scoreStr, 400, 850);
-			
-			font.draw(game.batch, "Time played:", 500 - font.getBounds("Time played:").width, 750);
+
+			fontLayout.setText(font, "Time played");
+			font.draw(game.batch, "Time played", 500 - fontLayout.width, 750);
 			font.draw(game.batch, timePlayed, 515, 750);
-			
-			font.draw(game.batch, "Games:", 500 - font.getBounds("Games:").width, 700);
+
+            fontLayout.setText(font, "Games: ");
+			font.draw(game.batch, "Games:", 500 - fontLayout.width, 700);
 			font.draw(game.batch, String.valueOf(Specular.prefs.getInteger("Games Played")), 515, 700);
-			
-			font.draw(game.batch, "Shots fired:", 500 - font.getBounds("Shots fired:").width, 650);
+
+            fontLayout.setText(font, "Shots fired: ");
+			font.draw(game.batch, "Shots fired:", 500 - fontLayout.width, 650);
 			font.draw(game.batch, String.valueOf(Specular.prefs.getInteger("Bullets Fired")), 515, 650);
-			
-			font.draw(game.batch, "Accuracy:", 500 - font.getBounds("Accuracy:").width, 600);
+
+            fontLayout.setText(font, "Accuracy: ");
+			font.draw(game.batch, "Accuracy:", 500 - fontLayout.width, 600);
 
 			font.draw(game.batch, accuracy, 515, 600);
-			
-			font.draw(game.batch, "Enemies killed:", 500 - font.getBounds("Enemies killed:").width, 550);
+
+            fontLayout.setText(font, "Enemies killed: ");
+			font.draw(game.batch, "Enemies killed:", 500 - fontLayout.width, 550);
 			font.draw(game.batch, String.valueOf(Specular.prefs.getInteger("Enemies Killed")), 515, 550);
 			
 			game.batch.end();
