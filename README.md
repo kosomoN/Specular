@@ -2,7 +2,7 @@
 
 A fast paced twinstick shooter, featuring ludicrous firepower and awesome music!
 
-**ATTENTION**: _Specular has been removed from Google Play Store, please download the desktop jar instead_
+**ATTENTION**: _Specular has been removed from Google Play Store, please download the desktop jar or APK instead_
 
 [Download the current release](https://github.com/kosomoN/Specular/releases/latest)
 
